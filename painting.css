@@ -18,14 +18,27 @@ body {
 
 .header {
     background-color: #0784d1;
-    padding: 10px 0;
     font-size: 30px;
     text-align: center;
     color: white;
     border-bottom: 2px solid #0784d1;
     border-top: 2px solid #0784d1;
     width: 100%;
-    height: 50px;
+    height: 10%;
+}
+
+#tool_top {
+    height: 7%;
+    background-color: #e6f5ff;
+}
+
+#inOutData {
+    display: flex;
+    flex-flow: wrap;
+    width: 10%;
+    height: 100%;
+    justify-content: space-around;
+    margin: 8px;
 }
 
 .landing_page {
@@ -34,15 +47,38 @@ body {
     width: 100%;
     height: 80%;
     min-height: 550px;
+    background-color: #e6f5ff;
 }
 
 #drawing_page {
-    width: 70%;
-    height: 100%;
+    width:100%;
+	height:100%;
     flex: 1;
 }
 
-/* #style {
+#tool_left {
+    width: 15px;
+    min-width: 15px;
+    display:flex;
+    background-color: #e6f5ff;
+    justify-content: space-between;
+}
+
+#myCanvas {
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #0784d1;
+}
+
+#tool_right {
+    display: flex;
+    width: 15px;
+    min-width: 15px;
+    background-color: #e6f5ff;
+}
+
+#style {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -54,7 +90,7 @@ body {
     border-radius: 50%;
     text-align: center;
     background-color: #e6f5ff;
-} */
+}
 
 #style>div {
     width: 70%;
@@ -91,67 +127,51 @@ body {
 }
 
 #property {
-    width: 100%;
+    position: absolute;
+    right: 2%;
+    top: 18%;
+    width: 10%;
     height: 48%;
-    display: flex;
+    display: none;
     flex-direction: column;
     font-size: 13px;
+    background-color: #ffffff;
 }
 
 #property_label {
     text-align: center;
-    padding: 3%;
+    width:100%;
+    /* height: 30px; */
+    padding: 0%;
     font-size: 22px;
-    border-bottom: 2px solid #0784d1;
-    background-color: #0784d1;
+    border: 2px solid black;
+    background-color: rgb(162 202 212 / 97%);
     font-family: UVF Bariol Regular;
-    color: white;
 }
-
-#property>div {
-    width: 100%;
-    height: 10%;
-    display: flex;
-    border-bottom: 2px solid #0784d1;
-    background-color: #ffffff;
+#property > div {
+	width:100%;
+	height:10%;
+	display:flex;
+	border-bottom:2px solid black;
+    border-left:2px solid black;
+    border-right:2px solid black;
+	background-color: #ffffff;
 }
-
-#property>div>p {
-    width: 37%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#property>div>div {
-    height: 100%;
-    flex: 1;
-    border-left: 2px solid #0784d1;
+#property > div > p{
+	width:37%;
+	height:100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
-#myCanvas {
-    background-color: white;
-    height: 100%;
-    width: 100%;
-    border: 1px solid #0784d1;
-    margin: 10px;
-}
-
-#tool_right {
+#property > div > div{
+	height:100%;
+	flex:1;
+	border-left: 2px solid black;
     display: flex;
-    border: 2px solid #0784d1;
-    border-top: 0px;
-    border-left: 0px;
-    /* width: 150px; */
-    min-width: 150px;
-    background-color: #e6f5ff;
-    margin: 10px;
+    align-items: center;
+    justify-content: center;
 }
-
 .rangeSlider {
     -webkit-appearance: none;
     width: 35px;
@@ -264,10 +284,9 @@ button {
     top: 86%;
     left: 2%;
     height: 50px;
-    width: 110px;
+    width: 150px;
     display: flex;
     align-items: center;
-    justify-content: space-around;
     border: 2px solid #0784d1;
     background: #bbe8ec;
 }
@@ -283,7 +302,7 @@ button {
 
 #display_coord {
     font-family: UVF Bariol Regular;
-    width: 45%;
+    width: 100%;
     text-align: center;
 }
 
@@ -304,15 +323,6 @@ button {
     background-size: 29px 29px;
 }
 
-#inOutData {
-    display: flex;
-    flex-flow: wrap;
-    width: 150px;
-    height: 40px;
-    justify-content: space-around;
-    margin-top: 5px;
-}
-
 #BDCondition {
     position: absolute;
     top: 20%;
@@ -323,4 +333,10 @@ button {
     border-radius: 20px;
     padding: 5px;
     display: none;
+}
+
+.footer {
+    width: 100%;
+    background-color: #e6f5ff;
+    flex:1;
 }
