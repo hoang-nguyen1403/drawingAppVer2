@@ -14,7 +14,17 @@
 	<div class="header">
 		<h1><b style="font-family: Segoe Script;"></b></h1>
 	</div>
-
+	<div id=tool_top>
+		<div id="inOutData">
+			<label id="openFile_label">
+				<input type="file" name="openFile" id="openFile" style="display: none">
+			</label>
+			<button id="saveFile" class="btn" type="button" onclick="processingData.prototype.saveObj()" value="Off"
+				style="background-image: url(img/save.png)"></button>
+			<button id="Clear_all" class="btn" type="button" onclick="PaintIn.clearAll()"
+				style="background-image: url(img/clearall.jpg)"></button>
+		</div>
+	</div>
 	<div class="landing_page">
 		<div id="tool_left">
 			<div id="style">
@@ -31,7 +41,6 @@
 					<!-- <input type="range" name="sizeGrid" min="10" max="100" id="sizeGrid" class="rangeSlider"> -->
 				</div>
 			</div>
-
 			<div id="shape">
 				<!-- <button id="brush" class="btn" type="button" onclick="PaintIn.chooseBrush()" value="Off"
 					style="background-image: url(img/brush.png)"></button> -->
@@ -64,46 +73,27 @@
 			</div>
 		</div>
 
-
-
 		<div id="drawing_page">
-			<div id="inOutData">
-				<label id="openFile_label">
-					<input type="file" name="openFile" id="openFile" style="display: none">
-				</label>
-				<button id="saveFile" class="btn" type="button" onclick="processingData.prototype.saveObj()" value="Off"
-					style="background-image: url(img/save.png)"></button>
-				<button id="Clear_all" class="btn" type="button" onclick="PaintIn.clearAll()"
-					style="background-image: url(img/clearall.jpg)"></button>
-			</div>
 			<canvas id="myCanvas">
 				<!-- <div id="RadiusLightNode"></div> -->
 			</canvas>
 		</div>
+
 		<div id="tool_right">
 			<div id="property">
-				<p id="property_label">Properties</p>
 			</div>
 		</div>
 
 	</div>
-
-	<div id="coord_div">
-		<div id="icon_coord">
-		</div>
-		<div id="display_coord">
-		</div>
-	</div>
-
-	<!-- <footer class="footer">
+	<footer class="footer">
 		<!-- <div class="container"> </div> -->
-	<!-- <div id="coord_div">
+		<div id="coord_div">
 			<div id="icon_coord">
 			</div>
 			<div id="display_coord">
 			</div>
-		</div> -->
-	<!-- </footer> -->
+		</div>
+	</footer>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/kd-tree-javascript@1.0.3/kdTree-min.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
