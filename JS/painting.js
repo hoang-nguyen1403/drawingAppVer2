@@ -1287,11 +1287,13 @@ class Paint {
                     case "Point":
                         if (this.curValPointLoad.value === "On") {
                             if (inputLoad === undefined) {
+                                this.addCommand('Fx, Fy', selectedObj.x + 10, selectedObj.y - 10);
                                 inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
                             }
                         }
                         if (this.curValMoment.value === "On") {
                             if (inputLoad === undefined) {
+                                this.addCommand('M = ...', selectedObj.x + 10, selectedObj.y - 10);
                                 inputForce(selectedObj.x, selectedObj.y, selectedObj, "moment");
                             }
                         }
@@ -1305,6 +1307,7 @@ class Paint {
                             let xM2 = (selectedObj.Point[0].x + xM1) - xBox;
                             let yM2 = (selectedObj.Point[0].y + yM1) - yBox;
                             if (this.curValPressLoad.value === "On") {
+                                this.addCommand('F = ...', xM2 + 10, yM2 - 10);
                                 inputForce(xM2, yM2, selectedObj, "normal_pressure");
                             }
                             // else if (this.curValAxialForce.value === "On") {
@@ -1649,21 +1652,20 @@ class Paint {
         let u1, u2, fromx, fromy, tox, toy;
 
         if (Obj.value > 0.00001) {
-            fromx = x + r;
-            fromy = y - 5;
-            tox = x + r;
-            toy = y;
-            u1 = 4;
-            u2 = 6;
-
-        }
-        else {
             fromx = x - r;
             fromy = y - 5;
             tox = x - r;
             toy = y;
             u1 = 6;
             u2 = 4;
+        }
+        else {
+            fromx = x + r;
+            fromy = y - 5;
+            tox = x + r;
+            toy = y;
+            u1 = 4;
+            u2 = 6;
         }
 
         let dx = tox - fromx,
