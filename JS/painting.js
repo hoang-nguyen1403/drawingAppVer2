@@ -349,7 +349,10 @@ class Paint {
         this.offButton(this.curValPressLoad, "pressLoad");
         // this.offButton(this.curValAxialForce, "axialForce");
         this.onOffButtonDraw(this.currentValueLine, "line");
-
+        if (this.currentValueLine.value === 'On') {
+            this.addCommand('ESC to exit draw!', 550, 50);
+            this.addCommand('SPACE to break line!', 550, 70);
+        }
     }
 
     // chooseCircle() {
@@ -1322,10 +1325,10 @@ class Paint {
         return
     }
 
-    addCommand(text) {
+    addCommand(text, x, y) {
         this.ctx.font = "13px Arial";
         this.ctx.fillStyle = "red";
-        this.ctx.fillText(text, 550, 50);
+        this.ctx.fillText(text, x, y);
     }
 
     // deleteForce(event){
@@ -1863,7 +1866,11 @@ class Paint {
             }
         }
         if (this.curValName.value === "On" || this.curValPointLoad.value === "On" || this.curValMoment.value === "On" || this.curValPressLoad.value === "On") {
-            this.addCommand('Press ESC to exit!');
+            this.addCommand('Press ESC to exit!', 550, 50);
+        }
+        if (this.pen === 'line') {
+            this.addCommand('ESC to exit draw!', 550, 50);
+            this.addCommand('SPACE to break line!', 550, 70);
         }
     }
     deleteCurObj() {
