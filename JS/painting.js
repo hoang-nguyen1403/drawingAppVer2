@@ -350,8 +350,8 @@ class Paint {
         // this.offButton(this.curValAxialForce, "axialForce");
         this.onOffButtonDraw(this.currentValueLine, "line");
         if (this.currentValueLine.value === 'On') {
-            this.addCommand('ESC to exit draw!', 550, 50);
-            this.addCommand('SPACE to break line!', 550, 70);
+            this.addCommand('Press ESC to exit draw!', 550, 50);
+            this.addCommand('Press SPACE to break line!', 550, 70);
         }
     }
 
@@ -1871,8 +1871,8 @@ class Paint {
             this.addCommand('Press ESC to exit!', 550, 50);
         }
         if (this.pen === 'line') {
-            this.addCommand('ESC to exit draw!', 550, 50);
-            this.addCommand('SPACE to break line!', 550, 70);
+            this.addCommand('Press ESC to exit draw!', 550, 50);
+            this.addCommand('Press SPACE to break line!', 550, 70);
         }
     }
     deleteCurObj() {
