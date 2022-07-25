@@ -19,10 +19,8 @@
 			<label id="openFile_label">
 				<input type="file" name="openFile" id="openFile" style="display: none">
 			</label>
-			<button id="saveFile" class="btn" type="button" onclick="processingData.prototype.saveObj()" value="Off"
-				style="background-image: url(img/save.png)"></button>
-			<button id="Clear_all" class="btn" type="button" onclick="PaintIn.clearAll()"
-				style="background-image: url(img/clearall.jpg)"></button>
+			<button id="saveFile" type="button" onclick="processingData.prototype.saveObj()" value="Off"></button>
+			<button id="Clear_all" type="button" onclick="PaintIn.clearAll()"></button>
 		</div>
 	</div>
 	<div class="landing_page">
@@ -58,16 +56,16 @@
 			<div id="BDCondition">
 				<!-- <button id="select" class="btn" type="button" onclick="PaintIn.chooseSelect()" value="Off"
 					style="background-image: url(img/select.png)"></button> -->
-				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()"
-					value="Off">Name</button>
-				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off">Point
-					Load</button>
-				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off">Press
-					Load</button>
+				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
+				style="background-image: url(img/apply_name.svg)"></button></button>
+				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off" 
+				style="background-image: url(img/apply_force.svg)"></button>
+				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
+				style="background-image: url(img/apply_normal_press.svg)"></button>
 				<!-- <button id="axialForce" class="btn" type="button" onclick="PaintIn.addValAxialForce()" value="Off"> Axial
 					Force</button> -->
-				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()"
-					value="Off">Moment</button>
+				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
+				style="background-image: url(img/apply_moment.svg)"></button></button>
 				<!-- <button id="deleteForce" class="btn" type="button" onclick="PaintIn.addValDeleteForce()"
 					value="Off">Delete Force</button> -->
 			</div>
@@ -82,6 +80,7 @@
 		<div id="tool_right">
 			<div id="property">
 			</div>
+			<div id="command"></div>
 		</div>
 
 	</div>
