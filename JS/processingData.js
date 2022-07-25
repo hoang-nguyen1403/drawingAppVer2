@@ -326,7 +326,6 @@ class processingData {
                 }
             }
         }
-        console.log(processingData.allLine)
         //create area object       
         for (let i = 0; i <= AreaResult.length - 1; i++) {
             let areaObj = new Area(AreaResult[i], undefined);
@@ -669,6 +668,13 @@ class Point {
     isIn(mouse) {
         return (((mouse[0] - this.x) ** 2 + (mouse[1] - this.y) ** 2) < 3 ** 2) ? true : false
     }
+    isInBox(topLeftPoint, bottomRigthPoint) {
+        let point = this.point;
+        if (topLeftPoint[0] < point[0] && topLeftPoint[1] < point[1] &&
+            point[0] < bottomRigthPoint[0] && point[1] < bottomRigthPoint[1]) {
+            return true;
+        } else return false;
+    }
 };
 
 // Line class
@@ -689,13 +695,36 @@ class Line {
     getLength() {
         this.length = math.norm(math.subtract(this.Point[0].point, this.Point[1].point));
     }
+    //get Point in line
+    getPointInLine(numPoint) {
+        let numSeg = numPoint - 1;
+        let point1 = this.Point[0].point;
+        let point2 = this.Point[1].point;
+        let dp = math.divide(math.subtract(point2, point1), numSeg);
+        let subPoints = []
+        for (let i = 0; i < numPoint; i++) {
+            let subPoint = math.add(point1, math.multiply(i, dp));
+            subPoints.push(subPoint);
+        }
+        return subPoints
+    }
     //inside-check
     isIn(Mouse) {
         let A_to_mouse = math.norm(math.subtract(this.Point[0].point, Mouse));
         let mouse_to_B = math.norm(math.subtract(Mouse, this.Point[1].point));
         return (A_to_mouse + mouse_to_B - this.length <= 0.1) ? true : false
-    };
-
+    }
+    isInBox(topLeftPoint, bottomRigthPoint) {
+        for (let pointObj of this.Point) {
+            let point = pointObj.point;
+            if (topLeftPoint[0] < point[0] && topLeftPoint[1] < point[1] &&
+                point[0] < bottomRigthPoint[0] && point[1] < bottomRigthPoint[1]) {
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 //Area
 class Area {
@@ -792,7 +821,17 @@ class Area {
             };
         };
         return count % 2 === 0 ? false : true
-    };
+    }
+    isInBox(topLeftPoint, bottomRigthPoint) {
+        for (let point of this.pointFlow) {
+            if (topLeftPoint[0] < point[0] && topLeftPoint[1] < point[1] &&
+                point[0] < bottomRigthPoint[0] && point[1] < bottomRigthPoint[1]) {
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 // Curve class
 class Curve {

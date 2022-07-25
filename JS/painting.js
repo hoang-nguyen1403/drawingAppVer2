@@ -28,7 +28,7 @@ class Paint {
         this.currentColor = 'black';
         this.currentWidth = 5;
         this.deltaGrid = 40;
-        this.pen = undefined;
+        this.pen = 'select';
 
         this.minGrid = 5;
         this.maxGrid = 100;
@@ -85,7 +85,7 @@ class Paint {
         this.arrCurValueObj = [];
         // this.hasInput = false;
         this.curPoint = [];
-        this.currentCursor = "url(img/select_cursor.svg) 7 7,  default";
+        this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
         this.canvas.style.cursor = this.currentCursor;
 
     }
@@ -107,42 +107,49 @@ class Paint {
         }
         else {
             currentActive.value = "Off";
-            this.pen = undefined;
+            this.pen = 'select';
             document.getElementById(nameID).classList.remove("active");
             //change cursor
-            this.currentCursor = "url(img/select_cursor.svg) 7 7,  default";
+            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
             this.canvas.style.cursor = this.currentCursor;
         }
+        // this.renderObject(processingData.allObject);
     }
 
     offButtonDraw(currentActive, nameID) {
         if (currentActive.value === "On") {
             currentActive.value = "Off";
-            this.pen = undefined;
+            this.pen = 'select';
             document.getElementById(nameID).classList.remove("active");
             this.selectObj();
         }
+        // this.renderObject(processingData.allObject);
     }
 
     onOffButton(currentActive, nameID) {
         if (currentActive.value === "Off") {
             currentActive.value = "On";
+            this.curValSelect = "Off";
             document.getElementById(nameID).classList.add("active");
         }
         else {
             currentActive.value = "Off";
             document.getElementById(nameID).classList.remove("active");
             //change cursor
-            this.currentCursor = "url(img/select_cursor.svg) 7 7,  default";
+            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
             this.canvas.style.cursor = this.currentCursor;
+            this.curValSelect = "On";
         }
+        // this.renderObject(processingData.allObject);
     }
 
     offButton(currentActive, nameID) {
         if (currentActive.value === "On") {
             currentActive.value = "Off";
+            this.curValSelect = "On";
             document.getElementById(nameID).classList.remove("active");
         }
+        // this.renderObject(processingData.allObject);
     }
 
     hiddenButton(nameID) {
@@ -195,7 +202,7 @@ class Paint {
                 processingData.prototype.areaDetect(processingData.allLine);
             }
             this.isCancled = false;
-            this.pen = undefined;
+            this.pen = 'select';
 
             // if (this.currentValueSelect.value === "On") {
             //     this.pen = "select";
@@ -252,10 +259,10 @@ class Paint {
             // this.offButton(this.curValAxialForce, "axialForce");
             this.offButton(this.curValMoment, "moment");
 
-            document.getElementById("BDCondition").style.display = "none";
+            // document.getElementById("BDCondition").style.display = "none";
 
             //chang cursor
-            this.currentCursor = "url(img/select_cursor.svg) 7 7,  default";
+            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
             this.canvas.style.cursor = this.currentCursor;
             this.renderProperty("off", "");
             this.renderObject(processingData.allObject);
@@ -338,6 +345,9 @@ class Paint {
         //change cursor
         this.currentCursor = "url(img/pen_cursor.svg) 0 32, default";
         this.canvas.style.cursor = this.currentCursor;
+
+        this.renderObject(processingData.allObject);
+
         // this.offButtonDraw(this.currentValueBrush, "brush");
         // this.offButtonDraw(this.currentValueSelect, "select");
         // this.offButtonDraw(this.currentValueSpl, "spl");
@@ -349,9 +359,8 @@ class Paint {
         this.offButton(this.curValPressLoad, "pressLoad");
         // this.offButton(this.curValAxialForce, "axialForce");
         this.onOffButtonDraw(this.currentValueLine, "line");
-        if (this.currentValueLine.value === 'On') {
-            this.addCommand('Press ESC to exit draw!', 550, 50);
-            this.addCommand('Press SPACE to break line!', 550, 70);
+        if (this.currentValueLine.value === "On") {
+            this.renderCommand('line');
         }
     }
 
@@ -403,8 +412,37 @@ class Paint {
     // }
 
     selectObj(event) {
-        if (this.pen === undefined && this.curValName.value === "Off" && this.curValPointLoad.value === "Off" && this.curValPressLoad.value === "Off" && this.curValMoment.value === "Off") {
-            this.curValSelect = "On";
+        //boundingbox select
+        let topLeftPoint = [this.mouseDownPos.x, this.mouseDownPos.y];
+        let bottomRigthPoint = [this.currentPos.x, this.currentPos.y];
+        if (this.mouseDownPos.x !== this.currentPos.x && this.mouseDownPos.y !== this.currentPos.y && this.pen === 'select') {
+            //find obj
+            processingData.allObject.reverse();
+            let selectedObj = processingData.allObject.find((pointObj) => pointObj.isInBox(topLeftPoint, bottomRigthPoint));
+            if (selectedObj !== undefined) {
+                this.arrCurObj[0] = selectedObj;
+                switch (selectedObj.className) {
+                    case "Point":
+                        this.renderProperty("point", selectedObj);
+                        this.drawPoint(selectedObj, "green");
+                        break;
+                    case "Line":
+                        this.renderProperty("line", selectedObj);
+                        this.drawLine(selectedObj.Point[0], selectedObj.Point[1], "#0000ff", selectedObj.width);
+                        break;
+                    case "Area":
+                        this.renderProperty("area", selectedObj);
+                        this.fillArea(selectedObj, "#b6d8e7");
+                        break;
+                }
+            }
+            //update screen
+            processingData.allObject.reverse();
+            PaintIn.renderObject(processingData.allObject);
+            return
+        }
+        //click select
+        if ((this.pen === 'select' || this.pen === undefined) && this.curValName.value === "Off" && this.curValPointLoad.value === "Off" && this.curValPressLoad.value === "Off" && this.curValMoment.value === "Off" && this.curValSelect === "On") {
             this.isCancled = false;
             if (window.event.ctrlKey) {
                 this.renderObject(processingData.allObject);
@@ -470,38 +508,38 @@ class Paint {
                     this.renderProperty("multi", this.arrMultiCurObj);
                     document.getElementById('BDCondition').style.display = 'flex';
                     let selectedObj = this.arrMultiCurObj[0];
-                    switch (selectedObj.className) {
-                        case "Point":
-                            document.getElementById("BDCondition").style.width = "200px";
-                            //display 3 button
-                            this.visibleButton('valueName');
-                            this.visibleButton('pointLoad');
-                            this.visibleButton('moment');
-                            //hidden 1 button
-                            this.hiddenButton('pressLoad');
-                            break
-                        case "Line":
-                            document.getElementById("BDCondition").style.width = "150px";
-                            //display 2 button
-                            this.visibleButton('valueName');
-                            this.visibleButton('pressLoad');
-                            //hidden 2 button
-                            this.hiddenButton('pointLoad');
-                            this.hiddenButton('moment');
-                            break;
-                        case "Area":
-                            document.getElementById("BDCondition").style.width = "70px";
-                            //display 1 button
-                            this.visibleButton('valueName');
-                            //hidden 3 button
-                            this.hiddenButton('pressLoad');
-                            this.hiddenButton('pointLoad');
-                            this.hiddenButton('moment');
-                            break;
-                    }
+                    // switch (selectedObj.className) {
+                    //     case "Point":
+                    //         document.getElementById("BDCondition").style.width = "200px";
+                    //         //display 3 button
+                    //         this.visibleButton('valueName');
+                    //         this.visibleButton('pointLoad');
+                    //         this.visibleButton('moment');
+                    //         //hidden 1 button
+                    //         this.hiddenButton('pressLoad');
+                    //         break
+                    //     case "Line":
+                    //         document.getElementById("BDCondition").style.width = "150px";
+                    //         //display 2 button
+                    //         this.visibleButton('valueName');
+                    //         this.visibleButton('pressLoad');
+                    //         //hidden 2 button
+                    //         this.hiddenButton('pointLoad');
+                    //         this.hiddenButton('moment');
+                    //         break;
+                    //     case "Area":
+                    //         document.getElementById("BDCondition").style.width = "70px";
+                    //         //display 1 button
+                    //         this.visibleButton('valueName');
+                    //         //hidden 3 button
+                    //         this.hiddenButton('pressLoad');
+                    //         this.hiddenButton('pointLoad');
+                    //         this.hiddenButton('moment');
+                    //         break;
+                    // }
                 } else {
                     this.renderProperty("off", this.arrMultiCurObj);
-                    document.getElementById('BDCondition').style.display = 'none';
+                    // document.getElementById('BDCondition').style.display = 'none';
                 }
             } else {
                 //normal last multicurrent obj
@@ -529,42 +567,15 @@ class Paint {
                     this.renderObject(processingData.allObject);
                     switch (selectedObj.className) {
                         case "Point":
-                            document.getElementById("BDCondition").style.width = "200px";
-                            document.getElementById("BDCondition").style.display = "flex";
-                            // document.getElementById("BDCondition").style.width = "200px";
-                            // BDconditionDiv.style.display ="flex"; 
                             this.renderProperty("point", selectedObj);
                             this.drawPoint(selectedObj, "green");
-                            //display 3 button
-                            this.visibleButton('valueName');
-                            this.visibleButton('pointLoad');
-                            this.visibleButton('moment');
-                            //hidden 1 button
-                            this.hiddenButton('pressLoad');
                             break
                         case "Line":
-                            document.getElementById("BDCondition").style.width = "150px";
-                            document.getElementById("BDCondition").style.display = "flex";
                             this.renderProperty("line", selectedObj);
                             this.drawLine(selectedObj.Point[0], selectedObj.Point[1], "#0000ff", selectedObj.width);
-                            //display 2 button
-                            this.visibleButton('valueName');
-                            this.visibleButton('pressLoad');
-                            //hidden 2 button
-                            this.hiddenButton('pointLoad');
-                            this.hiddenButton('moment');
-                            break;
                         case "Area":
-                            document.getElementById("BDCondition").style.width = "70px";
-                            document.getElementById("BDCondition").style.display = "flex";
                             this.renderProperty("area", selectedObj);
                             this.fillArea(selectedObj, "#b6d8e7");
-                            //display 1 button
-                            this.visibleButton('valueName');
-                            //hidden 3 button
-                            this.hiddenButton('pressLoad');
-                            this.hiddenButton('pointLoad');
-                            this.hiddenButton('moment');
                             break;
                     }
                 }
@@ -576,6 +587,8 @@ class Paint {
         //change cursor
         this.currentCursor = "url(img/text_cursor.svg), default";
         this.canvas.style.cursor = this.currentCursor;
+
+        this.renderObject(processingData.allObject);
 
         this.pen = undefined;
         // if (this.currentValueSelect.value === "On") {
@@ -593,6 +606,10 @@ class Paint {
 
         if (this.curValName.value === "On") {
             this.addName();
+            this.renderCommand('valueOn')
+        }
+        else {
+            inputID = undefined;
         }
     }
 
@@ -600,6 +617,8 @@ class Paint {
         //change cursor
         this.currentCursor = "url(img/force_cursor.svg) 0 0, default";
         this.canvas.style.cursor = this.currentCursor;
+
+        this.renderObject(processingData.allObject);
 
         this.pen = undefined;
         // this.offButtonDraw(this.currentValueBrush, "brush");
@@ -616,6 +635,10 @@ class Paint {
         this.onOffButton(this.curValPointLoad, "pointLoad");
         if (this.curValPointLoad.value === "On") {
             this.addForce();
+            this.renderCommand('valueOn');
+        }
+        else {
+            inputLoad = undefined;
         }
     }
 
@@ -623,6 +646,8 @@ class Paint {
         //change cursor
         this.currentCursor = "url(img/normal_press_cursor.svg) 0 0, default";
         this.canvas.style.cursor = this.currentCursor;
+
+        this.renderObject(processingData.allObject);
 
         this.pen = undefined;
         // this.offButtonDraw(this.currentValueBrush, "brush");
@@ -639,6 +664,10 @@ class Paint {
         this.onOffButton(this.curValPressLoad, "pressLoad");
         if (this.curValPressLoad.value === "On") {
             this.addForce();
+            this.renderCommand('valueOn');
+        }
+        else {
+            inputLoad = undefined;
         }
     }
 
@@ -665,6 +694,8 @@ class Paint {
         this.currentCursor = "url(img/moment_cursor.svg), default";
         this.canvas.style.cursor = this.currentCursor;
 
+        this.renderObject(processingData.allObject);
+
         this.pen = undefined;
         // this.offButtonDraw(this.currentValueBrush, "brush");
         // this.offButtonDraw(this.currentValueSpl, "spl");
@@ -680,6 +711,10 @@ class Paint {
         this.onOffButton(this.curValMoment, "moment");
         if (this.curValMoment.value === "On") {
             this.addForce();
+            this.renderCommand('valueOn')
+        }
+        else {
+            inputLoad = undefined;
         }
 
     }
@@ -707,7 +742,7 @@ class Paint {
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
-        this.pen = undefined;
+        this.pen = 'select';
         this.arrMouseDownPosition = [];
         // this.arr = [];
         this.arrLineX = [];
@@ -728,6 +763,10 @@ class Paint {
         processingData.allPoint = [];
         processingData.allArea = [];
         processingData.allObject = [];
+        this.arrCurObj = [];
+        this.arrMultiCurObj = [];
+        this.renderProperty("off", "");
+        this.renderObject(processingData.allObject);
     }
 
     choiceEvent() {
@@ -804,7 +843,7 @@ class Paint {
 
     getMousePosition(event) {
         let rect = this.canvas.getBoundingClientRect();
-        if (this.pen === "brush" || this.pen === "line" || this.pen === "circle" || this.pen === "rect" || this.pen === "spl" || this.curValSelect === "On" || this.curValName.value === "On" || this.curValPointLoad.value === "On" || this.curValPressLoad.value === "On") {
+        if (this.pen === "brush" || this.pen === "line" || this.pen === "circle" || this.pen === "rect" || this.pen === "spl" || this.curValSelect === "On" || this.curValName.value === "On" || this.curValPointLoad.value === "On" || this.curValPressLoad.value === "On" || this.curValMoment.value === "On") {
             return {
                 x: (event.clientX - rect.left),
                 y: (event.clientY - rect.top)
@@ -986,7 +1025,7 @@ class Paint {
         this.currentMouseMovePos = this.getMousePosition(event);
 
         //
-        document.getElementById("display_coord").innerHTML = '[' + [Math.round((this.currentMouseMovePos.x) * 100) / 100] + ' ; ' + [Math.round((this.currentMouseMovePos.y) * 100) / 100] + ']';
+        document.getElementById("display_coord").innerHTML = '[' + this.currentMouseMovePos.x + ' ; ' + this.currentMouseMovePos.y + ']';
         //
         if (this.currentValueGrid.value == "On" && this.arrGrid.length != 0 && this.currentPos != undefined) {
             let nearPoint = processingData.prototype.getNearest(this.arrGrid, this.currentPos);
@@ -1122,6 +1161,16 @@ class Paint {
         // } else {
         //     this.canvas.style.cursor = "default";
         // }
+        //bounding box
+        if (this.isPainting && (this.pen === undefined || this.pen === 'select') && this.curValSelect === "On") {
+            //draw bounding box
+            this.undo();
+            this.ctx.beginPath()
+            this.ctx.fillStyle = "rgb(0 234 255 / 26%)";
+            let topLeftPoint = [this.mouseDownPos.x, this.mouseDownPos.y];
+            let bottomRigthPoint = [mouseMovePos.x, mouseMovePos.y];
+            this.ctx.fillRect(topLeftPoint[0], topLeftPoint[1], bottomRigthPoint[0] - topLeftPoint[0], bottomRigthPoint[1] - topLeftPoint[1]);
+        }
 
         this.currentPos = mouseMovePos;
     }
@@ -1332,6 +1381,31 @@ class Paint {
         this.ctx.font = "13px Arial";
         this.ctx.fillStyle = "red";
         this.ctx.fillText(text, x, y);
+    }
+
+    renderCommand(mode) {
+        switch (mode) {
+            case "line":
+                document.getElementById('command').style.display = 'flex';
+                document.getElementById("command").innerHTML = (`
+                    <p> Press ESC to exit draw! <br>
+                        Press SPACE to break line! 
+                    </p>
+                </div>
+                    `);
+                break;
+            case "valueOn":
+                document.getElementById('command').style.display = 'flex';
+                document.getElementById("command").innerHTML = (`
+                    <p> Press ESC to exit!
+                    </p>
+                </div>
+                    `);
+                break;
+            case "Off":
+                document.getElementById('command').style.display = 'none';
+                break;
+        };
     }
 
     // deleteForce(event){
@@ -1835,44 +1909,108 @@ class Paint {
                 }
             }
         }
+        // render properties
         if (this.arrMultiCurObj[0] !== undefined) {
+            document.getElementById('BDCondition').style.display = 'flex';
             for (let i = 0; i < this.arrMultiCurObj.length; i++) {
                 let selectedObj;
                 selectedObj = this.arrMultiCurObj[i];
                 switch (selectedObj.className) {
                     case "Point":
                         this.drawPoint(selectedObj, "green");
+                        document.getElementById("BDCondition").style.width = "200px";
+                        //display 3 button
+                        this.visibleButton('valueName');
+                        this.visibleButton('pointLoad');
+                        this.visibleButton('moment');
+                        //hidden 1 button
+                        this.hiddenButton('pressLoad');
                         break;
                     case "Line":
                         this.drawLine(selectedObj.Point[0], selectedObj.Point[1], "#0000ff", selectedObj.width);
+                        document.getElementById("BDCondition").style.width = "150px";
+                        //display 2 button
+                        this.visibleButton('valueName');
+                        this.visibleButton('pressLoad');
+                        //hidden 2 button
+                        this.hiddenButton('pointLoad');
+                        this.hiddenButton('moment');
                         break;
                     case "Area":
                         this.fillArea(selectedObj, "#b6d8e7");
+                        document.getElementById("BDCondition").style.width = "70px";
+                        //display 1 button
+                        this.visibleButton('valueName');
+                        //hidden 3 button
+                        this.hiddenButton('pressLoad');
+                        this.hiddenButton('pointLoad');
+                        this.hiddenButton('moment');
                         break;
                 }
             }
         }
+        else {
+            document.getElementById("BDCondition").style.display = "none";
+        }
+
         if (this.arrCurObj[0] !== undefined) {
             let selectedObj;
             selectedObj = this.arrCurObj[0];
             switch (selectedObj.className) {
                 case "Point":
+                    document.getElementById("BDCondition").style.width = "200px";
+                    document.getElementById("BDCondition").style.display = "flex";
                     this.drawPoint(selectedObj, "green");
+                    this.renderProperty("point", selectedObj);
+                    //display 3 button
+                    this.visibleButton('valueName');
+                    this.visibleButton('pointLoad');
+                    this.visibleButton('moment');
+                    //hidden 1 button
+                    this.hiddenButton('pressLoad');
                     break;
                 case "Line":
+                    document.getElementById("BDCondition").style.width = "150px";
+                    document.getElementById("BDCondition").style.display = "flex";
                     this.drawLine(selectedObj.Point[0], selectedObj.Point[1], "#0000ff", selectedObj.width);
+                    this.renderProperty("line", selectedObj);
+                    //display 2 button
+                    this.visibleButton('valueName');
+                    this.visibleButton('pressLoad');
+                    //hidden 2 button
+                    this.hiddenButton('pointLoad');
+                    this.hiddenButton('moment');
                     break;
                 case "Area":
+                    document.getElementById("BDCondition").style.width = "70px";
+                    document.getElementById("BDCondition").style.display = "flex";
                     this.fillArea(selectedObj, "#b6d8e7");
+                    this.renderProperty("area", selectedObj);
+                    //display 1 button
+                    this.visibleButton('valueName');
+                    //hidden 3 button
+                    this.hiddenButton('pressLoad');
+                    this.hiddenButton('pointLoad');
+                    this.hiddenButton('moment');
+                    break;
                     break;
             }
         }
+        else {
+            document.getElementById("BDCondition").style.display = "none";
+        }
+
         if (this.curValName.value === "On" || this.curValPointLoad.value === "On" || this.curValMoment.value === "On" || this.curValPressLoad.value === "On") {
-            this.addCommand('Press ESC to exit!', 550, 50);
+            this.renderCommand('valueOn');
+        }
+        else {
+            this.renderCommand("Off");
         }
         if (this.pen === 'line') {
-            this.addCommand('Press ESC to exit draw!', 550, 50);
-            this.addCommand('Press SPACE to break line!', 550, 70);
+            this.renderCommand('line');
+        }
+        else {
+            this.renderCommand("Off");
         }
     }
     deleteCurObj() {
@@ -1904,117 +2042,190 @@ class Paint {
         this.renderProperty("off", "");
 
     }
+
     renderProperty(mode, Obj) {
         document.getElementById('property').style.display = 'flex';
         switch (mode) {
             case "point":
-                document.getElementById("property").innerHTML = (`
-                <p id="property_label">Properties</p>
-                <div>
-                    <p>x
-                    </p>
-                    <div>${math.round(Obj.x, 2)}
+                {
+                    //classify load
+                    let forces = [];
+                    let moments = [];
+                    if (Obj.pointLoads !== null) {
+                        for (let load of Obj.pointLoads) {
+                            if (load["type"] === "force") {
+                                forces.push(load)
+                            } else moments.push(load);
+                        }
+                    }
+                    //create list force
+                    let selectForces = "";
+                    for (let force of forces) {
+                        let x = force.parameters.force_x;
+                        let y = force.parameters.force_y;
+                        selectForces += `<option value=${Obj.pointLoads.indexOf(force)}>${x},${y}</option>`;
+                    }
+                    //create list force
+                    let selectMoments = "";
+                    for (let moment of moments) {
+                        let value = moment.parameters["value"];
+                        selectMoments += `<option value=${Obj.pointLoads.indexOf(moment)}>${value}</option>`;
+                    }
+                    //
+                    document.getElementById("property").innerHTML = (`
+                    <p id="property_label">Properties</p>
+                    <div>
+                        <p>x</p>
+                        <div>${math.round(Obj.x, 2)}</div>
                     </div>
-                </div>
-                <div>
-                    <p>y
-                    </p>
-                    <div>${math.round(Obj.y, 2)}
+                    <div>
+                        <p>y</p>
+                        <div>${math.round(Obj.y, 2)}</div>
                     </div>
-                </div>
-                <div>
-                <p>Name</p>
-                <div>${Obj.name}
-                </div>
-            </div>
-                `);
-                break;
+                    <div>
+                        <p>Name</p>
+                        <div>${Obj.name}</div>
+                    </div>
+                    <div>
+                        <p>Force</p>
+                        <div>
+                            <select id="forcesDropdown">
+                                ${selectForces}
+                            </select>
+                            <button class="delLoadButton" onclick="PaintIn.delLoad('forcesDropdown')"
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <p>Moment</p>
+                        <div>
+                            <select id="momentsDropdown">
+                                ${selectMoments}
+                            </select>
+                            <button class="delLoadButton" onclick="PaintIn.delLoad('momentsDropdown')">
+                            </button>
+                        </div>
+                    </div>
+                    `);
+                    break;
+                }
             case "line":
-                document.getElementById("property").innerHTML = (`
-                <p id="property_label">Properties</p>
-                <div>
-                    <p>Point 1
-                    </p>
-                    <div>[${math.round(Obj.Point[0].x, 2)},${math.round(Obj.Point[0].y, 2)}]
+                {
+                    //create list force
+                    let selectNormalPress = "";
+                    if (Obj.lineLoads !== null) {
+                        for (let normalPress of Obj.lineLoads) {
+                            let node0 = normalPress.parameters.node_0;
+                            let node1 = normalPress.parameters.node_1;
+                            selectNormalPress += `<option value=${Obj.lineLoads.indexOf(normalPress)}>${node0},${node1}</option>`;
+                        }
+                    }
+                    document.getElementById("property").innerHTML = (`
+                    <p id="property_label">Properties</p>
+                    <div>
+                        <p>Point 1</p>
+                        <div>[${math.round(Obj.Point[0].x, 2)},${math.round(Obj.Point[0].y, 2)}]</div>
                     </div>
-                </div>
-                <div>
-                    <p>Point 2
-                    </p>
-                    <div>[${math.round(Obj.Point[1].x, 2)},${math.round(Obj.Point[1].y, 2)}]
+                    <div>
+                        <p>Point 2</p>
+                        <div>[${math.round(Obj.Point[1].x, 2)},${math.round(Obj.Point[1].y, 2)}]</div>
                     </div>
-                </div>
-                <div>
-                    <p>Length
-                    </p>
-                    <div>${math.round(Obj.length, 2)}
+                    <div>
+                        <p>Length</p>
+                        <div>${math.round(Obj.length, 2)}</div>
                     </div>
-                </div>
-                <div>
-                    <p>Line
-                    </p>
-                    <div>1
+                    <div>
+                        <p>Line</p>
+                        <div>1</div>
                     </div>
-                </div>
-                <div>
-                    <p>Name</p>
-                    <div>${Obj.name}
-                </div>
-                `);
-                break;
+                    <div>
+                        <p>Name</p>
+                        <div>${Obj.name}</div>
+                    </div>
+                    <div>
+                        <p>Normal Press</p>
+                        <div>
+                            <select id="normalPressesDropdown">
+                                ${selectNormalPress}
+                            </select>
+                        <button class="delLoadButton" onclick="PaintIn.delLoad('normalPressesDropdown')">
+                        </button>
+                        </div>
+                    </div>
+                    `);
+                    break;
+                }
             case "off":
-                document.getElementById('property').style.display = 'none';
-                document.getElementById("property").innerHTML = (`
-                <p id="property_label"></p>
-                `);
-                break;
+                {
+                    document.getElementById('property').style.display = 'none';
+                    document.getElementById("property").innerHTML = (`
+                    <p id="property_label"></p>
+                    `);
+                    break;
+                }
             case "multi":
-                document.getElementById("property").innerHTML = (`
-                <p id="property_label">Properties</p>
-                <div>
-                    <p>Object
-                    </p>
-                    <div>${Obj.length}
+                {
+                    document.getElementById("property").innerHTML = (`
+                    <p id="property_label">Properties</p>
+                    <div>
+                        <p>Object
+                        </p>
+                        <div>${Obj.length}
+                        </div>
                     </div>
-                </div>
-                `);
-                break;
+                    `);
+                    break;
+                }
             case "area":
-                document.getElementById("property").innerHTML = (`
-                <p id="property_label">Properties</p>
-                <div>
-                    <p>Area
-                    </p>
-                    <div>${math.round(Obj.area, 2)}
+                {
+                    document.getElementById("property").innerHTML = (`
+                    <p id="property_label">Properties</p>
+                    <div>
+                        <p>Area
+                        </p>
+                        <div>${math.round(Obj.area, 2)}
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <p>Center
-                    </p>
-                    <div>[${math.round(Obj.center, 2)}]
+                    <div>
+                        <p>Center
+                        </p>
+                        <div>[${math.round(Obj.center, 2)}]
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <p>Perimeter
-                    </p>
-                    <div>${math.round(Obj.perimeter, 2)}
+                    <div>
+                        <p>Perimeter
+                        </p>
+                        <div>${math.round(Obj.perimeter, 2)}
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <p>Sides
-                    </p>
-                    <div>${Obj.Line.length}
+                    <div>
+                        <p>Sides
+                        </p>
+                        <div>${Obj.Line.length}
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <p>Name</p>
-                    <div>${Obj.name}
-                </div>
-                `);
-                break;
+                    <div>
+                        <p>Name</p>
+                        <div>${Obj.name}
+                    </div>
+                    `);
+                    break;
+                }
         };
     }
-
+    delLoad(tagId) {
+        let obj = this.arrCurObj[0];
+        let selectTag = document.getElementById(tagId);
+        let selectedLoad = selectTag[selectTag.selectedIndex];
+        if (selectedLoad !== undefined) {
+            if (obj.className === "Point") {
+                obj.pointLoads.splice(selectedLoad.value, 1);
+            } else if (obj.className === "Line") {
+                obj.lineLoads.splice(selectedLoad.value, 1);
+            }
+        }
+        this.renderObject(processingData.allObject);
+    }
     //--------------------------------
 
     fillArea(AreaObj, fillColor = "#ebf9ff") {
@@ -2085,11 +2296,12 @@ class Paint {
             switch (key) {
                 case "fix": {
                     //draw triangle
+                    let firstPoint = obj.point;
                     let sideLength = 20;
                     this.ctx.beginPath();
-                    this.ctx.moveTo(obj.x, obj.y);
-                    this.ctx.lineTo(obj.x + sideLength / 2, obj.y - sideLength * math.sqrt(3) / 2);
-                    this.ctx.lineTo(obj.x - sideLength / 2, obj.y - sideLength * math.sqrt(3) / 2);
+                    this.ctx.moveTo(firstPoint[0], firstPoint[1]);
+                    this.ctx.lineTo(firstPoint[0] + sideLength / 2, firstPoint[1] - sideLength * math.sqrt(3) / 2);
+                    this.ctx.lineTo(firstPoint[0] - sideLength / 2, firstPoint[1] - sideLength * math.sqrt(3) / 2);
                     this.ctx.fillStyle = "black";
                     this.ctx.fill();
                     break;
@@ -2163,7 +2375,79 @@ class Paint {
                 }
             }
         } else if (obj.className === "Line") {
-
+            switch (key) {
+                case "fix": {
+                    //draw triangle
+                    let subPoints = obj.getPointInLine(5);
+                    for (let point of subPoints) {
+                        let firstPoint = point;
+                        let sideLength = 20;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(firstPoint[0], firstPoint[1]);
+                        this.ctx.lineTo(firstPoint[0] + sideLength / 2, firstPoint[1] - sideLength * math.sqrt(3) / 2);
+                        this.ctx.lineTo(firstPoint[0] - sideLength / 2, firstPoint[1] - sideLength * math.sqrt(3) / 2);
+                        this.ctx.fillStyle = "black";
+                        this.ctx.fill();
+                    }
+                    break;
+                }
+                case "khop ban le di dong ngang": {
+                    let subPoints = obj.getPointInLine(5);
+                    for (let point of subPoints) {
+                        //draw triangle
+                        let sideLength = 20;
+                        let h = sideLength * math.sqrt(3) / 2;
+                        let firstPoint = point;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(firstPoint[0], firstPoint[1]);
+                        this.ctx.lineTo(firstPoint[0] + sideLength / 2, firstPoint[1] - h);
+                        this.ctx.lineTo(firstPoint[0] - sideLength / 2, firstPoint[1] - h);
+                        this.ctx.closePath();
+                        this.ctx.fillStyle = "black";
+                        this.ctx.fill();
+                        //draw two small circle
+                        let R = 3;
+                        let center1 = [firstPoint[0] + (1 / 4) * sideLength, firstPoint[1] - h - R];
+                        let center2 = [firstPoint[0] - (1 / 4) * sideLength, firstPoint[1] - h - R];
+                        this.ctx.beginPath();
+                        this.ctx.arc(center1[0], center1[1], R, 0, 2 * math.PI);
+                        this.ctx.closePath();
+                        this.ctx.arc(center2[0], center2[1], R, 0, 2 * math.PI);
+                        this.ctx.closePath();
+                        this.ctx.fillStyle = "black";
+                        this.ctx.fill()
+                    }
+                    break;
+                }
+                case "khop ban le di dong doc": {
+                    let subPoints = obj.getPointInLine(5);
+                    for (let point of subPoints) {
+                        //draw triangle
+                        let sideLength = 20;
+                        let h = sideLength * math.sqrt(3) / 2;
+                        let firstPoint = point;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(firstPoint[0], firstPoint[1]);
+                        this.ctx.lineTo(firstPoint[0] - h, firstPoint[1] + sideLength / 2);
+                        this.ctx.lineTo(firstPoint[0] - h, firstPoint[1] - sideLength / 2);
+                        this.ctx.closePath();
+                        this.ctx.fillStyle = "black";
+                        this.ctx.fill();
+                        //draw two small circle
+                        let R = 3;
+                        let center1 = [firstPoint[0] - h - R, firstPoint[1] + (1 / 4) * sideLength];
+                        let center2 = [firstPoint[0] - h - R, firstPoint[1] - (1 / 4) * sideLength];
+                        this.ctx.beginPath();
+                        this.ctx.arc(center1[0], center1[1], R, 0, 2 * math.PI);
+                        this.ctx.closePath();
+                        this.ctx.arc(center2[0], center2[1], R, 0, 2 * math.PI);
+                        this.ctx.closePath();
+                        this.ctx.fillStyle = "black";
+                        this.ctx.fill()
+                    }
+                    break;
+                }
+            }
         }
     }
 };
