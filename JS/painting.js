@@ -3,8 +3,8 @@ class Paint {
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
 
-        this.canvas.width = document.getElementById("drawing_page").clientWidth;
-        this.canvas.height = document.getElementById("drawing_page").clientHeight;
+        this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
+        this.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
 
         this.toolbar = document.getElementById("tool_left");
         this.currentValueGrid = document.getElementById('grid');
@@ -33,10 +33,6 @@ class Paint {
         this.minGrid = 5;
         this.maxGrid = 100;
 
-        this.currentPos = {
-            x: 0,
-            y: 0
-        }; //now position
         this.isCancled = false;
         this.currentMouseDownPos = {
             x: 0,
@@ -173,12 +169,13 @@ class Paint {
                 processingData.prototype.areaDetect(processingData.allLine);
                 // add node to arrGrid
                 this.addNode();
+                // lengthLine = undefined;
             };
             if (this.curValName.value === "On") {
                 try {
-                    inputID.destroy();
+                    NameID.destroy();
                     this.arrCurObj = [];
-                    inputID = undefined;
+                    NameID = undefined;
                 }
                 catch (error) {
                     this.renderObject(processingData.allObject);
@@ -187,9 +184,9 @@ class Paint {
 
             if (this.curValPointLoad.value === "On" || this.curValPressLoad.value === "On" || this.curValMoment.value === "On") {
                 try {
-                    inputLoad.destroy();
+                    valueLoad.destroy();
                     this.arrCurObj = [];
-                    inputLoad = undefined;
+                    valueLoad = undefined;
                 }
                 catch (error) {
                     this.renderObject(processingData.allObject);
@@ -226,9 +223,9 @@ class Paint {
 
             if (this.curValName.value === "On") {
                 try {
-                    inputID.destroy();
+                    NameID.destroy();
                     this.arrCurObj = [];
-                    inputID = undefined;
+                    NameID = undefined;
                 }
                 catch (error) {
                     this.renderObject(processingData.allObject);
@@ -237,9 +234,9 @@ class Paint {
 
             if (this.curValPointLoad.value === "On" || this.curValPressLoad.value === "On" || this.curValMoment.value === "On") {
                 try {
-                    inputLoad.destroy();
+                    valueLoad.destroy();
                     this.arrCurObj = [];
-                    inputLoad = undefined;
+                    valueLoad = undefined;
                 }
                 catch (error) {
                     this.renderObject(processingData.allObject);
@@ -305,23 +302,19 @@ class Paint {
             this.deleteCurObj();
         }
         //ENTER
-        // if (event.keyCode === 13 && (this.curValNamePoint.value === "On" || this.curValNameLine.value === "On" || this.curValNameArea.value === "On")) {
-        //     // try {
-        //     //     inputID.destroy();
-        //     // }
-        //     // catch {
-        //     //     this.renderObject(processingData.allObject);
-        //     // }
-        //     // inputID = undefined;
-        //     // this.renderObject(processingData.allObject);
+        if (event.keyCode === 13) {
+            // this.drawLine(this.mouseDownPos, endLine);
+            this.renderObject(processingData.allObject);
+        }
 
-        //     if (selectedObj === undefined) {
-        //         this.renderProperty("off", selectedObj);
-        //         this.arrCurObj = [];
-        //         return;
-        //     }
-        //     this.renderObject(processingData.allObject);
-        // }
+        //F2 input length Line
+        if (event.keyCode === 113 && lengthLine === undefined) {
+            let currentLine;
+            let startLine = this.mouseDownPos;
+            let xC = (startLine.x + this.currentMouseMovePos.x) / 2;
+            let yC = (startLine.y + this.currentMouseMovePos.y) / 2;
+            inputLenght(xC, yC, currentLine);
+        }
     }
 
     concatArr(arr1, arr2) {
@@ -414,8 +407,8 @@ class Paint {
     selectObj(event) {
         //boundingbox select
         let topLeftPoint = [this.mouseDownPos.x, this.mouseDownPos.y];
-        let bottomRigthPoint = [this.currentPos.x, this.currentPos.y];
-        if (this.mouseDownPos.x !== this.currentPos.x && this.mouseDownPos.y !== this.currentPos.y && this.pen === 'select') {
+        let bottomRigthPoint = [this.currentMouseDownPos.x, this.currentMouseDownPos.y];
+        if (this.mouseDownPos.x !== this.currentMouseDownPos.x && this.mouseDownPos.y !== this.currentMouseDownPos.y && this.pen === 'select' && window.event.ctrlKey === false) {
             //find obj
             processingData.allObject.reverse();
             let selectedObj = processingData.allObject.find((pointObj) => pointObj.isInBox(topLeftPoint, bottomRigthPoint));
@@ -445,7 +438,7 @@ class Paint {
         if ((this.pen === 'select' || this.pen === undefined) && this.curValName.value === "Off" && this.curValPointLoad.value === "Off" && this.curValPressLoad.value === "Off" && this.curValMoment.value === "Off" && this.curValSelect === "On") {
             this.isCancled = false;
             if (window.event.ctrlKey) {
-                this.renderObject(processingData.allObject);
+                // this.renderObject(processingData.allObject);
                 //normal last current obj
                 if (this.arrCurObj[0] instanceof Line) {
                     this.drawLine(this.arrCurObj[0].Point[0], this.arrCurObj[0].Point[1], this.arrCurObj[0].color);
@@ -457,7 +450,7 @@ class Paint {
                 //turn off single mode
                 this.arrCurObj = [];
                 //trace obj
-                let selectedObj = processingData.allObject.find(obj => obj.isIn([this.currentPos.x, this.currentPos.y]));
+                let selectedObj = processingData.allObject.find(obj => obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y]));
                 if (selectedObj === undefined) {
                     this.renderObject(processingData.allObject);
                     return
@@ -503,51 +496,14 @@ class Paint {
                         }
                     }
                 }
-                //render prop
-                if (this.arrMultiCurObj.length !== 0) {
-                    this.renderProperty("multi", this.arrMultiCurObj);
-                    document.getElementById('BDCondition').style.display = 'flex';
-                    let selectedObj = this.arrMultiCurObj[0];
-                    // switch (selectedObj.className) {
-                    //     case "Point":
-                    //         document.getElementById("BDCondition").style.width = "200px";
-                    //         //display 3 button
-                    //         this.visibleButton('valueName');
-                    //         this.visibleButton('pointLoad');
-                    //         this.visibleButton('moment');
-                    //         //hidden 1 button
-                    //         this.hiddenButton('pressLoad');
-                    //         break
-                    //     case "Line":
-                    //         document.getElementById("BDCondition").style.width = "150px";
-                    //         //display 2 button
-                    //         this.visibleButton('valueName');
-                    //         this.visibleButton('pressLoad');
-                    //         //hidden 2 button
-                    //         this.hiddenButton('pointLoad');
-                    //         this.hiddenButton('moment');
-                    //         break;
-                    //     case "Area":
-                    //         document.getElementById("BDCondition").style.width = "70px";
-                    //         //display 1 button
-                    //         this.visibleButton('valueName');
-                    //         //hidden 3 button
-                    //         this.hiddenButton('pressLoad');
-                    //         this.hiddenButton('pointLoad');
-                    //         this.hiddenButton('moment');
-                    //         break;
-                    // }
-                } else {
-                    this.renderProperty("off", this.arrMultiCurObj);
-                    // document.getElementById('BDCondition').style.display = 'none';
-                }
+                this.renderObject(processingData.allObject);
             } else {
                 //normal last multicurrent obj
                 this.renderObject(processingData.allObject);
                 //turn off multi mode
                 this.arrMultiCurObj = [];
                 //trace obj
-                let selectedObj = processingData.allObject.find(obj => obj.isIn([this.currentPos.x, this.currentPos.y]));
+                let selectedObj = processingData.allObject.find(obj => obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y]));
                 if (selectedObj === undefined) {
                     this.renderProperty("off", selectedObj);
                     document.getElementById('BDCondition').style.display = 'none';
@@ -573,6 +529,7 @@ class Paint {
                         case "Line":
                             this.renderProperty("line", selectedObj);
                             this.drawLine(selectedObj.Point[0], selectedObj.Point[1], "#0000ff", selectedObj.width);
+                            break;
                         case "Area":
                             this.renderProperty("area", selectedObj);
                             this.fillArea(selectedObj, "#b6d8e7");
@@ -609,7 +566,7 @@ class Paint {
             this.renderCommand('valueOn')
         }
         else {
-            inputID = undefined;
+            NameID = undefined;
         }
     }
 
@@ -638,7 +595,7 @@ class Paint {
             this.renderCommand('valueOn');
         }
         else {
-            inputLoad = undefined;
+            valueLoad = undefined;
         }
     }
 
@@ -667,7 +624,7 @@ class Paint {
             this.renderCommand('valueOn');
         }
         else {
-            inputLoad = undefined;
+            valueLoad = undefined;
         }
     }
 
@@ -714,7 +671,7 @@ class Paint {
             this.renderCommand('valueOn')
         }
         else {
-            inputLoad = undefined;
+            valueLoad = undefined;
         }
 
     }
@@ -778,6 +735,7 @@ class Paint {
             if (e.target.id === 'line_size') {
                 this.currentWidth = e.target.value;
             }
+            
             if (e.target.id === 'sizeGrid') {
                 if (this.currentValueGrid.value == "On") {
                     this.deltaGrid = e.target.value;
@@ -835,8 +793,8 @@ class Paint {
         });
         //make canvas responsive
         onresize = (event) => {
-            PaintIn.canvas.width = document.getElementById("drawing_page").clientWidth;
-            PaintIn.canvas.height = document.getElementById("drawing_page").clientHeight;
+            PaintIn.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
+            PaintIn.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
             PaintIn.renderObject(processingData.allObject);
         }
     }
@@ -867,14 +825,14 @@ class Paint {
         this.image.src = this.canvas.toDataURL("image/bmp ", 1.0);
         this.mouseDownPos = this.getMousePosition(event); //start
         this.arrMouseDownPosition.push(this.mouseDownPos);
-        this.currentPos = this.getMousePosition(event);
+        this.currentMouseDownPos = this.getMousePosition(event);
 
-        if (this.currentValueGrid.value == "On" && this.arrGrid.length != 0 && this.currentPos != undefined) {
+        if (this.currentValueGrid.value == "On" && this.arrGrid.length != 0 && this.currentMouseDownPos != undefined) {
             // console.log(this.arrGrid.length)
             //choose the nearest mouseDown
 
             if (this.pen === 'line') {
-                let nearPoint = processingData.prototype.getNearest(this.arrGrid, this.currentPos);
+                let nearPoint = processingData.prototype.getNearest(this.arrGrid, this.currentMouseDownPos);
                 this.mouseDownPos = nearPoint[0];
                 this.arrLineX.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].x);
                 this.arrLineY.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].y);
@@ -946,16 +904,6 @@ class Paint {
             // }
         };
 
-        // //Load
-        // if (this.curValPointLoad.value === "On" || this.curValPressLoad.value === "On" || this.curValMoment.value === "On") {
-        //     this.addForce();
-        // }
-
-        // //addName
-        // if (this.curValName.value === "On") {
-        //     this.addName();
-        // }
-
         //get data (need optimize) 
         // Line
         if (this.arrLineX.length >= 2) {
@@ -1020,32 +968,34 @@ class Paint {
     }
 
     mouseMove(event) {
+        this.image = new Image;
+        this.image.src = this.canvas.toDataURL("image/bmp ", 1.0);
         let mouseMovePos = this.getMousePosition(event);
-        // this.currentMouseMovePos = this.getMousePosition(event);
         this.currentMouseMovePos = this.getMousePosition(event);
+        this.renderObject(processingData.allObject);
 
         //
         document.getElementById("display_coord").innerHTML = '[' + this.currentMouseMovePos.x + ' ; ' + this.currentMouseMovePos.y + ']';
         //
-        if (this.currentValueGrid.value == "On" && this.arrGrid.length != 0 && this.currentPos != undefined) {
-            let nearPoint = processingData.prototype.getNearest(this.arrGrid, this.currentPos);
-            this.currentPos = nearPoint[0];
+        if (this.currentValueGrid.value == "On" && this.arrGrid.length != 0 && this.currentMouseDownPos != undefined) {
+            let nearPoint = processingData.prototype.getNearest(this.arrGrid, this.currentMouseDownPos);
+            this.currentMouseDownPos = nearPoint[0];
         } else {
             let arrPoints = [];
             processingData.allPoint.forEach((value) => arrPoints.push({ x: value.x, y: value.y }));
 
-            let nearPoint = processingData.prototype.getNearest(arrPoints, this.currentPos, 10);
+            let nearPoint = processingData.prototype.getNearest(arrPoints, this.currentMouseDownPos, 10);
             if (nearPoint !== undefined) {
-                this.currentPos = nearPoint[0];
+                this.currentMouseDownPos = nearPoint[0];
             } else {
-                this.currentPos = mouseMovePos;
+                this.currentMouseDownPos = mouseMovePos;
             }
         }
-        // } else if (this.currentValueGrid.value == "Off" && this.currentPos != undefined && processingData.allPoint.length !== 0) {
+        // } else if (this.currentValueGrid.value == "Off" && this.currentMouseDownPos != undefined && processingData.allPoint.length !== 0) {
         //     let arrAllPoint = [];
         //     processingData.allPoint.forEach((value) => arrAllPoint.push({ x: value.x, y: value.y }));
 
-        //     let nearPoint = getNearest(arrAllPoint, this.currentPos, 10)
+        //     let nearPoint = getNearest(arrAllPoint, this.currentMouseDownPos, 10)
         //     console.log(nearPoint)
 
         // }
@@ -1055,7 +1005,7 @@ class Paint {
             // brush
             // if (this.pen === 'brush') {
             //     this.drawBrush(
-            //         this.currentPos,
+            //         this.currentMouseDownPos,
             //         this.currentMouseMovePos
             //     );
             // };
@@ -1063,16 +1013,14 @@ class Paint {
 
         //line link start and end node
         if (this.pen === 'line') {
-
             if (!this.isCancled) {
                 return
             };
             this.undo();
-
             this.drawLine
                 (
                     this.mouseDownPos,
-                    this.currentPos
+                    this.currentMouseDownPos
                 );
         };
 
@@ -1084,7 +1032,7 @@ class Paint {
         //     this.drawRect
         //         (
         //             this.mouseDownPos,
-        //             this.currentPos
+        //             this.currentMouseDownPos
         //         );
 
         // };
@@ -1096,7 +1044,7 @@ class Paint {
         //     this.drawCicle
         //         (
         //             this.mouseDownPos,
-        //             this.currentPos
+        //             this.currentMouseDownPos
         //         );
         // };
 
@@ -1106,9 +1054,9 @@ class Paint {
         //     };
         //     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
         //     let arrXs = [...this.arrSPLX]
-        //     arrXs.push(this.currentPos.x)
+        //     arrXs.push(this.currentMouseDownPos.x)
         //     let arrYs = [...this.arrSPLY]
-        //     arrYs.push(this.currentPos.y)
+        //     arrYs.push(this.currentMouseDownPos.y)
         //     console.log("X", arrXs)
         //     console.log("Y", arrYs)
         //     this.drawSPLine(arrXs, arrYs);
@@ -1138,7 +1086,7 @@ class Paint {
         //     this.curValPressLoad.value === "Off" &&
         //     this.curValMoment.value === "Off" &&
         //     this.curValName.value === "Off" ) {
-        //     processingData.prototype.moveObject(this.arrCurObj[0], [this.currentPos.x, this.currentPos.y])
+        //     processingData.prototype.moveObject(this.arrCurObj[0], [this.currentMouseDownPos.x, this.currentMouseDownPos.y])
         // }
 
         // //change mouse (test)
@@ -1162,7 +1110,7 @@ class Paint {
         //     this.canvas.style.cursor = "default";
         // }
         //bounding box
-        if (this.isPainting && (this.pen === undefined || this.pen === 'select') && this.curValSelect === "On") {
+        if (this.isPainting && (this.pen === undefined || this.pen === 'select') && this.curValSelect === "On" && window.event.ctrlKey === false) {
             //draw bounding box
             this.undo();
             this.ctx.beginPath()
@@ -1171,8 +1119,7 @@ class Paint {
             let bottomRigthPoint = [mouseMovePos.x, mouseMovePos.y];
             this.ctx.fillRect(topLeftPoint[0], topLeftPoint[1], bottomRigthPoint[0] - topLeftPoint[0], bottomRigthPoint[1] - topLeftPoint[1]);
         }
-
-        this.currentPos = mouseMovePos;
+        this.currentMouseDownPos = mouseMovePos;
     }
 
     addNamePoint(Obj) {
@@ -1225,34 +1172,34 @@ class Paint {
     }
 
     addName() {
-        if (inputID === undefined && (this.pen === undefined || this.pen === 'line')) {
+        if (NameID === undefined && (this.pen === undefined || this.pen === 'line')) {
             // //normal last multicurrent obj
             this.renderObject(processingData.allObject);
             // //trace obj
-            // let selectedObj = processingData.allObject.find(obj => obj.isIn([this.currentPos.x, this.currentPos.y]));
+            // let selectedObj = processingData.allObject.find(obj => obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y]));
             let selectedObj;
 
             // if (this.arrMultiCurObj[0] !== undefined) {
             //     for (let i = 0; i < this.arrMultiCurObj.length; i++) {
             //         selectedObj = this.arrMultiCurObj[i];
             //         selectedObj.name = this.arrMultiCurObj[0].name;
-            //     }
-            //     switch (selectedObj.className) {
-            //         case "Point":
-            //             if (inputID === undefined) {
-            //                 this.addNamePoint(this.arrMultiCurObj[0]);
-            //             }
-            //             break;
-            //         case "Line":
-            //             if (inputID === undefined) {
-            //                 this.addNameLine(this.arrMultiCurObj[0]);
-            //             }
-            //             break;
-            //         case "Area":
-            //             if (inputID === undefined) {
-            //                 this.addNameArea(this.arrMultiCurObj[0]);
-            //             }
-            //             break;
+            //         switch (selectedObj.className) {
+            //             case "Point":
+            //                 if (NameID === undefined) {
+            //                     this.addNamePoint(selectedObj);
+            //                 }
+            //                 break;
+            //             case "Line":
+            //                 if (NameID === undefined) {
+            //                     this.addNameLine(selectedObj);
+            //                 }
+            //                 break;
+            //             case "Area":
+            //                 if (NameID === undefined) {
+            //                     this.addNameArea(selectedObj);
+            //                 }
+            //                 break;
+            //         }
             //     }
             // }
 
@@ -1261,17 +1208,17 @@ class Paint {
                 //render Prop
                 switch (selectedObj.className) {
                     case "Point":
-                        if (inputID === undefined) {
+                        if (NameID === undefined) {
                             this.addNamePoint(selectedObj);
                         }
                         break;
                     case "Line":
-                        if (inputID === undefined) {
+                        if (NameID === undefined) {
                             this.addNameLine(selectedObj);
                         }
                         break;
                     case "Area":
-                        if (inputID === undefined) {
+                        if (NameID === undefined) {
                             this.addNameArea(selectedObj);
                         }
                         break;
@@ -1288,7 +1235,7 @@ class Paint {
     }
 
     addForce() {
-        if (inputLoad === undefined && (this.pen === undefined || this.pen === 'line')) {
+        if (valueLoad === undefined && (this.pen === undefined || this.pen === 'line')) {
             //normal last multicurrent obj
             this.renderObject(processingData.allObject);
             //trace obj
@@ -1300,18 +1247,18 @@ class Paint {
             //         switch (selectedObj.className) {
             //             case "Point":
             //                 if (this.curValPointLoad.value === "On") {
-            //                     if (inputLoad === undefined) {
+            //                     if (valueLoad === undefined) {
             //                         inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
             //                     }
             //                 }
             //                 if (this.curValMoment.value === "On") {
-            //                     if (inputLoad === undefined) {
+            //                     if (valueLoad === undefined) {
             //                         inputForce(selectedObj.x, selectedObj.y, selectedObj, "moment");
             //                     }
             //                 }
             //                 break;
             //             case "Line":
-            //                 if (inputLoad === undefined) {
+            //                 if (valueLoad === undefined) {
             //                     let xM1 = (selectedObj.Point[1].x - selectedObj.Point[0].x) / 2;
             //                     let yM1 = (selectedObj.Point[1].y - selectedObj.Point[0].y) / 2;
             //                     let xBox = 25 / 2;
@@ -1335,20 +1282,20 @@ class Paint {
                 switch (selectedObj.className) {
                     case "Point":
                         if (this.curValPointLoad.value === "On") {
-                            if (inputLoad === undefined) {
+                            if (valueLoad === undefined) {
                                 this.addCommand('Fx, Fy', selectedObj.x + 10, selectedObj.y - 10);
                                 inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
                             }
                         }
                         if (this.curValMoment.value === "On") {
-                            if (inputLoad === undefined) {
+                            if (valueLoad === undefined) {
                                 this.addCommand('M = ...', selectedObj.x + 10, selectedObj.y - 10);
                                 inputForce(selectedObj.x, selectedObj.y, selectedObj, "moment");
                             }
                         }
                         break;
                     case "Line":
-                        if (inputLoad === undefined) {
+                        if (valueLoad === undefined) {
                             let xM1 = (selectedObj.Point[1].x - selectedObj.Point[0].x) / 2;
                             let yM1 = (selectedObj.Point[1].y - selectedObj.Point[0].y) / 2;
                             let xBox = 25 / 2;
@@ -1909,9 +1856,11 @@ class Paint {
                 }
             }
         }
-        // render properties
+
+        // render properties and button
         if (this.arrMultiCurObj[0] !== undefined) {
             document.getElementById('BDCondition').style.display = 'flex';
+            this.renderProperty("multi", this.arrMultiCurObj);
             for (let i = 0; i < this.arrMultiCurObj.length; i++) {
                 let selectedObj;
                 selectedObj = this.arrMultiCurObj[i];
@@ -1951,6 +1900,7 @@ class Paint {
         }
         else {
             document.getElementById("BDCondition").style.display = "none";
+            this.renderProperty("off", this.arrMultiCurObj);
         }
 
         if (this.arrCurObj[0] !== undefined) {
@@ -1993,11 +1943,7 @@ class Paint {
                     this.hiddenButton('pointLoad');
                     this.hiddenButton('moment');
                     break;
-                    break;
             }
-        }
-        else {
-            document.getElementById("BDCondition").style.display = "none";
         }
 
         if (this.curValName.value === "On" || this.curValPointLoad.value === "On" || this.curValMoment.value === "On" || this.curValPressLoad.value === "On") {
@@ -2058,18 +2004,25 @@ class Paint {
                             } else moments.push(load);
                         }
                     }
+                    //first value
+                    let firstForceValue = null;
+                    let firstMomentValue = null;
                     //create list force
                     let selectForces = "";
                     for (let force of forces) {
                         let x = force.parameters.force_x;
                         let y = force.parameters.force_y;
                         selectForces += `<option value=${Obj.pointLoads.indexOf(force)}>${x},${y}</option>`;
+                        //get first value
+                        if (forces.indexOf(force) === 0) firstForceValue = `${x},${y}`;
                     }
                     //create list force
                     let selectMoments = "";
                     for (let moment of moments) {
                         let value = moment.parameters["value"];
                         selectMoments += `<option value=${Obj.pointLoads.indexOf(moment)}>${value}</option>`;
+                        //get first value
+                        if (moments.indexOf(moment) === 0) firstMomentValue = `${value}`;
                     }
                     //
                     document.getElementById("property").innerHTML = (`
@@ -2089,9 +2042,12 @@ class Paint {
                     <div>
                         <p>Force</p>
                         <div>
-                            <select id="forcesDropdown">
-                                ${selectForces}
-                            </select>
+                            <div class="select-editable">
+                                <select  class="select-editable" id="forcesDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                                    ${selectForces}
+                                </select>
+                                <input type="text" name="format" value="${firstForceValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'force')"/>
+                            </div>
                             <button class="delLoadButton" onclick="PaintIn.delLoad('forcesDropdown')"
                             </button>
                         </div>
@@ -2099,9 +2055,12 @@ class Paint {
                     <div>
                         <p>Moment</p>
                         <div>
-                            <select id="momentsDropdown">
-                                ${selectMoments}
-                            </select>
+                            <div class="select-editable">
+                                <select class="select-editable" id="momentsDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                                    ${selectMoments}
+                                </select>
+                                <input type="text" name="format" value="${firstMomentValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'moment')"/>
+                            </div>
                             <button class="delLoadButton" onclick="PaintIn.delLoad('momentsDropdown')">
                             </button>
                         </div>
@@ -2113,13 +2072,19 @@ class Paint {
                 {
                     //create list force
                     let selectNormalPress = "";
+                    let firstValue = null;
                     if (Obj.lineLoads !== null) {
                         for (let normalPress of Obj.lineLoads) {
                             let node0 = normalPress.parameters.node_0;
                             let node1 = normalPress.parameters.node_1;
                             selectNormalPress += `<option value=${Obj.lineLoads.indexOf(normalPress)}>${node0},${node1}</option>`;
+                            //get first value 
+                            if (Obj.lineLoads.indexOf(normalPress) === 0) {
+                                firstValue = `${node0},${node1}`
+                            }
                         }
                     }
+
                     document.getElementById("property").innerHTML = (`
                     <p id="property_label">Properties</p>
                     <div>
@@ -2145,11 +2110,14 @@ class Paint {
                     <div>
                         <p>Normal Press</p>
                         <div>
-                            <select id="normalPressesDropdown">
-                                ${selectNormalPress}
-                            </select>
-                        <button class="delLoadButton" onclick="PaintIn.delLoad('normalPressesDropdown')">
-                        </button>
+                            <div class="select-editable">
+                                <select id="normalPressesDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                                    ${selectNormalPress}
+                                </select>
+                                <input type="text" name="format" value="${firstValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'normalPress')"/>
+                            </div>
+                            <button class="delLoadButton" onclick="PaintIn.delLoad('normalPressesDropdown')">
+                            </button>
                         </div>
                     </div>
                     `);
@@ -2222,6 +2190,39 @@ class Paint {
                 obj.pointLoads.splice(selectedLoad.value, 1);
             } else if (obj.className === "Line") {
                 obj.lineLoads.splice(selectedLoad.value, 1);
+            }
+        }
+        this.renderObject(processingData.allObject);
+    }
+    changeLoad(loadIndex, newValue, type) {
+        switch (type) {
+            case "force": {
+                if (!newValue.includes(",")) return;
+                let force_x = Number(newValue.slice(0, newValue.indexOf(",")));
+                let force_y = Number(newValue.slice(newValue.indexOf(",") + 1, newValue.length));
+                //check fail input
+                if (isNaN(force_x) || isNaN(force_y)) return;
+                //set new value
+                this.arrCurObj[0].pointLoads[loadIndex].parameters.force_x = force_x;
+                this.arrCurObj[0].pointLoads[loadIndex].parameters.force_y = force_y;
+                break;
+            }
+            case "moment": {
+                let value = Number(newValue);
+                //check fail input
+                if (isNaN(value)) return;
+                this.arrCurObj[0].pointLoads[loadIndex].parameters.value = value
+                break;
+            }
+            case "normalPress": {
+                let node_0 = Number(newValue.slice(0, newValue.indexOf(",")));
+                let node_1 = Number(newValue.slice(newValue.indexOf(",") + 1, newValue.length));
+                //check fail input
+                if (isNaN(node_0) || isNaN(node_1)) return;
+                //set new value
+                this.arrCurObj[0].lineLoads[loadIndex].parameters.node_0 = node_0;
+                this.arrCurObj[0].lineLoads[loadIndex].parameters.node_1 = node_1;
+                break;
             }
         }
         this.renderObject(processingData.allObject);
