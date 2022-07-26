@@ -870,10 +870,10 @@ function getNearest(listPoints, currentPoint) {
 };
 
 
-var inputID;
+var NameID;
 
 function inputName(x, y, obj) {
-    inputID = new CanvasInput({
+    NameID = new CanvasInput({
         canvas: document.getElementById('myCanvas'),
         x: x,
         y: y,
@@ -891,18 +891,18 @@ function inputName(x, y, obj) {
             PaintIn.drawText(obj, this.value());
             obj.name = this.value();
             this.destroy();
-            inputID = undefined;
+            NameID = undefined;
             PaintIn.renderObject(processingData.allObject);
             PaintIn.isCancled = false;
         },
     });
-    inputID.focus();
+    NameID.focus();
 };
 
-var inputLoad;
+var valueLoad;
 
 function inputForce(x, y, obj, loadKey) {
-    inputLoad = new CanvasInput({
+    valueLoad = new CanvasInput({
         canvas: document.getElementById('myCanvas'),
         x: x,
         y: y,
@@ -976,14 +976,59 @@ function inputForce(x, y, obj, loadKey) {
                 obj.lineLoads.push(axialPressureObj);
             }
             this.destroy();
-            inputLoad = undefined;
+            valueLoad = undefined;
             PaintIn.renderObject(processingData.allObject);
             PaintIn.isCancled = false;
 
         },
     });
-    inputLoad.focus();
+    valueLoad.focus();
 };
+
+var lengthLine;
+var endLine;
+function inputLenght(x, y) {
+    lengthLine = new CanvasInput({
+        canvas: document.getElementById('myCanvas'),
+        x: x,
+        y: y,
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontColor: '#212121',
+        fontWeight: 'bold',
+        width: 60,
+        height: 25,
+        padding: 0,
+        borderColor: '#000',
+        borderRadius: 3,
+
+        onsubmit: function () {
+            let l = Number(lengthLine.value());
+            let startLine = PaintIn.mouseDownPos;
+            endLine = getPoint(startLine, PaintIn.currentMouseMovePos, l);
+            PaintIn.arrLineX.push(endLine.x);
+            PaintIn.arrLineY.push(endLine.y);
+            PaintIn.arrLineColor.push(PaintIn.currentColor);
+            PaintIn.arrLineWidth.push(PaintIn.lineWidth);
+            if (PaintIn.arrLineX.length >= 2) {
+                processingData.prototype.inputRawData(PaintIn.pen, PaintIn.arrLineX, PaintIn.arrLineY);
+            };
+            PaintIn.drawLine(startLine, endLine);
+            this.destroy();
+            lengthLine = undefined;
+            // PaintIn.renderObject(processingData.allObject);
+            PaintIn.mouseDownPos = endLine;
+        },
+    });
+    lengthLine.focus();
+};
+
+function getPoint(start, cur, l) {
+    let a = cur.x - start.x;
+    let b = cur.y - start.y;
+    let t = Math.sqrt(l * l / (a * a + b * b));
+    return { x: start.x + a * t, y: start.y + b * t };
+}
 
 
 
