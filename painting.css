@@ -27,62 +27,65 @@ body {
     border-bottom: 2px solid #0784d1;
     border-top: 2px solid #0784d1;
     width: 100%;
-    height: 60px;
+    min-height: 60px;
     display: block;
 }
 
 #tool_top {
-    height: 50px;
+    height: 45px;
     background-color: #e6f5ff;
+    border: 1px solid #0784d1;
+    width: 100%;
+    display: flex;
+    padding-top: 5px;
 }
 
-#inOutData {
-    display: flex;
+/* #inOutData {
+
     flex-flow: wrap;
     width: 150px;
     height: 100%;
     justify-content: space-around;
     margin: 5px;
     background-color: none;
-}
+} */
 
-.landing_page {
+#body_div {
     background-color: #e6f5ff;
     display: flex;
     width: 100%;
-    height: 80%;
-    min-height: 550px;
+    flex: 1;
     /* background-color: #e6f5ff; */
 }
 
-#drawing_page {
+#center_div {
     width: 100%;
-    height: 100%;
     flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 #tool_left {
-    width: 15px;
-    min-width: 15px;
     display: flex;
     background-color: #e6f5ff;
     justify-content: space-between;
 }
-
+#tool_right {
+    display: flex;
+    align-content: center;
+    background-color: #e6f5ff;
+    height: 0%;
+}
+#wrap_canvas_div {
+    flex: 1;
+    border: 1px solid #0784d1;
+    width: 100%;
+}
 #myCanvas {
     background-color: white;
     height: 100%;
     width: 100%;
-    border: 1px solid #0784d1;
-}
-
-#tool_right {
-    display: flex;
-    align-content: center;
-    width: 15px;
-    min-width: 15px;
-    background-color: #e6f5ff;
-    height: 0%;
 }
 
 #style {
@@ -118,9 +121,8 @@ body {
 #property {
     position: absolute;
     right: 25px;
-    top: 18%;
+    top: 20%;
     width: 150px;
-    height: 300px;
     display: none;
     flex-direction: column;
     font-size: 13px;
@@ -140,7 +142,7 @@ body {
 
 #property>div {
     width: 100%;
-    height: 10%;
+    height: 35px;
     display: flex;
     border-bottom: 2px solid black;
     border-left: 2px solid black;
@@ -233,19 +235,6 @@ button {
     background-color: rgb(137, 219, 252);
 }
 
-#size_grid {
-    position: absolute;
-    top: 200px;
-    left: 25px;
-    width: 35px;
-    height: 35px;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 50%;
-    text-align: center;
-    background-color: #bbe8ec;
-}
-
 #grid {
     position: absolute;
     top: 350px;
@@ -285,14 +274,21 @@ button {
 }
 
 #line_size {
+    position: absolute;
+    top: 200px;
+    left: 25px;
     width: 35px;
     height: 35px;
-    border: 2px solid black;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #bbe8ec;
 }
 
 #coord_div {
     position: absolute;
-    top: 86%;
+    top: 90%;
     left: 25px;
     height: 50px;
     width: 150px;
@@ -320,7 +316,6 @@ button {
 #openFile_label {
     width: 35px;
     height: 35px;
-    margin: 2px;
     background: url(img/open_file.gif);
     border: 2px solid black;
     border-radius: 50%;
@@ -365,11 +360,6 @@ button {
     background-color: #e6f5ff;
 }
 
-.footer {
-    width: 100%;
-    background-color: #e6f5ff;
-    flex: 1;
-}
 .delLoadButton {
     width: 20px;
     height: 20px;
@@ -381,4 +371,33 @@ button {
 }
 .delLoadButton:hover {
     background-size: 17px 17px;
+}
+
+.select-editable {
+    position:relative;
+    background-color:white;
+    border:solid grey 1px;
+    width:60px;
+    height:19px;
+}
+.select-editable select {
+    position:absolute;
+    top:0px;
+    left:0px;
+    font-size:14px;
+    border:none;
+    width:60px;
+    margin:0;
+}
+.select-editable input {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:40px;
+    padding:1px;
+    font-size:12px;
+    border:none;
+}
+.select-editable select:focus, .select-editable input:focus {
+    outline:none;
 }
