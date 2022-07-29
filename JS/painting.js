@@ -336,6 +336,9 @@ class Paint {
         //shortcut for draw line
         // press l
         if (event.keyCode === 76 && this.pen === 'select') {
+            //change cursor
+            this.currentCursor = "url(img/pen_cursor.svg) 0 32, default";
+            this.canvas.style.cursor = this.currentCursor;
             let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
             this.keyDown(spaceKey);
             this.onButtonDraw(this.currentValueLine, 'line');
