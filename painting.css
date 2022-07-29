@@ -363,32 +363,6 @@ button {
     background-color: #e6f5ff;
 }
 
-#inputValue {
-    position: absolute;
-    top: 28%;
-    left: 45%;
-    /* flex-flow: row; */
-    justify-content: space-around;
-    /* border: 2px solid black; */
-    border-radius: 20px;
-    padding: 5px;
-    display: none;
-    /* background-color: #e6f5ff; */
-}
-
-#inputValue>div {
-    width: 40px;
-    height: 40px;
-    border-radius: 2px;
-    background-size: 25px 25px;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 50%;
-    text-align: center;
-    background-color: none;
-    /* display: none; */
-}
-
 .delLoadButton {
     width: 20px;
     height: 20px;
