@@ -32,12 +32,11 @@ body {
 }
 
 #tool_top {
-    height: 45px;
+    height: 50px;
     background-color: #e6f5ff;
     border: 1px solid #0784d1;
     width: 100%;
     display: flex;
-    padding-top: 5px;
 }
 
 /* #inOutData {
@@ -326,6 +325,7 @@ button {
     background-repeat: no-repeat;
     background-position: center;
     background-color: white;
+    margin: 5px;
 }
 
 #openFile_label:hover {
@@ -335,6 +335,7 @@ button {
 #saveFile {
     background-image: url(img/save_file.gif);
     background-color: white;
+    margin: 5px;
 }
 
 #Clear_all {
@@ -343,6 +344,7 @@ button {
     background-repeat: no-repeat;
     background-position: center;
     background-color: white;
+    margin: 5px;
 }
 
 #Clear_all:hover {
@@ -409,3 +411,4 @@ button {
 .select-editable input:focus {
     outline: none;
 }
+
