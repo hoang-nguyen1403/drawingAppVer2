@@ -569,6 +569,73 @@ class processingData {
         //update screen
         PaintIn.renderObject(processingData.allObject);
     }
+    createMeshData(inputData) {
+        let jsmat = inputData["jsmat"];
+        let FEtri = inputData["FEtri"];
+        let FEcoord = inputData["FEcoord"];
+        let baseCoord = jsmat["node_coords"][3];
+        let scale = 200; //max lenght in object
+        //print node
+        // for (let coord of FEcoord) {
+        //     PaintIn.ctx.beginPath();
+        //     PaintIn.ctx.arc(coord[0]*200 + baseCoord[0], coord[1]*200 + baseCoord[1], 0.5, 0, 2*math.PI);
+        //     PaintIn.ctx.stroke();
+        // }
+
+        // let FEsoln = inputData["FEsoln"];
+        // let QC = inputData["QC"];
+        //
+        for (let surface of FEtri) {
+            if (FEtri.indexOf(surface) === 100) {
+                this.updateStorage();
+                PaintIn.renderObject(processingData.allObject);
+                return
+            } 
+
+            // PaintIn.ctx.beginPath();
+            // let indexOfNode0 = surface[0];
+            // let nodeCoord0 = math.add(math.multiply(FEcoord[indexOfNode0 - 1], 500), [0, 0]);
+            // PaintIn.ctx.moveTo(nodeCoord0[0], nodeCoord0[1]);
+            // console.log(nodeCoord0)
+            // for (let i = 1; i <= surface.length - 1; i++) {
+            //     // if(i === 3) break
+            //     let indexOfNextNode = surface[i];
+            //     let nextNodeCoord = math.add(math.multiply(FEcoord[indexOfNextNode - 1], 500), [0, 0]);
+            //     PaintIn.ctx.lineTo(nextNodeCoord[0], nextNodeCoord[1]);
+            //     console.log(nextNodeCoord)
+            // }
+            // PaintIn.ctx.closePath();
+            // PaintIn.ctx.lineWidth = 0.5;
+            // PaintIn.ctx.stroke();
+            
+            let node0 = math.add(math.multiply(FEcoord[surface[0] - 1], scale), baseCoord);
+            let node1 = math.add(math.multiply(FEcoord[surface[1] - 1], scale), baseCoord);
+            let node2 = math.add(math.multiply(FEcoord[surface[2] - 1], scale), baseCoord);
+            let node3 = math.add(math.multiply(FEcoord[surface[3] - 1], scale), baseCoord);
+            let node4 = math.add(math.multiply(FEcoord[surface[4] - 1], scale), baseCoord);
+            let node5 = math.add(math.multiply(FEcoord[surface[5] - 1], scale), baseCoord);
+            let nodeObjs = processingData.prototype.createPoint(
+                [node0[0], node1[0], node2[0], node3[0], node4[0], node5[0]],
+                [node0[1], node1[1], node2[1], node3[1], node4[1], node5[1]],
+                Array(6).fill(null),
+                Array(6).fill(null)
+            );
+            // 0 5 1 3 2 4
+            let lineObj1 = new Line(nodeObjs[0], nodeObjs[5], null, "black", 1);
+            let lineObj2 = new Line(nodeObjs[5], nodeObjs[1], null, "black", 1);
+            let lineObj3 = new Line(nodeObjs[1], nodeObjs[3], null, "black", 1);
+            let lineObj4 = new Line(nodeObjs[3], nodeObjs[2], null, "black", 1);
+            let lineObj5 = new Line(nodeObjs[2], nodeObjs[4], null, "black", 1);
+            let lineObj6 = new Line(nodeObjs[4], nodeObjs[0], null, "black", 1);
+
+            let area = new Area([lineObj1, lineObj2, lineObj3, lineObj4, lineObj5, lineObj6], null);
+            this.addObject(area, processingData.allArea);
+        }
+        this.updateStorage();
+        PaintIn.renderObject(processingData.allObject);
+
+        return
+    }
     // getNearest(listPoints, currentPoint, maxDistance) {
     //     let distance = function (a, b) {
     //         return math.norm([a[0] - b[0], a[1] - b[1]]);
@@ -675,6 +742,13 @@ class Point {
             return true;
         } else return false;
     }
+    isTouchBox(topRightPoint, bottomLeftPoint) {
+        let point = this.point;
+        if (topRightPoint[0] > point[0] && topRightPoint[1] < point[1] &&
+            point[0] > bottomLeftPoint[0] && point[1] < bottomLeftPoint[1]) {
+            return true;
+        } else return false;
+    }
 };
 
 // Line class
@@ -724,6 +798,9 @@ class Line {
             }
         }
         return true;
+    }
+    isTouchBox(topRightPoint, bottomLeftPoint) {
+        return false;
     }
 };
 //Area
@@ -832,6 +909,9 @@ class Area {
         }
         return true;
     }
+    isTouchBox(topRightPoint, bottomLeftPoint) {
+        return false
+    }
 };
 // Curve class
 class Curve {
@@ -873,7 +953,7 @@ function getNearest(listPoints, currentPoint) {
 var nameID;
 
 function inputName(x, y, obj) {
-   nameID = new CanvasInput({
+    nameID = new CanvasInput({
         canvas: document.getElementById('myCanvas'),
         x: x,
         y: y,
@@ -966,7 +1046,7 @@ function inputForce(x, y, obj, loadKey) {
                 forceObj = { "type": loadKey, "parameters": { "force_x": force_x, "force_y": force_y } };
                 obj.pointLoads.push(forceObj);
 
-            } 
+            }
             // else if (loadKey === "moment") {
             //     //first check
             //     if (obj.pointLoads === null) {
@@ -1054,7 +1134,7 @@ function inputForces(x, y, loadKey) {
                     forceObj = { "type": loadKey, "parameters": { "force_x": force_x, "force_y": force_y } };
                     obj.pointLoads.push(forceObj);
 
-                } 
+                }
                 // else if (loadKey === "moment") {
                 //     //first check
                 //     if (obj.pointLoads === null) {
@@ -1132,7 +1212,7 @@ function inputMoment(x, y, obj, loadKey) {
                 momentObj = { "type": loadKey, "parameters": { "value": moment } };
                 obj.pointLoads.push(momentObj);
 
-            } 
+            }
             this.destroy();
             valueMoment = undefined;
             PaintIn.renderObject(processingData.allObject);
@@ -1161,7 +1241,7 @@ function inputMoments(x, y, loadKey) {
 
         onsubmit: function () {
             for (let obj of PaintIn.arrMultiCurObj) {
-                 if (loadKey === "moment") {
+                if (loadKey === "moment") {
                     //first check
                     if (obj.pointLoads === null) {
                         obj.pointLoads = [];
@@ -1170,7 +1250,7 @@ function inputMoments(x, y, loadKey) {
                     let moment = Number(this.value());
                     momentObj = { "type": loadKey, "parameters": { "value": moment } };
                     obj.pointLoads.push(momentObj);
-                } 
+                }
             }
             this.destroy();
             valueMoments = undefined;
