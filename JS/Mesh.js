@@ -53,7 +53,8 @@ class Mesh {
         let FEsoln = inputData["FEsoln"];
         let QC = inputData["QC"];
         let baseCoord = jsmat["node_coords"][3];
-        let scale = 200; //max lenght in object
+        baseCoord = [200, 300];
+        let scale = 400;
         let indexValueColor = [];
         let colors = colormap({
             colormap: 'jet',
@@ -91,7 +92,7 @@ class Mesh {
                 Array(1).fill(null));
             Mesh.nodes.push(point[0]);
         }
-        Mesh.Objects.push(Mesh.nodes[0]);
+        Mesh.Objects.push(Mesh.nodes);
 
         //color node
         for (let i = 0; i < Mesh.nodes.length; i++) {
@@ -158,9 +159,10 @@ class Mesh {
             Mesh.elements.push(elem);
         }
 
-        Mesh.Objects.push(Mesh.edges[0]);
-        Mesh.Objects.push(Mesh.elements[0]);
+        Mesh.Objects.push(Mesh.edges);
+        Mesh.Objects.push(Mesh.elements);
         this.drawMesh();
+        return
     }
 
 
@@ -173,12 +175,18 @@ class Mesh {
         PaintIn.mouseMoveStatus = false;
         document.getElementById('modeSoln').style.display = 'flex';
         document.getElementById("modeSoln").style.width = "150px";
+        Mesh.curValElem.value === "On";
+        document.getElementById('showElement').classList.add("active");
+        // for (let i = 0; i < Mesh.elements.length; i++) {
+        //     PaintIn.fillArea(Mesh.elements[i]);
+        // }
         for (let line of Mesh.edges) {
             PaintIn.drawLine(line.Point[0], line.Point[1], 'black', 0.5);
         }
         for (let i = 0; i < Mesh.nodes.length; i++) {
             PaintIn.drawPoint(Mesh.nodes[i], this.nodesColor[i], this.nodesColor[i], 1);
         }
+        return
     }
 
     drawColorBar(inputData) {
@@ -231,7 +239,7 @@ class Mesh {
                 //color
                 let colorIndex = math.round((FEsoln[nodeIndex - 1] + delta) * nshades);
                 let color = colors[colorIndex]
-                nodeColors.push(color)
+                nodeColors.push(color);
             }
             processingData.prototype.polygonFill(coordXs, coordYs, nodeColors);
         }
@@ -273,7 +281,6 @@ class Mesh {
         //draw box
         PaintIn.ctx.rect(base[0], base[1], width, yMax - base[1]);
         // PaintIn.ctx.lineWidth = 2;
-        PaintIn.ctx.strokeStyle = "black";
         PaintIn.ctx.stroke();
     }
 }
@@ -286,3 +293,4 @@ Mesh.Objects = [];
 Mesh.curValElem = document.getElementById('showElement');
 Mesh.curValColorBar = document.getElementById('showColorBar');
 Mesh.inputData = undefined;
+Mesh.elemsColor = [];
