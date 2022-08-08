@@ -857,7 +857,6 @@ class Paint {
         });
         //openfileSolu
         document.getElementById('openFileSolu').addEventListener('change', function () {
-            PaintIn.clearAll();
             var frS = new FileReader();
             frS.onload = function () {
                 let inputData = JSON.parse(frS.result);
