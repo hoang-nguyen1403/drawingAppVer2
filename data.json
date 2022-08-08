@@ -1,0 +1,101 @@
+{
+    "num_nodes": 6,
+    "num_segments": 6,
+    "node_coords": [
+        [
+            480,
+            500
+        ],
+        [
+            520,
+            500
+        ],
+        [
+            520,
+            300
+        ],
+        [
+            320,
+            300
+        ],
+        [
+            320,
+            340
+        ],
+        [
+            480,
+            340
+        ]
+    ],
+    "node_names": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+    ],
+    "segments": [
+        [
+            0,
+            1
+        ],
+        [
+            1,
+            2
+        ],
+        [
+            2,
+            3
+        ],
+        [
+            3,
+            4
+        ],
+        [
+            4,
+            5
+        ],
+        [
+            5,
+            0
+        ]
+    ],
+    "segment_names": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "surfaces": [
+        [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+        ]
+    ],
+    "surface_names": [
+        null
+    ],
+    "nodal_loads": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "segment_loads": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ]
+}
