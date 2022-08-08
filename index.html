@@ -47,7 +47,7 @@
 				<!-- <button id="select" class="btn" type="button" onclick="PaintIn.chooseSelect()" value="Off"
 					style="background-image: url(img/select.png)"></button> -->
 				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
-					style="background-image: url(img/apply_name.svg)"></button></button>
+					style="background-image: url(img/apply_name.svg)"></button>
 				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
 					style="background-image: url(img/apply_force.svg)"></button>
 				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
@@ -60,11 +60,18 @@
 					value="Off">Delete Force</button> -->
 			</div>
 
+			<div id="modeSoln">
+				<button id="showElement" class="btn" type="button" onclick="Mesh.prototype.addValElem()"
+					value="Off">Element</button>
+				<button id="showColorBar" class="btn" type="button" onclick="Mesh.prototype.addValColorBar()"
+					value="Off">Color Bar</button>
+			</div>
+
 			<!-- <div id="constraint">
-				<button id="fixConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button></button>
-				<button id="hingeConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button></button>
-				<button id="constraintHor" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button></button>
-				<button id="constraintVer" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button></button>
+				<button id="fixConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
+				<button id="hingeConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
+				<button id="constraintHor" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
+				<button id="constraintVer" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
 			</div> -->
 
 			<div id=tool_top>
@@ -73,6 +80,10 @@
 				</label>
 				<button id="saveFile" type="button" onclick="processingData.prototype.saveObj()" value="Off"></button>
 				<button id="Clear_all" type="button" onclick="PaintIn.clearAll()"></button>
+				<label id="openFile_Solu">
+					<p>Soln</p>
+					<input type="file" name="openFileSolu" id="openFileSolu" style="display: none">
+				</label>
 			</div>
 			<div id="wrap_canvas_div">
 				<canvas id="myCanvas">
@@ -113,9 +124,11 @@
 	<script src="JS/jsspline.js"></script> -->
 	<script src="JS/CanvasInput.js"></script>
 	<script src="JS/fileSaver/src/FileSaver.js"></script>
+	<script src="./JS/colormapfix.js"></script>
 
 	<script src="JS/lightButton.js"></script>
 	<script src="JS/processingData.js"></script>
+	<script src="JS/mesh.js"></script>
 	<script src="JS/painting.js"></script>
 	<!-- <script src="JS/test.js"></script> -->
 
