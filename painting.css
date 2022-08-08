@@ -332,6 +332,22 @@ button {
     background-size: 29px 29px;
 }
 
+#openFile_Solu {
+    width: 35px;
+    height: 35px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#openFile_Solu:hover {
+    background-size: 29px 29px;
+}
+
 #saveFile {
     background-image: url(img/save_file.gif);
     background-color: white;
@@ -410,5 +426,18 @@ button {
 .select-editable select:focus,
 .select-editable input:focus {
     outline: none;
+}
+
+#modeSoln {
+    position: absolute;
+    top: 20%;
+    left: 45%;
+    /* flex-flow: row; */
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px;
+    display: none;
+    background-color: #e6f5ff;
 }
 
