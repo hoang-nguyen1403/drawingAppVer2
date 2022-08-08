@@ -92,7 +92,7 @@ class Paint {
 
     }
     changeTypeSelect(key) {
-        
+
     }
     undo() {
         if (this.image !== null) {
@@ -110,6 +110,7 @@ class Paint {
             currentActive.value = "On";
             this.pen = nameID;
             this.curValSelect = "Off";
+            this.mouseMoveStatus = true;
             document.getElementById(nameID).classList.add("active");
         }
         else {
@@ -129,6 +130,7 @@ class Paint {
             currentActive.value = "On";
             this.pen = nameID;
             this.curValSelect = "Off";
+            this.mouseMoveStatus = true;
             document.getElementById(nameID).classList.add("active");
         }
     }
@@ -149,6 +151,7 @@ class Paint {
             //thuc hien chuc nang
             this.pen = undefined;
             this.curValSelect = "Off";
+            this.mouseMoveStatus = true;
             document.getElementById(nameID).classList.add("active");
         }
         else {
@@ -851,6 +854,19 @@ class Paint {
 
             }
             fr.readAsText(this.files[0]);
+        });
+        //openfileSolu
+        document.getElementById('openFileSolu').addEventListener('change', function () {
+            PaintIn.clearAll();
+            var frS = new FileReader();
+            frS.onload = function () {
+                let inputData = JSON.parse(frS.result);
+                if (inputData["jsmat"] !== undefined) {
+                    Mesh.prototype.openFileSoln(inputData);
+                }
+
+            }
+            frS.readAsText(this.files[0]);
         });
         //make canvas responsive
         onresize = (event) => {
@@ -1666,13 +1682,13 @@ class Paint {
         }
     }
 
-    drawPoint(point, color = "red", R = 1) {
+    drawPoint(point, color = "red", colorStroke = 'back', R = 3) {
         this.ctx.beginPath();
         this.ctx.arc(point.x, point.y, R, 0, 2 * Math.PI);
         this.ctx.fillStyle = color;
         this.ctx.fill();
         this.ctx.lineWidth = 1;
-        this.ctx.strokeStyle = 'black';
+        this.ctx.strokeStyle = colorStroke;
         this.ctx.stroke();
     }
 
