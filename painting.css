@@ -333,11 +333,12 @@ button {
 }
 
 #openFile_Solu {
+    background: url(img/post_mode.png);
     width: 35px;
     height: 35px;
     border: 2px solid black;
     border-radius: 50%;
-    background-size: 25px 25px;
+    background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;
     background-color: white;
@@ -441,14 +442,19 @@ button {
 } */
 
 #fillColor {
+    background: url(img/fill-color.png);
+    /* background-color: white; */
     position: absolute;
     top: 480px;
     left: 25px;
     display: none;
+    background-position: center;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
 }
 
 #modeDrawing {
-    background: url(img/drawing-mode.png);
+    background: url(img/switch.png);
     background-size: 25px 25px;
     background-repeat: no-repeat;
     background-position: center;
