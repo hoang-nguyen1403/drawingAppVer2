@@ -19,16 +19,16 @@ class processingData {
         // } else {
         //     saveArr.push(newObject);
         // }
-        let sameObj = saveArr.find((value) => (JSON.stringify(value) === JSON.stringify(newObject)))
+        let sameObj = saveArr.find((value) => (JSON.stringify(value) === JSON.stringify(newObject))) // chuyen ve string de so sanh element trong array
         if (sameObj === undefined) {
-            saveArr.push(newObject);
+            saveArr.push(newObject); //neu khong co phan tu tuong tu thi add phan tu do
         }
-        return sameObj
+        return sameObj // neu co phan tu tuong tu thi chi lay 1 phan tu
 
     };
     //----Create Object
     //Point
-    createPoint(arrPointX, arrPointY, nameList, pointLoadsList) {
+    createPoint(arrPointX, arrPointY, nameList, pointLoadsList) { //tao point tu list toa do X va Y
         let AllPointObj = [];
         for (let index = 0; index <= arrPointX.length - 1; index++) {
             let point = [arrPointX[index], arrPointY[index]];

@@ -1,60 +1,40 @@
+var jsmat, FEsoln, QC, baseCoord, FEtri, FEcoord, scale;
 class Mesh {
     constructor() {
         this.nodesColor = [];
     }
 
-    addValElem() {
+    addValFillColor() {
         PaintIn.ctx.fillStyle = 'white';
         PaintIn.ctx.fillRect(0, 0, PaintIn.canvas.width, PaintIn.canvas.height);
-        if (Mesh.curValElem.value === "Off") {
-            Mesh.curValElem.value === "On";
-            document.getElementById('showElement').classList.add("active");
-            document.getElementById('showColorBar').classList.remove("active");
-            Mesh.curValElem.value = "On";
-            Mesh.curValColorBar.value = "Off";
+        if (Mesh.curValFillColor.value === "Off") {
+            Mesh.curValFillColor.value === "On";
+            document.getElementById('fillColor').classList.add("active");
+            Mesh.curValFillColor.value = "On";
+            this.fillElements();
+
+        }
+        else {
+            Mesh.curValFillColor.value = "Off";
+            document.getElementById('fillColor').classList.remove("active");
             this.drawMesh();
         }
-        else {
-            Mesh.curValElem.value = "Off";
-            document.getElementById('showElement').classList.remove("active");
-            PaintIn.ctx.fillStyle = 'white';
-            PaintIn.ctx.fillRect(0, 0, PaintIn.canvas.width, PaintIn.canvas.height);
-        }
     }
-    addValColorBar() {
-        PaintIn.ctx.fillStyle = 'white';
-        PaintIn.ctx.fillRect(0, 0, PaintIn.canvas.width, PaintIn.canvas.height);
-        if (Mesh.curValColorBar.value === "Off") {
-            Mesh.curValColorBar.value === "On";
-            document.getElementById('showColorBar').classList.add("active");
-            document.getElementById('showElement').classList.remove("active");
-            Mesh.curValElem.value = "Off";
-            Mesh.curValColorBar.value = "On";
-            if (Mesh.inputData !== undefined) {
-                this.drawColorBar(Mesh.inputData);
-            }
-        }
-        else {
-            Mesh.curValColorBar.value = "Off";
-            document.getElementById('showColorBar').classList.remove("active");
-            PaintIn.ctx.fillStyle = 'white';
-            PaintIn.ctx.fillRect(0, 0, PaintIn.canvas.width, PaintIn.canvas.height);
-        }
-    }
+
     createDataMesh(inputData) {
         Mesh.inputData = inputData;
+        jsmat = Mesh.inputData["jsmat"];
+        FEsoln = Mesh.inputData["FEsoln"];
+        QC = Mesh.inputData["QC"];
+        baseCoord = jsmat["node_coords"][3];
+        baseCoord = [200, 300];
+        FEtri = Mesh.inputData["FEtri"];
+        FEcoord = Mesh.inputData["FEcoord"];
+        scale = 400;
         let arrNodeColor = [];
         let arrElem = [];
-        let jsmat = inputData["jsmat"];
-        let FEtri = inputData["FEtri"];
-        let FEcoord = inputData["FEcoord"];
         const FEcoordNode = JSON.parse(JSON.stringify(FEcoord));
         const FEcoordLine = JSON.parse(JSON.stringify(FEcoord));
-        let FEsoln = inputData["FEsoln"];
-        let QC = inputData["QC"];
-        let baseCoord = jsmat["node_coords"][3];
-        baseCoord = [200, 300];
-        let scale = 400;
         let indexValueColor = [];
         let colors = colormap({
             colormap: 'jet',
@@ -90,9 +70,9 @@ class Mesh {
             indexValueColor.push(colorIndex);
             let point = processingData.prototype.createPoint([FEcoordNode[i][0]], [FEcoordNode[i][1]], Array(1).fill(null),
                 Array(1).fill(null));
+            // let point = new Point()
             Mesh.nodes.push(point[0]);
         }
-        Mesh.Objects.push(Mesh.nodes);
 
         //color node
         for (let i = 0; i < Mesh.nodes.length; i++) {
@@ -159,46 +139,41 @@ class Mesh {
             Mesh.elements.push(elem);
         }
 
-        Mesh.Objects.push(Mesh.edges);
-        Mesh.Objects.push(Mesh.elements);
         this.drawMesh();
+
         return
     }
 
 
     openFileSoln(inputData) {
+        PaintIn.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+        PaintIn.canvas.style.cursor = PaintIn.currentCursor;
+        PaintIn.mouseMoveStatus = false;
+        PaintIn.pen = undefined;
+        PaintIn.curValSelect = "Off";
+        PaintIn.ctx.fillStyle = 'white';
+        PaintIn.ctx.fillRect(0, 0, PaintIn.canvas.width, PaintIn.canvas.height);
+        PaintIn.curValDrawing.value = "Off";
+        document.getElementById('modeDrawing').classList.remove("active");
+        document.getElementById('command').style.display = 'none';
         this.createDataMesh(inputData);
     }
 
     drawMesh() {
-        PaintIn.pen = undefined;
-        PaintIn.mouseMoveStatus = false;
-        document.getElementById('modeSoln').style.display = 'flex';
-        document.getElementById("modeSoln").style.width = "150px";
-        Mesh.curValElem.value === "On";
-        document.getElementById('showElement').classList.add("active");
-        // for (let i = 0; i < Mesh.elements.length; i++) {
-        //     PaintIn.fillArea(Mesh.elements[i]);
-        // }
+        document.getElementById('fillColor').style.display = 'flex';
         for (let line of Mesh.edges) {
             PaintIn.drawLine(line.Point[0], line.Point[1], 'black', 0.5);
         }
         for (let i = 0; i < Mesh.nodes.length; i++) {
             PaintIn.drawPoint(Mesh.nodes[i], this.nodesColor[i], this.nodesColor[i], 1);
         }
+        this.drawColorBar();
         return
     }
 
-    drawColorBar(inputData) {
-        // draw elements
-        let jsmat = inputData["jsmat"];
-        let FEcoord = inputData["FEcoord"];
-        let FEtri = inputData["FEtri"];
-        let FEsoln = inputData["FEsoln"];
+    fillElements() {
+        this.drawColorBar();
         const FEcoordElem = JSON.parse(JSON.stringify(FEcoord));
-        let baseCoord = jsmat["node_coords"][3];
-        baseCoord = [200, 300];
-        let scale = 400;
         let rotMatrix = [
             [math.cos(math.PI / 2), -math.sin(math.PI / 2)],
             [math.sin(math.PI / 2), math.cos(math.PI / 2)]
@@ -214,7 +189,7 @@ class Mesh {
             format: 'rgba',
             alpha: 1
         })
-        //fill element
+
         for (let surface of FEtri) {
             let coordXs = [];
             let coordYs = [];
@@ -239,12 +214,20 @@ class Mesh {
                 //color
                 let colorIndex = math.round((FEsoln[nodeIndex - 1] + delta) * nshades);
                 let color = colors[colorIndex]
-                nodeColors.push(color);
+                nodeColors.push(color)
             }
             processingData.prototype.polygonFill(coordXs, coordYs, nodeColors);
         }
-        //create color bar 
-        //size
+    }
+
+    drawColorBar() {
+        // draw elements
+
+        let maxValue = math.max(FEsoln);
+        let minValue = math.min(FEsoln);
+        let delta = math.abs(minValue);
+        delta = math.ceil(delta, 1);
+
         let xMin = 200;
         let xMax = 600;
         let yMin = 100;
@@ -288,9 +271,7 @@ class Mesh {
 Mesh.nodes = [];
 Mesh.edges = [];
 Mesh.elements = [];
-Mesh.Objects = [];
+Mesh.objects = [];
 
-Mesh.curValElem = document.getElementById('showElement');
-Mesh.curValColorBar = document.getElementById('showColorBar');
+Mesh.curValFillColor = document.getElementById('fillColor');
 Mesh.inputData = undefined;
-Mesh.elemsColor = [];

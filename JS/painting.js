@@ -24,6 +24,11 @@ class Paint {
         this.curValMoment = document.getElementById('moment');
         this.curValDeleteForce = document.getElementById('deleteForce');
 
+        //addMode
+        this.curValDrawing = document.getElementById('modeDrawing');
+        //set defaul mode is drawing
+        document.getElementById('modeDrawing').classList.add("active");
+
         //attLine
         this.currentColor = 'black';
         this.currentWidth = 5;
@@ -89,11 +94,59 @@ class Paint {
         this.curPoint = [];
         this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
         this.canvas.style.cursor = this.currentCursor;
-
+        this.controlCanvas();
     }
-    changeTypeSelect(key) {
 
+    changeMode() {
+        if (this.curValDrawing.value === "Off") {
+            // mode drawing
+            this.renderObject(processingData.allObject);
+            this.curValDrawing.value = "On";
+            document.getElementById('modeDrawing').classList.add("active");
+
+            Mesh.curValFillColor.value = "Off";
+            document.getElementById('fillColor').style.display = 'none';
+
+            this.mouseMoveStatus = true;
+            this.pen = 'select';
+            this.curValSelect = "On";
+
+        }
+        else {
+            //mode soln
+            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+            this.canvas.style.cursor = this.currentCursor;
+            
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            this.curValDrawing.value = "Off";
+            document.getElementById('modeDrawing').classList.remove("active");
+
+            Mesh.curValFillColor.value = "Off";
+            document.getElementById('fillColor').classList.remove("active");
+
+            this.mouseMoveStatus = false;
+            this.pen = undefined;
+            this.curValSelect = "Off";
+
+            //display soln
+            if (Mesh.inputData !== undefined) {
+                document.getElementById('command').style.display = 'none';
+                Mesh.prototype.drawMesh();
+            }
+            else {
+                this.renderCommand("soln");
+            }
+        }
     }
+
+    controlCanvas() {
+        if (this.curValDrawing.value = "Off") {
+            this.offButtonDraw(this.currentValueLine, 'line');
+        }
+    }
+
     undo() {
         if (this.image !== null) {
             this.ctx.drawImage(this.image, 0, 0, this.canvas.width, this.canvas.height);
@@ -877,7 +930,7 @@ class Paint {
 
     getMousePosition(event) {
         let rect = this.canvas.getBoundingClientRect();
-        if (this.pen === "brush" || (this.pen === "line") || this.pen === "circle" || this.pen === "rect" || this.pen === "spl" || this.curValSelect === "On" || this.curValName.value === "On" || this.curValPointLoad.value === "On" || this.curValPressLoad.value === "On" || this.curValMoment.value === "On") {
+        if (this.pen === "brush" || (this.pen === "line") || this.pen === "circle" || this.pen === "rect" || this.pen === "spl" || this.curValSelect === "On" || this.curValName.value === "On" || this.curValPointLoad.value === "On" || this.curValPressLoad.value === "On" || this.curValMoment.value === "On" || this.curValDrawing.value === "On") {
             return {
                 x: (event.clientX - rect.left),
                 y: (event.clientY - rect.top)
@@ -1488,6 +1541,13 @@ class Paint {
             case "Off":
                 document.getElementById('command').style.display = 'none';
                 break;
+            case "soln":
+                document.getElementById('command').style.display = 'flex';
+                document.getElementById("command").innerHTML = (`
+                    <p> Please open file solution!
+                    </p>
+                </div>
+                    `);
         };
     }
 
@@ -2646,4 +2706,5 @@ function getPosElement(idElem) {
 }
 
 const PaintIn = new Paint();
+PaintIn.curValDrawing.value = "On";
 
