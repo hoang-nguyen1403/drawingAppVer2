@@ -234,7 +234,7 @@ class Mesh {
         let yMax = 500;
         let xCBSpace = 70;
 
-        let n = 10;
+        let n = 20;
         let base = [xMax + xCBSpace, yMin];
         let width = 50;
         let height = yMax - base[1];
@@ -242,7 +242,7 @@ class Mesh {
         let rangeY = math.range(base[1], yMax, dy);
         let barcolors = colormap({
             colormap: 'jet',
-            nshades: 10,
+            nshades: n,
             format: 'hex',
             alpha: 1
         });

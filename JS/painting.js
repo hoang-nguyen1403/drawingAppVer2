@@ -102,7 +102,7 @@ class Paint {
             // mode drawing
             this.renderObject(processingData.allObject);
             this.curValDrawing.value = "On";
-            document.getElementById('modeDrawing').classList.add("active");
+            document.getElementById('modeDrawing').style.background = 'url(img/drawing-mode.png)';
 
             Mesh.curValFillColor.value = "Off";
             document.getElementById('fillColor').style.display = 'none';
@@ -121,7 +121,7 @@ class Paint {
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
             this.curValDrawing.value = "Off";
-            document.getElementById('modeDrawing').classList.remove("active");
+            document.getElementById('modeDrawing').style.background = 'url(img/result.png)';
 
             Mesh.curValFillColor.value = "Off";
             document.getElementById('fillColor').classList.remove("active");
