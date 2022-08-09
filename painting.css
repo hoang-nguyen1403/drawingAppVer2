@@ -448,11 +448,11 @@ button {
 }
 
 #modeDrawing {
-    /* background: url(img/clear_screen.gif); */
+    background: url(img/drawing-mode.png);
     background-size: 25px 25px;
     background-repeat: no-repeat;
     background-position: center;
-    /* background-color: white; */
+    background-color: white;
     margin: 5px;
 }
 
