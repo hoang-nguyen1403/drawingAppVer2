@@ -160,7 +160,7 @@ class Mesh {
     }
 
     drawMesh() {
-        document.getElementById('fillColor').style.display = 'flex';
+        document.getElementById('fillColor').style.display = 'block';
         for (let line of Mesh.edges) {
             PaintIn.drawLine(line.Point[0], line.Point[1], 'black', 0.5);
         }
@@ -234,7 +234,7 @@ class Mesh {
         let yMax = 500;
         let xCBSpace = 70;
 
-        let n = 20;
+        let n = 10;
         let base = [xMax + xCBSpace, yMin];
         let width = 50;
         let height = yMax - base[1];
@@ -242,7 +242,7 @@ class Mesh {
         let rangeY = math.range(base[1], yMax, dy);
         let barcolors = colormap({
             colormap: 'jet',
-            nshades: n,
+            nshades: 10,
             format: 'hex',
             alpha: 1
         });

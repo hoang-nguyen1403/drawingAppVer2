@@ -102,7 +102,7 @@ class Paint {
             // mode drawing
             this.renderObject(processingData.allObject);
             this.curValDrawing.value = "On";
-            document.getElementById('modeDrawing').style.background = 'url(img/drawing-mode.png)';
+            document.getElementById('modeDrawing').classList.add("active");
 
             Mesh.curValFillColor.value = "Off";
             document.getElementById('fillColor').style.display = 'none';
@@ -110,7 +110,6 @@ class Paint {
             this.mouseMoveStatus = true;
             this.pen = 'select';
             this.curValSelect = "On";
-
         }
         else {
             //mode soln
@@ -121,7 +120,7 @@ class Paint {
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
             this.curValDrawing.value = "Off";
-            document.getElementById('modeDrawing').style.background = 'url(img/result.png)';
+            document.getElementById('modeDrawing').classList.remove("active");
 
             Mesh.curValFillColor.value = "Off";
             document.getElementById('fillColor').classList.remove("active");
