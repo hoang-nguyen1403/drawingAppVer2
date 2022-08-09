@@ -428,16 +428,34 @@ button {
     outline: none;
 }
 
-#modeSoln {
+/* #modeSoln {
     position: absolute;
     top: 20%;
     left: 45%;
-    /* flex-flow: row; */
     justify-content: space-around;
     border: 2px solid black;
     border-radius: 20px;
     padding: 5px;
     display: none;
     background-color: #e6f5ff;
+} */
+
+#fillColor {
+    position: absolute;
+    top: 480px;
+    left: 25px;
+    display: none;
 }
 
+#modeDrawing {
+    /* background: url(img/clear_screen.gif); */
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* background-color: white; */
+    margin: 5px;
+}
+
+#modeDrawing:hover {
+    background-size: 30px 30px;
+}
