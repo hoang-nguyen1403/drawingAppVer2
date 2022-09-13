@@ -969,11 +969,15 @@ class Paint {
 
         let listData = processingData.prototype.saveObj();
         // console.log(listData);
-        var promise = axios({
+
+        let promise = axios({
             url: 'http://localhost:8000/v1/article',
             method: "GET",
-            data: listData,
+            // data: listData,
         });
+
+        promise = axios.post('http://localhost:8000/v1/article',{listData});
+
 
         // var promise = axios({
         //     url: 'http://localhost:8000/v1/article',
