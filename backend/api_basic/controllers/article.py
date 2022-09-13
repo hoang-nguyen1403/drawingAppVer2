@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from rest_framework.parsers import JSONParser
+# from rest_framework.parsers import JSONParser
 from ..models.Article import Article
 from ..serializers import ArticleSerializer
 from django.views.decorators.csrf import csrf_exempt
@@ -22,7 +22,8 @@ def article_list(request):
         return JsonResponse(obj, safe = False)
         
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
+        # data = JSONParser().parse(request)
+        data =request.POST.get('ids')
         json_data = json.dumps(data)
         with open("data.json", "w") as inputFile:
             inputFile.write(json_data)
