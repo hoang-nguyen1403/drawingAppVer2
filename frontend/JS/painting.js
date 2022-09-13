@@ -807,12 +807,16 @@ class Paint {
 
     clearAll() {
         this.isCancled = false;
+        this.offButtonDraw(this.currentValueLine,'line');
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
         this.pen = 'select';
+        this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+        this.canvas.style.cursor = this.currentCursor;
         this.arrMouseDownPosition = [];
         // this.arr = [];
+        this.curSelectBox = [];
         this.arrLineX = [];
         this.arrLineY = [];
         this.arrCircleX = [];
@@ -968,7 +972,7 @@ class Paint {
         // ===============================================================
 
         let listData = processingData.prototype.saveObj();
-        // console.log(listData);
+        // console.log(listData); // data type: dictionary
 
         let promise = axios({
             url: 'http://localhost:8000/v1/article',
@@ -976,13 +980,11 @@ class Paint {
             // data: listData,
         });
 
-        promise = axios.post('http://localhost:8000/v1/article',{listData});
-
+        promise = axios.post('http://localhost:8000/v1/article', listData);
 
         // var promise = axios({
         //     url: 'http://localhost:8000/v1/article',
-        //     method: "POST",
-        //     data: listData,
+        //     method: "GET",
         // });
 
         promise.then((result) => {
@@ -1005,15 +1007,15 @@ class Paint {
         };
     }
 
-    // changeOrigin(event) {
-    //     let offSetX = this.canvas.width / 2;
-    //     let offSetY = this.canvas.height / 2;
-    //     var pos = this.getMousePosition(event);
-    //     return {
-    //         x: (pos.x - offSetX),
-    //         y: (pos.y - offSetY)
-    //     };
-    // }
+    changeOrigin(event) {
+        let offSetX = this.canvas.width / 2;
+        let offSetY = this.canvas.height / 2;
+        var pos = this.getMousePosition(event);
+        return {
+            x: (pos.x - offSetX),
+            y: (pos.y - offSetY)
+        };
+    }
 
     mouseDown(event) {
         this.isPainting = true;
@@ -1173,10 +1175,12 @@ class Paint {
         // this.image.src = this.canvas.toDataURL("image/bmp ", 1.0);
         let mouseMovePos = this.getMousePosition(event);
         this.currentMouseMovePos = this.getMousePosition(event);
+        let mouseMoveCoordination = this.changeOrigin(event);
         // this.renderObject(processingData.allObject);
 
         //
-        document.getElementById("display_coord").innerHTML = '[' + this.currentMouseMovePos.x + ' ; ' + this.currentMouseMovePos.y + ']';
+        // document.getElementById("display_coord").innerHTML = '[' + this.currentMouseMovePos.x + ' ; ' + this.currentMouseMovePos.y + ']';
+        document.getElementById("display_coord").innerHTML = '[' + mouseMoveCoordination.x + ' ; ' + mouseMoveCoordination.y + ']';
         //
         if (this.currentValueGrid.value == "On" && this.arrGrid.length != 0 && this.currentMouseDownPos != undefined) {
             let nearPoint = processingData.prototype.getNearest(this.arrGrid, this.currentMouseDownPos);
@@ -2751,7 +2755,7 @@ class Paint {
             clientX: pos[0] + rect.left,
             clientY: pos[1] + rect.top,
         });
-        console.log(newEvent)
+        // console.log(newEvent)
         this.canvas.dispatchEvent(newEvent);
     }
 };

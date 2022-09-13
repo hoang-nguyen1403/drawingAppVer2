@@ -946,10 +946,10 @@ class processingData {
         //     return tree.nearest(currentPoint, 1, maxDistance)[0];
     };
     getNearest(listPoints, currentPoint, maxDistance) {
-        var distance = function (a, b) {
+        let distance = function (a, b) {
             return math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
         }
-        var tree = new kdTree(listPoints, distance, ["x", "y"]);
+        let tree = new kdTree(listPoints, distance, ["x", "y"]);
         return tree.nearest(currentPoint, 1, maxDistance)[0];
     };
     moveObject(obj, newLocation) {
