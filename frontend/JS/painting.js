@@ -807,7 +807,7 @@ class Paint {
 
     clearAll() {
         this.isCancled = false;
-        this.offButtonDraw(this.currentValueLine,'line');
+        this.offButtonDraw(this.currentValueLine, 'line');
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
@@ -972,15 +972,16 @@ class Paint {
         // ===============================================================
 
         let listData = processingData.prototype.saveObj();
+        console.log(listData)
         // console.log(listData); // data type: dictionary
 
+        // let promise = axios.get('http://localhost:8000/v1/article');
+        // promise = axios.post('http://localhost:8000/v1/article', listData);
         let promise = axios({
-            url: 'http://localhost:8000/v1/article',
             method: "GET",
-            // data: listData,
+            url: 'http://localhost:8000/v1/article',
+            data: listData,
         });
-
-        promise = axios.post('http://localhost:8000/v1/article', listData);
 
         // var promise = axios({
         //     url: 'http://localhost:8000/v1/article',
@@ -993,7 +994,7 @@ class Paint {
         });
 
         promise.catch(function (err) {
-            console.log("err", err);
+            console.log("err", err.response.data);
         });
     }
 
