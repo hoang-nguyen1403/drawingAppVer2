@@ -976,7 +976,7 @@ class Paint {
             // data: listData,
         });
 
-        promise = axios.post('http://localhost:8000/v1/article',{listData});
+        promise = axios.post('http://localhost:8000/v1/article',listData);
 
 
         // var promise = axios({
@@ -991,7 +991,7 @@ class Paint {
         });
 
         promise.catch(function (err) {
-            console.log("err", err);
+            console.log("err", err.response.data);
         });
     }
 
