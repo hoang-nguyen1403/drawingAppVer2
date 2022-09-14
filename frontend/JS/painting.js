@@ -145,7 +145,6 @@ class Paint {
             this.offButtonDraw(this.currentValueLine, 'line');
         }
     }
-
     undo() {
         if (this.image !== null) {
             this.ctx.drawImage(this.image, 0, 0, this.canvas.width, this.canvas.height);
