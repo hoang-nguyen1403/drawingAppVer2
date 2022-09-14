@@ -146,6 +146,10 @@ class Mesh {
 
 
     openFileSoln(inputData) {
+        Mesh.nodes = [];
+        Mesh.edges = [];
+        Mesh.elements = [];
+        Mesh.objects = [];
         PaintIn.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
         PaintIn.canvas.style.cursor = PaintIn.currentCursor;
         PaintIn.mouseMoveStatus = false;
