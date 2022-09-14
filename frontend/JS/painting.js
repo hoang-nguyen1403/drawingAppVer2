@@ -972,14 +972,13 @@ class Paint {
         // ===============================================================
 
         let listData = processingData.prototype.saveObj();
-        console.log(listData)
         // console.log(listData); // data type: dictionary
 
         // let promise = axios.get('http://localhost:8000/v1/article');
         // promise = axios.post('http://localhost:8000/v1/article', listData);
         let promise = axios({
-            method: "GET",
-            url: 'http://localhost:8000/v1/article',
+            method: "POST",
+            url: 'http://localhost:8000/v1/article/',
             data: listData,
         });
 
@@ -994,7 +993,7 @@ class Paint {
         });
 
         promise.catch(function (err) {
-            console.log("err", err.response.data);
+            console.log("err", err);
         });
     }
 
