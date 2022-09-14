@@ -8,7 +8,5 @@ class Article(models.Model):
     segments = models.CharField(max_length=100)
     segment_names = models.CharField(max_length=100)
     
-    
-    
     def __str__(self):
         return self.title
