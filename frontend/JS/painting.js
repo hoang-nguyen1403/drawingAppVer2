@@ -92,7 +92,7 @@ class Paint {
         this.arrCurValueObj = [];
         // this.hasInput = false;
         this.curPoint = [];
-        this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+        this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
         this.canvas.style.cursor = this.currentCursor;
         this.controlCanvas();
     }
@@ -113,7 +113,7 @@ class Paint {
         }
         else {
             //mode soln
-            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+            this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
             this.canvas.style.cursor = this.currentCursor;
 
             this.ctx.fillStyle = 'white';
@@ -170,7 +170,7 @@ class Paint {
             this.curValSelect = "On";
             document.getElementById(nameID).classList.remove("active");
             //change cursor
-            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+            this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
             this.canvas.style.cursor = this.currentCursor;
         }
         // this.renderObject(processingData.allObject);
@@ -209,7 +209,7 @@ class Paint {
             currentActive.value = "Off";
             document.getElementById(nameID).classList.remove("active");
             //change cursor
-            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+            this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
             this.canvas.style.cursor = this.currentCursor;
             this.curValSelect = "On";
             this.pen = 'select';
@@ -339,7 +339,7 @@ class Paint {
             // document.getElementById("BDCondition").style.display = "none";
 
             //change cursor
-            this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+            this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
             this.canvas.style.cursor = this.currentCursor;
             this.renderProperty("off", "");
             this.renderObject(processingData.allObject);
@@ -402,7 +402,7 @@ class Paint {
         // press l
         if (event.keyCode === 76 && this.pen === 'select') {
             //change cursor
-            this.currentCursor = "url(img/pen_cursor.svg) 0 32, default";
+            this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
             this.canvas.style.cursor = this.currentCursor;
             let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
             this.keyDown(spaceKey);
@@ -430,7 +430,7 @@ class Paint {
 
     chooseLine() {
         //change cursor
-        this.currentCursor = "url(img/pen_cursor.svg) 0 32, default";
+        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
         this.canvas.style.cursor = this.currentCursor;
 
         let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
@@ -650,7 +650,7 @@ class Paint {
 
     addValueName() {
         //change cursor
-        this.currentCursor = "url(img/text_cursor.svg), default";
+        this.currentCursor = "url(frontend/img/text_cursor.svg), default";
         this.canvas.style.cursor = this.currentCursor;
 
         this.renderObject(processingData.allObject);
@@ -680,7 +680,7 @@ class Paint {
 
     addValPointLoad() {
         //change cursor
-        this.currentCursor = "url(img/force_cursor.svg) 0 0, default";
+        this.currentCursor = "url(frontend/img/force_cursor.svg) 0 0, default";
         this.canvas.style.cursor = this.currentCursor;
 
         this.renderObject(processingData.allObject);
@@ -711,7 +711,7 @@ class Paint {
 
     addValPressLoad() {
         //change cursor
-        this.currentCursor = "url(img/normal_press_cursor.svg) 0 0, default";
+        this.currentCursor = "url(frontend/img/normal_press_cursor.svg) 0 0, default";
         this.canvas.style.cursor = this.currentCursor;
 
         this.renderObject(processingData.allObject);
@@ -758,7 +758,7 @@ class Paint {
 
     addValMoment() {
         //change cursor
-        this.currentCursor = "url(img/moment_cursor.svg), default";
+        this.currentCursor = "url(frontend/img/moment_cursor.svg), default";
         this.canvas.style.cursor = this.currentCursor;
 
         this.renderObject(processingData.allObject);
@@ -811,7 +811,7 @@ class Paint {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
         this.pen = 'select';
-        this.currentCursor = "url(img/select_cursor.svg) 0 0,  default";
+        this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
         this.canvas.style.cursor = this.currentCursor;
         this.arrMouseDownPosition = [];
         // this.arr = [];
@@ -935,56 +935,14 @@ class Paint {
 
     getAPI() {
         // request
-        // axios.get('https://api.github.com/users/mapbox')
-        //     .then((response) => {
-        //         console.log(response.data);
-        //         console.log(response.status);
-        //         console.log(response.statusText);
-        //         console.log(response.headers);
-        //         console.log(response.config);
-        //     });
-        //==========================================================
-        // axios.all([
-        //     axios.get('https://api.github.com/users/mapbox'),
-        //     axios.get('https://api.github.com/users/phantomjs')
-        // ])
-        //     .then(responseArr => {
-        //         //this will be executed only when all requests are complete
-        //         console.log('Date created: ', responseArr[0].data.created_at);
-        //         console.log('Date created: ', responseArr[1].data.created_at);
-        //     });
-        //=========================================================
-        // // declare a request interceptor
-        // axios.interceptors.request.use(config => {
-        //     // perform a task before the request is sent
-        //     console.log('Request was sent');
-        //     return config;
-        // }, error => {
-        //     // handle the error
-        //     return Promise.reject(error);
-        // });
-        // // sent a GET request
-        // axios.get('https://api.github.com/users/mapbox')
-        //     .then(response => {
-        //         console.log(response.data.created_at);
-        //     });
-        // ===============================================================
-
         let listData = processingData.prototype.saveObj();
         // console.log(listData); // data type: dictionary
 
-        // let promise = axios.get('http://localhost:8000/v1/article');
-        // promise = axios.post('http://localhost:8000/v1/article', listData);
         let promise = axios({
-            method: "POST",
+            method: "GET",
             url: 'https://vyfirstapp.herokuapp.com/v1/article/',
             data: listData,
         });
-
-        // var promise = axios({
-        //     url: 'http://localhost:8000/v1/article',
-        //     method: "GET",
-        // });
 
         promise.then((result) => {
             console.log(result.data);
@@ -1019,7 +977,7 @@ class Paint {
     mouseDown(event) {
         this.isPainting = true;
         this.image = new Image;
-        this.image.src = this.canvas.toDataURL("image/bmp ", 1.0);
+        this.image.src = this.canvas.toDataURL("frontend/image/bmp ", 1.0);
         this.mouseDownPos = this.getMousePosition(event); //start
         this.arrMouseDownPosition.push(this.mouseDownPos);
         this.currentMouseDownPos = this.getMousePosition(event);
@@ -1171,7 +1129,7 @@ class Paint {
             return;
         }
         // this.image = new Image;
-        // this.image.src = this.canvas.toDataURL("image/bmp ", 1.0);
+        // this.image.src = this.canvas.toDataURL("frontend/image/bmp ", 1.0);
         let mouseMovePos = this.getMousePosition(event);
         this.currentMouseMovePos = this.getMousePosition(event);
         let mouseMoveCoordination = this.changeOrigin(event);
@@ -1301,15 +1259,15 @@ class Paint {
         // let moment = document.getElementById("moment").value;
 
         // if (lineButton === "On") {
-        //     this.canvas.style.cursor = "url(img/pen_cursor.png) 0 32, default";
+        //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
         // } else if (valueName === "On") {
-        //     this.canvas.style.cursor = "url(img/edit_text.png) 0 32, default";
+        //     this.canvas.style.cursor = "url(frontend/img/edit_text.png) 0 32, default";
         // } else if (pointLoad === "On") {
-        //     this.canvas.style.cursor = "url(img/pen_cursor.png) 0 32, default";
+        //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
         // } else if (pressLoad === "On") {
-        //     this.canvas.style.cursor = "url(img/pen_cursor.png) 0 32, default";
+        //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
         // } else if (moment === "On") {
-        //     this.canvas.style.cursor = "url(img/pen_cursor.png) 0 32, default";
+        //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
         // } else {
         //     this.canvas.style.cursor = "default";
         // }
