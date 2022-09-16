@@ -977,7 +977,7 @@ class Paint {
         // promise = axios.post('http://localhost:8000/v1/article', listData);
         let promise = axios({
             method: "POST",
-            url: 'http://localhost:8000/v1/article/',
+            url: 'https://vyfirstapp.herokuapp.com/v1/article/',
             data: listData,
         });
 
