@@ -29,6 +29,9 @@ class Paint {
         //set defaul mode is drawing
         document.getElementById('modeDrawing').classList.add("active");
 
+        //tab
+        this.tabStatus = document.getElementById('tab-icon');
+
         //attLine
         this.currentColor = 'black';
         this.currentWidth = 5;
@@ -95,6 +98,16 @@ class Paint {
         this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
         this.canvas.style.cursor = this.currentCursor;
         this.controlCanvas();
+    }
+
+    toggleTab() {
+        this.onOffButton(this.tabStatus, "tab-comments");
+        if (this.tabStatus.value === "On") {
+            this.hiddenButton("tab-comments");
+        }
+        else {
+            this.visibleButton("tab-comments");
+        }
     }
 
     changeMode() {

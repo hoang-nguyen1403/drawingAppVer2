@@ -465,3 +465,28 @@ button {
 #modeDrawing:hover {
     background-size: 30px 30px;
 }
+
+/* ----------Tab comment */
+
+#tab-icon{
+    background: url(img/arrow.png);
+    position: absolute;
+    right: 10px;
+    top: 11%;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* background-color: white; */
+    margin: 5px;
+}
+#tab-comments{
+    position: absolute;
+    display: block;
+    right: 25px;
+    top: 20%;
+    width: 350px;
+    height: 350px;
+    background-color: #bbe8ec;
+
+}
+
