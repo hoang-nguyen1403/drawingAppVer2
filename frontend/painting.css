@@ -206,7 +206,6 @@ body {
 button {
     width: 40px;
     height: 40px;
-    border-radius: 2px;
     background-size: 25px 25px;
     background-repeat: no-repeat;
     background-position: center;
@@ -468,25 +467,52 @@ button {
 
 /* ----------Tab comment */
 
-#tab-icon{
+#tab-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 0;
+    background-size: 20px 20px;
+    border: none;
     background: url(img/arrow.png);
     position: absolute;
-    right: 10px;
-    top: 11%;
+    right: 9px;
+    top: 13%;
     background-size: 25px 25px;
     background-repeat: no-repeat;
     background-position: center;
-    /* background-color: white; */
-    margin: 5px;
 }
-#tab-comments{
+
+#tab-comments {
     position: absolute;
     display: block;
-    right: 25px;
-    top: 20%;
-    width: 350px;
-    height: 350px;
-    background-color: #bbe8ec;
-
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    right: 9px;
+    top: 17%;
+    width: 250px;
+    height: 82.5%;
+    background-color: #e6f5ff;
+    border-left: 1px solid #0784d1
 }
 
+#lableTab {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#tab-comments>input {
+    margin: 15px;
+    width: 80%;
+    height: 17px;
+}
+
+/* difference text in tab */
+#comments>p {
+    width: 100%;
+    height: 100%;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}

@@ -100,16 +100,6 @@ class Paint {
         this.controlCanvas();
     }
 
-    toggleTab() {
-        this.onOffButton(this.tabStatus, "tab-comments");
-        if (this.tabStatus.value === "On") {
-            this.hiddenButton("tab-comments");
-        }
-        else {
-            this.visibleButton("tab-comments");
-        }
-    }
-
     changeMode() {
         if (this.curValDrawing.value === "Off") {
             // mode drawing
@@ -949,17 +939,20 @@ class Paint {
     getAPI() {
         // request
         let listData = processingData.prototype.saveObj();
-        // console.log(listData); // data type: dictionary
+        console.log(listData); // data type: dictionary
+        let params = { "rhs": [listData], "nargout": 1, "outputFormat": { "mode": "small", "nanType": "object" } };
 
         let promise = axios({
-            method: "GET",
-            url: 'https://vyfirstapp.herokuapp.com/v1/article/',
-            data: listData,
+            method: "POST",
+            url: 'http://localhost:9910/BondTools/functionFile',
+            data: params,
         });
 
         promise.then((result) => {
-            console.log(result.data);
-            Mesh.prototype.openFileSoln(result.data);
+            // console.log(result.data);
+            let receiveData = result.data['lhs'][0]; //MATLAB response body is {"lhs":[receiveData]}
+            console.log(receiveData);
+            Mesh.prototype.openFileSoln(receiveData); //draw Messh
         });
 
         promise.catch(function (err) {
@@ -978,12 +971,12 @@ class Paint {
     }
 
     changeOrigin(event) {
-        let offSetX = this.canvas.width / 2;
-        let offSetY = this.canvas.height / 2;
+        let offSetX = 0;
+        let offSetY = this.canvas.height;
         var pos = this.getMousePosition(event);
         return {
             x: (pos.x - offSetX),
-            y: (pos.y - offSetY)
+            y: -(pos.y - offSetY)
         };
     }
 
@@ -1514,7 +1507,8 @@ class Paint {
                         if (this.curValPointLoad.value === "On") {
                             if (valueLoad === undefined) {
                                 this.addCommand('Fx, Fy', selectedObj.x + 10, selectedObj.y - 10);
-                                inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
+                                // inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
+                                inputValue(selectedObj.x, selectedObj.y, selectedObj);
                             }
                         }
                         if (this.curValMoment.value === "On") {
@@ -1534,7 +1528,8 @@ class Paint {
                             let yM2 = (selectedObj.Point[0].y + yM1) - yBox;
                             if (this.curValPressLoad.value === "On") {
                                 this.addCommand('F = ...', xM2 + 10, yM2 - 10);
-                                inputForce(xM2, yM2, selectedObj, "normal_pressure");
+                                // inputForce(xM2, yM2, selectedObj, "normal_pressure");
+                                inputValue(xM2, yM2, selectedObj);
                             }
                             // else if (this.curValAxialForce.value === "On") {
                             //     inputForce(xM2, yM2, selectedObj, "axial_pressure");
@@ -2728,6 +2723,33 @@ class Paint {
         // console.log(newEvent)
         this.canvas.dispatchEvent(newEvent);
     }
+
+    //--------------------------------------------------------------------//
+    //tab-comments
+    toggleTab() {
+        if (this.tabStatus.value === "On") {
+            this.tabStatus.value = "Off"
+            this.hiddenButton("tab-comments");
+        }
+        else {
+            this.tabStatus.value = "On"
+            this.visibleButton("tab-comments");
+
+            //difference comments suitable for feature
+            // document.getElementById("tab-comments").innerHTML = (`
+            //         <p id="comments">Text area</p>
+            //         `);
+        }
+    }
+
+    getValueInTextBox() {
+        if (event.keyCode === "13") {
+            let value = document.getElementById("textBox").value;
+            console.log(value);
+        }
+
+    }
+
 };
 
 //get height of tool_top
