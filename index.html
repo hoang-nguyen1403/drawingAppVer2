@@ -110,11 +110,12 @@
 		</div>
 
 		<div class="tab">
-			<button id="tab-icon" onclick="PaintIn.toggleTab()" value="On"></button>
-		</div>
+			<button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button>
 
-		<div id="tab-comments">
-
+			<div id="tab-comments">
+				<p id="lableTab">Text comments</p>
+				<input type="text" id="textBox" value="" onkeydown="PaintIn.getValueInTextBox()">
+			</div>
 		</div>
 
 	</div>
@@ -143,7 +144,6 @@
 	<script src="frontend/JS/Mesh.js"></script>
 	<script src="frontend/JS/painting.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
-
 
 </body>
 
