@@ -1020,6 +1020,62 @@ class processingData {
         PaintIn.renderObject(processingData.allObject);
     }
 
+    //input by area comments
+    inputComments() {
+        let typeValue = JSON.stringify(PaintIn.valueComment.value.slice(PaintIn.valueComment.value.indexOf(',') + 1, PaintIn.valueComment.value.indexOf(',') + 2));
+        let objName = JSON.stringify(PaintIn.valueComment.value.slice(0, PaintIn.valueComment.value.indexOf(',')));
+        const indexComma = [];
+        for (let i = 0; i < PaintIn.valueComment.value.length; i++) {
+            if ((PaintIn.valueComment.value)[i] === ',') {
+                indexComma.push(i);
+            }
+        }
+
+        for (let obj of processingData.allObject) {
+            if (JSON.stringify(obj.name) === objName) {
+                if (obj.className === "Point") {
+                    // first check
+                    if (obj.pointLoads === null) {
+                        obj.pointLoads = [];
+                    }
+
+                    if (typeValue === JSON.stringify('f')) {
+                        let force_x;
+                        let force_y;
+
+                        force_x = Number((PaintIn.valueComment.value).slice(indexComma[1] + 1, indexComma[2]));
+                        force_y = Number((PaintIn.valueComment.value).slice(indexComma[2] + 1, PaintIn.valueComment.value.length));
+
+                        let forceObj = { "type": "force", "parameters": { "force_x": force_x, "force_y": force_y } };
+                        obj.pointLoads.push(forceObj);
+                    }
+                    else if (typeValue === JSON.stringify('m')) {
+                        let moment = Number((PaintIn.valueComment.value).slice(indexComma[1] + 1, PaintIn.valueComment.value.length));
+                        let momentObj = { "type": "moment", "parameters": { "value": moment } };
+                        obj.pointLoads.push(momentObj);
+                    }
+                }
+                else if (obj.className === "Line") {
+                    //first check
+                    if (obj.lineLoads === null) {
+                        obj.lineLoads = [];
+                    }
+                    //
+                    if (typeValue === JSON.stringify('f')) {
+                        let node_0;
+                        let node_1;
+
+                        node_0 = Number((PaintIn.valueComment.value).slice(indexComma[1] + 1, indexComma[2]));
+                        node_1 = Number((PaintIn.valueComment.value).slice(indexComma[2] + 1, PaintIn.valueComment.value.length));
+
+                        let pressureObj = { "type": "normal_pressure", "parameters": { "node_0": node_0, "node_1": node_1 } };
+                        obj.lineLoads.push(pressureObj);
+                    }
+                }
+            }
+        }
+        PaintIn.renderObject(processingData.allObject);
+    };
 };
 // Point class
 class Point {
@@ -1593,96 +1649,6 @@ function inputLenght(x, y) {
     });
     lengthLine.focus();
 }
-
-//-----------------------------------------------------------------------------//
-function inputValue(x, y, obj) {
-    valueLoad = new CanvasInput({
-        canvas: document.getElementById('myCanvas'),
-        x: x,
-        y: y,
-        fontSize: 13,
-        fontFamily: 'Arial',
-        fontColor: '#212121',
-        fontWeight: 'bold',
-        width: 50,
-        height: 25,
-        padding: 0,
-        borderColor: '#000',
-        borderRadius: 3,
-
-        onsubmit: function () {
-            let typeValue = this.value().slice(this.value().indexOf(',') + 1, this.value().indexOf(',') + 2);
-            const indexComma = [];
-            for (let i = 0; i < this.value().length; i++) {
-                if (this.value()[i] === ',') {
-                    indexComma.push(i);
-                }
-            }
-
-            if (typeValue === "f") {
-                if (obj.className === "Point") {
-                    //first check
-                    if (obj.pointLoads === null) {
-                        obj.pointLoads = [];
-                    }
-                    //
-                    let force_x;
-                    let force_y;
-
-                    force_x = Number((this.value()).slice(indexComma[1] + 1, indexComma[2]));
-                    force_y = Number((this.value()).slice(indexComma[2] + 1, this.value().length));
-
-                    forceObj = { "type": "force", "parameters": { "force_x": force_x, "force_y": force_y } };
-                    obj.pointLoads.push(forceObj);
-                }
-
-                else if (obj.className === "Line") {
-                    //first check
-                    if (obj.lineLoads === null) {
-                        obj.lineLoads = [];
-                    }
-                    //
-                    let node_0;
-                    let node_1;
-
-                    node_0 = Number((this.value()).slice(indexComma[1] + 1, indexComma[2]));
-                    node_1 = Number((this.value()).slice(indexComma[2] + 1, this.value().length));
-
-                    let pressureObj = { "type": "normal_pressure", "parameters": { "node_0": node_0, "node_1": node_1 } };
-                    obj.lineLoads.push(pressureObj);
-
-                    // if (type === "axial_pressure") {
-                    //     //first check
-                    //     if (obj.lineLoads === null) {
-                    //         obj.lineLoads = [];
-                    //     }
-                    //     //
-                    //     let value = Number(this.value());
-                    //     let axialPressureObj = { "type": typeValue, "parameters": { "value": value } };
-                    //     obj.lineLoads.push(axialPressureObj);
-                    // }
-                }
-            }
-            else if (typeValue === "m") {
-                //first check
-                if (obj.pointLoads === null) {
-                    obj.pointLoads = [];
-                }
-                //
-                let moment = Number((this.value()).slice(indexComma[1] + 1, this.value().length));
-                momentObj = { "type": "moment", "parameters": { "value": moment } };
-                obj.pointLoads.push(momentObj);
-            }
-
-            this.destroy();
-            valueLoad = undefined;
-            PaintIn.renderObject(processingData.allObject);
-            PaintIn.isCancled = false;
-
-        },
-    });
-    valueLoad.focus();
-};
 
 function getPoint(start, cur, l) {
     let a = cur[0] - start[0];

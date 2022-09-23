@@ -31,6 +31,7 @@ class Paint {
 
         //tab
         this.tabStatus = document.getElementById('tab-icon');
+        this.valueComment = document.getElementById("textBox");
 
         //attLine
         this.currentColor = 'black';
@@ -1507,8 +1508,8 @@ class Paint {
                         if (this.curValPointLoad.value === "On") {
                             if (valueLoad === undefined) {
                                 this.addCommand('Fx, Fy', selectedObj.x + 10, selectedObj.y - 10);
-                                // inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
-                                inputValue(selectedObj.x, selectedObj.y, selectedObj);
+                                inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
+                                // inputValue(selectedObj.x, selectedObj.y, selectedObj);
                             }
                         }
                         if (this.curValMoment.value === "On") {
@@ -1528,8 +1529,8 @@ class Paint {
                             let yM2 = (selectedObj.Point[0].y + yM1) - yBox;
                             if (this.curValPressLoad.value === "On") {
                                 this.addCommand('F = ...', xM2 + 10, yM2 - 10);
-                                // inputForce(xM2, yM2, selectedObj, "normal_pressure");
-                                inputValue(xM2, yM2, selectedObj);
+                                inputForce(xM2, yM2, selectedObj, "normal_pressure");
+                                // inputValue(xM2, yM2, selectedObj);
                             }
                             // else if (this.curValAxialForce.value === "On") {
                             //     inputForce(xM2, yM2, selectedObj, "axial_pressure");
@@ -1872,22 +1873,26 @@ class Paint {
     drawForceInPoint(Obj, x, y, color = "#063970", lineWidth = 2) {
         //alpha = input;
         //get vecto u of Line 
-        let endPointX = { x: x + 50, y: y }; //parallel Ox u = {x:1, y:0}
-        let endPointY = { x: x, y: y + 50 }; // parallel Oy u = {x:0, y:1}
+        let endPointX;
+        let endPointY;
 
         //Fx
         if (Obj.force_x > 0.000001) {
+            endPointX = { x: x + 50, y: y }; //parallel Ox u = {x:1, y:0}
             this.drawForce(x, y, endPointX.x, endPointX.y, color, lineWidth);
         }
         else if (Obj.force_x < -0.000001) {
-            this.drawForce(endPointX.x, endPointX.y, x, y, color, lineWidth);
+            endPointX = { x: x - 50, y: y }; //parallel Ox u = {x:1, y:0}
+            this.drawForce(x, y, endPointX.x, endPointX.y, color, lineWidth);
         }
         //Fy
         if (Obj.force_y > 0.000001) {
+            endPointY = { x: x, y: y - 50 }; // parallel Oy u = {x:0, y:-1}
             this.drawForce(x, y, endPointY.x, endPointY.y, color, lineWidth);
         }
         else if (Obj.force_y < -0.000001) {
-            this.drawForce(endPointY.x, endPointY.y, x, y, color, lineWidth);
+            endPointY = { x: x, y: y + 50 }; // parallel Oy u = {x:0, y:1}
+            this.drawForce(x, y, endPointY.x, endPointY.y, color, lineWidth);
         }
     }
 
@@ -2734,22 +2739,14 @@ class Paint {
         else {
             this.tabStatus.value = "On"
             this.visibleButton("tab-comments");
-
-            //difference comments suitable for feature
-            // document.getElementById("tab-comments").innerHTML = (`
-            //         <p id="comments">Text area</p>
-            //         `);
         }
     }
 
     getValueInTextBox() {
-        if (event.keyCode === "13") {
-            let value = document.getElementById("textBox").value;
-            console.log(value);
+        if (window.event.keyCode == 13) {
+            processingData.prototype.inputComments();
         }
-
     }
-
 };
 
 //get height of tool_top
