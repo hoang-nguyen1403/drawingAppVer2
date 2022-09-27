@@ -254,6 +254,7 @@ class Paint {
                 // add node to arrGrid
                 this.addNode();
             };
+            
         }
         //ESC
         if (event.keyCode === 27) {

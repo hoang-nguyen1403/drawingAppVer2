@@ -26,6 +26,7 @@ class processingData {
         return sameObj // neu co phan tu tuong tu thi chi lay 1 phan tu
 
     };
+
     //----Create Object
     //Point
     createPoint(arrPointX, arrPointY, nameList, pointLoadsList) { //tao point tu list toa do X va Y
@@ -58,6 +59,7 @@ class processingData {
     }
 
     inputRawData(Type, Arr1, Arr2, listPointName, listLineName, colorList, widthList, arrForcePoint, arrForceLine) {
+        //Arr1: arrPointX, Arr2: arrPointY
         if (listPointName === undefined) {
             listPointName = Array(Arr1.length).fill(undefined);
         }
@@ -178,8 +180,9 @@ class processingData {
                 } else {
                     var IntersPoint = this.intersectionCheck(Line_List_copy[i], Line_List_copy[ii]);
                     if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
+
                         arrIntersPoint.push(IntersPoint.Coord);
-                        console.log("IntersPoint");
+                        // console.log("IntersPoint");
                     }
                 }
             }
@@ -315,7 +318,7 @@ class processingData {
                 if (JSON.stringify(arrPointFlow.at(-1)) ===
                     JSON.stringify(arrLineFlow[0].Point[0].point)) {
                     //get resutl
-                    console.log("getResult")
+                    // console.log("getResult")
                     AreaResult.push(arrLineFlow);
                     PointFlowResult.push(arrPointFlow);
                     //delete 
@@ -326,6 +329,30 @@ class processingData {
                 }
             }
         }
+
+        //
+        if (processingData.newObjects.length === 0) {
+            processingData.oldObjects = [];
+            processingData.newObjects = [...processingData.allObject];
+        }
+        else {
+            for (let obj1 of processingData.allObject) {
+                for (let obj2 of processingData.newObjects) {
+                    if (JSON.stringify(obj1) === JSON.stringify(obj2)) {
+                        processingData.oldObjects.push(obj1);
+                    }
+                }
+            }
+            processingData.newObjects = [...processingData.allObject];
+            for (let i = 0; i < processingData.oldObjects.length; i++) {
+                for (let ii = 0; ii < processingData.newObjects.length; ii++) {
+                    if (JSON.stringify(processingData.oldObjects[i]) === JSON.stringify(processingData.newObjects[ii])) {
+                        processingData.newObjects.splice(ii, 1);
+                    }
+                }
+            }
+        }
+
         //create area object       
         for (let i = 0; i <= AreaResult.length - 1; i++) {
             let areaObj = new Area(AreaResult[i], undefined);
@@ -336,6 +363,7 @@ class processingData {
         PaintIn.renderObject(processingData.allObject);
         return AreaResult
     }
+
     setObjName(obj) {
     }
 
@@ -490,8 +518,9 @@ class processingData {
             }
         }
         for (let point of processingData.allPoint) {
-            processingData.allObject.push(point)
+            processingData.allObject.push(point);
         }
+
         //sort [Area, Line, Point]
         processingData.allObject.sort((a, b) => {
             let a_ = 0;
@@ -1298,6 +1327,8 @@ processingData.allLine = [];
 processingData.allPoint = [];
 processingData.allArea = [];
 processingData.allAreaCenter = [];
+processingData.newObjects = [];
+processingData.oldObjects = [];
 //----------------------------//
 
 function getNearest(listPoints, currentPoint) {
