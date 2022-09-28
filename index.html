@@ -84,6 +84,7 @@
 
 				<!-- request -->
 				<button id="openFile_Solu" onclick="PaintIn.getAPI()"></button>
+				<button id="logFile" type="button" onclick="PaintIn.saveLogFile()">LogFile</button>
 
 				<label id="ChangeMode">
 					<button id="modeDrawing" type="button" onclick="PaintIn.changeMode()" value="On"></button>
@@ -115,6 +116,8 @@
 			<div id="tab-comments">
 				<p id="lableTab">Text comments</p>
 				<input type="text" id="textBox" value="" onkeydown="PaintIn.getValueInTextBox()">
+				<div id="valueInputed">
+				</div>
 			</div>
 		</div>
 
@@ -138,6 +141,7 @@
 	<script src="frontend/JS/CanvasInput.js"></script>
 	<script src="frontend/JS/fileSaver/src/FileSaver.js"></script>
 	<script src="frontend/JS/colormapfix.js"></script>
+	<!-- <script src="frontend/JS/fs.js"></script> -->
 
 	<script src="frontend/JS/lightButton.js"></script>
 	<script src="frontend/JS/processingData.js"></script>
