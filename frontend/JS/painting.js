@@ -394,7 +394,7 @@ class Paint {
             dataLogFile.push(this.valueComment.value);
             // dataLogFile.push();
             this.valueComment.value = "";
-            for(let i in dataLogFile){
+            for (let i in dataLogFile) {
                 document.getElementById("valueInputed").innerHTML = (`
                 <p> ${dataLogFile[i]} <br></p>
                 `);
@@ -947,28 +947,53 @@ class Paint {
     }
 
     getAPI() {
-        // request
         let listData = processingData.prototype.saveObj();
-        console.log(listData); // data type: dictionary
-        let params = { "rhs": [listData], "nargout": 1, "outputFormat": { "mode": "small", "nanType": "object" } };
-
         let promise = axios({
             method: "POST",
-            url: 'http://localhost:9910/BondTools/functionFile',
-            data: params,
+            url: 'https://vyfirstapp.herokuapp.com/v1/article/',
+            data: listData,
         });
 
+        // var promise = axios({
+        //     url: 'http://localhost:8000/v1/article',
+        //     method: "GET",
+        // });
+
         promise.then((result) => {
-            // console.log(result.data);
-            let receiveData = result.data['lhs'][0]; //MATLAB response body is {"lhs":[receiveData]}
-            console.log(receiveData);
-            Mesh.prototype.openFileSoln(receiveData); //draw Messh
+            console.log(result.data);
+            Mesh.prototype.openFileSoln(result.data);
         });
 
         promise.catch(function (err) {
             console.log("err", err);
         });
     }
+
+
+    // getAPI() {
+    //     // request
+    //     let listData = processingData.prototype.saveObj();
+    //     console.log(listData); // data type: dictionary
+    //     let params = { "rhs": [listData], "nargout": 1, "outputFormat": { "mode": "small", "nanType": "object" } };
+
+    //     let promise = axios({
+    //         method: "POST",
+    //         // url: 'http://localhost:9910/BondTools/functionFile',
+    //         data: params,
+    //     });
+
+    //     promise.then((result) => {
+    //         // console.log(result.data);
+    //         let receiveData = result.data['lhs'][0]; //MATLAB response body is {"lhs":[receiveData]}
+    //         console.log(receiveData);
+    //         Mesh.prototype.openFileSoln(receiveData); //draw Messh
+    //     });
+
+    //     promise.catch(function (err) {
+    //         console.log("err", err);
+    //     });
+    // }
+
 
     getMousePosition(event) {
         let rect = this.canvas.getBoundingClientRect();
