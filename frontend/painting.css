@@ -516,3 +516,12 @@ button {
     text-align: center;
     justify-content: center;
 }
+
+#valueInputed>div {
+    width: 100%;
+    height: 100%;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}

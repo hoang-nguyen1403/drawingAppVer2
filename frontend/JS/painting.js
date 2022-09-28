@@ -1,3 +1,4 @@
+
 class Paint {
     constructor() {
         this.canvas = document.getElementById("myCanvas");
@@ -254,7 +255,7 @@ class Paint {
                 // add node to arrGrid
                 this.addNode();
             };
-            
+
         }
         //ESC
         if (event.keyCode === 27) {
@@ -390,7 +391,14 @@ class Paint {
         }
         //ENTER
         if (event.keyCode === 13) {
-            // this.renderObject(processingData.allObject);
+            dataLogFile.push(this.valueComment.value);
+            // dataLogFile.push();
+            this.valueComment.value = "";
+            for(let i in dataLogFile){
+                document.getElementById("valueInputed").innerHTML = (`
+                <p> ${dataLogFile[i]} <br></p>
+                `);
+            }
         }
 
         //F2 input length Line
@@ -2748,6 +2756,12 @@ class Paint {
             processingData.prototype.inputComments();
         }
     }
+
+    saveLogFile() {
+        let blob = new Blob([dataLogFile],
+            { type: "text/plain;charset=utf-8" });
+        saveAs(blob, "logFile.txt");
+    }
 };
 
 //get height of tool_top
@@ -2768,4 +2782,5 @@ function getPosElement(idElem) {
 
 const PaintIn = new Paint();
 PaintIn.curValDrawing.value = "On";
+var dataLogFile = [];
 
