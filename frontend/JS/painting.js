@@ -249,16 +249,17 @@ class Paint {
             this.arrMultiCurObj = [];
             //
             this.isCancled = false;
+            processingData.prototype.separateData();
             if (this.pen === 'line') {
                 this.undo();
                 processingData.prototype.areaDetect(processingData.allLine);
                 // add node to arrGrid
                 this.addNode();
             };
-
         }
         //ESC
         if (event.keyCode === 27) {
+            processingData.prototype.separateData();
             if (this.pen === "line") {
                 processingData.prototype.areaDetect(processingData.allLine);
             }

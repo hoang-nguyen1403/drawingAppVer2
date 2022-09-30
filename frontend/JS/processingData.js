@@ -152,7 +152,7 @@ class processingData {
     areaDetect(Line_List) {
         // PaintIn.onOffButton(PaintIn.currentValueDetectArea, "areaDetect");
         this.isCancled = false;
-        let Line_List_copy = [...Line_List];
+        let allLine = [...Line_List];
         processingData.allLine = [];
         processingData.allArea = [];
 
@@ -166,7 +166,13 @@ class processingData {
         let arrEndLineWidth = [];
         let arrEndLinePointForce = [];
         let arrEndLineForce = [];
-        for (let i = 0; i <= Line_List_copy.length - 1; i++) {
+        let arrallLine = [];
+        for (let line of processingData.newObjects) {
+            if (line.className === "Line") {
+                arrallLine.push(line);
+            }
+        }
+        for (let i = 0; i <= allLine.length - 1; i++) {
             let arrIntersPoint = [];
             let arrSubLineX = [];
             let arrSubLineY = [];
@@ -174,26 +180,28 @@ class processingData {
             let EndLine1Y = [];
             let EndLine2X = [];
             let EndLine2Y = [];
-            for (let ii = 0; ii <= Line_List_copy.length - 1; ii++) {
+            for (let ii = 0; ii <= arrallLine.length - 1; ii++) {
                 if (ii === i) {
                     continue;
                 } else {
-                    var IntersPoint = this.intersectionCheck(Line_List_copy[i], Line_List_copy[ii]);
+                    // var IntersPoint = this.intersectionCheck(allLine[i], allLine[ii]);
+                    var IntersPoint = this.intersectionCheck(allLine[i], arrallLine[ii]);
                     if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
 
                         arrIntersPoint.push(IntersPoint.Coord);
-                        // console.log("IntersPoint");
+                        console.log("IntersPoint");
                     }
                 }
             }
+
             //when dont have IntersPoint
             if (arrIntersPoint.length === 0) {
-                processingData.allLine.push(Line_List_copy[i])
+                processingData.allLine.push(allLine[i])
                 continue;
             }
             //sort by distance from endpoint
-            let endPoint1 = Line_List_copy[i].Point[0].point;
-            let endPoint2 = Line_List_copy[i].Point[1].point;
+            let endPoint1 = allLine[i].Point[0].point;
+            let endPoint2 = allLine[i].Point[1].point;
             arrIntersPoint.sort(function (value1, value2) {
                 var distance1 = math.norm(math.subtract(value1, endPoint1));
                 var distance2 = math.norm(math.subtract(value2, endPoint1));
@@ -205,12 +213,12 @@ class processingData {
                 EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
                 arrEndLineX.push(EndLine1X);
                 arrEndLineY.push(EndLine1Y);
-                arrEndLineName.push([Line_List_copy[i].name]);
-                arrEndLinePointName.push([Line_List_copy[i].Point[0].name, undefined]);
-                arrEndLineColor.push([Line_List_copy[i].color]);
-                arrEndLineWidth.push([Line_List_copy[i].width]);
-                arrEndLinePointForce.push([Line_List_copy[i].Point[0].pointLoads, undefined]);
-                arrEndLineForce.push([Line_List_copy[i].lineLoads])
+                arrEndLineName.push([allLine[i].name]);
+                arrEndLinePointName.push([allLine[i].Point[0].name, undefined]);
+                arrEndLineColor.push([allLine[i].color]);
+                arrEndLineWidth.push([allLine[i].width]);
+                arrEndLinePointForce.push([allLine[i].Point[0].pointLoads, undefined]);
+                arrEndLineForce.push([allLine[i].lineLoads])
 
             }
             if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
@@ -218,12 +226,12 @@ class processingData {
                 EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
                 arrEndLineX.push(EndLine2X);
                 arrEndLineY.push(EndLine2Y);
-                arrEndLineName.push([Line_List_copy[i].name]);
-                arrEndLinePointName.push([undefined, Line_List_copy[i].Point[1].name]);
-                arrEndLineColor.push([Line_List_copy[i].color]);
-                arrEndLineWidth.push([Line_List_copy[i].width]);
-                arrEndLinePointForce.push([undefined, Line_List_copy[i].Point[0].pointLoads]);
-                arrEndLineForce.push([Line_List_copy[i].lineLoads])
+                arrEndLineName.push([allLine[i].name]);
+                arrEndLinePointName.push([undefined, allLine[i].Point[1].name]);
+                arrEndLineColor.push([allLine[i].color]);
+                arrEndLineWidth.push([allLine[i].width]);
+                arrEndLinePointForce.push([undefined, allLine[i].Point[0].pointLoads]);
+                arrEndLineForce.push([allLine[i].lineLoads])
             }
             //
             if (arrIntersPoint.length >= 2) {
@@ -235,8 +243,8 @@ class processingData {
                     //
                 }
                 processingData.prototype.inputRawData("line", arrSubLineX, arrSubLineY, undefined,
-                    Array(arrSubLineX.length).fill(Line_List_copy[i].name), Array(arrSubLineX.length).fill(Line_List_copy[i].color),
-                    Array(arrSubLineX.length).fill(Line_List_copy[i].width), undefined, Array(arrSubLineX.length).fill(Line_List_copy[i].lineLoads));
+                    Array(arrSubLineX.length).fill(allLine[i].name), Array(arrSubLineX.length).fill(allLine[i].color),
+                    Array(arrSubLineX.length).fill(allLine[i].width), undefined, Array(arrSubLineX.length).fill(allLine[i].lineLoads));
             }
 
         }
@@ -330,36 +338,12 @@ class processingData {
             }
         }
 
-        //
-        if (processingData.newObjects.length === 0) {
-            processingData.oldObjects = [];
-            processingData.newObjects = [...processingData.allObject];
-        }
-        else {
-            for (let obj1 of processingData.allObject) {
-                for (let obj2 of processingData.newObjects) {
-                    if (JSON.stringify(obj1) === JSON.stringify(obj2)) {
-                        processingData.oldObjects.push(obj1);
-                    }
-                }
-            }
-            processingData.newObjects = [...processingData.allObject];
-            for (let i = 0; i < processingData.oldObjects.length; i++) {
-                for (let ii = 0; ii < processingData.newObjects.length; ii++) {
-                    if (JSON.stringify(processingData.oldObjects[i]) === JSON.stringify(processingData.newObjects[ii])) {
-                        processingData.newObjects.splice(ii, 1);
-                    }
-                }
-            }
-        }
-
         //create area object       
         for (let i = 0; i <= AreaResult.length - 1; i++) {
             let areaObj = new Area(AreaResult[i], undefined);
             processingData.prototype.addObject(areaObj, processingData.allArea);
         }
-        //
-        this.updateStorage()
+        this.updateStorage();
         PaintIn.renderObject(processingData.allObject);
         return AreaResult
     }
@@ -550,6 +534,32 @@ class processingData {
             return b_ - a_
         })
     }
+
+    separateData() {
+        this.updateStorage();
+        //seperate data
+        if (processingData.newObjects.length === 0) {
+            processingData.newObjects = [...processingData.allObject];
+        }
+        else {
+            for (let obj1 of processingData.allObject) {
+                for (let obj2 of processingData.newObjects) {
+                    if (JSON.stringify(obj1) === JSON.stringify(obj2)) {
+                        processingData.oldObjects.push(obj1);
+                    }
+                }
+            }
+            processingData.newObjects = [...processingData.allObject];
+            for (let i = 0; i < processingData.oldObjects.length; i++) {
+                for (let ii = 0; ii < processingData.newObjects.length; ii++) {
+                    if (JSON.stringify(processingData.oldObjects[i]) === JSON.stringify(processingData.newObjects[ii])) {
+                        processingData.newObjects.splice(ii, 1);
+                    }
+                }
+            }
+        }
+    }
+
     createData(inputData) {
         //delete old data
         PaintIn.clearAll();
@@ -1151,7 +1161,7 @@ class Line {
         this.lineLoads = lineLoads;
         //length
         this.length;
-        this.getLength()
+        this.getLength();
     }
     //calc length of line
     getLength() {
