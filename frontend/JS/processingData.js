@@ -693,6 +693,7 @@ class processingData {
             "surface_names": surface_names,
             "nodal_loads": nodal_loads,
             "segment_loads": segment_loads,
+            "text-data":dataLogFile,
         }
         dataSaved = JSON.stringify(jsonObject)
         return dataSaved;
