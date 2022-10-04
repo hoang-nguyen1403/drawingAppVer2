@@ -1,1 +1,0 @@
-globalThis.colormap = require('colormap')
