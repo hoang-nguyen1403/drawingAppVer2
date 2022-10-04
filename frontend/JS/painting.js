@@ -252,8 +252,8 @@ class Paint {
             processingData.prototype.separateData();
             if (this.pen === 'line') {
                 this.undo();
-                // processingData.prototype.areaDetect(processingData.allLine);
-                processingData.prototype.areaDetect(processingData.oldObjects);
+                processingData.prototype.areaDetect(processingData.allLine);
+                // processingData.prototype.areaDetect(processingData.oldObjects);
                 // add node to arrGrid
                 this.addNode();
             };
@@ -262,8 +262,8 @@ class Paint {
         if (event.keyCode === 27) {
             processingData.prototype.separateData();
             if (this.pen === "line") {
-                // processingData.prototype.areaDetect(processingData.allLine);
-                processingData.prototype.areaDetect(processingData.oldObjects);
+                processingData.prototype.areaDetect(processingData.allLine);
+                // processingData.prototype.areaDetect(processingData.oldObjects);
             }
             this.isCancled = false;
             this.pen = 'select';

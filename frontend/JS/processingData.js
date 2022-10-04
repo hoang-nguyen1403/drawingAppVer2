@@ -149,202 +149,10 @@ class processingData {
         }
     }
 
-    // areaDetect(Line_List) {
-    //     // PaintIn.onOffButton(PaintIn.currentValueDetectArea, "areaDetect");
-    //     this.isCancled = false;
-    //     let Line_List_copy = [...Line_List];
-    //     processingData.allLine = [];
-    //     processingData.allArea = [];
-
-    //     let AreaResult = [];
-    //     let PointFlowResult = [];
-    //     let arrEndLineX = [];
-    //     let arrEndLineY = [];
-    //     let arrEndLineName = [];
-    //     let arrEndLinePointName = [];
-    //     let arrEndLineColor = [];
-    //     let arrEndLineWidth = [];
-    //     let arrEndLinePointForce = [];
-    //     let arrEndLineForce = [];
-    //     for (let i = 0; i <= Line_List_copy.length - 1; i++) {
-    //         let arrIntersPoint = [];
-    //         let arrSubLineX = [];
-    //         let arrSubLineY = [];
-    //         let EndLine1X = [];
-    //         let EndLine1Y = [];
-    //         let EndLine2X = [];
-    //         let EndLine2Y = [];
-    //         for (let ii = 0; ii <= Line_List_copy.length - 1; ii++) {
-    //             if (ii === i) {
-    //                 continue;
-    //             } else {
-    //                 var IntersPoint = this.intersectionCheck(Line_List_copy[i], Line_List_copy[ii]);
-    //                 if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
-    //                     arrIntersPoint.push(IntersPoint.Coord);
-    //                     console.log("IntersPoint");
-    //                 }
-    //             }
-    //         }
-    //         //when dont have IntersPoint
-    //         if (arrIntersPoint.length === 0) {
-    //             processingData.allLine.push(Line_List_copy[i])
-    //             continue;
-    //         }
-    //         //sort by distance from endpoint
-    //         let endPoint1 = Line_List_copy[i].Point[0].point;
-    //         let endPoint2 = Line_List_copy[i].Point[1].point;
-    //         arrIntersPoint.sort(function (value1, value2) {
-    //             var distance1 = math.norm(math.subtract(value1, endPoint1));
-    //             var distance2 = math.norm(math.subtract(value2, endPoint1));
-    //             return distance1 - distance2
-    //         })
-    //         //keep end line
-    //         if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
-    //             EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
-    //             EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
-    //             arrEndLineX.push(EndLine1X);
-    //             arrEndLineY.push(EndLine1Y);
-    //             arrEndLineName.push([Line_List_copy[i].name]);
-    //             arrEndLinePointName.push([Line_List_copy[i].Point[0].name, undefined]);
-    //             arrEndLineColor.push([Line_List_copy[i].color]);
-    //             arrEndLineWidth.push([Line_List_copy[i].width]);
-    //             arrEndLinePointForce.push([Line_List_copy[i].Point[0].pointLoads, undefined]);
-    //             arrEndLineForce.push([Line_List_copy[i].lineLoads])
-
-    //         }
-    //         if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
-    //             EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
-    //             EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
-    //             arrEndLineX.push(EndLine2X);
-    //             arrEndLineY.push(EndLine2Y);
-    //             arrEndLineName.push([Line_List_copy[i].name]);
-    //             arrEndLinePointName.push([undefined, Line_List_copy[i].Point[1].name]);
-    //             arrEndLineColor.push([Line_List_copy[i].color]);
-    //             arrEndLineWidth.push([Line_List_copy[i].width]);
-    //             arrEndLinePointForce.push([undefined, Line_List_copy[i].Point[0].pointLoads]);
-    //             arrEndLineForce.push([Line_List_copy[i].lineLoads])
-    //         }
-    //         //
-    //         if (arrIntersPoint.length >= 2) {
-    //             //create line bw inters point
-    //             for (let index = 0; index <= arrIntersPoint.length - 1; index++) {
-    //                 //
-    //                 arrSubLineX.push(arrIntersPoint[index][0]);
-    //                 arrSubLineY.push(arrIntersPoint[index][1]);
-    //                 //
-    //             }
-    //             processingData.prototype.inputRawData("line", arrSubLineX, arrSubLineY, undefined,
-    //                 Array(arrSubLineX.length).fill(Line_List_copy[i].name), Array(arrSubLineX.length).fill(Line_List_copy[i].color),
-    //                 Array(arrSubLineX.length).fill(Line_List_copy[i].width), undefined, Array(arrSubLineX.length).fill(Line_List_copy[i].lineLoads));
-    //         }
-
-    //     }
-    //     //-----------------//
-    //     let segmentLine = [...processingData.allLine];
-    //     // save end line
-    //     for (let i = 0; i <= arrEndLineX.length - 1; i++) {
-    //         processingData.prototype.inputRawData("line", arrEndLineX[i], arrEndLineY[i], arrEndLinePointName[i],
-    //             arrEndLineName[i], arrEndLineColor[i], arrEndLineWidth[i], arrEndLinePointForce[i], arrEndLineForce[i]);
-    //     }
-    //     let exceptIndex = [];
-    //     for (let index1 = 0; index1 <= segmentLine.length - 1; index1++) {
-    //         if (exceptIndex.indexOf(index1) !== -1) {
-    //             continue;
-    //         }
-    //         let arrLineFlow = [];
-    //         let arrPointFlow = [];
-    //         arrLineFlow.push(segmentLine[index1]);
-    //         arrPointFlow.push(segmentLine[index1].Point[0].point);
-    //         arrPointFlow.push(segmentLine[index1].Point[1].point);
-    //         let orientation = "";
-    //         while (true) {
-    //             let arrNextLine = [];
-    //             let arrNextPoint = [];
-    //             let point1OfLine1 = arrLineFlow.at(-1).Point[0].point;
-    //             let point2OfLine1 = arrLineFlow.at(-1).Point[1].point;
-    //             for (let index2 = 0; index2 <= segmentLine.length - 1; index2++) {
-    //                 if (index2 === index1) continue;
-    //                 let point1OfNext = segmentLine[index2].Point[0].point;
-    //                 let point2OfNext = segmentLine[index2].Point[1].point;
-
-    //                 if (JSON.stringify(point2OfLine1) === JSON.stringify(point1OfNext) &&
-    //                     JSON.stringify(point1OfLine1) !== JSON.stringify(point2OfNext)) {
-    //                     arrNextPoint.push(point2OfNext);
-    //                     arrNextLine.push(segmentLine[index2]);
-    //                 } else if (JSON.stringify(point2OfLine1) === JSON.stringify(point2OfNext) &&
-    //                     JSON.stringify(point1OfLine1) !== JSON.stringify(point1OfNext)) {
-    //                     //swap
-    //                     let swap = segmentLine[index2].Point[0];
-    //                     segmentLine[index2].Point[0] = segmentLine[index2].Point[1];
-    //                     segmentLine[index2].Point[1] = swap;
-
-    //                     arrNextLine.push(segmentLine[index2]);
-    //                     arrNextPoint.push(segmentLine[index2].Point[1].point);
-    //                 }
-    //             }
-    //             if (arrNextLine.length === 0) break;
-    //             arrNextLine.sort(function (a, b) {
-    //                 let pointa = a.Point[1].point
-    //                 let pointb = b.Point[1].point
-
-    //                 let OA = math.subtract(point1OfLine1, point2OfLine1);
-    //                 let OB = math.subtract(pointa, point2OfLine1);
-    //                 let OC = math.subtract(pointb, point2OfLine1);
-
-    //                 let degree1 = math.atan2(OA[1], OA[0]) - math.atan2(OB[1], OB[0]);
-    //                 let degree2 = math.atan2(OA[1], OA[0]) - math.atan2(OC[1], OC[0]);
-
-    //                 if (degree1 < 0) degree1 += 2 * math.PI;
-    //                 if (degree2 < 0) degree2 += 2 * math.PI;
-    //                 return degree2 - degree1
-    //             });
-
-    //             let AO = math.subtract(point2OfLine1, point1OfLine1);
-    //             let OB = math.subtract(arrNextLine[0].Point[1].point, point2OfLine1);
-    //             if (arrLineFlow.length === 1) {
-    //                 //set orientation
-    //                 if (math.round(math.cross([AO[0], AO[1], 0], [OB[0], OB[1], 0])[2], 3) >= 0) {
-    //                     orientation = "CW";
-    //                 } else orientation = "CCW"
-    //             }
-    //             if (orientation === "CW") {
-    //                 arrLineFlow.push(arrNextLine.at(-1));
-    //                 arrPointFlow.push(arrNextLine.at(-1).Point[1].point);
-    //             } else if (orientation === "CCW") {
-    //                 arrLineFlow.push(arrNextLine[0]);
-    //                 arrPointFlow.push(arrNextLine[0].Point[1].point);
-    //             }
-    //             if (JSON.stringify(arrPointFlow.at(-1)) ===
-    //                 JSON.stringify(arrLineFlow[0].Point[0].point)) {
-    //                 //get resutl
-    //                 console.log("getResult")
-    //                 AreaResult.push(arrLineFlow);
-    //                 PointFlowResult.push(arrPointFlow);
-    //                 //delete 
-    //                 for (let line of arrLineFlow) {
-    //                     exceptIndex.push(segmentLine.indexOf(line));
-    //                 }
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     console.log(processingData.allLine)
-    //     //create area object       
-    //     for (let i = 0; i <= AreaResult.length - 1; i++) {
-    //         let areaObj = new Area(AreaResult[i], undefined, PointFlowResult[i]);
-    //         processingData.prototype.addObject(areaObj, processingData.allArea);
-    //     }
-    //     //
-    //     this.updateStorage()
-    //     PaintIn.renderObject(processingData.allObject);
-    //     return AreaResult
-    // }
-
     areaDetect(Line_List) {
         // PaintIn.onOffButton(PaintIn.currentValueDetectArea, "areaDetect");
         this.isCancled = false;
-        let allLine = [...Line_List]; //contain old line
-        let totalLine = [...Line_List]; //all Line
+        let Line_List_copy = [...Line_List];
         processingData.allLine = [];
         processingData.allArea = [];
 
@@ -358,251 +166,443 @@ class processingData {
         let arrEndLineWidth = [];
         let arrEndLinePointForce = [];
         let arrEndLineForce = [];
-        let arrNewLine = [];
-        let lineSeparated = []; //line have intersection
-        let rawLine = []; //line not have intersection
-        let arrIntersPoint = [];
-        let newLines = [];
-
-        for (let line of processingData.newObjects) {
-            if (line.className === "Line") {
-                arrNewLine.push(line);
-                totalLine.push(line);
-            }
-        }
-        for (let i = 0; i <= arrNewLine.length - 1; i++) {
-            for (let ii = 0; ii <= allLine.length - 1; ii++) {
+        for (let i = 0; i <= Line_List_copy.length - 1; i++) {
+            let arrIntersPoint = [];
+            let arrSubLineX = [];
+            let arrSubLineY = [];
+            let EndLine1X = [];
+            let EndLine1Y = [];
+            let EndLine2X = [];
+            let EndLine2Y = [];
+            for (let ii = 0; ii <= Line_List_copy.length - 1; ii++) {
                 if (ii === i) {
                     continue;
                 } else {
-                    let IntersPoint = this.intersectionCheck(arrNewLine[i], allLine[ii]);
+                    var IntersPoint = this.intersectionCheck(Line_List_copy[i], Line_List_copy[ii]);
                     if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
                         arrIntersPoint.push(IntersPoint.Coord);
-                        lineSeparated.push(arrNewLine[i], allLine[ii]);
-                        // console.log("IntersPoint");
-                    }
-                    else {
-                        processingData.prototype.addObject(allLine[ii], rawLine);
+                        console.log("IntersPoint");
                     }
                 }
             }
-            for (let ii = 0; ii <= arrNewLine.length - 1; ii++) {
-                if (ii === i) {
-                    continue;
-                } else {
-                    let IntersPoint = this.intersectionCheck(arrNewLine[i], arrNewLine[ii]);
-                    if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
-                        arrIntersPoint.push(IntersPoint.Coord);
-                        lineSeparated.push(arrNewLine[i], arrNewLine[ii]);
-                        // console.log("IntersPoint");
+            //when dont have IntersPoint
+            if (arrIntersPoint.length === 0) {
+                processingData.allLine.push(Line_List_copy[i])
+                continue;
+            }
+            //sort by distance from endpoint
+            let endPoint1 = Line_List_copy[i].Point[0].point;
+            let endPoint2 = Line_List_copy[i].Point[1].point;
+            arrIntersPoint.sort(function (value1, value2) {
+                var distance1 = math.norm(math.subtract(value1, endPoint1));
+                var distance2 = math.norm(math.subtract(value2, endPoint1));
+                return distance1 - distance2
+            })
+            //keep end line
+            if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
+                EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
+                EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
+                arrEndLineX.push(EndLine1X);
+                arrEndLineY.push(EndLine1Y);
+                arrEndLineName.push([Line_List_copy[i].name]);
+                arrEndLinePointName.push([Line_List_copy[i].Point[0].name, undefined]);
+                arrEndLineColor.push([Line_List_copy[i].color]);
+                arrEndLineWidth.push([Line_List_copy[i].width]);
+                arrEndLinePointForce.push([Line_List_copy[i].Point[0].pointLoads, undefined]);
+                arrEndLineForce.push([Line_List_copy[i].lineLoads])
+
+            }
+            if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
+                EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
+                EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
+                arrEndLineX.push(EndLine2X);
+                arrEndLineY.push(EndLine2Y);
+                arrEndLineName.push([Line_List_copy[i].name]);
+                arrEndLinePointName.push([undefined, Line_List_copy[i].Point[1].name]);
+                arrEndLineColor.push([Line_List_copy[i].color]);
+                arrEndLineWidth.push([Line_List_copy[i].width]);
+                arrEndLinePointForce.push([undefined, Line_List_copy[i].Point[0].pointLoads]);
+                arrEndLineForce.push([Line_List_copy[i].lineLoads])
+            }
+            //
+            if (arrIntersPoint.length >= 2) {
+                //create line bw inters point
+                for (let index = 0; index <= arrIntersPoint.length - 1; index++) {
+                    //
+                    arrSubLineX.push(arrIntersPoint[index][0]);
+                    arrSubLineY.push(arrIntersPoint[index][1]);
+                    //
+                }
+                processingData.prototype.inputRawData("line", arrSubLineX, arrSubLineY, undefined,
+                    Array(arrSubLineX.length).fill(Line_List_copy[i].name), Array(arrSubLineX.length).fill(Line_List_copy[i].color),
+                    Array(arrSubLineX.length).fill(Line_List_copy[i].width), undefined, Array(arrSubLineX.length).fill(Line_List_copy[i].lineLoads));
+            }
+
+        }
+        //-----------------//
+        let segmentLine = [...processingData.allLine];
+        // save end line
+        for (let i = 0; i <= arrEndLineX.length - 1; i++) {
+            processingData.prototype.inputRawData("line", arrEndLineX[i], arrEndLineY[i], arrEndLinePointName[i],
+                arrEndLineName[i], arrEndLineColor[i], arrEndLineWidth[i], arrEndLinePointForce[i], arrEndLineForce[i]);
+        }
+        let exceptIndex = [];
+        for (let index1 = 0; index1 <= segmentLine.length - 1; index1++) {
+            if (exceptIndex.indexOf(index1) !== -1) {
+                continue;
+            }
+            let arrLineFlow = [];
+            let arrPointFlow = [];
+            arrLineFlow.push(segmentLine[index1]);
+            arrPointFlow.push(segmentLine[index1].Point[0].point);
+            arrPointFlow.push(segmentLine[index1].Point[1].point);
+            let orientation = "";
+            while (true) {
+                let arrNextLine = [];
+                let arrNextPoint = [];
+                let point1OfLine1 = arrLineFlow.at(-1).Point[0].point;
+                let point2OfLine1 = arrLineFlow.at(-1).Point[1].point;
+                for (let index2 = 0; index2 <= segmentLine.length - 1; index2++) {
+                    if (index2 === index1) continue;
+                    let point1OfNext = segmentLine[index2].Point[0].point;
+                    let point2OfNext = segmentLine[index2].Point[1].point;
+
+                    if (JSON.stringify(point2OfLine1) === JSON.stringify(point1OfNext) &&
+                        JSON.stringify(point1OfLine1) !== JSON.stringify(point2OfNext)) {
+                        arrNextPoint.push(point2OfNext);
+                        arrNextLine.push(segmentLine[index2]);
+                    } else if (JSON.stringify(point2OfLine1) === JSON.stringify(point2OfNext) &&
+                        JSON.stringify(point1OfLine1) !== JSON.stringify(point1OfNext)) {
+                        //swap
+                        let swap = segmentLine[index2].Point[0];
+                        segmentLine[index2].Point[0] = segmentLine[index2].Point[1];
+                        segmentLine[index2].Point[1] = swap;
+
+                        arrNextLine.push(segmentLine[index2]);
+                        arrNextPoint.push(segmentLine[index2].Point[1].point);
                     }
-                    else {
-                        processingData.prototype.addObject(arrNewLine[ii], rawLine);
+                }
+                if (arrNextLine.length === 0) break;
+                arrNextLine.sort(function (a, b) {
+                    let pointa = a.Point[1].point
+                    let pointb = b.Point[1].point
+
+                    let OA = math.subtract(point1OfLine1, point2OfLine1);
+                    let OB = math.subtract(pointa, point2OfLine1);
+                    let OC = math.subtract(pointb, point2OfLine1);
+
+                    let degree1 = math.atan2(OA[1], OA[0]) - math.atan2(OB[1], OB[0]);
+                    let degree2 = math.atan2(OA[1], OA[0]) - math.atan2(OC[1], OC[0]);
+
+                    if (degree1 < 0) degree1 += 2 * math.PI;
+                    if (degree2 < 0) degree2 += 2 * math.PI;
+                    return degree2 - degree1
+                });
+
+                let AO = math.subtract(point2OfLine1, point1OfLine1);
+                let OB = math.subtract(arrNextLine[0].Point[1].point, point2OfLine1);
+                if (arrLineFlow.length === 1) {
+                    //set orientation
+                    if (math.round(math.cross([AO[0], AO[1], 0], [OB[0], OB[1], 0])[2], 3) >= 0) {
+                        orientation = "CW";
+                    } else orientation = "CCW"
+                }
+                if (orientation === "CW") {
+                    arrLineFlow.push(arrNextLine.at(-1));
+                    arrPointFlow.push(arrNextLine.at(-1).Point[1].point);
+                } else if (orientation === "CCW") {
+                    arrLineFlow.push(arrNextLine[0]);
+                    arrPointFlow.push(arrNextLine[0].Point[1].point);
+                }
+                if (JSON.stringify(arrPointFlow.at(-1)) ===
+                    JSON.stringify(arrLineFlow[0].Point[0].point)) {
+                    //get resutl
+                    console.log("getResult")
+                    AreaResult.push(arrLineFlow);
+                    PointFlowResult.push(arrPointFlow);
+                    //delete 
+                    for (let line of arrLineFlow) {
+                        exceptIndex.push(segmentLine.indexOf(line));
                     }
+                    break;
                 }
             }
         }
-
-        let arrSubLineX = [];
-        let arrSubLineY = [];
-        let EndLine1X = [];
-        let EndLine1Y = [];
-        let EndLine2X = [];
-        let EndLine2Y = [];
-
-        //when dont have IntersPoint
-        if (arrIntersPoint.length === 0) {
-            for (let i = 0; i < arrNewLine.length; i++) {
-                totalLine.push(arrNewLine[i]);
-            }
-
-            for (let i = 0; i < allLine.length; i++) {
-                totalLine.push(allLine[i]);
-            }
+        console.log(processingData.allLine)
+        //create area object       
+        for (let i = 0; i <= AreaResult.length - 1; i++) {
+            let areaObj = new Area(AreaResult[i], undefined, PointFlowResult[i]);
+            processingData.prototype.addObject(areaObj, processingData.allArea);
         }
-        else {//have intersPoint
-            for (let i = 0; i < lineSeparated.length; i++) {
-                //sort by distance from endpoint
-                let endPoint1 = lineSeparated[i].Point[0].point;
-                let endPoint2 = lineSeparated[i].Point[1].point;
-                arrIntersPoint.sort(function (value1, value2) {
-                    var distance1 = math.norm(math.subtract(value1, endPoint1));
-                    var distance2 = math.norm(math.subtract(value2, endPoint1));
-                    return distance1 - distance2
-                })
-                //keep end line
-                if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
-                    EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
-                    EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
-                    arrEndLineX.push(EndLine1X);
-                    arrEndLineY.push(EndLine1Y);
-                    arrEndLineName.push([lineSeparated[i].name]);
-                    arrEndLinePointName.push([lineSeparated[i].Point[0].name, undefined]);
-                    arrEndLineColor.push([lineSeparated[i].color]);
-                    arrEndLineWidth.push([lineSeparated[i].width]);
-                    arrEndLinePointForce.push([lineSeparated[i].Point[0].pointLoads, undefined]);
-                    arrEndLineForce.push([lineSeparated[i].lineLoads])
-
-                }
-                if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
-                    EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
-                    EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
-                    arrEndLineX.push(EndLine2X);
-                    arrEndLineY.push(EndLine2Y);
-                    arrEndLineName.push([lineSeparated[i].name]);
-                    arrEndLinePointName.push([undefined, lineSeparated[i].Point[1].name]);
-                    arrEndLineColor.push([lineSeparated[i].color]);
-                    arrEndLineWidth.push([lineSeparated[i].width]);
-                    arrEndLinePointForce.push([undefined, lineSeparated[i].Point[0].pointLoads]);
-                    arrEndLineForce.push([lineSeparated[i].lineLoads])
-                }
-                //
-                if (arrIntersPoint.length >= 2) {
-                    //create line bw inters point
-                    for (let index = 0; index <= arrIntersPoint.length - 2; index++) {
-                        //
-                        arrSubLineX.push(arrIntersPoint[index][0]);
-                        arrSubLineY.push(arrIntersPoint[index][1]);
-                        // console.log(arrSubLineX)
-                        //
-                    }
-                    let line = processingData.prototype.createLine(arrIntersPoint, Array(arrIntersPoint.length).fill(undefined),
-                        Array(arrIntersPoint.length).fill(undefined),
-                        Array(arrIntersPoint.length).fill(undefined),
-                        Array(arrIntersPoint.length).fill(undefined));
-                    newLines.push(line);
-
-                    processingData.prototype.addObject(line, totalLine); //new line from interspoint
-
-                    // for (let obj of rawLine) {
-                    //     for (let i = 0; i < 2; i++) {
-                    //         processingData.prototype.addObject(obj.Point[i].x, arrSubLineX);
-                    //         processingData.prototype.addObject(obj.Point[i].y, arrSubLineY);
-                    //     }
-                    // }
-                    // new line from internpoint
-                    //     processingData.prototype.inputRawData("line", arrSubLineX, arrSubLineY, undefined,
-                    //         Array(arrSubLineX.length).fill(totalLine[i].name), Array(arrSubLineX.length).fill(totalLine[i].color),
-                    //         Array(arrSubLineX.length).fill(totalLine[i].width), undefined, Array(arrSubLineX.length).fill([i].lineLoads));
-                }
-            }
-            // save end line
-            // for (let i = 0; i <= arrEndLineX.length - 1; i++) {
-            //     processingData.prototype.inputRawData("line", arrEndLineX[i], arrEndLineY[i], arrEndLinePointName[i],
-            //         arrEndLineName[i], arrEndLineColor[i], arrEndLineWidth[i], arrEndLinePointForce[i], arrEndLineForce[i]);
-            // }
-
-            //end line
-            for (let i = 0; i <= arrEndLineX.length - 1; i++) {
-                let arrPoints = processingData.prototype.createPoint(arrEndLineX, arrEndLineY, Array(arrEndLineX.length).fill(undefined), Array(arrEndLineX.length).fill(undefined));
-                let line = processingData.prototype.createLine(arrPoints, Array(arrPoints.length).fill(undefined),
-                    Array(arrPoints.length).fill(undefined),
-                    Array(arrPoints.length).fill(undefined),
-                    Array(arrPoints.length).fill(undefined));
-
-                processingData.prototype.addObject(line, totalLine); //new line from interspoint
-            }
-
-            processingData.allLine = totalLine;
-
-
-            //-----------------//
-            //detect 
-            let segmentLine = [...newLines];
-            let exceptIndex = [];
-
-            for (let index1 = 0; index1 <= segmentLine.length - 1; index1++) {
-                if (exceptIndex.indexOf(index1) !== -1) {
-                    continue;
-                }
-                let arrLineFlow = [];
-                let arrPointFlow = [];
-                arrLineFlow.push(segmentLine[index1]);
-                arrPointFlow.push(segmentLine[index1].Point[0].point);
-                arrPointFlow.push(segmentLine[index1].Point[1].point);
-                let orientation = "";
-                while (true) {
-                    let arrNextLine = [];
-                    let arrNextPoint = [];
-                    let point1OfLine1 = arrLineFlow.at(-1).Point[0].point;
-                    let point2OfLine1 = arrLineFlow.at(-1).Point[1].point;
-                    for (let index2 = 0; index2 <= segmentLine.length - 1; index2++) {
-                        if (index2 === index1) continue;
-                        let point1OfNext = segmentLine[index2].Point[0].point;
-                        let point2OfNext = segmentLine[index2].Point[1].point;
-
-                        if (JSON.stringify(point2OfLine1) === JSON.stringify(point1OfNext) &&
-                            JSON.stringify(point1OfLine1) !== JSON.stringify(point2OfNext)) {
-                            arrNextPoint.push(point2OfNext);
-                            arrNextLine.push(segmentLine[index2]);
-                        } else if (JSON.stringify(point2OfLine1) === JSON.stringify(point2OfNext) &&
-                            JSON.stringify(point1OfLine1) !== JSON.stringify(point1OfNext)) {
-                            //swap
-                            let swap = segmentLine[index2].Point[0];
-                            segmentLine[index2].Point[0] = segmentLine[index2].Point[1];
-                            segmentLine[index2].Point[1] = swap;
-
-                            arrNextLine.push(segmentLine[index2]);
-                            arrNextPoint.push(segmentLine[index2].Point[1].point);
-                        }
-                    }
-                    if (arrNextLine.length === 0) break;
-                    arrNextLine.sort(function (a, b) {
-                        let pointa = a.Point[1].point
-                        let pointb = b.Point[1].point
-
-                        let OA = math.subtract(point1OfLine1, point2OfLine1);
-                        let OB = math.subtract(pointa, point2OfLine1);
-                        let OC = math.subtract(pointb, point2OfLine1);
-
-                        let degree1 = math.atan2(OA[1], OA[0]) - math.atan2(OB[1], OB[0]);
-                        let degree2 = math.atan2(OA[1], OA[0]) - math.atan2(OC[1], OC[0]);
-
-                        if (degree1 < 0) degree1 += 2 * math.PI;
-                        if (degree2 < 0) degree2 += 2 * math.PI;
-                        return degree2 - degree1
-                    });
-
-                    let AO = math.subtract(point2OfLine1, point1OfLine1);
-                    let OB = math.subtract(arrNextLine[0].Point[1].point, point2OfLine1);
-                    if (arrLineFlow.length === 1) {
-                        //set orientation
-                        if (math.round(math.cross([AO[0], AO[1], 0], [OB[0], OB[1], 0])[2], 3) >= 0) {
-                            orientation = "CW";
-                        } else orientation = "CCW"
-                    }
-                    if (orientation === "CW") {
-                        arrLineFlow.push(arrNextLine.at(-1));
-                        arrPointFlow.push(arrNextLine.at(-1).Point[1].point);
-                    } else if (orientation === "CCW") {
-                        arrLineFlow.push(arrNextLine[0]);
-                        arrPointFlow.push(arrNextLine[0].Point[1].point);
-                    }
-                    if (JSON.stringify(arrPointFlow.at(-1)) ===
-                        JSON.stringify(arrLineFlow[0].Point[0].point)) {
-                        //get resutl
-                        // console.log("getResult")
-                        AreaResult.push(arrLineFlow);
-                        PointFlowResult.push(arrPointFlow);
-                        //delete 
-                        for (let line of arrLineFlow) {
-                            exceptIndex.push(segmentLine.indexOf(line));
-                        }
-                        break;
-                    }
-                }
-            }
-
-            //create area object       
-            for (let i = 0; i <= AreaResult.length - 1; i++) {
-                let areaObj = new Area(AreaResult[i], undefined);
-                processingData.prototype.addObject(areaObj, processingData.allArea);
-            }
-        }
-        this.updateStorage();
+        //
+        this.updateStorage()
         PaintIn.renderObject(processingData.allObject);
         return AreaResult
     }
+
+    // areaDetect(Line_List) {
+    //     // PaintIn.onOffButton(PaintIn.currentValueDetectArea, "areaDetect");
+    //     this.isCancled = false;
+    //     let allLine = [...Line_List]; //contain old line
+    //     let totalLine = [...Line_List]; //all Line
+    //     processingData.allLine = [];
+    //     processingData.allArea = [];
+
+    //     let AreaResult = [];
+    //     let PointFlowResult = [];
+    //     let arrEndLineX = [];
+    //     let arrEndLineY = [];
+    //     let arrEndLineName = [];
+    //     let arrEndLinePointName = [];
+    //     let arrEndLineColor = [];
+    //     let arrEndLineWidth = [];
+    //     let arrEndLinePointForce = [];
+    //     let arrEndLineForce = [];
+    //     let arrNewLine = [];
+    //     let lineSeparated = []; //line have intersection
+    //     let rawLine = []; //line not have intersection
+    //     let arrIntersPoint = [];
+    //     let newLines = [];
+
+    //     for (let line of processingData.newObjects) {
+    //         if (line.className === "Line") {
+    //             arrNewLine.push(line);
+    //             totalLine.push(line);
+    //         }
+    //     }
+    //     for (let i = 0; i <= arrNewLine.length - 1; i++) {
+    //         for (let ii = 0; ii <= allLine.length - 1; ii++) {
+    //             if (ii === i) {
+    //                 continue;
+    //             } else {
+    //                 let IntersPoint = this.intersectionCheck(arrNewLine[i], allLine[ii]);
+    //                 if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
+    //                     arrIntersPoint.push(IntersPoint.Coord);
+    //                     lineSeparated.push(arrNewLine[i], allLine[ii]);
+    //                     // console.log("IntersPoint");
+    //                 }
+    //                 else {
+    //                     processingData.prototype.addObject(allLine[ii], rawLine);
+    //                 }
+    //             }
+    //         }
+    //         for (let ii = 0; ii <= arrNewLine.length - 1; ii++) {
+    //             if (ii === i) {
+    //                 continue;
+    //             } else {
+    //                 let IntersPoint = this.intersectionCheck(arrNewLine[i], arrNewLine[ii]);
+    //                 if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
+    //                     arrIntersPoint.push(IntersPoint.Coord);
+    //                     lineSeparated.push(arrNewLine[i], arrNewLine[ii]);
+    //                     // console.log("IntersPoint");
+    //                 }
+    //                 else {
+    //                     processingData.prototype.addObject(arrNewLine[ii], rawLine);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     let arrSubLineX = [];
+    //     let arrSubLineY = [];
+    //     let EndLine1X = [];
+    //     let EndLine1Y = [];
+    //     let EndLine2X = [];
+    //     let EndLine2Y = [];
+
+    //     //when dont have IntersPoint
+    //     if (arrIntersPoint.length === 0) {
+    //         for (let i = 0; i < arrNewLine.length; i++) {
+    //             totalLine.push(arrNewLine[i]);
+    //         }
+
+    //         for (let i = 0; i < allLine.length; i++) {
+    //             totalLine.push(allLine[i]);
+    //         }
+    //     }
+    //     else {//have intersPoint
+    //         for (let i = 0; i < lineSeparated.length; i++) {
+    //             //sort by distance from endpoint
+    //             let endPoint1 = lineSeparated[i].Point[0].point;
+    //             let endPoint2 = lineSeparated[i].Point[1].point;
+    //             arrIntersPoint.sort(function (value1, value2) {
+    //                 var distance1 = math.norm(math.subtract(value1, endPoint1));
+    //                 var distance2 = math.norm(math.subtract(value2, endPoint1));
+    //                 return distance1 - distance2
+    //             })
+    //             //keep end line
+    //             if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
+    //                 EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
+    //                 EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
+    //                 arrEndLineX.push(EndLine1X);
+    //                 arrEndLineY.push(EndLine1Y);
+    //                 arrEndLineName.push([lineSeparated[i].name]);
+    //                 arrEndLinePointName.push([lineSeparated[i].Point[0].name, undefined]);
+    //                 arrEndLineColor.push([lineSeparated[i].color]);
+    //                 arrEndLineWidth.push([lineSeparated[i].width]);
+    //                 arrEndLinePointForce.push([lineSeparated[i].Point[0].pointLoads, undefined]);
+    //                 arrEndLineForce.push([lineSeparated[i].lineLoads])
+
+    //             }
+    //             if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
+    //                 EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
+    //                 EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
+    //                 arrEndLineX.push(EndLine2X);
+    //                 arrEndLineY.push(EndLine2Y);
+    //                 arrEndLineName.push([lineSeparated[i].name]);
+    //                 arrEndLinePointName.push([undefined, lineSeparated[i].Point[1].name]);
+    //                 arrEndLineColor.push([lineSeparated[i].color]);
+    //                 arrEndLineWidth.push([lineSeparated[i].width]);
+    //                 arrEndLinePointForce.push([undefined, lineSeparated[i].Point[0].pointLoads]);
+    //                 arrEndLineForce.push([lineSeparated[i].lineLoads])
+    //             }
+    //             //
+    //             if (arrIntersPoint.length >= 2) {
+    //                 //create line bw inters point
+    //                 for (let index = 0; index <= arrIntersPoint.length - 2; index++) {
+    //                     //
+    //                     arrSubLineX.push(arrIntersPoint[index][0]);
+    //                     arrSubLineY.push(arrIntersPoint[index][1]);
+    //                     // console.log(arrSubLineX)
+    //                     //
+    //                 }
+    //                 let line = processingData.prototype.createLine(arrIntersPoint, Array(arrIntersPoint.length).fill(undefined),
+    //                     Array(arrIntersPoint.length).fill(undefined),
+    //                     Array(arrIntersPoint.length).fill(undefined),
+    //                     Array(arrIntersPoint.length).fill(undefined));
+    //                 newLines.push(line);
+
+    //                 processingData.prototype.addObject(line, totalLine); //new line from interspoint
+
+    //                 // for (let obj of rawLine) {
+    //                 //     for (let i = 0; i < 2; i++) {
+    //                 //         processingData.prototype.addObject(obj.Point[i].x, arrSubLineX);
+    //                 //         processingData.prototype.addObject(obj.Point[i].y, arrSubLineY);
+    //                 //     }
+    //                 // }
+    //                 // new line from internpoint
+    //                 //     processingData.prototype.inputRawData("line", arrSubLineX, arrSubLineY, undefined,
+    //                 //         Array(arrSubLineX.length).fill(totalLine[i].name), Array(arrSubLineX.length).fill(totalLine[i].color),
+    //                 //         Array(arrSubLineX.length).fill(totalLine[i].width), undefined, Array(arrSubLineX.length).fill([i].lineLoads));
+    //             }
+    //         }
+    //         // save end line
+    //         // for (let i = 0; i <= arrEndLineX.length - 1; i++) {
+    //         //     processingData.prototype.inputRawData("line", arrEndLineX[i], arrEndLineY[i], arrEndLinePointName[i],
+    //         //         arrEndLineName[i], arrEndLineColor[i], arrEndLineWidth[i], arrEndLinePointForce[i], arrEndLineForce[i]);
+    //         // }
+
+    //         //end line
+    //         for (let i = 0; i <= arrEndLineX.length - 1; i++) {
+    //             let arrPoints = processingData.prototype.createPoint(arrEndLineX, arrEndLineY, Array(arrEndLineX.length).fill(undefined), Array(arrEndLineX.length).fill(undefined));
+    //             let line = processingData.prototype.createLine(arrPoints, Array(arrPoints.length).fill(undefined),
+    //                 Array(arrPoints.length).fill(undefined),
+    //                 Array(arrPoints.length).fill(undefined),
+    //                 Array(arrPoints.length).fill(undefined));
+
+    //             processingData.prototype.addObject(line, totalLine); //new line from interspoint
+    //         }
+
+    //         processingData.allLine = totalLine;
+
+
+    //         //-----------------//
+    //         //detect 
+    //         let segmentLine = [...newLines];
+    //         let exceptIndex = [];
+
+    //         for (let index1 = 0; index1 <= segmentLine.length - 1; index1++) {
+    //             if (exceptIndex.indexOf(index1) !== -1) {
+    //                 continue;
+    //             }
+    //             let arrLineFlow = [];
+    //             let arrPointFlow = [];
+    //             arrLineFlow.push(segmentLine[index1]);
+    //             arrPointFlow.push(segmentLine[index1].Point[0].point);
+    //             arrPointFlow.push(segmentLine[index1].Point[1].point);
+    //             let orientation = "";
+    //             while (true) {
+    //                 let arrNextLine = [];
+    //                 let arrNextPoint = [];
+    //                 let point1OfLine1 = arrLineFlow.at(-1).Point[0].point;
+    //                 let point2OfLine1 = arrLineFlow.at(-1).Point[1].point;
+    //                 for (let index2 = 0; index2 <= segmentLine.length - 1; index2++) {
+    //                     if (index2 === index1) continue;
+    //                     let point1OfNext = segmentLine[index2].Point[0].point;
+    //                     let point2OfNext = segmentLine[index2].Point[1].point;
+
+    //                     if (JSON.stringify(point2OfLine1) === JSON.stringify(point1OfNext) &&
+    //                         JSON.stringify(point1OfLine1) !== JSON.stringify(point2OfNext)) {
+    //                         arrNextPoint.push(point2OfNext);
+    //                         arrNextLine.push(segmentLine[index2]);
+    //                     } else if (JSON.stringify(point2OfLine1) === JSON.stringify(point2OfNext) &&
+    //                         JSON.stringify(point1OfLine1) !== JSON.stringify(point1OfNext)) {
+    //                         //swap
+    //                         let swap = segmentLine[index2].Point[0];
+    //                         segmentLine[index2].Point[0] = segmentLine[index2].Point[1];
+    //                         segmentLine[index2].Point[1] = swap;
+
+    //                         arrNextLine.push(segmentLine[index2]);
+    //                         arrNextPoint.push(segmentLine[index2].Point[1].point);
+    //                     }
+    //                 }
+    //                 if (arrNextLine.length === 0) break;
+    //                 arrNextLine.sort(function (a, b) {
+    //                     let pointa = a.Point[1].point
+    //                     let pointb = b.Point[1].point
+
+    //                     let OA = math.subtract(point1OfLine1, point2OfLine1);
+    //                     let OB = math.subtract(pointa, point2OfLine1);
+    //                     let OC = math.subtract(pointb, point2OfLine1);
+
+    //                     let degree1 = math.atan2(OA[1], OA[0]) - math.atan2(OB[1], OB[0]);
+    //                     let degree2 = math.atan2(OA[1], OA[0]) - math.atan2(OC[1], OC[0]);
+
+    //                     if (degree1 < 0) degree1 += 2 * math.PI;
+    //                     if (degree2 < 0) degree2 += 2 * math.PI;
+    //                     return degree2 - degree1
+    //                 });
+
+    //                 let AO = math.subtract(point2OfLine1, point1OfLine1);
+    //                 let OB = math.subtract(arrNextLine[0].Point[1].point, point2OfLine1);
+    //                 if (arrLineFlow.length === 1) {
+    //                     //set orientation
+    //                     if (math.round(math.cross([AO[0], AO[1], 0], [OB[0], OB[1], 0])[2], 3) >= 0) {
+    //                         orientation = "CW";
+    //                     } else orientation = "CCW"
+    //                 }
+    //                 if (orientation === "CW") {
+    //                     arrLineFlow.push(arrNextLine.at(-1));
+    //                     arrPointFlow.push(arrNextLine.at(-1).Point[1].point);
+    //                 } else if (orientation === "CCW") {
+    //                     arrLineFlow.push(arrNextLine[0]);
+    //                     arrPointFlow.push(arrNextLine[0].Point[1].point);
+    //                 }
+    //                 if (JSON.stringify(arrPointFlow.at(-1)) ===
+    //                     JSON.stringify(arrLineFlow[0].Point[0].point)) {
+    //                     //get resutl
+    //                     // console.log("getResult")
+    //                     AreaResult.push(arrLineFlow);
+    //                     PointFlowResult.push(arrPointFlow);
+    //                     //delete 
+    //                     for (let line of arrLineFlow) {
+    //                         exceptIndex.push(segmentLine.indexOf(line));
+    //                     }
+    //                     break;
+    //                 }
+    //             }
+    //         }
+
+    //         //create area object       
+    //         for (let i = 0; i <= AreaResult.length - 1; i++) {
+    //             let areaObj = new Area(AreaResult[i], undefined);
+    //             processingData.prototype.addObject(areaObj, processingData.allArea);
+    //         }
+    //     }
+    //     this.updateStorage();
+    //     PaintIn.renderObject(processingData.allObject);
+    //     return AreaResult
+    // }
 
     setObjName(obj) {
     }
