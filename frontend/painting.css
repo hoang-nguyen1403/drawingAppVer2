@@ -333,8 +333,8 @@ button {
 
 #openFile_Solu {
     background: url(img/post_mode.png);
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border: 2px solid black;
     border-radius: 50%;
     background-size: 30px 30px;
@@ -345,7 +345,7 @@ button {
 }
 
 #openFile_Solu:hover {
-    background-size: 29px 29px;
+    background-size: 35px 35px;
 }
 
 #saveFile {
@@ -524,4 +524,21 @@ button {
     align-items: center;
     text-align: center;
     justify-content: center;
+}
+
+#logFile{
+    background: url(img/logLogFile.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#logFile:hover {
+    background-size: 35px 35px;
 }
