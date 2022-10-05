@@ -252,8 +252,14 @@ class Paint {
             processingData.prototype.separateData();
             if (this.pen === 'line') {
                 this.undo();
-                processingData.prototype.areaDetect(processingData.allLine);
-                // processingData.prototype.areaDetect(processingData.oldObjects);
+                // processingData.prototype.areaDetect(processingData.allLine);
+                let lineList = [];
+                for (let line of processingData.oldObjects) {
+                    if (line.className === "Line") {
+                        lineList.push(line);
+                    }
+                }
+                processingData.prototype.areaDetect(lineList);
                 // add node to arrGrid
                 this.addNode();
             };
@@ -262,8 +268,14 @@ class Paint {
         if (event.keyCode === 27) {
             processingData.prototype.separateData();
             if (this.pen === "line") {
-                processingData.prototype.areaDetect(processingData.allLine);
-                // processingData.prototype.areaDetect(processingData.oldObjects);
+                // processingData.prototype.areaDetect(processingData.allLine);
+                let lineList = [];
+                for (let line of processingData.oldObjects) {
+                    if (line.className === "Line") {
+                        lineList.push(line);
+                    }
+                }
+                processingData.prototype.areaDetect(lineList);
             }
             this.isCancled = false;
             this.pen = 'select';

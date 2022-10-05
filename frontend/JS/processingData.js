@@ -341,11 +341,15 @@ class processingData {
     }
 
     // areaDetect(Line_List) {
+    //     let len = Line_List.length;
     //     // PaintIn.onOffButton(PaintIn.currentValueDetectArea, "areaDetect");
     //     this.isCancled = false;
-    //     let allLine = [...Line_List]; //contain old line
+    //     if (Line_List.length === 0) {
+    //         Line_List = [...processingData.Lines];
+    //     }
+    //     let oldLine = [...Line_List]; //contain old line
     //     let totalLine = [...Line_List]; //all Line
-    //     processingData.allLine = [];
+    //     processingData.oldLine = [];
     //     processingData.allArea = [];
 
     //     let AreaResult = [];
@@ -367,37 +371,45 @@ class processingData {
     //     for (let line of processingData.newObjects) {
     //         if (line.className === "Line") {
     //             arrNewLine.push(line);
-    //             totalLine.push(line);
+    //             if (Line_List.length !== 0) {
+    //                 totalLine.push(line);
+    //             }
     //         }
     //     }
     //     for (let i = 0; i <= arrNewLine.length - 1; i++) {
-    //         for (let ii = 0; ii <= allLine.length - 1; ii++) {
+    //         for (let ii = 0; ii <= oldLine.length - 1; ii++) {
     //             if (ii === i) {
     //                 continue;
     //             } else {
-    //                 let IntersPoint = this.intersectionCheck(arrNewLine[i], allLine[ii]);
+    //                 let IntersPoint = this.intersectionCheck(arrNewLine[i], oldLine[ii]);
     //                 if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
     //                     arrIntersPoint.push(IntersPoint.Coord);
-    //                     lineSeparated.push(arrNewLine[i], allLine[ii]);
-    //                     // console.log("IntersPoint");
+    //                     lineSeparated.push(arrNewLine[i], oldLine[ii]);
+    //                     console.log("IntersPoint");
     //                 }
     //                 else {
-    //                     processingData.prototype.addObject(allLine[ii], rawLine);
+    //                     processingData.prototype.addObject(oldLine[ii], rawLine);
+    //                     console.log(rawLine)
     //                 }
     //             }
     //         }
-    //         for (let ii = 0; ii <= arrNewLine.length - 1; ii++) {
-    //             if (ii === i) {
-    //                 continue;
-    //             } else {
-    //                 let IntersPoint = this.intersectionCheck(arrNewLine[i], arrNewLine[ii]);
-    //                 if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
-    //                     arrIntersPoint.push(IntersPoint.Coord);
-    //                     lineSeparated.push(arrNewLine[i], arrNewLine[ii]);
-    //                     // console.log("IntersPoint");
-    //                 }
-    //                 else {
-    //                     processingData.prototype.addObject(arrNewLine[ii], rawLine);
+
+    //         if (len !== 0 && arrNewLine.length > 1) {
+    //             // console.log('1', arrNewLine[i])
+    //             for (let ii = 0; ii <= arrNewLine.length - 1; ii++) {
+    //                 if (ii === i) {
+    //                     continue;
+    //                 } else {
+    //                     let IntersPoint = this.intersectionCheck(arrNewLine[i], arrNewLine[ii]);
+    //                     console.log('2', arrNewLine[ii])
+    //                     if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
+    //                         arrIntersPoint.push(IntersPoint.Coord);
+    //                         lineSeparated.push(arrNewLine[i], arrNewLine[ii]);
+    //                         console.log("IntersPoint");
+    //                     }
+    //                     else {
+    //                         processingData.prototype.addObject(arrNewLine[ii], rawLine);
+    //                     }
     //                 }
     //             }
     //         }
@@ -416,12 +428,13 @@ class processingData {
     //             totalLine.push(arrNewLine[i]);
     //         }
 
-    //         for (let i = 0; i < allLine.length; i++) {
-    //             totalLine.push(allLine[i]);
+    //         for (let i = 0; i < oldLine.length; i++) {
+    //             totalLine.push(oldLine[i]);
     //         }
     //     }
     //     else {//have intersPoint
     //         for (let i = 0; i < lineSeparated.length; i++) {
+    //             console.log(lineSeparated[i].Point[0].point)
     //             //sort by distance from endpoint
     //             let endPoint1 = lineSeparated[i].Point[0].point;
     //             let endPoint2 = lineSeparated[i].Point[1].point;
@@ -431,60 +444,60 @@ class processingData {
     //                 return distance1 - distance2
     //             })
     //             //keep end line
-    //             if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
-    //                 EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
-    //                 EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
-    //                 arrEndLineX.push(EndLine1X);
-    //                 arrEndLineY.push(EndLine1Y);
-    //                 arrEndLineName.push([lineSeparated[i].name]);
-    //                 arrEndLinePointName.push([lineSeparated[i].Point[0].name, undefined]);
-    //                 arrEndLineColor.push([lineSeparated[i].color]);
-    //                 arrEndLineWidth.push([lineSeparated[i].width]);
-    //                 arrEndLinePointForce.push([lineSeparated[i].Point[0].pointLoads, undefined]);
-    //                 arrEndLineForce.push([lineSeparated[i].lineLoads])
+    //             // if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
+    //             //     EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
+    //             //     EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
+    //             //     arrEndLineX.push(EndLine1X);
+    //             //     arrEndLineY.push(EndLine1Y);
+    //             //     arrEndLineName.push([lineSeparated[i].name]);
+    //             //     arrEndLinePointName.push([lineSeparated[i].Point[0].name, undefined]);
+    //             //     arrEndLineColor.push([lineSeparated[i].color]);
+    //             //     arrEndLineWidth.push([lineSeparated[i].width]);
+    //             //     arrEndLinePointForce.push([lineSeparated[i].Point[0].pointLoads, undefined]);
+    //             //     arrEndLineForce.push([lineSeparated[i].lineLoads])
 
-    //             }
-    //             if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
-    //                 EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
-    //                 EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
-    //                 arrEndLineX.push(EndLine2X);
-    //                 arrEndLineY.push(EndLine2Y);
-    //                 arrEndLineName.push([lineSeparated[i].name]);
-    //                 arrEndLinePointName.push([undefined, lineSeparated[i].Point[1].name]);
-    //                 arrEndLineColor.push([lineSeparated[i].color]);
-    //                 arrEndLineWidth.push([lineSeparated[i].width]);
-    //                 arrEndLinePointForce.push([undefined, lineSeparated[i].Point[0].pointLoads]);
-    //                 arrEndLineForce.push([lineSeparated[i].lineLoads])
-    //             }
-    //             //
-    //             if (arrIntersPoint.length >= 2) {
-    //                 //create line bw inters point
-    //                 for (let index = 0; index <= arrIntersPoint.length - 2; index++) {
-    //                     //
-    //                     arrSubLineX.push(arrIntersPoint[index][0]);
-    //                     arrSubLineY.push(arrIntersPoint[index][1]);
-    //                     // console.log(arrSubLineX)
-    //                     //
-    //                 }
-    //                 let line = processingData.prototype.createLine(arrIntersPoint, Array(arrIntersPoint.length).fill(undefined),
-    //                     Array(arrIntersPoint.length).fill(undefined),
-    //                     Array(arrIntersPoint.length).fill(undefined),
-    //                     Array(arrIntersPoint.length).fill(undefined));
-    //                 newLines.push(line);
+    //             // }
+    //             // if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
+    //             //     EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
+    //             //     EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
+    //             //     arrEndLineX.push(EndLine2X);
+    //             //     arrEndLineY.push(EndLine2Y);
+    //             //     arrEndLineName.push([lineSeparated[i].name]);
+    //             //     arrEndLinePointName.push([undefined, lineSeparated[i].Point[1].name]);
+    //             //     arrEndLineColor.push([lineSeparated[i].color]);
+    //             //     arrEndLineWidth.push([lineSeparated[i].width]);
+    //             //     arrEndLinePointForce.push([undefined, lineSeparated[i].Point[0].pointLoads]);
+    //             //     arrEndLineForce.push([lineSeparated[i].lineLoads])
+    //             // }
+    //             // //
+    //             // if (arrIntersPoint.length >= 2) {
+    //             //     //create line bw inters point
+    //             //     for (let index = 0; index <= arrIntersPoint.length - 2; index++) {
+    //             //         //
+    //             //         arrSubLineX.push(arrIntersPoint[index][0]);
+    //             //         arrSubLineY.push(arrIntersPoint[index][1]);
+    //             //         // console.log(arrSubLineX)
+    //             //         //
+    //             //     }
+    //             //     let line = processingData.prototype.createLine(arrIntersPoint, Array(arrIntersPoint.length).fill(undefined),
+    //             //         Array(arrIntersPoint.length).fill(undefined),
+    //             //         Array(arrIntersPoint.length).fill(undefined),
+    //             //         Array(arrIntersPoint.length).fill(undefined));
+    //             //     newLines.push(line);
 
-    //                 processingData.prototype.addObject(line, totalLine); //new line from interspoint
+    //             //     processingData.prototype.addObject(line, totalLine); //new line from interspoint
 
-    //                 // for (let obj of rawLine) {
-    //                 //     for (let i = 0; i < 2; i++) {
-    //                 //         processingData.prototype.addObject(obj.Point[i].x, arrSubLineX);
-    //                 //         processingData.prototype.addObject(obj.Point[i].y, arrSubLineY);
-    //                 //     }
-    //                 // }
-    //                 // new line from internpoint
-    //                 //     processingData.prototype.inputRawData("line", arrSubLineX, arrSubLineY, undefined,
-    //                 //         Array(arrSubLineX.length).fill(totalLine[i].name), Array(arrSubLineX.length).fill(totalLine[i].color),
-    //                 //         Array(arrSubLineX.length).fill(totalLine[i].width), undefined, Array(arrSubLineX.length).fill([i].lineLoads));
-    //             }
+    //             //     // for (let obj of rawLine) {
+    //             //     //     for (let i = 0; i < 2; i++) {
+    //             //     //         processingData.prototype.addObject(obj.Point[i].x, arrSubLineX);
+    //             //     //         processingData.prototype.addObject(obj.Point[i].y, arrSubLineY);
+    //             //     //     }
+    //             //     // }
+    //             //     // new line from internpoint
+    //             //     //     processingData.prototype.inputRawData("line", arrSubLineX, arrSubLineY, undefined,
+    //             //     //         Array(arrSubLineX.length).fill(totalLine[i].name), Array(arrSubLineX.length).fill(totalLine[i].color),
+    //             //     //         Array(arrSubLineX.length).fill(totalLine[i].width), undefined, Array(arrSubLineX.length).fill([i].lineLoads));
+    //             // }
     //         }
     //         // save end line
     //         // for (let i = 0; i <= arrEndLineX.length - 1; i++) {
@@ -502,7 +515,6 @@ class processingData {
 
     //             processingData.prototype.addObject(line, totalLine); //new line from interspoint
     //         }
-
     //         processingData.allLine = totalLine;
 
 
@@ -813,6 +825,11 @@ class processingData {
                         processingData.newObjects.splice(ii, 1);
                     }
                 }
+            }
+        }
+        for (let line of processingData.allObject) {
+            if (line.className === "Line") {
+                processingData.Lines.push(line);
             }
         }
     }
@@ -1596,6 +1613,7 @@ processingData.allArea = [];
 processingData.allAreaCenter = [];
 processingData.newObjects = [];
 processingData.oldObjects = [];
+processingData.Lines = [];
 //----------------------------//
 
 function getNearest(listPoints, currentPoint) {
