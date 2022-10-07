@@ -181,7 +181,7 @@ class processingData {
                     var IntersPoint = this.intersectionCheck(Line_List_copy[i], Line_List_copy[ii]);
                     if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {
                         arrIntersPoint.push(IntersPoint.Coord);
-                        console.log("IntersPoint");
+                        // console.log("IntersPoint");
                     }
                 }
             }
@@ -317,7 +317,7 @@ class processingData {
                 if (JSON.stringify(arrPointFlow.at(-1)) ===
                     JSON.stringify(arrLineFlow[0].Point[0].point)) {
                     //get resutl
-                    console.log("getResult")
+                    // console.log("getResult")
                     AreaResult.push(arrLineFlow);
                     PointFlowResult.push(arrPointFlow);
                     //delete 
@@ -328,7 +328,7 @@ class processingData {
                 }
             }
         }
-        console.log(processingData.allLine)
+        // console.log(processingData.allLine)
         //create area object       
         for (let i = 0; i <= AreaResult.length - 1; i++) {
             let areaObj = new Area(AreaResult[i], undefined, PointFlowResult[i]);
