@@ -328,10 +328,11 @@ class processingData {
                 }
             }
         }
-        console.log(processingData.allLine)
+        console.log(AreaResult)
         //create area object       
         for (let i = 0; i <= AreaResult.length - 1; i++) {
-            let areaObj = new Area(AreaResult[i], undefined, PointFlowResult[i]);
+            // let areaObj = new Area(AreaResult[i], undefined, PointFlowResult[i]);
+            let areaObj = new Area(AreaResult[i], undefined);
             processingData.prototype.addObject(areaObj, processingData.allArea);
         }
         //
@@ -444,19 +445,19 @@ class processingData {
     //                 return distance1 - distance2
     //             })
     //             //keep end line
-    //             // if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
-    //             //     EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
-    //             //     EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
-    //             //     arrEndLineX.push(EndLine1X);
-    //             //     arrEndLineY.push(EndLine1Y);
-    //             //     arrEndLineName.push([lineSeparated[i].name]);
-    //             //     arrEndLinePointName.push([lineSeparated[i].Point[0].name, undefined]);
-    //             //     arrEndLineColor.push([lineSeparated[i].color]);
-    //             //     arrEndLineWidth.push([lineSeparated[i].width]);
-    //             //     arrEndLinePointForce.push([lineSeparated[i].Point[0].pointLoads, undefined]);
-    //             //     arrEndLineForce.push([lineSeparated[i].lineLoads])
+    //             if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
+    //                 EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
+    //                 EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
+    //                 arrEndLineX.push(EndLine1X);
+    //                 arrEndLineY.push(EndLine1Y);
+    //                 arrEndLineName.push([lineSeparated[i].name]);
+    //                 arrEndLinePointName.push([lineSeparated[i].Point[0].name, undefined]);
+    //                 arrEndLineColor.push([lineSeparated[i].color]);
+    //                 arrEndLineWidth.push([lineSeparated[i].width]);
+    //                 arrEndLinePointForce.push([lineSeparated[i].Point[0].pointLoads, undefined]);
+    //                 arrEndLineForce.push([lineSeparated[i].lineLoads])
 
-    //             // }
+    //             }
     //             // if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(- 1))) {
     //             //     EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
     //             //     EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
