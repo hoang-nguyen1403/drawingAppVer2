@@ -147,34 +147,28 @@
 	<script src="frontend/libs/colormapfix.js"></script>
 	<script async src="frontend/libs/opencv.js" type="text/javascript"></script>
 
-	<script src="frontend/JS/lightButton.js"></script>
 	<script src="frontend/JS/processingData.js"></script>
 	<script src="frontend/JS/Mesh.js"></script>
 	<script src="frontend/JS/painting.js"></script>
-
-	<!-- <script src="https://cdn.jsdelivr.net/npm/convex-hull@1.0.3/ch.min.js"></script> -->
-	<!-- <script src="https://cdn.jsdelivr.net/npm/incremental-convex-hull@1.0.1/ich.min.js"></script>
-	<script type="module">
-		import lodash from 'https://cdn.skypack.dev/geo-convex-hull';
-	</script> -->
-	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.145.0/three.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.145.0/three.js"></script> -->
-	<!-- <script src="frontend/libs/ConvexHull.js"></script> -->
-	<!-- <script src="./frontend/libs/three.js"></script> -->
-	<!-- <script src="sha512-mElAVmOZp/n8OKao194p++kIARCbLKnf/pdVTVI+ZkxL0Rmyw6p5C4kcLd67l2WdvfyBqFe6dI4lR3m++xhdnA=="></script> -->
-	<!-- <script src="./frontend/libs/ConvexHull.js"></script>
-	<script type="module" src="./frontend/JS/test_import.js"></script> -->
-
-	<!-- <py-script>
-import numpy
-	</py-script> -->
-	<script  src="./frontend/libs/three.js"></script>
+	<script src="./frontend/JS/inputData.js"></script>
+	<script src="./frontend/libs/three.js"></script>
 	<script src="./frontend/libs/ConvexHull.js"></script>
-	<script>
-		let convexHull = new ConvexHull()
-		console.log(convexHull);
-	</script> -->
+	<script src="./frontend/JS/test_import.js"></script>
 
+	<!-- <script>
+		let cv = new ConvexHull();
+		console.log(cv)
+	</script>
+	<script type="text/javascript">
+		let imgElement = document.getElementById("imageSrc")
+		let inputElement = document.getElementById("fileInput");
+		inputElement.addEventListener("change", (e) => {
+			imgElement.src = URL.createObjectURL(e.target.files[0]);
+		}, false);
+		imgElement.onload = function () {
+			let mat = cv.imread(imgElement);
+		}
+	</script> -->
 </body>
 
 </html>
