@@ -938,18 +938,47 @@ class Paint {
             }
             fr.readAsText(this.files[0]);
         });
-        // //openfileSolu
-        // document.getElementById('openFileSolu').addEventListener('change', function () {
-        //     var frS = new FileReader();
-        //     frS.onload = function () {
-        //         let inputData = JSON.parse(frS.result);
-        //         if (inputData["jsmat"] !== undefined) {
-        //             Mesh.prototype.openFileSoln(inputData);
-        //         }
 
-        //     }
-        //     frS.readAsText(this.files[0]);
-        // });
+        //input img
+        let imageInput = document.querySelector("#inputImg");
+        let uploadImage = "";
+        document.getElementById('inputImg').addEventListener('change', function () {
+            // let reader = new FileReader();
+            // reader.addEventListener("load", () => {
+            //     uploadImage = reader.result;
+            //     document.querySelector("#myCanvas").style.backgroundImage = `url(${uploadImage})`;
+            // });
+            // reader.readAsDataURL(this.files[0]);
+
+            //save img in canvas
+            // let dataURL = document.getElementById('myCanvas').toDataURL("image/png");
+            // document.getElementById('imageInput').value = dataURL;
+
+            let formData = new FormData();
+            // console.log(imageInput.files)
+            formData.append("file", $("#inputImg")[0].files[0]);
+            formData.append("language", "eng");
+            formData.append("apikey", "helloworld");
+            formData.append("imageInput", imageInput.files[0]);
+            let promise = axios({
+                method: "POST",
+                url: 'http://127.0.0.1:8000/v1/article/',
+                data: formData,
+                dataType: 'json',
+                cache: false,
+                contentType: false,
+                processData: false,
+            });
+
+            promise.then((result) => {
+                console.log(result.data);
+            });
+
+            promise.catch(function (err) {
+                console.log("err", err);
+            });
+        });
+
 
         //make canvas responsive
         onresize = (event) => {
@@ -1033,7 +1062,8 @@ class Paint {
     mouseDown(event) {
         this.isPainting = true;
         this.image = new Image;
-        this.image.src = this.canvas.toDataURL("frontend/image/bmp ", 1.0);
+        this.image.src = this.canvas.toDataURL("image/png ", 1.0);
+        // var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
         this.mouseDownPos = this.getMousePosition(event); //start
         this.arrMouseDownPosition.push(this.mouseDownPos);
         this.currentMouseDownPos = this.getMousePosition(event);

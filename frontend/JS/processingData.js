@@ -246,6 +246,30 @@ class processingData {
             processingData.prototype.inputRawData("line", arrEndLineX[i], arrEndLineY[i], arrEndLinePointName[i],
                 arrEndLineName[i], arrEndLineColor[i], arrEndLineWidth[i], arrEndLinePointForce[i], arrEndLineForce[i]);
         }
+
+        //
+        // receive data 
+        // let listData = processingData.prototype.saveObj();
+        // let promise = axios({
+        //     method: "POST",
+        //     url: 'https://vyfirstapp.herokuapp.com/v1/article/',
+        //     data: listData,
+        // });
+
+        // // var promise = axios({
+        // //     url: 'http://localhost:8000/v1/article',
+        // //     method: "GET",
+        // // });
+
+        // promise.then((result) => {
+        //     processingData.prototype.createData(result.data);
+        //     // Mesh.prototype.openFileSoln(result.data);
+        // });
+
+        // promise.catch(function (err) {
+        //     console.log("err", err);
+        // });
+
         let exceptIndex = [];
         for (let index1 = 0; index1 <= segmentLine.length - 1; index1++) {
             if (exceptIndex.indexOf(index1) !== -1) {
@@ -329,14 +353,15 @@ class processingData {
             }
         }
         // console.log(processingData.allLine)
-        //create area object       
+        // create area object       
         for (let i = 0; i <= AreaResult.length - 1; i++) {
             // let areaObj = new Area(AreaResult[i], undefined, PointFlowResult[i]);
             let areaObj = new Area(AreaResult[i], undefined);
             processingData.prototype.addObject(areaObj, processingData.allArea);
         }
-        //
-        this.updateStorage()
+        
+
+        this.updateStorage();
         PaintIn.renderObject(processingData.allObject);
         return AreaResult
     }
