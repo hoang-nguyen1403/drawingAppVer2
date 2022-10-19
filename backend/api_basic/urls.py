@@ -3,6 +3,6 @@ from .controllers.article import ArticleAPIView
 
 urlpatterns = [
     # path('article/', article_list),
-    path('article/',ArticleAPIView.as_view()),
+    path('detectArea/',ArticleAPIView.as_view()),
 ]
 
