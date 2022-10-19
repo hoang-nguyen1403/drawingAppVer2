@@ -962,7 +962,7 @@ class Paint {
           formData.append("imageInput", imageInput.files[0]);
           let promise = axios({
               method: "POST",
-              url: 'http://127.0.0.1:8000/v1/article/',
+              url: 'http://127.0.0.1:8000/v1/detectArea/',
               data: formData,
               dataType: 'json',
               cache: false,
