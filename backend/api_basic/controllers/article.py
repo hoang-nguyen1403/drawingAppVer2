@@ -8,6 +8,9 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework import status
 import json
+import re
+import base64
+
 
 # Create your views here.
 # @csrf_exempt
@@ -39,3 +42,15 @@ class ArticleAPIView(APIView):
         # return JsonResponse(data, status=status.HTTP_201_CREATED)
         obj = json.load(open('UIp_FE.json'))
         return JsonResponse(obj, safe = False)
+
+        # dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
+        # ImageData = request.POST.get('hidden_image_field')
+        # ImageData = dataUrlPattern.match(ImageData).group(2)
+
+        # # If none or len 0, means illegal image data
+        # if ImageData == None or len(ImageData) == 0:
+        #     # PRINT ERROR MESSAGE HERE
+        #     pass
+
+        # # Decode the 64 bit string into 32 bit
+        # ImageData = base64.b64decode(ImageData)

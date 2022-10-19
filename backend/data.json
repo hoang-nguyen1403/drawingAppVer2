@@ -1,1 +1,12 @@
-{"num_nodes": 0, "num_segments": 0, "node_coords": [], "node_names": [], "segments": [], "segment_names": [], "surfaces": [], "surface_names": [], "nodal_loads": [], "segment_loads": []}
+{
+    "num_nodes": 0,
+    "num_segments": 0,
+    "node_coords": [],
+    "node_names": [],
+    "segments": [],
+    "segment_names": [],
+    "surfaces": [],
+    "surface_names": [],
+    "nodal_loads": [],
+    "segment_loads": []
+}
