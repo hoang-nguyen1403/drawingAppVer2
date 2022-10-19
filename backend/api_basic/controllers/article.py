@@ -105,4 +105,4 @@ class ArticleAPIView(APIView):
         #     resultFile.write(str(data))
         # obj = json.load(open('UIp_FE.json'))
         # return JsonResponse(obj, safe = False)
-        #push again
+        # git push origin
