@@ -93,7 +93,8 @@
 					<button id="modeDrawing" type="button" onclick="PaintIn.changeMode()" value="On"></button>
 				</label>
 				<label class="inputImage">
-					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" style="display: none">
+					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
+						style="display: none">
 				</label>
 			</div>
 			<div id="wrap_canvas_div">
@@ -119,7 +120,7 @@
 		<div class="tab">
 			<button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button>
 
-			<div id="tab-comments">
+			<div id="tab-comments"> 
 				<p id="lableTab">Text comments</p>
 				<input type="text" id="textBox" value="" onkeydown="PaintIn.getValueInTextBox()">
 				<div id="valueInputed">
@@ -172,6 +173,16 @@
 		imgElement.onload = function () {
 			let mat = cv.imread(imgElement);
 		}
+	</script> -->
+
+	<!-- <script type="text/javascript">
+		const form = document.getElementById('inputImg');
+		form.addEventListener('change', function(e) {
+			e.defaultPrevented();
+			const formData = new FormData();
+			console.log(formData)
+
+		});  
 	</script> -->
 </body>
 

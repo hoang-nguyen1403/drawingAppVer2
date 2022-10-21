@@ -1,0 +1,1 @@
+<QueryDict: {'pic1': [<InMemoryUploadedFile: pic1.png (image/png)>]}>
