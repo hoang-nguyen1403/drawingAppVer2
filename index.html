@@ -92,7 +92,10 @@
 				<label id="ChangeMode">
 					<button id="modeDrawing" type="button" onclick="PaintIn.changeMode()" value="On"></button>
 				</label>
-				<!-- <button id="logFile" type="button" onclick="PaintIn.saveLogFile()"></button> -->
+				<label class="inputImage">
+					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
+						style="display: none">
+				</label>
 			</div>
 			<div id="wrap_canvas_div">
 				<canvas id="myCanvas">
@@ -117,7 +120,7 @@
 		<div class="tab">
 			<button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button>
 
-			<div id="tab-comments">
+			<div id="tab-comments"> 
 				<p id="lableTab">Text comments</p>
 				<input type="text" id="textBox" value="" onkeydown="PaintIn.getValueInTextBox()">
 				<div id="valueInputed">
@@ -126,6 +129,10 @@
 		</div>
 
 	</div>
+
+	<!-- test link cdn -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/hull-connector@1.0.51/dist/index.min.js"></script> -->
+	<!--  -->
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/kd-tree-javascript@1.0.3/kdTree-min.min.js"></script>
@@ -151,7 +158,7 @@
 	<script src="frontend/JS/painting.js"></script>
 	<script src="./frontend/libs/three.js"></script>
 	<script src="./frontend/libs/ConvexHull.js"></script>
-	<script src="./frontend/JS/test_import.js"></script>
+	<!-- <script src="./frontend/JS/test_import.js"></script> -->
 
 	<!-- <script>
 		let cv = new ConvexHull();
@@ -166,6 +173,16 @@
 		imgElement.onload = function () {
 			let mat = cv.imread(imgElement);
 		}
+	</script> -->
+
+	<!-- <script type="text/javascript">
+		const form = document.getElementById('inputImg');
+		form.addEventListener('change', function(e) {
+			e.defaultPrevented();
+			const formData = new FormData();
+			console.log(formData)
+
+		});  
 	</script> -->
 </body>
 

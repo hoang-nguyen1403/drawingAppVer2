@@ -1,97 +1,12 @@
 {
-    "num_nodes": 6,
-    "num_segments": 7,
-    "node_coords": [
-        [
-            123,
-            319
-        ],
-        [
-            192.07739764,
-            228.25126192
-        ],
-        [
-            276,
-            118
-        ],
-        [
-            469,
-            374
-        ],
-        [
-            146,
-            204
-        ],
-        [
-            221,
-            377
-        ]
-    ],
-    "node_names": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-    ],
-    "segments": [
-        [
-            0,
-            1
-        ],
-        [
-            1,
-            2
-        ],
-        [
-            2,
-            3
-        ],
-        [
-            3,
-            1
-        ],
-        [
-            1,
-            4
-        ],
-        [
-            4,
-            0
-        ],
-        [
-            0,
-            5
-        ]
-    ],
-    "segment_names": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-    ],
+    "num_nodes": 0,
+    "num_segments": 0,
+    "node_coords": [],
+    "node_names": [],
+    "segments": [],
+    "segment_names": [],
     "surfaces": [],
     "surface_names": [],
-    "nodal_loads": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-    ],
-    "segment_loads": [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-    ],
-    "text-data": []
+    "nodal_loads": [],
+    "segment_loads": []
 }

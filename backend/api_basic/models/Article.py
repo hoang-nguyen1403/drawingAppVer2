@@ -1,12 +1,12 @@
+from distutils.command.upload import upload
 from django.db import models
 
 # Create your models here.
+# def upload_to(instance, filename):
+#     return 'images/{filename}'.format(filename=filename)
+
 class Article(models.Model):
-    num_nodes = models.CharField(max_length=100)
-    num_segments = models.CharField(max_length=100)
-    num_coords = models.CharField(max_length=100)
-    segments = models.CharField(max_length=100)
-    segment_names = models.CharField(max_length=100)
-    
-    def __str__(self):
-        return self.title
+    image_url = models.ImageField(upload_to='media/', blank=True, null=True)
+
+    # def __str__(self):
+    #     return self.name + ": " + str(self.imagefile)

@@ -8,8 +8,26 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework import status
 import json
-import cv2
 import numpy as np
+import cv2
+
+
+# Create your views here.
+# @csrf_exempt
+# @api_view(['GET', 'POST'])
+# def article_list(request):
+#     if request.method == 'GET':
+#         # articles = Article.objects.all()
+#         # serializer = ArticleSerializer(articles, many=True)
+#         # return JsonResponse(serializer.data, safe = False)
+#         obj = json.load(open('UIp_FE.json'))
+#         return JsonResponse(obj, safe = False)
+
+#     elif request.method == 'POST':
+#         data = JSONParser().parse(request)
+#         with open("data.json", "w") as inputFile:
+#             inputFile.write(str(data))
+#         return JsonResponse(data, status=status.HTTP_201_CREATED)
 
 class ArticleAPIView(APIView):
     
@@ -105,4 +123,3 @@ class ArticleAPIView(APIView):
         #     resultFile.write(str(data))
         # obj = json.load(open('UIp_FE.json'))
         # return JsonResponse(obj, safe = False)
-        # git push origin

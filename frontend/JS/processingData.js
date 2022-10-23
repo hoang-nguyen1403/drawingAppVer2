@@ -1,6 +1,6 @@
 //----------RECORD data------------//
 class processingData {
-  constructor() {}
+  constructor() { }
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -336,8 +336,8 @@ class processingData {
     // });
 
     promise.then((result) => {
-      console.log(result.data);
-    processingData.prototype.createData(result.data);
+      // console.log(result.data);
+      processingData.prototype.createData(result.data);
       // Mesh.prototype.openFileSoln(result.data);
     });
 
@@ -716,7 +716,7 @@ class processingData {
   //     return AreaResult
   // }
 
-  setObjName(obj) {}
+  setObjName(obj) { }
 
   InterPolationFunction(arrX, arrY) {
     let allFunc = [];
@@ -744,8 +744,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-          ((arrY[row + 1] - arrY[row]) / h[row] -
-            (arrY[row] - arrY[row - 1]) / h[row - 1])
+        ((arrY[row + 1] - arrY[row]) / h[row] -
+          (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -757,7 +757,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-          3;
+        3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
