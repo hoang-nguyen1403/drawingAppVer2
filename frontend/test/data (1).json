@@ -1,0 +1,127 @@
+{
+    "num_nodes": 8,
+    "num_segments": 10,
+    "node_coords": [
+        [
+            283.33359772,
+            274.76713198
+        ],
+        [
+            296.0649707,
+            248.53278765
+        ],
+        [
+            340,
+            158
+        ],
+        [
+            396.70584351,
+            244.17064455
+        ],
+        [
+            442,
+            313
+        ],
+        [
+            193,
+            253
+        ],
+        [
+            241,
+            362
+        ],
+        [
+            516,
+            239
+        ]
+    ],
+    "node_names": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "segments": [
+        [
+            0,
+            1
+        ],
+        [
+            1,
+            2
+        ],
+        [
+            2,
+            3
+        ],
+        [
+            3,
+            4
+        ],
+        [
+            4,
+            0
+        ],
+        [
+            0,
+            5
+        ],
+        [
+            5,
+            1
+        ],
+        [
+            1,
+            3
+        ],
+        [
+            6,
+            0
+        ],
+        [
+            3,
+            7
+        ]
+    ],
+    "segment_names": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "surfaces": [],
+    "surface_names": [],
+    "nodal_loads": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "segment_loads": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "text-data": []
+}

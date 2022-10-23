@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="stylesheet" href="frontend/painting.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>React App</title>
+  </head>
+  <!-- <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+  </body> -->
+  <body>
+    <div id="header">
+      <h1><b style="font-family: Segoe Script;"></b></h1>
+    </div>
+    <div id="body_div">
+      <div id="tool_left">
+        <div>
+          <label id="colorpicker_label">
+            <input type="color" id="line_color" name="color" style="display: none">
+          </label>
+          <input type="number" name="size" min="1" max="10" id="line_size" value="5">
+        </div>
+  
+        <div>
+          <button id="grid" type="button" class="option-btn btn-off btn" onclick="PaintIn.buttonGrid()"
+            style="background-image: url(frontend/img/grid.png)" value="Off"></button>
+          <!-- <input type="range" name="sizeGrid" min="10" max="100" id="sizeGrid" class="rangeSlider"> -->
+        </div>
+        <!-- <button id="brush" class="btn" type="button" onclick="PaintIn.chooseBrush()" value="Off"
+            style="background-image: url(frontend/img/brush.png)"></button> -->
+        <button id="line" class="btn" type="button" onclick="PaintIn.chooseLine()" value="Off"
+          style="background-image: url(frontend/img/line.png)"></button>
+        <!-- <button id="circle" class="btn" type="button" onclick="PaintIn.chooseCircle()" value="Off"
+            style="background-image: url(frontend/img/circle.png)"></button>
+          <button id="rect" class="btn" type="button" onclick="PaintIn.chooseRect()" value="Off"
+            style="background-image: url(frontend/img/rectangle.png)"></button>
+          <button id="spl" class="btn" type="button" onclick="PaintIn.chooseSpl()" value="Off"
+            style="background-image: url(frontend/img/spline.png)"></button> -->
+        <!-- <button id="areaDetect" class="btn" type="button" onclick="PaintIn.buttonDetectArea()"
+            style="background-image: url(frontend/img/detect.png)" value="Off"></button> -->
+      </div>
+  
+      <div id="center_div">
+        <div id="BDCondition">
+          <!-- <button id="select" class="btn" type="button" onclick="PaintIn.chooseSelect()" value="Off"
+            style="background-image: url(frontend/img/select.png)"></button> -->
+          <button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
+            style="background-image: url(frontend/img/apply_name.svg)"></button>
+          <button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
+            style="background-image: url(frontend/img/apply_force.svg)"></button>
+          <button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
+            style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
+          <!-- <button id="axialForce" class="btn" type="button" onclick="PaintIn.addValAxialForce()" value="Off"> Axial
+            Force</button> -->
+          <button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
+            style="background-image: url(frontend/img/apply_moment.svg)"></button></button>
+          <!-- <button id="deleteForce" class="btn" type="button" onclick="PaintIn.addValDeleteForce()"
+            value="Off">Delete Force</button> -->
+        </div>
+  
+        <div id="modeSoln">
+          <button id="fillColor" class="btn" type="button" onclick="Mesh.prototype.addValFillColor()"
+            value="Off"></button>
+        </div>
+  
+        <!-- <div id="constraint">
+          <button id="fixConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
+          <button id="hingeConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
+          <button id="constraintHor" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
+          <button id="constraintVer" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
+        </div> -->
+  
+        <div id=tool_top>
+          <label id="openFile_label">
+            <input type="file" name="openFile" id="openFile" style="display: none">
+          </label>
+          <button id="saveFile" type="button" onclick="processingData.prototype.saveAsData()"></button>
+          <button id="Clear_all" type="button" onclick="PaintIn.clearAll()"></button>
+          <!-- <label id="openFile_Solu">
+            <input type="file" name="openFileSolu" id="openFileSolu" style="display: none">
+          </label> -->
+  
+          <!-- request -->
+          <button id="openFile_Solu" onclick="PaintIn.getAPI()"></button>
+          <label id="ChangeMode">
+            <button id="modeDrawing" type="button" onclick="PaintIn.changeMode()" value="On"></button>
+          </label>
+          <label class="inputImage">
+            <input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
+              style="display: none">
+          </label>
+        </div>
+        <div id="wrap_canvas_div">
+          <canvas id="myCanvas">
+            <!-- <div id="RadiusLightNode"></div> -->
+          </canvas>
+        </div>
+  
+        <div id="coord_div">
+          <div id="icon_coord">
+          </div>
+          <div id="display_coord">
+          </div>
+        </div>
+      </div>
+  
+      <div id="tool_right">
+        <div id="property">
+        </div>
+        <div id="command"></div>
+      </div>
+  
+      <div class="tab">
+        <button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button>
+  
+        <div id="tab-comments"> 
+          <p id="lableTab">Text comments</p>
+          <input type="text" id="textBox" value="" onkeydown="PaintIn.getValueInTextBox()">
+          <div id="valueInputed">
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  
+    <!-- test link cdn -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/hull-connector@1.0.51/dist/index.min.js"></script> -->
+    <!--  -->
+  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kd-tree-javascript@1.0.3/kdTree-min.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="frontend/libs/math.js"></script>
+  
+    <!-- SPL library -->
+    <!-- <script src="frontend/JS/p5.min.js"></script>
+    <script src="frontend/JS/p5.dom.min.js"></script>
+    <script src="frontend/JS/p5.sound.min.js"></script>
+    <script src="frontend/JS/jsspline.js"></script> -->
+    <script src="frontend/libs/CanvasInput.js"></script>
+    <script src="frontend/JS/fileSaver/src/FileSaver.js"></script>
+    <script src="frontend/libs/colormapfix.js"></script>
+  
+    <script src="frontend/JS/processingData.js"></script>
+    <script src="frontend/JS/Mesh.js"></script>
+    <script src="frontend/JS/painting.js"></script>
+    <script src="./frontend/libs/three.js"></script>
+    <script src="./frontend/libs/ConvexHull.js"></script>
+    <!-- <script src="./frontend/JS/test_import.js"></script> -->
+  
+    <!-- <script>
+      let cv = new ConvexHull();
+      console.log(cv)
+    </script>
+    <script type="text/javascript">
+      let imgElement = document.getElementById("imageSrc")
+      let inputElement = document.getElementById("fileInput");
+      inputElement.addEventListener("change", (e) => {
+        imgElement.src = URL.createObjectURL(e.target.files[0]);
+      }, false);
+      imgElement.onload = function () {
+        let mat = cv.imread(imgElement);
+      }
+    </script> -->
+  
+    <!-- <script type="text/javascript">
+      const form = document.getElementById('inputImg');
+      form.addEventListener('change', function(e) {
+        e.defaultPrevented();
+        const formData = new FormData();
+        console.log(formData)
+  
+      });  
+    </script> -->
+  </body>
+</html>

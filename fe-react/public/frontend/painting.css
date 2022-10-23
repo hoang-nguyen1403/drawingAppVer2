@@ -1,0 +1,544 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: Calibri;
+    user-select: none;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overscroll-behavior-x: none;
+}
+
+#header {
+    background-color: #0784d1;
+    font-size: 30px;
+    text-align: center;
+    color: white;
+    border-bottom: 2px solid #0784d1;
+    border-top: 2px solid #0784d1;
+    width: 100%;
+    min-height: 60px;
+    display: block;
+}
+
+#tool_top {
+    height: 50px;
+    background-color: #e6f5ff;
+    border: 1px solid #0784d1;
+    width: 100%;
+    display: flex;
+}
+
+/* #inOutData {
+
+    flex-flow: wrap;
+    width: 150px;
+    height: 100%;
+    justify-content: space-around;
+    margin: 5px;
+    background-color: none;
+} */
+
+#body_div {
+    background-color: #e6f5ff;
+    display: flex;
+    width: 100%;
+    flex: 1;
+    /* background-color: #e6f5ff; */
+}
+
+#center_div {
+    width: 100%;
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#tool_left {
+    display: flex;
+    background-color: #e6f5ff;
+    justify-content: space-between;
+}
+
+#tool_right {
+    display: flex;
+    align-content: center;
+    background-color: #e6f5ff;
+    height: 0%;
+}
+
+#wrap_canvas_div {
+    flex: 1;
+    border: 1px solid #0784d1;
+    width: 100%;
+}
+
+#myCanvas {
+    background-color: white;
+    height: 100%;
+    width: 100%;
+}
+
+#style {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #e6f5ff;
+}
+
+#style>div {
+    width: 70%;
+    height: 35px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#shape {
+    justify-content: space-around;
+    display: flex;
+    flex-flow: wrap;
+    height: 125px;
+
+}
+
+#property {
+    position: absolute;
+    right: 25px;
+    top: 20%;
+    width: 150px;
+    display: none;
+    flex-direction: column;
+    font-size: 13px;
+    /* background-color: #ffffff; */
+}
+
+#property_label {
+    text-align: center;
+    width: 100%;
+    /* height: 30px; */
+    padding: 0%;
+    font-size: 22px;
+    border: 2px solid black;
+    background-color: rgb(162 202 212 / 97%);
+    font-family: UVF Bariol Regular;
+}
+
+#property>div {
+    width: 100%;
+    height: 35px;
+    display: flex;
+    border-bottom: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    /* background-color: #ffffff; */
+}
+
+#property>div>p {
+    width: 37%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+#property>div>div {
+    height: 100%;
+    flex: 1;
+    border-left: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#command {
+    position: absolute;
+    left: 25%;
+    top: 22%;
+    width: 150px;
+    height: 35px;
+    display: none;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 13px;
+    color: red;
+    border: 2px solid black;
+    text-align: center;
+    border-radius: 20px;
+    /* background: #e6f5ff; */
+}
+
+.rangeSlider {
+    -webkit-appearance: none;
+    width: 35px;
+    height: 10px;
+    background: #e6f5ff;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 10px;
+}
+
+.rangeSlider:hover {
+    opacity: 1;
+}
+
+button {
+    width: 40px;
+    height: 40px;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #bbe8ec;
+}
+
+.active,
+.btn:hover {
+    background-color: #59cbd5;
+    background-size: 30px 30px;
+    color: white;
+}
+
+.btn-off {
+    background-color: #bbe8ec;
+}
+
+.btn-on {
+    color: white;
+    background-color: #59cbd5;
+    border: 2px solid #0784d1;
+}
+
+.active {
+    color: #ffffff;
+    background-color: rgb(137, 219, 252);
+}
+
+#grid {
+    position: absolute;
+    top: 350px;
+    left: 25px;
+}
+
+#line {
+    position: absolute;
+    top: 400px;
+    left: 25px;
+}
+
+#clear_undo {
+    position: absolute;
+    top: 66%;
+    left: 2%;
+}
+
+#colorpicker_label {
+    position: absolute;
+    top: 150px;
+    left: 25px;
+    width: 35px;
+    height: 35px;
+    background: url(img/paint.png);
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #bbe8ec;
+    border: 2px solid #0784d1;
+    border-radius: 50%;
+}
+
+#colorpicker_label:hover {
+    background-color: #59cbd5;
+    background-size: 30px 30px;
+}
+
+#line_size {
+    position: absolute;
+    top: 200px;
+    left: 25px;
+    width: 35px;
+    height: 35px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #bbe8ec;
+}
+
+#coord_div {
+    position: absolute;
+    top: 90%;
+    left: 25px;
+    height: 50px;
+    width: 150px;
+    display: flex;
+    align-items: center;
+    border: 2px solid #0784d1;
+    background: #bbe8ec;
+}
+
+#icon_coord {
+    height: 100%;
+    width: 78px;
+    background-image: url(img/coord.png);
+    background-size: 45px 90%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#display_coord {
+    font-family: UVF Bariol Regular;
+    width: 100%;
+    text-align: center;
+}
+
+#openFile_label {
+    width: 35px;
+    height: 35px;
+    background: url(img/open_file.gif);
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#openFile_label:hover {
+    background-size: 29px 29px;
+}
+
+#openFile_Solu {
+    background: url(img/post_mode.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#openFile_Solu:hover {
+    background-size: 35px 35px;
+}
+
+#saveFile {
+    background-image: url(img/save_file.gif);
+    background-color: white;
+    margin: 5px;
+}
+
+#Clear_all {
+    background: url(img/clear_screen.gif);
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#Clear_all:hover {
+    background-size: 30px 30px;
+}
+
+
+#BDCondition {
+    position: absolute;
+    top: 20%;
+    left: 45%;
+    /* flex-flow: row; */
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px;
+    display: none;
+    background-color: #e6f5ff;
+}
+
+.delLoadButton {
+    width: 20px;
+    height: 20px;
+    border-radius: 0;
+    background-image: url(img/delete_load.svg);
+    background-size: 15px 15px;
+    background-color: white;
+    border: 0px;
+}
+
+.delLoadButton:hover {
+    background-size: 17px 17px;
+}
+
+.select-editable {
+    position: relative;
+    background-color: white;
+    border: solid grey 1px;
+    width: 60px;
+    height: 19px;
+}
+
+.select-editable select {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    font-size: 14px;
+    border: none;
+    width: 60px;
+    margin: 0;
+}
+
+.select-editable input {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 40px;
+    padding: 1px;
+    font-size: 12px;
+    border: none;
+}
+
+.select-editable select:focus,
+.select-editable input:focus {
+    outline: none;
+}
+
+/* #modeSoln {
+    position: absolute;
+    top: 20%;
+    left: 45%;
+    justify-content: space-around;
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 5px;
+    display: none;
+    background-color: #e6f5ff;
+} */
+
+#fillColor {
+    background: url(img/fill-color.png);
+    /* background-color: white; */
+    position: absolute;
+    top: 480px;
+    left: 25px;
+    display: none;
+    background-position: center;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+}
+
+#modeDrawing {
+    background: url(img/switch.png);
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#modeDrawing:hover {
+    background-size: 30px 30px;
+}
+
+/* ----------Tab comment */
+
+#tab-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 0;
+    background-size: 20px 20px;
+    border: none;
+    background: url(img/arrow.png);
+    position: absolute;
+    right: 9px;
+    top: 13%;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#tab-comments {
+    position: absolute;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    right: 9px;
+    top: 17%;
+    width: 250px;
+    height: 82.5%;
+    background-color: #e6f5ff;
+    border-left: 1px solid #0784d1
+}
+
+#lableTab {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#tab-comments>input {
+    margin: 15px;
+    width: 80%;
+    height: 17px;
+}
+
+/* difference text in tab */
+#comments>p {
+    width: 100%;
+    height: 100%;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+#valueInputed>div {
+    width: 100%;
+    height: 100%;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.inputImage{
+    background: url(img/image.png);
+    width: 35px;
+    height: 35px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 28px 28px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+.inputImage:hover {
+    background-size: 35px 35px;
+}
