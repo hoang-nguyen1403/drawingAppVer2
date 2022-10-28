@@ -6,7 +6,9 @@ import json
 from django.http import HttpResponse
 from django.core.files.storage import default_storage
 class PictureAPIView(APIView):
+
     def get(self, request):
+         if request.method == 'GET':
             obj = json.load(open('UIp_FE.json'))
             return JsonResponse(obj, safe=False)
 

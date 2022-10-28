@@ -1027,8 +1027,8 @@ class Paint {
       PaintIn.renderObject(processingData.allObject);
     }
 
-
   }
+
 
   // getAPI() {
   //   let listData = processingData.prototype.saveObj();
