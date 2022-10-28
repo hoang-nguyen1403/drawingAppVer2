@@ -961,7 +961,7 @@ class processingData {
 
   createData(inputData) {
     //delete old data
-    PaintIn.clearAll();
+    // PaintIn.clearAll();
     //create point
     let nodeX = math.subset(
       inputData["node_coords"],

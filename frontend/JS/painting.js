@@ -409,11 +409,15 @@ class Paint {
       dataLogFile.push(this.valueComment.value);
       // dataLogFile.push();
       this.valueComment.value = "";
-      for (let i in dataLogFile) {
-        document.getElementById("valueInputed").innerHTML = (`
-              <p> ${dataLogFile[i]} <br></p>
-              `);
+      let strings = '';
+      let reverseData = [...dataLogFile].reverse()
+      for (let i in reverseData) {
+        strings += reverseData[i] + '<br>';
       }
+      console.log(strings)
+      document.getElementById("valueInputed").innerHTML = (`
+      <p style="background-color: #ffffff;"> ${strings} <br></p>
+      `);
     }
 
     //F2 input length Line
@@ -932,6 +936,7 @@ class Paint {
         if (inputData["jsmat"] !== undefined) {
           processingData.prototype.createMeshData(inputData);
         } else {
+          PaintIn.clearAll();
           processingData.prototype.createData(inputData);
         }
 
@@ -1025,31 +1030,30 @@ class Paint {
 
   }
 
-  getAPI() {
-    let listData = processingData.prototype.saveObj();
-    let promise = axios({
-      method: "POST",
-      url: 'https://vyfirstapp.herokuapp.com/v1/article/',
-      data: listData,
-    });
-
-    // var promise = axios({
-    //     url: 'http://localhost:8000/v1/article',
-    //     method: "GET",
-    // });
-
-    promise.then((result) => {
-      console.log(result.data);
-      Mesh.prototype.openFileSoln(result.data);
-    });
-
-    promise.catch(function (err) {
-      console.log("err", err);
-    });
-  }
-
-
   // getAPI() {
+  //   let listData = processingData.prototype.saveObj();
+  //   let promise = axios({
+  //     method: "POST",
+  //     url: 'https://vyfirstapp.herokuapp.com/v1/article/',
+  //     data: listData,
+  //   });
+
+  //   // var promise = axios({
+  //   //     url: 'http://localhost:8000/v1/article',
+  //   //     method: "GET",
+  //   // });
+
+  //   promise.then((result) => {
+  //     console.log(result.data);
+  //     Mesh.prototype.openFileSoln(result.data);
+  //   });
+
+  //   promise.catch(function (err) {
+  //     console.log("err", err);
+  //   });
+  // }
+
+  //   getAPI() {
   //     // request
   //     let listData = processingData.prototype.saveObj();
   //     console.log(listData); // data type: dictionary
@@ -1057,7 +1061,7 @@ class Paint {
 
   //     let promise = axios({
   //         method: "POST",
-  //         // url: 'http://localhost:9910/BondTools/functionFile',
+  //         url: 'http://localhost:9910/BondTools/firstAPI',
   //         data: params,
   //     });
 
@@ -1072,6 +1076,27 @@ class Paint {
   //         console.log("err", err);
   //     });
   // }
+
+  getAPI() {
+    // request
+    let listData = processingData.prototype.saveObj();
+    let params = { "rhs": [listData], "nargout": 1, "outputFormat": { "mode": "small", "nanType": "object" } };
+
+    let promise = axios({
+      method: "POST",
+      url: 'http://localhost:9910/BondTools/firstAPI',
+      data: params,
+    });
+
+    promise.then((result) => {
+      let receiveData = result.data['lhs'][0];
+      Mesh.prototype.openFileSoln(receiveData);
+    });
+
+    promise.catch(function (err) {
+      console.log("err", err);
+    });
+  }
 
 
   getMousePosition(event) {
@@ -2862,11 +2887,11 @@ class Paint {
     }
   }
 
-  saveLogFile() {
-    let blob = new Blob([dataLogFile],
-      { type: "text/plain;charset=utf-8" });
-    saveAs(blob, "logFile.txt");
-  }
+  // saveLogFile() {
+  //   let blob = new Blob([dataLogFile],
+  //     { type: "text/plain;charset=utf-8" });
+  //   saveAs(blob, "logFile.txt");
+  // }
 };
 
 //get height of tool_top
