@@ -516,13 +516,17 @@ button {
     text-align: center;
     justify-content: center;
 }
+#valueInputed{
+    background-color: #ffffff;
+    margin: 10px;
 
+}
 #valueInputed>div {
     width: 100%;
     height: 100%;
     display: block;
-    align-items: center;
-    text-align: center;
+    align-items:center;
+    text-align:justify;
     justify-content: center;
 }
 
