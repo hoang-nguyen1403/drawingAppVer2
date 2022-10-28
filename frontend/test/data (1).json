@@ -1,0 +1,19 @@
+{
+    "num_nodes": 0,
+    "num_segments": 0,
+    "node_coords": [],
+    "node_names": [],
+    "segments": [],
+    "segment_names": [],
+    "surfaces": [],
+    "surface_names": [],
+    "nodal_loads": [],
+    "segment_loads": [],
+    "text-data": [
+        "p1",
+        "",
+        "l1",
+        "ls",
+        "wl'"
+    ]
+}
