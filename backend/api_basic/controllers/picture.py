@@ -10,7 +10,6 @@ from ..processings.dectectPictureFunction import detectPicture
 class PictureAPIView(APIView):
 
     def get(self, request):
-         if request.method == 'GET':
             obj = json.load(open('UIp_FE.json'))
             return JsonResponse(obj, safe=False)
 

@@ -58,11 +58,14 @@ def detectPicture(file_name):
         white_board = np.zeros_like(matrix)
         for segment in segments_list:
             cv2.line(white_board, segments_list[segment]['line'][0], segments_list[segment]['line'][1], color=[255,255,255], thickness=2)
-        cv2.imwrite('result.png',white_board)
+        # write_path = os.path.join(settings.MEDIA_ROOT,'result.png')
+        # cv2.imwrite(write_path,white_board)
 
-    img = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
+    # ========================== READ IMAGE =====================================
+    read_path = os.path.join(settings.MEDIA_ROOT,file_name)
+    img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
     bin_inv = cv2.bitwise_not(img) # flip image colors
-    bin_inv = cv2.dilate(bin_inv, np.ones((5,5)))
+    bin_inv = cv2.dilate(bin_inv, np.ones((5, 5)))
 
     # ========================== FIND END POINTS =====================================
     th, img = cv2.threshold(img, 127, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
@@ -72,6 +75,7 @@ def detectPicture(file_name):
     ext = get_end_pnts(pnts, img)
     for p in ext:
         cv2.circle(img, (p[0], p[1]), 5, 128)
+        
 
     # =========================== FIND SEGMENTS ========================================
     segments = {}
@@ -96,4 +100,6 @@ def detectPicture(file_name):
     display_result(img, segments)
 
     return segments
+
+
 
