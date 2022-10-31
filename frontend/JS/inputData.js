@@ -95,17 +95,6 @@ function inputForce(x, y, obj, loadKey) {
                 obj.pointLoads.push(forceObj);
 
             }
-            // else if (loadKey === "moment") {
-            //     //first check
-            //     if (obj.pointLoads === null) {
-            //         obj.pointLoads = [];
-            //     }
-            //     //
-            //     let moment = Number(this.value());
-            //     momentObj = { "type": loadKey, "parameters": { "value": moment } };
-            //     obj.pointLoads.push(momentObj);
-
-            // } 
             else if (loadKey === "normal_pressure") {
                 //first check
                 if (obj.lineLoads === null) {
@@ -332,16 +321,15 @@ function inputLenght(x, y) {
             PaintIn.simulateMouseEvent("mouseup", nextPoint);
             this.destroy();
             lengthLine = undefined;
-            // PaintIn.renderObject(processingData.allObject);
             console.log(nextPoint)
         },
     });
     lengthLine.focus();
 }
 
-function getPoint(start, cur, l) {
-    let a = cur[0] - start[0];
-    let b = cur[1] - start[1];
-    let t = Math.sqrt(l * l / (a * a + b * b));
-    return [start[0] + a * t, start[1] + b * t];
-}
+// function getPoint(start, cur, l) {
+//     let a = cur[0] - start[0];
+//     let b = cur[1] - start[1];
+//     let t = Math.sqrt(l * l / (a * a + b * b));
+//     return [start[0] + a * t, start[1] + b * t];
+// }
