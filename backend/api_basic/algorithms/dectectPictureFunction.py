@@ -4,68 +4,70 @@ import cv2
 import numpy as np
 import math
 import itertools
+import time
 
-from .detectAreaFunction import detectArea
+# from .detectAreaFunction import detectArea
+
+
+def get_end_points(points, img):
+    node_coords = []    
+    for point in points:
+        x = point[0]
+        y = point[1]
+        n = 0        
+        n += img[y - 1,x]
+        n += img[y - 1,x - 1]
+        n += img[y - 1,x + 1]
+        n += img[y,x - 1]    
+        n += img[y,x + 1]    
+        n += img[y + 1,x]    
+        n += img[y + 1,x - 1]
+        n += img[y + 1,x + 1]
+        n /= 255        
+        if n == 1:
+            node_coords.append(point.tolist())
+    return node_coords
+
+def flat_segment_line(segment_line):
+    segment_line = [segment_line[0][0],segment_line[0][1], segment_line[1][0], segment_line[1][1]]
+    return segment_line
+
+def dot_product(v1, v2):
+    return sum((a*b) for a, b in zip(v1, v2))
+
+def get_length(v):
+    return math.sqrt(dot_product(v, v))
+
+def get_angle(segment1, segment2):
+    v1 = flat_segment_line(segment1)
+    v2 = flat_segment_line(segment2)
+    return math.degrees(math.acos(dot_product(v1, v2) / (get_length(v1) * get_length(v2))))
+
+def filter_overlap(segment_dict):
+    segment_combinations = itertools.combinations(segment_dict,2)
+    for couple_segment in segment_combinations:
+        segment1, segment2 = couple_segment
+        try:
+            if segment_dict[segment1]['line'][0] in segment_dict[segment2]['line'] or segment_dict[segment1]['line'][1] in segment_dict[segment2]['line']:
+                    angle = get_angle(segment_dict[segment1]['line'], segment_dict[segment2]['line'])
+                    if angle < 10:
+                        if segment_dict[segment1]['precision'] > segment_dict[segment2]['precision']:
+                            del segment_dict[segment2]
+                        else:
+                            del segment_dict[segment1]
+        except:
+            pass
+    return segment_dict
+
+# def display_result(matrix,segment_dict):
+#     white_board = np.zeros_like(matrix)
+#     for segment in segment_dict:
+#         cv2.line(white_board, segment_dict[segment]['line'][0], segment_dict[segment]['line'][1], color=[255,255,255], thickness=2)
+#     write_path = os.path.join(settings.MEDIA_ROOT,'result.png')
+#     cv2.imwrite(write_path,white_board)
+
 
 def detectPicture(file_name):
-    def get_end_points(pnts, img):
-        node_coords = []    
-        for p in pnts:
-            x = p[0]
-            y = p[1]
-            n = 0        
-            n += img[y - 1,x]
-            n += img[y - 1,x - 1]
-            n += img[y - 1,x + 1]
-            n += img[y,x - 1]    
-            n += img[y,x + 1]    
-            n += img[y + 1,x]    
-            n += img[y + 1,x - 1]
-            n += img[y + 1,x + 1]
-            n /= 255        
-            if n == 1:
-                node_coords.append(p.tolist())
-        return node_coords
-
-    def flat_segment_line(segment_line):
-        segment_line = [segment_line[0][0],segment_line[0][1], segment_line[1][0], segment_line[1][1]]
-        return segment_line
-
-    def dot_product(v1, v2):
-        return sum((a*b) for a, b in zip(v1, v2))
-
-    def get_length(v):
-        return math.sqrt(dot_product(v, v))
-
-    def get_angle(segment1, segment2):
-        v1 = flat_segment_line(segment1)
-        v2 = flat_segment_line(segment2)
-        return math.degrees(math.acos(dot_product(v1, v2) / (get_length(v1) * get_length(v2))))
-
-    def filter_overlap(segment_dict):
-        segment_combinations = itertools.combinations(segment_dict,2)
-        for couple_segment in segment_combinations:
-            segment1, segment2 = couple_segment
-            try:
-                if segment_dict[segment1]['line'][0] in segment_dict[segment2]['line'] or segment_dict[segment1]['line'][1] in segment_dict[segment2]['line']:
-                        angle = get_angle(segment_dict[segment1]['line'], segment_dict[segment2]['line'])
-                        if angle < 10:
-                            if segment_dict[segment1]['precision'] > segment_dict[segment2]['precision']:
-                                del segment_dict[segment2]
-                            else:
-                                del segment_dict[segment1]
-            except:
-                pass
-        return segment_dict
-
-    def display_result(matrix,segment_dict):
-        white_board = np.zeros_like(matrix)
-        for segment in segment_dict:
-            cv2.line(white_board, segment_dict[segment]['line'][0], segment_dict[segment]['line'][1], color=[255,255,255], thickness=2)
-        # write_path = os.path.join(settings.MEDIA_ROOT,'result.png')
-        # cv2.imwrite(write_path,white_board)
-
-    # ========================== READ IMAGE =====================================
     data = {
         "num_nodes": 0,
         "num_segments": 0,
@@ -78,10 +80,12 @@ def detectPicture(file_name):
         "nodal_loads": [],
         "segment_loads": []
     }
+
+    # ========================== READ IMAGE =====================================
     read_path = os.path.join(settings.MEDIA_ROOT,file_name)
     img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
     bin_inv = cv2.bitwise_not(img) # flip image colors
-    bin_inv = cv2.dilate(bin_inv, np.ones((5, 5)))
+    bin_inv = cv2.dilate(bin_inv, np.ones((3, 3)))
 
     # ========================== FIND END POINTS =====================================
     th, img = cv2.threshold(img, 127, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
@@ -89,10 +93,11 @@ def detectPicture(file_name):
     points = cv2.findNonZero(img)
     points = np.squeeze(points)
     node_coords = get_end_points(points, img)
+
+    # ========================== ADD NODES TO DATA ===================================
     data["node_coords"] = node_coords
     data["num_nodes"] = len(data["node_coords"])
     data["node_names"] = [None]*data["num_nodes"]
-        
 
     # =========================== FIND SEGMENTS ========================================
     segment_dict = {}
@@ -102,9 +107,9 @@ def detectPicture(file_name):
     for line in lines: # loop through each line
         bin_line = np.zeros_like(bin_inv) # create a matrix to draw the line in
         start, end = line # grab endpoints
-        cv2.line(bin_line, start, end, color=255, thickness=5) # draw line
+        cv2.line(bin_line, start, end, color=255, thickness=2) # draw line
         conj = (bin_inv/255 + bin_line/255) # create agreement image
-        conj_line = (np.zeros_like(bin_inv) + bin_line/255)
+        conj_line = (bin_line/255)
         n_agree = np.sum(conj==2)
         n_line = np.sum(conj_line==1)
         precision = n_agree/n_line
@@ -112,9 +117,10 @@ def detectPicture(file_name):
             cv2.line(line_img, start, end, color=[0,200,0], thickness=2)
             segment_dict[count] = {"line": [list(start),list(end)], "precision": precision}
             count += 1
-
     segment_dict = filter_overlap(segment_dict)
-    display_result(img, segment_dict)
+    # display_result(img, segment_dict)
+
+    # =========================== ADD SEGMENTS TO DATA ===============================
     segments = []
     for segment in segment_dict:
         start_node = segment_dict[segment]["line"][0]
@@ -132,5 +138,7 @@ def detectPicture(file_name):
     data["num_segments"] = len(data["segments"])
     data["segment_names"] = [None]*data["num_segments"]
     # tim giao diem
+    # canh moi
+    # data = detectArea(data)
     return data
 

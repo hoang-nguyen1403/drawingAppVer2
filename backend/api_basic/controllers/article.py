@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 import json
 
-from ..processings.detectAreaFunction import detectArea
+from ..algorithms.detectAreaFunction import detectArea
 
 
 # Create your views here.
@@ -34,18 +34,8 @@ class ArticleAPIView(APIView):
     def get(self, request):
         obj = json.load(open('UIp_FE.json'))
         return JsonResponse(obj, safe = False)
-    
+
     def post(self, request):
-
         data = JSONParser().parse(request)
-        # with open("data.json", "w") as resultFile:
-        #     json.dump(data, resultFile)
-
         data = detectArea(data)
-        # with open("result.json", "w") as resultFile:
-        #     json.dump(data, resultFile)
         return JsonResponse(data, safe = False)
-
-        #     resultFile.write(str(data))
-        # obj = json.load(open('UIp_FE.json'))
-        # return JsonResponse(obj, safe = False)
