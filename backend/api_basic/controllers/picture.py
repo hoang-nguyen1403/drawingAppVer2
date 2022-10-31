@@ -15,11 +15,12 @@ class PictureAPIView(APIView):
 
     def post(self, request):
             file = request.FILES['file']
-            if default_storage.exists(str(file.name)):
-               default_storage.delete(str(file.name))
+        #     if default_storage.exists(str(file.name)):
+        #        default_storage.delete(str(file.name))
             file_name = default_storage.save(file.name,file)
             result = detectPicture(file_name)
-            return JsonResponse(file_name,safe=False)
+            default_storage.delete(str(file.name))
+            return JsonResponse(result,safe=False)
             
 
             
