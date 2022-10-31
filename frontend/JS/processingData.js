@@ -1,4 +1,4 @@
-//----------RECORD data------------//
+//----------RECORD data------------//point
 class processingData {
   constructor() { }
   //Add
@@ -323,122 +323,19 @@ class processingData {
     //
     // receive data
     let listData = processingData.prototype.saveObj();
-    console.log(listData);
     let promise = axios({
       method: "POST",
       url: "http://127.0.0.1:8000/v1/detectArea/",
       data: listData,
     });
 
-    // var promise = axios({
-    //     url: 'http://localhost:8000/v1/article',
-    //     method: "GET",
-    // });
-
     promise.then((result) => {
-      // console.log(result.data);
       processingData.prototype.createData(result.data);
-      // Mesh.prototype.openFileSoln(result.data);
     });
 
     promise.catch(function (err) {
       console.log("err", err);
     });
-
-    // let exceptIndex = [];
-    // for (let index1 = 0; index1 <= segmentLine.length - 1; index1++) {
-    //     if (exceptIndex.indexOf(index1) !== -1) {
-    //         continue;
-    //     }
-    //     let arrLineFlow = [];
-    //     let arrPointFlow = [];
-    //     arrLineFlow.push(segmentLine[index1]);
-    //     arrPointFlow.push(segmentLine[index1].Point[0].point);
-    //     arrPointFlow.push(segmentLine[index1].Point[1].point);
-    //     let orientation = "";
-    //     while (true) {
-    //         let arrNextLine = [];
-    //         let arrNextPoint = [];
-    //         let point1OfLine1 = arrLineFlow.at(-1).Point[0].point;
-    //         let point2OfLine1 = arrLineFlow.at(-1).Point[1].point;
-    //         for (let index2 = 0; index2 <= segmentLine.length - 1; index2++) {
-    //             if (index2 === index1) continue;
-    //             let point1OfNext = segmentLine[index2].Point[0].point;
-    //             let point2OfNext = segmentLine[index2].Point[1].point;
-
-    //             if (JSON.stringify(point2OfLine1) === JSON.stringify(point1OfNext) &&
-    //                 JSON.stringify(point1OfLine1) !== JSON.stringify(point2OfNext)) {
-    //                 arrNextPoint.push(point2OfNext);
-    //                 arrNextLine.push(segmentLine[index2]);
-    //             } else if (JSON.stringify(point2OfLine1) === JSON.stringify(point2OfNext) &&
-    //                 JSON.stringify(point1OfLine1) !== JSON.stringify(point1OfNext)) {
-    //                 //swap
-    //                 let swap = segmentLine[index2].Point[0];
-    //                 segmentLine[index2].Point[0] = segmentLine[index2].Point[1];
-    //                 segmentLine[index2].Point[1] = swap;
-
-    //                 arrNextLine.push(segmentLine[index2]);
-    //                 arrNextPoint.push(segmentLine[index2].Point[1].point);
-    //             }
-    //         }
-    //         if (arrNextLine.length === 0) break;
-    //         arrNextLine.sort(function (a, b) {
-    //             let pointa = a.Point[1].point
-    //             let pointb = b.Point[1].point
-
-    //             let OA = math.subtract(point1OfLine1, point2OfLine1);
-    //             let OB = math.subtract(pointa, point2OfLine1);
-    //             let OC = math.subtract(pointb, point2OfLine1);
-
-    //             let degree1 = math.atan2(OA[1], OA[0]) - math.atan2(OB[1], OB[0]);
-    //             let degree2 = math.atan2(OA[1], OA[0]) - math.atan2(OC[1], OC[0]);
-
-    //             if (degree1 < 0) degree1 += 2 * math.PI;
-    //             if (degree2 < 0) degree2 += 2 * math.PI;
-    //             return degree2 - degree1
-    //         });
-
-    //         let AO = math.subtract(point2OfLine1, point1OfLine1);
-    //         let OB = math.subtract(arrNextLine[0].Point[1].point, point2OfLine1);
-    //         if (arrLineFlow.length === 1) {
-    //             //set orientation
-    //             if (math.round(math.cross([AO[0], AO[1], 0], [OB[0], OB[1], 0])[2], 3) >= 0) {
-    //                 orientation = "CW";
-    //             } else orientation = "CCW"
-    //         }
-    //         if (orientation === "CW") {
-    //             arrLineFlow.push(arrNextLine.at(-1));
-    //             arrPointFlow.push(arrNextLine.at(-1).Point[1].point);
-    //         } else if (orientation === "CCW") {
-    //             arrLineFlow.push(arrNextLine[0]);
-    //             arrPointFlow.push(arrNextLine[0].Point[1].point);
-    //         }
-    //         if (JSON.stringify(arrPointFlow.at(-1)) ===
-    //             JSON.stringify(arrLineFlow[0].Point[0].point)) {
-    //             //get resutl
-    //             // console.log("getResult")
-    //             AreaResult.push(arrLineFlow);
-    //             PointFlowResult.push(arrPointFlow);
-    //             //delete
-    //             for (let line of arrLineFlow) {
-    //                 exceptIndex.push(segmentLine.indexOf(line));
-    //             }
-    //             break;
-    //         }
-    //     }
-    // }
-    // console.log(processingData.allLine)
-    //create area object
-    // for (let i = 0; i <= AreaResult.length - 1; i++) {
-    //     // let areaObj = new Area(AreaResult[i], undefined, PointFlowResult[i]);
-    //     let areaObj = new Area(AreaResult[i], undefined);
-    //     processingData.prototype.addObject(areaObj, processingData.allArea);
-    // }
-    //
-
-    // this.updateStorage();
-    // PaintIn.renderObject(processingData.allObject);
-    // return AreaResult
   }
 
   // areaDetect(Line_List) {

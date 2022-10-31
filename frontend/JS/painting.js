@@ -407,14 +407,13 @@ class Paint {
     //ENTER
     if (event.keyCode === 13) {
       dataLogFile.push(this.valueComment.value);
-      // dataLogFile.push();
       this.valueComment.value = "";
       let strings = '';
       let reverseData = [...dataLogFile].reverse()
       for (let i in reverseData) {
         strings += reverseData[i] + '<br>';
       }
-      console.log(strings)
+      // console.log(strings)
       document.getElementById("valueInputed").innerHTML = (`
       <p style="background-color: #ffffff;"> ${strings} <br></p>
       `);
@@ -2726,7 +2725,7 @@ class Paint {
           let firstPoint = center;
           let sideLength = 20;
           this.ctx.moveTo(firstPoint[0], firstPoint[1]);
-          this.ctx.lineTo(firstPoint[0] + sideLength / 2, firstPoint[1] - sideLength * math.sqrt(3) / 2);
+          this.ctx.lineTo(firstPoint[0] + sideLength / 2, firstPoFnt[1] - sideLength * math.sqrt(3) / 2);
           this.ctx.lineTo(firstPoint[0] - sideLength / 2, firstPoint[1] - sideLength * math.sqrt(3) / 2);
           this.ctx.fill();
           break;

@@ -10,9 +10,6 @@
 	<!-- <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
 	<script defer src="https://pyscript.net/latest/pyscript.js"></script> -->
 	<title>Drawing App</title>
-	<!-- <py-env>
-		- numpy
-	</py-env> -->
 </head>
 
 <body>
@@ -57,12 +54,8 @@
 					style="background-image: url(frontend/img/apply_force.svg)"></button>
 				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
 					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
-				<!-- <button id="axialForce" class="btn" type="button" onclick="PaintIn.addValAxialForce()" value="Off"> Axial
-					Force</button> -->
 				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
 					style="background-image: url(frontend/img/apply_moment.svg)"></button></button>
-				<!-- <button id="deleteForce" class="btn" type="button" onclick="PaintIn.addValDeleteForce()"
-					value="Off">Delete Force</button> -->
 			</div>
 
 			<div id="modeSoln">
@@ -83,9 +76,6 @@
 				</label>
 				<button id="saveFile" type="button" onclick="processingData.prototype.saveAsData()"></button>
 				<button id="Clear_all" type="button" onclick="PaintIn.clearAll()"></button>
-				<!-- <label id="openFile_Solu">
-					<input type="file" name="openFileSolu" id="openFileSolu" style="display: none">
-				</label> -->
 
 				<!-- request -->
 				<button id="openFile_Solu" onclick="PaintIn.getAPI()"></button>
@@ -99,7 +89,7 @@
 			</div>
 			<div id="wrap_canvas_div">
 				<canvas id="myCanvas">
-					<!-- <div id="RadiusLightNode"></div> -->
+
 				</canvas>
 			</div>
 
@@ -129,10 +119,6 @@
 		</div>
 
 	</div>
-
-	<!-- test link cdn -->
-	<!-- <script src="https://cdn.jsdelivr.net/npm/hull-connector@1.0.51/dist/index.min.js"></script> -->
-	<!--  -->
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/kd-tree-javascript@1.0.3/kdTree-min.min.js"></script>
