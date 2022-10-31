@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 import cv2
 import numpy as np
 import math
