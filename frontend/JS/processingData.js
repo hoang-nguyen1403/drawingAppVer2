@@ -237,6 +237,8 @@ class processingData {
           }
         }
       }
+      console.log(arrIntersPoint)
+
       //when dont have IntersPoint
       if (arrIntersPoint.length === 0) {
         processingData.allLine.push(Line_List_copy[i]);
@@ -924,6 +926,7 @@ class processingData {
       allArea.push(area);
     }
     //add data
+    processingData.allPoint = allPoint
     processingData.allLine = allLine;
     processingData.allArea = allArea;
     //update storage
