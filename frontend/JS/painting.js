@@ -1493,6 +1493,14 @@ class Paint {
     }
   }
 
+    // for (let coupLine of coupleLines) {
+    //   var IntersPoint = this.intersectionCheck(coupLine[0], coupLine[1]);
+    //   if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {//array Intersection.lenght >1
+    //     arrIntersPoint.push(IntersPoint.Coord);
+    //   }
+    // }
+    // console.log(arrIntersPoint)
+
   addName() {
     //check before input
     if (this.arrMultiCurObj[0] !== undefined) {

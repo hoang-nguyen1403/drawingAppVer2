@@ -109,15 +109,14 @@ def detectPicture(file_name):
         "nodal_loads": [],
         "segment_loads": []
     }
-
-    # ========================== READ IMAGE =====================================
     read_path = os.path.join(settings.MEDIA_ROOT,file_name)
     img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
     bin_inv = cv2.bitwise_not(img) # flip image colors
     bin_inv = cv2.dilate(bin_inv, np.ones((1, 1)))
 
     # ========================== FIND END POINTS =====================================
-    th, img = cv2.threshold(img, 127, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
+    th, img = cv2.threshold(
+        img, 127, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
     img = cv2.ximgproc.thinning(img)
     points = cv2.findNonZero(img)
     points = np.squeeze(points)
@@ -155,6 +154,7 @@ def detectPicture(file_name):
     data["node_coords"] = node_coords
     data["num_nodes"] = len(data["node_coords"])
     data["node_names"] = [None]*data["num_nodes"]
+        
 
     # =========================== ADD SEGMENTS TO DATA ===============================
     segments = []
@@ -168,5 +168,4 @@ def detectPicture(file_name):
     data["num_segments"] = len(data["segments"])
     data["segment_names"] = [None]*data["num_segments"]
     # data = detectArea(data)
-    print(data)
     return data
