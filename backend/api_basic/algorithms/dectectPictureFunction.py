@@ -10,6 +10,22 @@ from scipy.spatial import cKDTree
 # from .detectAreaFunction import detectArea
 
 
+def region_of_interest(img):
+    canny_img = cv2.Canny(img, 127, 255)
+    contours, hierarchy = cv2.findContours(canny_img,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    height, width = canny_img.shape
+    min_x, min_y = width, height
+    max_x = max_y = 0
+    for contour in contours:
+        (x,y,w,h) = cv2.boundingRect(contour)
+        min_x, max_x = min(x, min_x), max(x+w, max_x)
+        min_y, max_y = min(y, min_y), max(y+h, max_y)
+    if max_x - min_x > 0 and max_y - min_y > 0:
+        min_x, min_y = min_x - 3, min_y - 3
+        max_x, max_y = max_x + 3, max_y + 3
+        img = img[min_y:max_y, min_x:max_x]
+    return img
+
 def get_end_points(points, img):
     node_coords = []    
     for point in points:
@@ -55,8 +71,8 @@ def filter_overlap(segment_dict):
     segment_combinations = itertools.combinations(segment_dict,2)
     for couple_segment in segment_combinations:
         segment1, segment2 = couple_segment
-        segment1_start_node, segment1_end_node = segment_dict[segment1]['line']
         try:
+            segment1_start_node, segment1_end_node = segment_dict[segment1]['line']
             if segment1_start_node in segment_dict[segment2]['line'] or segment1_end_node in segment_dict[segment2]['line']:
                     angle = get_angle(segment_dict[segment1]['line'], segment_dict[segment2]['line'])
                     if angle < 10:
@@ -118,12 +134,12 @@ def detectPicture(file_name):
     }
     read_path = os.path.join(settings.MEDIA_ROOT,file_name)
     img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
+    img = region_of_interest(img)
     bin_inv = cv2.bitwise_not(img) # flip image colors
     bin_inv = cv2.dilate(bin_inv, np.ones((1, 1)))
 
     # ========================== FIND END POINTS =====================================
-    th, img = cv2.threshold(
-        img, 127, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
+    th, img = cv2.threshold(img, 127, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
     img = cv2.ximgproc.thinning(img)
     points = cv2.findNonZero(img)
     points = np.squeeze(points)
@@ -175,4 +191,9 @@ def detectPicture(file_name):
     data["num_segments"] = len(data["segments"])
     data["segment_names"] = [None]*data["num_segments"]
     # data = detectArea(data)
+    # ============================ REMOVE TO CENTER CANVAS ===========================
+    node_coords = []
+    for node_coord in data["node_coords"]:
+        node_coords.append([node_coord[0]+100, node_coord[1]+100])
+    data["node_coords"] = node_coords
     return data
