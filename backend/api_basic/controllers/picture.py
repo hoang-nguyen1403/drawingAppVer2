@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from rest_framework.views import APIView
 from django.core.files.storage import default_storage
 import json
@@ -17,13 +17,10 @@ class PictureAPIView(APIView):
         #     if default_storage.exists(str(file.name)):
         #        default_storage.delete(str(file.name))
             file_name = default_storage.save(file.name,file)
-            result = detectPicture(file_name)
+            try:
+                result = detectPicture(file_name)
+            except:
+                default_storage.delete(file_name)
+                return HttpResponse(status=500)
             default_storage.delete(file_name)
             return JsonResponse(result,safe=False)
-            
-
-            
-
-    
-    
-        
