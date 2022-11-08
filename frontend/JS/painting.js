@@ -966,7 +966,7 @@ class Paint {
       formData.append("file", $("#inputImg")[0].files[0]);
       let promise = axios({
         method: "POST",
-        url: "https://vysecondapp.herokuapp.com/v1/picture/",
+        url: "http://127.0.0.1:8000/v1/picture/",
         data: formData,
         headers: {
           "Content-Type": "multipart/form-data",
