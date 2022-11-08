@@ -103,14 +103,21 @@ def find_intersection(line1, line2):
         if get_distance([x,y],line1[0]) < length1 and get_distance([x,y],line1[1]) < length1 and get_distance([x,y],line2[0]) < length2 and get_distance([x,y],line2[1]) < length2:
             return [round(x), round(y)]
 
-# def detectLine(line, intersections):
-#     intersections.sort()
-#     listLine = []
-#     listLine.append([line[0], intersections[0]])
-#     for i in range(0, len(intersections)-2):
-#         listLine.append(intersections[i], intersections[i]+1)
-#     listLine.append([line[1], intersections[len(intersections)-1]])
-#     return listLine
+def detectLine(line, intersections):
+    intersections.sort()
+    listLine = []
+    if(len(intersections) !=0):
+        listLine.append([line[0], intersections[0]])
+        if len(intersections) >2:
+            for i in range(0, len(intersections)-2):
+                listLine.append([intersections[i], intersections[i]+1])
+            listLine.append([line[1], intersections[len(intersections)-1]])
+        elif(len(intersections) == 2):
+            listLine.append([intersections[0], intersections[1]])
+            listLine.append([line[1], intersections[len(intersections)-1]])
+        elif (len(intersections) == 1):
+            listLine.append([line[1], intersections[len(intersections)-1]])
+    return listLine
 
 def detectPicture(file_name):
     data = {
