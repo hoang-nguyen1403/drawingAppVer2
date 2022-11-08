@@ -140,7 +140,6 @@ def detectPicture(file_name):
 
     # =========================== FIND SEGMENTS ========================================
     time_start = time.time()
-
     segment_dict = {}
     count = 0
     lines = itertools.combinations(node_coords,2) # create all possible lines
@@ -170,7 +169,6 @@ def detectPicture(file_name):
     data["node_coords"] = node_coords
     data["num_nodes"] = len(data["node_coords"])
     data["node_names"] = [None]*data["num_nodes"]
-        
 
     # =========================== ADD SEGMENTS TO DATA ===============================
     segments = []
@@ -184,6 +182,7 @@ def detectPicture(file_name):
     data["num_segments"] = len(data["segments"])
     data["segment_names"] = [None]*data["num_segments"]
     # data = detectArea(data)
+    
     # ============================ REMOVE TO CENTER CANVAS ===========================
     node_coords = []
     for node_coord in data["node_coords"]:
