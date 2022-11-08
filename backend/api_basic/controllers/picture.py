@@ -21,6 +21,6 @@ class PictureAPIView(APIView):
                 result = detectPicture(file_name)
             except:
                 default_storage.delete(file_name)
-                return HttpResponse(status=500)
+                return HttpResponse(status=300)
             default_storage.delete(file_name)
             return JsonResponse(result,safe=False)

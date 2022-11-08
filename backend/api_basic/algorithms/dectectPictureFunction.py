@@ -7,7 +7,7 @@ import itertools
 import time
 from scipy.spatial import cKDTree
 
-# from .detectAreaFunction import detectArea
+from .detectAreaFunction import detectArea
 
 
 def region_of_interest(img):
@@ -109,8 +109,8 @@ def detectLine(line, intersections):
     if(len(intersections) !=0):
         listLine.append([line[0], intersections[0]])
         if len(intersections) >2:
-            for i in range(0, len(intersections)-2):
-                listLine.append([intersections[i], intersections[i]+1])
+            for i in range(0, len(intersections)-1):
+                listLine.append([intersections[i], intersections[i+1]])
             listLine.append([line[1], intersections[len(intersections)-1]])
         elif(len(intersections) == 2):
             listLine.append([intersections[0], intersections[1]])
@@ -146,54 +146,66 @@ def detectPicture(file_name):
     node_coords = get_end_points(points, img)
 
     # =========================== FIND SEGMENTS ========================================
-    time_start = time.time()
-
     segment_dict = {}
     count = 0
-    lines = itertools.combinations(node_coords,2) # create all possible lines
+    lines = itertools.combinations(node_coords, 2)  # create all possible lines
     bin_inv = bin_inv / 255
-    for line in lines: # loop through each line
-        bin_line = np.zeros_like(bin_inv) # create a matrix to draw the line in
-        start, end = line # grab endpoints
-        cv2.line(bin_line, start, end, color=1, thickness=1) # draw line
+    for line in lines:  # loop through each line
+        # create a matrix to draw the line in
+        bin_line = np.zeros_like(bin_inv)
+        start, end = line  # grab endpoints
+        cv2.line(bin_line, start, end, color=1, thickness=1)  # draw line
         precision = get_precision(bin_inv, bin_line)
         if precision > .9:
-            segment_dict[count] = {"line": line, "precision": precision}
+            segment_dict[count] = {"line": line, "precision": precision, "intersection":False}
             count += 1
     segment_dict = filter_overlap(segment_dict)
-    print(time.time()-time_start)
 
     # =========================== FIND INTERSECTIONS =================================
     intersections = []
-    segment_combinations = itertools.combinations(segment_dict,2)
-    for couple_segment in segment_combinations:
-        segment1_id, segment2_id = couple_segment
-        segment1 = segment_dict[segment1_id]['line']
-        segment2 = segment_dict[segment2_id]['line']
-        intersection_point = find_intersection(segment1, segment2)
-        if intersection_point != None and intersection_point not in node_coords:
-            intersections.append(intersection_point)
+    bin_intersections = []
+    segments = []
+    for i in range(0, len(segment_dict)):
+        inters_one_line = []
+        segment1 = segment_dict[i]['line']
+        for ii in range(0, len(segment_dict)):
+            segment2 = segment_dict[ii]['line']
+            intersection = find_intersection(segment1, segment2)
+            if(intersection!= None):
+                inters_one_line.append(intersection)
+                segment_dict[i]['intersection'] = True
+                segment_dict[ii]['intersection'] = True
+                bin_intersections.append(intersection) 
+            subline = detectLine(segment_dict[i]['line'], inters_one_line)
+        segments += subline
+
+    for i in range(0, len(segment_dict)):
+        if(segment_dict[i]['intersection'] == False):
+            segments.append(segment_dict[i]['line'])
+    for intersection in bin_intersections:
+        if intersection not in intersections:
+            intersections.append(intersection)
+    
     node_coords = node_coords + intersections
     data["node_coords"] = node_coords
     data["num_nodes"] = len(data["node_coords"])
     data["node_names"] = [None]*data["num_nodes"]
-        
 
     # =========================== ADD SEGMENTS TO DATA ===============================
-    segments = []
+    segment_list = []
     kdtree = cKDTree(data["node_coords"])
-    for segment in segment_dict:
-        start_node, end_node = segment_dict[segment]["line"]
+    for segment in segments:
+        start_node, end_node = segment
         distances, ids = kdtree.query([start_node, end_node])
         if distances[0] < 1e-5 and distances[1] < 1e-5:
-            segments.append(ids.tolist())
-    data["segments"] = segments
+            segment_list.append(ids.tolist())
+    data["segments"] = segment_list
     data["num_segments"] = len(data["segments"])
     data["segment_names"] = [None]*data["num_segments"]
-    # data = detectArea(data)
     # ============================ REMOVE TO CENTER CANVAS ===========================
     node_coords = []
     for node_coord in data["node_coords"]:
         node_coords.append([node_coord[0]+100, node_coord[1]+100])
     data["node_coords"] = node_coords
+    data = detectArea(data)
     return data
