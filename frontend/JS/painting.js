@@ -255,14 +255,6 @@ class Paint {
       if (this.pen === "line") {
         this.undo();
         processingData.prototype.areaDetect(processingData.allLine);
-        // let lineList = [];
-        // for (let line of processingData.oldObjects) {
-        //     if (line.className === "Line") {
-        //         lineList.push(line);
-        //     }
-        // }
-        // processingData.prototype.areaDetect(lineList);
-        // add node to arrGrid
         this.addNode();
       }
     }
@@ -271,13 +263,6 @@ class Paint {
       // processingData.prototype.separateData();
       if (this.pen === "line") {
         processingData.prototype.areaDetect(processingData.allLine);
-        // let lineList = [];
-        // for (let line of processingData.oldObjects) {
-        //     if (line.className === "Line") {
-        //         lineList.push(line);
-        //     }
-        // }
-        // processingData.prototype.areaDetect(lineList);
       }
       this.isCancled = false;
       this.pen = "select";
@@ -698,6 +683,12 @@ class Paint {
     this.renderObject(processingData.allObject);
   }
 
+  addCommand(text, x, y) {
+    PaintIn.ctx.font = "13px Arial";
+    PaintIn.ctx.fillStyle = "red";
+    PaintIn.ctx.fillText(text, x, y);
+  }
+
   addValueName() {
     //change cursor
     this.currentCursor = "url(frontend/img/text_cursor.svg), default";
@@ -720,7 +711,7 @@ class Paint {
 
     if (this.curValName.value === "On") {
       this.renderCommand("valueOn");
-      this.addName();
+      addName();
     } else {
       nameID = undefined;
       nameIDs = undefined;
@@ -748,7 +739,7 @@ class Paint {
     this.onOffButton(this.curValPointLoad, "pointLoad");
     if (this.curValPointLoad.value === "On") {
       this.renderCommand("valueOn");
-      this.addForce();
+      addForce();
       valueMoment = undefined;
       valueMoments = undefined;
     } else {
@@ -779,7 +770,7 @@ class Paint {
     this.onOffButton(this.curValPressLoad, "pressLoad");
     if (this.curValPressLoad.value === "On") {
       this.renderCommand("valueOn");
-      this.addForce();
+      addForce();
     } else {
       valueLoad = undefined;
       valueLoads = undefined;
@@ -825,7 +816,7 @@ class Paint {
     this.onOffButton(this.curValMoment, "moment");
     if (this.curValMoment.value === "On") {
       this.renderCommand("valueOn");
-      this.addForce();
+      addForce();
       valueLoad = undefined;
       valueLoads = undefined;
     } else {
@@ -953,6 +944,8 @@ class Paint {
         } else {
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
+          //update screen
+          PaintIn.renderObject(processingData.allObject);
         }
       };
       fr.readAsText(this.files[0]);
@@ -974,8 +967,9 @@ class Paint {
       });
 
       promise.then((result) => {
-        console.log(result.data);
         processingData.prototype.createData(result.data);
+        //update screen
+        PaintIn.renderObject(processingData.allObject);
       });
 
       promise.catch(function (err) {
@@ -1322,15 +1316,15 @@ class Paint {
     // }
 
     // not link position of start and end point
-    if (this.isPainting) {
-      // brush
-      // if (this.pen === 'brush') {
-      //     this.drawBrush(
-      //         this.currentMouseDownPos,
-      //         this.currentMouseMovePos
-      //     );
-      // };
-    }
+    // if (this.isPainting) {
+    //   // brush
+    //   // if (this.pen === 'brush') {
+    //   //     this.drawBrush(
+    //   //         this.currentMouseDownPos,
+    //   //         this.currentMouseMovePos
+    //   //     );
+    //   // };
+    // }
 
     //line link start and end node
     if (this.pen === "line") {
@@ -1448,290 +1442,6 @@ class Paint {
     this.currentMouseDownPos = mouseMovePos;
   }
 
-  addNamePoint(Obj) {
-    let pos = getPosElement("valueName");
-    if (this.arrMultiCurObj[0] !== undefined) {
-      inputNames(pos[0] + 15, pos[1]);
-      return;
-    } else {
-      let xC = Obj.x;
-      let yC = Obj.y;
-      inputName(xC, yC, Obj);
-      return;
-    }
-  }
-
-  addNameLine(Obj) {
-    let pos = getPosElement("valueName");
-    if (this.arrMultiCurObj[0] !== undefined) {
-      inputNames(pos[0] + 15, pos[1]);
-      return;
-    } else {
-      //choose position to display box input
-      let xM1 = (Obj.Point[1].x - Obj.Point[0].x) / 2;
-      let yM1 = (Obj.Point[1].y - Obj.Point[0].y) / 2;
-      let xBox = 25 / 2;
-      let yBox = 25 / 2;
-      let xM2 = Obj.Point[0].x + xM1 - xBox;
-      let yM2 = Obj.Point[0].y + yM1 - yBox;
-      inputName(xM2, yM2, Obj);
-      return;
-    }
-  }
-
-  addNameArea(Obj) {
-    //    choose position to display box input
-    if (this.arrMultiCurObj[0] !== undefined) {
-      let pos = getPosElement("valueName");
-      inputNames(pos[0] + 15, pos[1]);
-      return;
-    } else {
-      let xC = Obj.center[0];
-      let yC = Obj.center[1];
-      inputName(xC, yC, Obj);
-      return;
-    }
-  }
-
-    // for (let coupLine of coupleLines) {
-    //   var IntersPoint = this.intersectionCheck(coupLine[0], coupLine[1]);
-    //   if (IntersPoint.Exist && JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1) {//array Intersection.lenght >1
-    //     arrIntersPoint.push(IntersPoint.Coord);
-    //   }
-    // }
-    // console.log(arrIntersPoint)
-
-  addName() {
-    //check before input
-    if (this.arrMultiCurObj[0] !== undefined) {
-      if (valueLoads !== undefined && this.curValPressLoad.value === "Off") {
-        valueLoads.destroy();
-        valueLoads = undefined;
-      }
-      if (valueMoments !== undefined && this.curValMoment.value === "Off") {
-        valueMoments.destroy();
-        valueMoments = undefined;
-        console.log("222");
-      }
-    }
-    if (this.arrCurObj[0] !== undefined) {
-      //name on=> press & moment off
-      if (valueLoad !== undefined && this.curValPressLoad.value === "Off") {
-        valueLoad.destroy();
-        valueLoad = undefined;
-      }
-      if (valueMoment !== undefined && this.curValMoment.value === "Off") {
-        valueMoment.destroy();
-        valueMoment = undefined;
-      }
-    }
-    //input
-    if (
-      (nameIDs === undefined || nameID === undefined) &&
-      (this.pen === undefined || this.pen === "line")
-    ) {
-      let selectedObj;
-
-      if (this.arrMultiCurObj[0] !== undefined) {
-        for (let i = 0; i < this.arrMultiCurObj.length; i++) {
-          selectedObj = this.arrMultiCurObj[i];
-          switch (selectedObj.className) {
-            case "Point":
-              if (nameIDs === undefined) {
-                this.addNamePoint(selectedObj);
-              }
-              break;
-            case "Line":
-              if (nameIDs === undefined) {
-                this.addNameLine(selectedObj);
-              }
-              break;
-            case "Area":
-              if (nameIDs === undefined) {
-                this.addNameArea(selectedObj);
-              }
-              break;
-          }
-        }
-      }
-
-      if (this.arrCurObj[0] !== undefined) {
-        selectedObj = this.arrCurObj[0];
-        //render Prop
-        switch (selectedObj.className) {
-          case "Point":
-            if (nameID === undefined) {
-              this.addNamePoint(selectedObj);
-            }
-            break;
-          case "Line":
-            if (nameID === undefined) {
-              this.addNameLine(selectedObj);
-            }
-            break;
-          case "Area":
-            if (nameID === undefined) {
-              this.addNameArea(selectedObj);
-            }
-            break;
-        }
-      }
-
-      if (selectedObj === undefined) {
-        this.renderProperty("off", selectedObj);
-        this.arrCurObj = [];
-        return;
-      }
-    }
-    return;
-  }
-
-  addForce() {
-    //check and destroy before input
-
-    if (this.arrMultiCurObj[0] !== undefined) {
-      if (nameIDs !== undefined && this.curValName.value === "Off") {
-        nameIDs.destroy();
-        nameIDs = undefined;
-      }
-      if (valueMoments !== undefined && this.curValMoment.value === "Off") {
-        valueMoments.destroy();
-        valueMoments = undefined;
-      }
-      if (valueLoads !== undefined && this.curValPointLoad.value === "Off") {
-        valueLoads.destroy();
-        valueLoads = undefined;
-      }
-    }
-    if (this.arrCurObj[0] !== undefined) {
-      if (nameID !== undefined && this.curValName.value === "Off") {
-        nameID.destroy();
-        nameID = undefined;
-      }
-      if (valueMoment !== undefined && this.curValMoment.value === "Off") {
-        valueMoment.destroy();
-        valueMoment = undefined;
-      }
-      if (valueLoad !== undefined && this.curValPointLoad.value === "Off") {
-        valueLoad.destroy();
-        valueLoad = undefined;
-      }
-    }
-
-    //input
-    if (
-      (valueLoads === undefined ||
-        valueLoad === undefined ||
-        valueMoments === undefined ||
-        valueMoment === undefined) &&
-      (this.pen === undefined || this.pen === "line")
-    ) {
-      let selectedObj;
-      if (this.arrMultiCurObj[0] !== undefined) {
-        //save value for selectedObj
-        selectedObj = this.arrMultiCurObj[0];
-        switch (selectedObj.className) {
-          case "Point": {
-            if (this.curValPointLoad.value === "On") {
-              let pos = getPosElement("pointLoad");
-              if (valueLoads === undefined) {
-                this.addCommand("Fx, Fy", pos[0] + 15, pos[1] + 50);
-                inputForces(pos[0] + 5, pos[1], "force");
-              }
-            }
-            if (this.curValMoment.value === "On") {
-              let pos = getPosElement("moment");
-              if (valueMoments === undefined) {
-                this.addCommand("M = ...", pos[0] + 15, pos[1] + 50);
-                inputMoments(pos[0] + 5, pos[1], "moment");
-              }
-            }
-            break;
-          }
-          case "Line": {
-            if (valueLoads === undefined) {
-              let pos = getPosElement("pressLoad");
-              if (this.curValPressLoad.value === "On") {
-                this.addCommand("F = ...", pos[0] + 15, pos[1] + 50);
-                inputForces(pos[0] + 5, pos[1], "normal_pressure");
-              }
-              // else if (this.curValAxialForce.value === "On") {
-              //     inputForce(xM2, yM2, selectedObj, "axial_pressure");
-              // }
-            }
-            break;
-          }
-        }
-        return;
-      }
-      if (this.arrCurObj[0] !== undefined) {
-        selectedObj = this.arrCurObj[0];
-        //render Prop
-        switch (selectedObj.className) {
-          case "Point":
-            if (this.curValPointLoad.value === "On") {
-              if (valueLoad === undefined) {
-                this.addCommand(
-                  "Fx, Fy",
-                  selectedObj.x + 10,
-                  selectedObj.y - 10
-                );
-                inputForce(selectedObj.x, selectedObj.y, selectedObj, "force");
-                // inputValue(selectedObj.x, selectedObj.y, selectedObj);
-              }
-            }
-            if (this.curValMoment.value === "On") {
-              if (valueMoment === undefined) {
-                this.addCommand(
-                  "M = ...",
-                  selectedObj.x + 10,
-                  selectedObj.y - 10
-                );
-                inputMoment(
-                  selectedObj.x,
-                  selectedObj.y,
-                  selectedObj,
-                  "moment"
-                );
-              }
-            }
-            break;
-          case "Line":
-            if (valueLoad === undefined) {
-              let xM1 = (selectedObj.Point[1].x - selectedObj.Point[0].x) / 2;
-              let yM1 = (selectedObj.Point[1].y - selectedObj.Point[0].y) / 2;
-              let xBox = 25 / 2;
-              let yBox = 25 / 2;
-              let xM2 = selectedObj.Point[0].x + xM1 - xBox;
-              let yM2 = selectedObj.Point[0].y + yM1 - yBox;
-              if (this.curValPressLoad.value === "On") {
-                this.addCommand("F = ...", xM2 + 10, yM2 - 10);
-                inputForce(xM2, yM2, selectedObj, "normal_pressure");
-                // inputValue(xM2, yM2, selectedObj);
-              }
-              // else if (this.curValAxialForce.value === "On") {
-              //     inputForce(xM2, yM2, selectedObj, "axial_pressure");
-              // }
-            }
-            break;
-        }
-        return;
-      }
-
-      if (selectedObj === undefined) {
-        this.renderProperty("off", selectedObj);
-        this.arrCurObj = [];
-        return;
-      }
-    }
-  }
-
-  addCommand(text, x, y) {
-    this.ctx.font = "13px Arial";
-    this.ctx.fillStyle = "red";
-    this.ctx.fillText(text, x, y);
-  }
-
   renderCommand(mode) {
     switch (mode) {
       case "line":
@@ -1779,8 +1489,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
