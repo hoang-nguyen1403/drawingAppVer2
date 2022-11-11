@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 import math
 import itertools
-import time
 from scipy.spatial import cKDTree
 
 from .detectAreaFunction import detectArea
