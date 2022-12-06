@@ -466,6 +466,41 @@ class processingData {
     let segment_loads = [];
     num_nodes = processingData.allPoint.length;
     num_segments = processingData.allLine.length;
+    // //change coordinate Oxy origin
+    // let rotMatrix = [
+    //   [math.cos(math.PI / 2), -math.sin(math.PI / 2)],
+    //   [math.sin(math.PI / 2), math.cos(math.PI / 2)]
+    // ]
+    // let allPoint = [...processingData.allPoint];
+    // for (let i = 0; i <= allPoint.length - 1; i++) {
+    //   let nodeCoord = [allPoint[i].x,allPoint[i].y];
+    //   //rot
+    //   nodeCoord = math.multiply(nodeCoord, rotMatrix);
+    //   nodeCoord = nodeCoord.flat()
+    //   allPoint[i].x = nodeCoord[0];
+    //   allPoint[i].x = nodeCoord[1];
+    // }
+
+    // let allLine = [...processingData.allLine];
+    // for (let i = 0; i <= allLine.length - 1; i++) {
+    //   let startcoordX = allLine[i].Point[0].x
+    //   let startcoordY = allLine[i].Point[0].y
+    //   let endcoordX = allLine[i].Point[1].x
+    //   let endcoordY = allLine[i].Point[1].y
+    //   let startNode = [startcoordX,startcoordY];
+    //   let endNode = [endcoordX,endcoordY];
+    //   //rot
+    //   startNode = math.multiply(startNode, rotMatrix);
+    //   startNode = startNode.flat()
+    //   endNode = math.multiply(endNode, rotMatrix);
+    //   endNode = endNode.flat()
+
+    //   allLine[i].Point[0].x = startNode[0];
+    //   allLine[i].Point[0].y = startNode[1];
+    //   allLine[i].Point[1].x = endNode[0];
+    //   allLine[i].Point[1].x = endNode[1];
+    // }
+    
     for (let point of processingData.allPoint) {
       nodes.push(point.point);
       node_names.push(point.name);
