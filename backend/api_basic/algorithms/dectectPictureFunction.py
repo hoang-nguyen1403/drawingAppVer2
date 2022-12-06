@@ -8,6 +8,16 @@ from scipy.spatial import cKDTree
 
 from .detectAreaFunction import detectArea
 
+def remove_shadows(img):
+    rgb_planes = cv2.split(img)
+    result_planes = []
+    for plane in rgb_planes:
+        dilated_img = cv2.dilate(plane, np.ones((7,7), np.uint8))
+        bg_img = cv2.medianBlur(dilated_img, 21)
+        diff_img = 255 - cv2.absdiff(plane, bg_img)
+        result_planes.append(diff_img)
+        result = cv2.merge(result_planes)
+        return result
 
 def region_of_interest(img):
     canny_img = cv2.Canny(img, 127, 255)
@@ -126,6 +136,7 @@ def detectPicture(file_name):
     read_path = os.path.join(settings.MEDIA_ROOT,file_name)
     img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
     img = region_of_interest(img)
+    # img = remove_shadows(img)
     bin_inv = cv2.bitwise_not(img) # flip image colors
     bin_inv = cv2.dilate(bin_inv, np.ones((1, 1)))
 
