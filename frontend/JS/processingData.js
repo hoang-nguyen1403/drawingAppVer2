@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() { }
+  constructor() {}
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -106,6 +106,10 @@ class processingData {
             listPointName,
             arrForcePoint
           );
+          //save point
+          // for (let point of AllPointObj) {
+          //   processingData.prototype.addObject(point, processingData.allPoint);
+          // }
           // create line
           let AllLineObj = this.createLine(
             AllPointObj,
@@ -320,7 +324,10 @@ class processingData {
     //
     // receive data
     let listData = processingData.prototype.saveObj();
-    processingData.prototype.detectArea(processingData.allPoint, processingData.allLine);
+    processingData.prototype.detectArea(
+      processingData.allPoint,
+      processingData.allLine
+    );
     let promise = axios({
       method: "POST",
       url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
@@ -347,7 +354,9 @@ class processingData {
     let scale = 4;
     let node_coords = [];
     for (let node of raw_node_coords) {
-      let node_coord = [[Math.round(node.x * scale), Math.round(node.y * scale)]];
+      let node_coord = [
+        [Math.round(node.x * scale), Math.round(node.y * scale)],
+      ];
       node_coords.push(node_coord);
     }
     // console.log(node_coords)
@@ -359,7 +368,7 @@ class processingData {
     // let mat2 = cv.matFromArray(3, 3, cv.CV_32FC1, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
     // let dst = new cv.Mat();
     // let matrix = new cv.Mat();
-    console.log(mat1)
+    console.log(mat1);
 
     // DRAW SEGMENTS
     // for (let segment in arrSegment) {
@@ -368,19 +377,17 @@ class processingData {
     //   cv.line(matrix, start_node, end_node, (255, 0, 0), 2);
     //   console.log(start_node);
     // }
-
-
   }
 
   matrix(m, n) {
-    let result = []
+    let result = [];
     for (let i = 0; i < n; i++) {
-      result.push(new Array(m).fill(0))
+      result.push(new Array(m).fill(0));
     }
-    return result
+    return result;
   }
 
-  setObjName(obj) { }
+  setObjName(obj) {}
 
   InterPolationFunction(arrX, arrY) {
     let allFunc = [];
@@ -408,8 +415,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-        ((arrY[row + 1] - arrY[row]) / h[row] -
-          (arrY[row] - arrY[row - 1]) / h[row - 1])
+          ((arrY[row + 1] - arrY[row]) / h[row] -
+            (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -421,7 +428,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-        3;
+          3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -565,6 +572,74 @@ class processingData {
     saveAs(blob, "data.json");
   }
 
+  //point - line -area
+  // updateStorage() {
+  //   // processingData.allPoint = [];
+  //   processingData.allObject = [];
+  //   for (let area of processingData.allArea) {
+  //     processingData.allObject.push(area);
+  //     for (let line of area.Line) {
+  //       let sameObj = this.addObject(line, processingData.allLine);
+  //       //link to 1 point
+  //       if (sameObj !== undefined) {
+  //         area.Line[area.Line.indexOf(line)] = sameObj;
+  //       }
+  //     }
+  //   }
+
+  //   for (let point of processingData.allPoint) {
+  //     processingData.allObject.push(point);
+  //   }
+
+  //   for (let line of processingData.allLine) {
+  //     processingData.allObject.push(line);
+  //     let point1 = line.Point[0];
+  //     let point2 = line.Point[1];
+  //     console.log(point1, point2);
+  //     console.log(processingData.allPoint);
+  //     let sameObj1 = this.addObject(point1, processingData.allPoint);
+  //     let sameObj2 = this.addObject(point2, processingData.allPoint);
+  //     console.log(processingData.allPoint);
+  //     //link to 1 point
+  //     if (sameObj1 == undefined) {
+  //       line.Point[0] = point1;
+  //     }
+  //     if (sameObj2 == undefined) {
+  //       line.Point[1] = point2;
+  //     }
+  //     console.log(line);
+  //   }
+
+  //   //sort [Area, Line, Point]
+  //   processingData.allObject.sort((a, b) => {
+  //     let a_ = 0;
+  //     let b_ = 0;
+  //     switch (a.className) {
+  //       case "Point":
+  //         a_ = 3;
+  //         break;
+  //       case "Line":
+  //         a_ = 2;
+  //         break;
+  //       case "Area":
+  //         a_ = 1;
+  //         break;
+  //     }
+  //     switch (b.className) {
+  //       case "Point":
+  //         b_ = 3;
+  //         break;
+  //       case "Line":
+  //         b_ = 2;
+  //         break;
+  //       case "Area":
+  //         b_ = 1;
+  //         break;
+  //     }
+  //     return b_ - a_;
+  //   });
+  // }
+
   updateStorage() {
     processingData.allPoint = [];
     processingData.allObject = [];
@@ -593,7 +668,7 @@ class processingData {
       }
     }
 
-    //add point not in line 
+    //add point not in line
 
     //
     for (let point of processingData.allPoint) {

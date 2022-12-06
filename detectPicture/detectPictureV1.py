@@ -1,12 +1,12 @@
-import os
-from django.conf import settings
+import json
 import cv2
 import numpy as np
+import sys
 import math
 import itertools
 from scipy.spatial import cKDTree
+np.set_printoptions(threshold=sys.maxsize)
 
-from .detectAreaFunction import detectArea
 
 def remove_shadows(img):
     rgb_planes = cv2.split(img)
@@ -18,6 +18,7 @@ def remove_shadows(img):
         result_planes.append(diff_img)
         result = cv2.merge(result_planes)
         return result
+    
 
 def region_of_interest(img):
     canny_img = cv2.Canny(img, 127, 255)
@@ -35,28 +36,35 @@ def region_of_interest(img):
         img = img[min_y:max_y, min_x:max_x]
     return img
 
+
 def get_end_points(points, img):
-    node_coords = []    
-    for point in points:
-        x = point[0]
-        y = point[1]
-        n = 0        
-        n += img[y - 1,x]
-        n += img[y - 1,x - 1]
-        n += img[y - 1,x + 1]
-        n += img[y,x - 1]    
-        n += img[y,x + 1]    
-        n += img[y + 1,x]    
-        n += img[y + 1,x - 1]
-        n += img[y + 1,x + 1]
-        n /= 255        
-        if n == 1:
-            node_coords.append(point.tolist())
+    node_coords = []
+    count = 0
+    for p in points:
+        try:
+            x = p[0]
+            y = p[1]
+            n = 0
+            n += img[y - 1, x]
+            n += img[y - 1, x - 1]
+            n += img[y - 1, x + 1]
+            n += img[y, x - 1]
+            n += img[y, x + 1]
+            n += img[y + 1, x]
+            n += img[y + 1, x - 1]
+            n += img[y + 1, x + 1]
+            n /= 255
+            if n == 1:
+                node_coords.append(p.tolist())
+        except:
+            count += 1
+    print('miss', count,'points')
     return node_coords
 
-def flat_segment_list(segment):
-    segment = [segment[0][0],segment[0][1], segment[1][0], segment[1][1]]
-    return segment
+
+def flat_segment_line(segment_line):
+    segment_line = [segment_line[0][0], segment_line[0][1], segment_line[1][0], segment_line[1][1]]
+    return segment_line
 
 def dot_product(v1, v2):
     return sum((a*b) for a, b in zip(v1, v2))
@@ -65,9 +73,10 @@ def get_length(v):
     return math.sqrt(dot_product(v, v))
 
 def get_angle(segment1, segment2):
-    v1 = flat_segment_list(segment1)
-    v2 = flat_segment_list(segment2)
+    v1 = flat_segment_line(segment1)
+    v2 = flat_segment_line(segment2)
     return math.degrees(math.acos(dot_product(v1, v2) / (get_length(v1) * get_length(v2))))
+
 
 def get_precision(bin_inv, bin_line):
     conjs = (bin_inv + bin_line)
@@ -75,6 +84,7 @@ def get_precision(bin_inv, bin_line):
     n_line = np.sum(bin_line == 1)
     precision = n_agree / n_line
     return precision
+
 
 def filter_overlap(segment_dict):
     segment_combinations = itertools.combinations(segment_dict,2)
@@ -92,6 +102,7 @@ def filter_overlap(segment_dict):
         except:
             pass
     return segment_dict
+
 
 def get_distance(p1, p2):
     return math.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2)
@@ -112,6 +123,7 @@ def find_intersection(line1, line2):
         if get_distance([x,y],line1[0]) < length1 and get_distance([x,y],line1[1]) < length1 and get_distance([x,y],line2[0]) < length2 and get_distance([x,y],line2[1]) < length2:
             return [round(x), round(y)]
 
+
 def detectLine(line, intersections):
     all_points = list(line) + intersections
     all_points.sort()
@@ -119,6 +131,83 @@ def detectLine(line, intersections):
     for i in range(0,len(all_points)-1):
         listLine.append([all_points[i], all_points[i+1]])
     return listLine
+
+def detectArea(data):
+    # =============== GET NODE COORDINATES AND SEGMENTS ============================
+    raw_node_coords = data['node_coords']
+    segments = data['segments']
+
+    # =============== SCALE AND ROUND NODE COORDINATES =========================
+    scale = 4
+    node_coords = [[round(x*scale),round(y*scale)] for [x,y] in raw_node_coords]
+
+    # =============== CREATE MATRIX =============================
+    matrix = np.zeros((6000, 6000), 'uint8')
+
+    # =============== DRAW SEGMENTS ============================
+    for segment in segments:
+        start_node = node_coords[segment[0]]
+        end_node = node_coords[segment[1]]
+        cv2.line(matrix, start_node, end_node,(255,0,0),2)
+
+    # =============== MATRIX PREPROCESSING ==============================
+    th, im_th = cv2.threshold(matrix, 127, 255, cv2.THRESH_BINARY_INV)
+    # mask used to flood filling
+    h, w = im_th.shape[:2] # notice the size needs to be 2 pixels than the image.
+    mask = np.zeros((h+2, w+2), np.uint8)
+    cv2.floodFill(matrix, mask, (0,0), 255) # floodfill from point (0, 0)
+    matrix = cv2.bitwise_not(matrix) # invert foolfilled image
+
+    # =============== FIND CONTOURS =============================
+    contours, _ = cv2.findContours(matrix, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    surface_nodes = [] # list of nodes that make a surface
+    surface_segments = [] # list of segments that make a surface
+    surfaces = [] # list of many surfaces
+    surface_names = [] # list of surface names
+
+    # =============== FIND WHICH NODES THAT MAKE A SURFACE =============================
+    for contour in contours:
+        approx = cv2.approxPolyDP(contour, 0.009 * cv2.arcLength(contour, True), True)
+
+        #convert array to list
+        contour_list = approx.ravel()
+
+        for i in range(0,len(contour_list)):
+            if i % 2 == 0:
+                x = contour_list[i]
+                y = contour_list[i+1]
+                min_var = 9999
+                for num_node in range(0,len(node_coords)):
+                    delta =  abs(x-node_coords[num_node][0]) + abs(y-node_coords[num_node][1])
+                    if delta < min_var:
+                        min_var = delta
+                        true_node = num_node #node which have the smallest delta is the most correct point
+                surface_nodes.append(true_node)
+
+    # =============== FIND WHICH SEGMENTS THAT MAKE A SURFACE FROM THOSE NODES =============================
+        surface_nodes_copy = surface_nodes.copy()
+        surface_nodes_copy.append(surface_nodes[0])
+        
+        for i in range(0, len(surface_nodes)):
+            segment1 = [surface_nodes_copy[i], surface_nodes_copy[i+1]]
+            segment2 = [surface_nodes_copy[i+1], surface_nodes_copy[i]]
+            for j in range(0, len(segments)):
+                if segment1 == segments[j] or segment2 == segments[j]:
+                    surface_segments.append(j)
+                    break
+    
+        # if surface_segment != []:
+        if len(surface_segments) >= 3:
+            surfaces.append(surface_nodes)
+            surface_names.append(None)
+        surface_nodes = []
+        surface_segments = []
+        surface_nodes_copy = []
+    
+    data['surfaces'] = surfaces
+    data['surface_names'] = surface_names
+    return data
 
 def detectPicture(file_name):
     data = {
@@ -133,18 +222,23 @@ def detectPicture(file_name):
         "nodal_loads": [],
         "segment_loads": []
     }
-    read_path = os.path.join(settings.MEDIA_ROOT,file_name)
-    img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
+    img = remove_shadows(img)
+    cv2.imshow('remove shadow', img)
     img = region_of_interest(img)
-    # img = remove_shadows(img)
-    bin_inv = cv2.bitwise_not(img) # flip image colors
+    cv2.imshow('ROI',img)
+    bin_inv = cv2.bitwise_not(img)  # flip image colors
     bin_inv = cv2.dilate(bin_inv, np.ones((1, 1)))
+
 
     # ========================== FIND END POINTS =====================================
     th, img = cv2.threshold(img, 127, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY_INV)
     img = cv2.ximgproc.thinning(img)
     points = cv2.findNonZero(img)
+    print('non zero',points)
     points = np.squeeze(points)
+    print('squeeze',points)
+    cv2.imshow('find points', img)
     node_coords = get_end_points(points, img)
 
     # =========================== FIND SEGMENTS ========================================
@@ -167,6 +261,7 @@ def detectPicture(file_name):
     intersections = []
     bin_intersections = []
     segments = []
+
     for i in range(0, len(segment_dict)):
         inters_one_line = []
         segment1 = segment_dict[i]['line']
@@ -187,13 +282,12 @@ def detectPicture(file_name):
     for intersection in bin_intersections:
         if intersection not in intersections:
             intersections.append(intersection)
-    
+
     node_coords = node_coords + intersections
     data["node_coords"] = node_coords
     data["num_nodes"] = len(data["node_coords"])
     data["node_names"] = [None]*data["num_nodes"]
 
-    # =========================== ADD SEGMENTS TO DATA ===============================
     segment_list = []
     kdtree = cKDTree(data["node_coords"])
     for segment in segments:
@@ -201,13 +295,16 @@ def detectPicture(file_name):
         distances, ids = kdtree.query([start_node, end_node])
         if distances[0] < 1e-5 and distances[1] < 1e-5:
             segment_list.append(ids.tolist())
+
     data["segments"] = segment_list
     data["num_segments"] = len(data["segments"])
     data["segment_names"] = [None]*data["num_segments"]
-    # ============================ REMOVE TO CENTER CANVAS ===========================
-    node_coords = []
-    for node_coord in data["node_coords"]:
-        node_coords.append([node_coord[0]+100, node_coord[1]+100])
-    data["node_coords"] = node_coords
-    data = detectArea(data)
     return data
+
+data = detectPicture('image.png')
+data = detectArea(data)
+print(data)
+with open('result.json', 'w') as outfile:
+    json.dump(data, outfile)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
