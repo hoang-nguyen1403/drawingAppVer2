@@ -333,3 +333,93 @@ function inputLenght(x, y) {
 //     let t = Math.sqrt(l * l / (a * a + b * b));
 //     return [start[0] + a * t, start[1] + b * t];
 // }
+
+  //input by area comments
+function  inputComments() {
+    let typeValue = JSON.stringify(
+      PaintIn.valueComment.value.slice(
+        PaintIn.valueComment.value.indexOf(",") + 1,
+        PaintIn.valueComment.value.indexOf(",") + 2
+      )
+    );
+    let objName = JSON.stringify(
+      PaintIn.valueComment.value.slice(
+        0,
+        PaintIn.valueComment.value.indexOf(",")
+      )
+    );
+    const indexComma = [];
+    for (let i = 0; i < PaintIn.valueComment.value.length; i++) {
+      if (PaintIn.valueComment.value[i] === ",") {
+        indexComma.push(i);
+      }
+    }
+
+    for (let obj of processingData.allObject) {
+      if (JSON.stringify(obj.name) === objName) {
+        if (obj.className === "Point") {
+          // first check
+          if (obj.pointLoads === null) {
+            obj.pointLoads = [];
+          }
+
+          if (typeValue === JSON.stringify("f")) {
+            let force_x;
+            let force_y;
+
+            force_x = Number(
+              PaintIn.valueComment.value.slice(indexComma[1] + 1, indexComma[2])
+            );
+            force_y = Number(
+              PaintIn.valueComment.value.slice(
+                indexComma[2] + 1,
+                PaintIn.valueComment.value.length
+              )
+            );
+
+            let forceObj = {
+              type: "force",
+              parameters: { force_x: force_x, force_y: force_y },
+            };
+            obj.pointLoads.push(forceObj);
+          } else if (typeValue === JSON.stringify("m")) {
+            let moment = Number(
+              PaintIn.valueComment.value.slice(
+                indexComma[1] + 1,
+                PaintIn.valueComment.value.length
+              )
+            );
+            let momentObj = { type: "moment", parameters: { value: moment } };
+            obj.pointLoads.push(momentObj);
+          }
+        } else if (obj.className === "Line") {
+          //first check
+          if (obj.lineLoads === null) {
+            obj.lineLoads = [];
+          }
+          //
+          if (typeValue === JSON.stringify("f")) {
+            let node_0;
+            let node_1;
+
+            node_0 = Number(
+              PaintIn.valueComment.value.slice(indexComma[1] + 1, indexComma[2])
+            );
+            node_1 = Number(
+              PaintIn.valueComment.value.slice(
+                indexComma[2] + 1,
+                PaintIn.valueComment.value.length
+              )
+            );
+
+            let pressureObj = {
+              type: "normal_pressure",
+              parameters: { node_0: node_0, node_1: node_1 },
+            };
+            obj.lineLoads.push(pressureObj);
+          }
+        }
+      }
+    }
+    PaintIn.renderObject(processingData.allObject);
+  }
