@@ -991,7 +991,7 @@ class Paint {
   //   let listData = processingData.prototype.saveObj();
   //   let promise = axios({
   //     method: "POST",
-  
+
   //     url: 'https://vyfirstapp.herokuapp.com/v1/article/',
   //     data: listData,
   //   });
@@ -1059,6 +1059,42 @@ class Paint {
       console.log("err", err);
     });
   }
+
+  mps_PALc(dname, params_json) {
+    let bodyData = {
+      rhs: [dname, params_json],
+      nargout: 1,
+      outputFormat: { mode: "small", nanType: "object" },
+    };
+
+    let promise = axios({
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      url: "http://34.23.153.57:5902/matfun/mps_PAL",
+      data: bodyData,
+    });
+    promise.then((result) => {
+      // console.log(result)
+      // "lhs" is format in matlab and you can see data in it by 2 ways:
+      //the first way: see data in console
+      console.log(result.data);
+
+      //the second way: save data as txt or json file
+      let response = JSON.stringify(result.data);
+      let blob = new Blob([response],
+        { type: "text/plain;charset=utf-8" });
+
+      //saveAs(blob, "logFile.txt");
+      saveAs(blob, "logFile.json");
+    });
+
+    promise.catch(function (err) {
+      console.log("err", err);
+    });
+  }
+
 
   getMousePosition(event) {
     let rect = this.canvas.getBoundingClientRect();
@@ -2836,7 +2872,7 @@ class Paint {
 
   getValueInTextBox() {
     if (window.event.keyCode == 13) {
-      processingData.prototype.inputComments();
+      inputComments();
     }
   }
 
