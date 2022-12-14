@@ -507,7 +507,7 @@ class processingData {
     //   allLine[i].Point[1].x = endNode[0];
     //   allLine[i].Point[1].x = endNode[1];
     // }
-    
+
     for (let point of processingData.allPoint) {
       nodes.push(point.point);
       node_names.push(point.name);

@@ -409,6 +409,14 @@ class Paint {
       document.getElementById("valueInputed").innerHTML = `
       <p style="background-color: #ffffff;"> ${strings} <br></p>
       `;
+      dataLogFileIndex = 0;
+    }
+    //arrow up
+    if (event.keyCode === 38) {
+      dataLogFileIndex += 1;
+      document.getElementById("textBox").value = dataLogFile.at(
+        -dataLogFileIndex
+      );
     }
 
     //F2 input length Line
@@ -1526,8 +1534,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -2902,3 +2910,5 @@ function getPosElement(idElem) {
 const PaintIn = new Paint();
 PaintIn.curValDrawing.value = "On";
 var dataLogFile = [];
+let dataLogFileIndex = 0;
+// const commands = ["line"];
