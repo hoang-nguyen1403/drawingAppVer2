@@ -63,14 +63,13 @@ def detectArea(data):
         #         if segment1 == segments[j] or segment2 == segments[j]:
         #             surface_segments.append(j)
         #             break
-    
-        if len(list(dict.fromkeys(surface_nodes))) >= 3:
+        surface_nodes = list(dict.fromkeys(surface_nodes))
+        if len(surface_nodes) >= 3 and surface_nodes not in data['surfaces']:
             surfaces.append(surface_nodes)
-            # surface_names.append(None)
         surface_nodes = []
         # surface_segments = []
         # surface_nodes_copy = []
     
-    data['surfaces'] = surfaces
-    data['surface_names'] = [None]*len(surfaces)
+    data['surfaces'] += surfaces
+    data['surface_names'] += [None]*len(surfaces)
     return data
