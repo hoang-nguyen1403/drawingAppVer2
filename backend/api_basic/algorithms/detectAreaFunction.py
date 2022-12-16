@@ -31,12 +31,11 @@ def detectArea(data):
     matrix = cv2.bitwise_not(matrix) # invert foolfilled image
 
     # =============== FIND CONTOURS =============================
-    contours, _ = cv2.findContours(matrix, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(matrix, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
     surface_nodes = [] # list of nodes that make a surface
     # surface_segments = [] # list of segments that make a surface
     surfaces = [] # list of many surfaces
-    # surface_names = [] # list of surface names
 
     # =============== FIND WHICH NODES THAT MAKE A SURFACE =============================
     for contour in contours:
@@ -63,8 +62,10 @@ def detectArea(data):
         #         if segment1 == segments[j] or segment2 == segments[j]:
         #             surface_segments.append(j)
         #             break
-        surface_nodes = list(dict.fromkeys(surface_nodes))
-        if len(surface_nodes) >= 3 and surface_nodes not in data['surfaces']:
+
+        all_surfaces = data['surfaces'] + surfaces
+        sort_surfaces = [sorted(surface) for surface in all_surfaces]
+        if len(surface_nodes) >= 3 and sorted(surface_nodes) not in sort_surfaces:
             surfaces.append(surface_nodes)
         surface_nodes = []
         # surface_segments = []
@@ -72,4 +73,5 @@ def detectArea(data):
     
     data['surfaces'] += surfaces
     data['surface_names'] += [None]*len(surfaces)
+    print(data)
     return data
