@@ -330,8 +330,8 @@ class processingData {
     );
     let promise = axios({
       method: "POST",
-      url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
-      // url: "http://127.0.0.1:8000/v1/detectArea/",
+      // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
+      url: "http://127.0.0.1:8000/v1/detectArea/",
       data: listData,
     });
 
@@ -643,6 +643,21 @@ class processingData {
   updateStorage() {
     processingData.allPoint = [];
     processingData.allObject = [];
+    //sort area
+    let currentObj;
+    for (let i = 0; i <= processingData.allArea.length; i++) {
+      for (let j = i + 1; j < processingData.allArea.length; j++) {
+        if (
+          Number(processingData.allArea[i].area) >
+          Number(processingData.allArea[j].area)
+        ) {
+          currentObj = processingData.allArea[i];
+          processingData.allArea[i] = processingData.allArea[j];
+          processingData.allArea[j] = currentObj;
+        }
+      }
+    }
+    //
     for (let area of processingData.allArea) {
       processingData.allObject.push(area);
       for (let line of area.Line) {
@@ -1258,7 +1273,6 @@ class processingData {
     //refresh screen
     PaintIn.renderObject(processingData.allObject);
   }
-
 }
 // Point class
 class Point {

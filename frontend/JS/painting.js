@@ -674,6 +674,7 @@ class Paint {
         let selectedObj = processingData.allObject.find((obj) =>
           obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
         );
+        console.log(selectedObj);
         if (selectedObj === undefined) {
           document.getElementById("BDCondition").style.display = "none";
           this.arrCurObj = [];
@@ -1091,8 +1092,7 @@ class Paint {
 
       //the second way: save data as txt or json file
       let response = JSON.stringify(result.data);
-      let blob = new Blob([response],
-        { type: "text/plain;charset=utf-8" });
+      let blob = new Blob([response], { type: "text/plain;charset=utf-8" });
 
       //saveAs(blob, "logFile.txt");
       saveAs(blob, "logFile.json");
@@ -1102,7 +1102,6 @@ class Paint {
       console.log("err", err);
     });
   }
-
 
   getMousePosition(event) {
     let rect = this.canvas.getBoundingClientRect();
