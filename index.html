@@ -45,6 +45,10 @@
 		</div>
 
 		<div id="center_div">
+			<!-- <div id="namingAreaMode">
+				<button id="areaNaming" class="btn" type="button" onclick="namingArea()" value="Off"
+					style="background-image: url(frontend/img/apply_name.svg)"></button>
+			</div> -->
 			<div id="BDCondition">
 				<!-- <button id="select" class="btn" type="button" onclick="PaintIn.chooseSelect()" value="Off"
 					style="background-image: url(frontend/img/select.png)"></button> -->
@@ -78,7 +82,8 @@
 				<button id="Clear_all" type="button" onclick="PaintIn.clearAll()"></button>
 
 				<!-- request -->
-				<button id="openFile_Solu" onclick="PaintIn.getAPI()"></button>
+				<!-- <button id="openFile_Solu" onclick="PaintIn.getAPI()"></button> -->
+				<button id="openFile_Solu" onclick="mps_PALc('pname',processingData.prototype.saveAsData())"></button>
 				<label id="ChangeMode">
 					<button id="modeDrawing" type="button" onclick="PaintIn.changeMode()" value="On"></button>
 				</label>
@@ -141,6 +146,7 @@
 	<script src="frontend/JS/inputData.js"></script>
 	<script src="frontend/JS/addValue.js"></script>
 	<script src="frontend/libs/opencv.js"></script>
+	<script src="frontend/JS/buttonControl.js"></script>
 
 	<script src="frontend/JS/processingData.js"></script>
 	<script src="frontend/JS/Mesh.js"></script>
