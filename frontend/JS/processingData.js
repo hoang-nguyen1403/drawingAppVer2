@@ -469,6 +469,7 @@ class processingData {
     let segment_names = [];
     let surfaces = [];
     let surface_names = [];
+    let surface_coords = [];
     let nodal_loads = [];
     let segment_loads = [];
     num_nodes = processingData.allPoint.length;
@@ -537,6 +538,7 @@ class processingData {
       }
       surfaces.push(surface);
       surface_names.push(area.name);
+      surface_coords.push(area.coordNaming);
     }
     let jsonObject = {
       num_nodes: num_nodes,
@@ -547,9 +549,10 @@ class processingData {
       segment_names: segment_names,
       surfaces: surfaces,
       surface_names: surface_names,
+      surface_coords:surface_coords,
       nodal_loads: nodal_loads,
       segment_loads: segment_loads,
-      "text-data": dataLogFile,
+      text_data: dataLogFile,
     };
     dataSaved = JSON.stringify(jsonObject);
     return dataSaved;
@@ -1388,6 +1391,7 @@ class Area {
     this.className = "Area";
     this.Line = LineList;
     this.name = AreaName;
+    this.coordNaming;
     //pointFlow
     this.pointFlow = [];
     this.getPointFlow();

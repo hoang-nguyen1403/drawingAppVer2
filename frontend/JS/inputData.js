@@ -9,7 +9,7 @@ function inputName(x, y, obj) {
     fontFamily: "Arial",
     fontColor: "#212121",
     fontWeight: "bold",
-    width: 25,
+    width: 45,
     height: 25,
     padding: 0,
     borderColor: "#000",
@@ -18,6 +18,9 @@ function inputName(x, y, obj) {
     onsubmit: function () {
       PaintIn.drawText(obj, this.value());
       obj.name = this.value();
+      if(obj.className === "Area"){
+        obj.coordNaming = [PaintIn.mouseDownPos.x,PaintIn.mouseDownPos.y];
+      }
       this.destroy();
       nameID = undefined;
       PaintIn.renderObject(processingData.allObject);
@@ -481,4 +484,32 @@ function inputComments() {
 //     let b = cur[1] - start[1];
 //     let t = Math.sqrt(l * l / (a * a + b * b));
 //     return [start[0] + a * t, start[1] + b * t];
+// }
+
+// var areaName;
+// function inputAreaName(x, y, obj) {
+//   areaName = new CanvasInput({
+//     canvas: document.getElementById("myCanvas"),
+//     x: x,
+//     y: y,
+//     fontSize: 18,
+//     fontFamily: "Arial",
+//     fontColor: "#212121",
+//     fontWeight: "bold",
+//     width: 25,
+//     height: 25,
+//     padding: 0,
+//     borderColor: "#000",
+//     borderRadius: 3,
+
+//     onsubmit: function () {
+//       PaintIn.drawText(obj, this.value());
+//       obj.name = this.value();
+//       this.destroy();
+//       areaName = undefined;
+//       PaintIn.renderObject(processingData.allObject);
+//       PaintIn.isCancled = false;
+//     },
+//   });
+//   areaName.focus();
 // }

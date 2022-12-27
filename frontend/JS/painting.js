@@ -25,6 +25,9 @@ class Paint {
     this.curValMoment = document.getElementById("moment");
     this.curValDeleteForce = document.getElementById("deleteForce");
 
+    // //namigArea mode
+    // this.curValNamingArea = document.getElementById("areaNaming");
+
     //addMode
     this.curValDrawing = document.getElementById("modeDrawing");
     //set defaul mode is drawing
@@ -674,7 +677,6 @@ class Paint {
         let selectedObj = processingData.allObject.find((obj) =>
           obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
         );
-        console.log(selectedObj);
         if (selectedObj === undefined) {
           document.getElementById("BDCondition").style.display = "none";
           this.arrCurObj = [];
@@ -1573,8 +1575,10 @@ class Paint {
       try {
         //Area
         this.ctx.fillStyle = "blue";
-        let xC = Obj.center[0];
-        let yC = Obj.center[1];
+        // let xC = Obj.center[0];
+        // let yC = Obj.center[1];
+        let xC = Obj.coordNaming[0];
+        let yC = Obj.coordNaming[1];
         this.ctx.fillText(text, xC, yC);
       } catch (error) {
         // Point
