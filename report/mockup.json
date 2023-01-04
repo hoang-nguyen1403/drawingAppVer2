@@ -1,0 +1,168 @@
+{
+    "num_nodes": 9,
+    "num_segments": 10,
+    "node_coords": [
+        [
+            180,
+            120
+        ],
+        [
+            180,
+            320
+        ],
+        [
+            400,
+            320
+        ],
+        [
+            500,
+            320
+        ],
+        [
+            500,
+            120
+        ],
+        [
+            400,
+            120
+        ],
+        [
+            220,
+            180
+        ],
+        [
+            320,
+            180
+        ],
+        [
+            260,
+            240
+        ]
+    ],
+    "node_names": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "segments": [
+        [
+            0,
+            1
+        ],
+        [
+            1,
+            2
+        ],
+        [
+            2,
+            3
+        ],
+        [
+            3,
+            4
+        ],
+        [
+            4,
+            5
+        ],
+        [
+            5,
+            0
+        ],
+        [
+            5,
+            2
+        ],
+        [
+            6,
+            7
+        ],
+        [
+            7,
+            8
+        ],
+        [
+            8,
+            6
+        ]
+    ],
+    "segment_names": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "surfaces": [
+        [
+            5,
+            2,
+            3,
+            4
+        ],
+        [
+            0,
+            1,
+            2,
+            5
+        ]
+    ],
+    "surface_names": [
+        null,
+        null
+    ],
+    "area_coords": [
+        [
+            455  ,
+            1867
+       ],
+       [
+            245  ,
+            880
+       ],
+       [
+            400,
+            500
+       ]
+    ],
+    "area_names": [
+        "ReA",
+        "HeA",
+        " ReB"
+    ],
+    "nodal_loads": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "segment_loads": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ],
+    "text-data": []
+}

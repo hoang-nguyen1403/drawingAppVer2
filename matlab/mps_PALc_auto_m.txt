@@ -1,0 +1,29 @@
+function res=mps_PALc();
+
+% Import HTTP interface packages
+import matlab.net.*
+import matlab.net.http.*
+import matlab.net.http.fields.*
+
+dname='fdriver_dunking_auto';
+
+% Setup message body
+body = MessageBody;
+payload = mps.json.encoderequest({dname,[]});
+disp(payload)
+
+body.Payload = payload;
+
+% Setup request
+requestUri = URI('http://34.23.153.57:5902/matfun/mps_PAL');
+options = matlab.net.http.HTTPOptions('ConnectTimeout',20,...
+    'ConvertResponse',false);
+request = RequestMessage;
+request.Header = HeaderField('Content-Type','application/json');
+request.Method = 'POST';
+request.Body = body;
+
+% Send request
+response = request.send(requestUri, options);
+
+res=response.Body.Data;
