@@ -73,5 +73,5 @@ def detectArea(data):
     
     data['surfaces'] += surfaces
     data['surface_names'] += [None]*len(surfaces)
-    print(data)
+    # print(data)
     return data
