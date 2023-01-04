@@ -368,7 +368,7 @@ class processingData {
     // let mat2 = cv.matFromArray(3, 3, cv.CV_32FC1, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
     // let dst = new cv.Mat();
     // let matrix = new cv.Mat();
-    console.log(mat1);
+    // console.log(mat1);
 
     // DRAW SEGMENTS
     // for (let segment in arrSegment) {
