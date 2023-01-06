@@ -530,6 +530,20 @@ button {
     justify-content: center;
 }
 
+#commandsAPI{
+    background-color: #ffffff;
+    margin: 10px;
+    position: absolute;
+    top: 80%;
+    width: 90%;
+    height: 18%;
+    border: 1px solid #0784d1;
+    display: block;
+    align-items:left;
+    text-align:left;
+    justify-content: center;
+}
+
 .inputImage{
     background: url(img/image.png);
     width: 35px;

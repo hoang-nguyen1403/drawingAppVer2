@@ -1513,6 +1513,7 @@ class Paint {
                   </p>
               </div>
                   `;
+                  
     }
   }
 
