@@ -1071,9 +1071,12 @@ class Paint {
     });
   }
 
-  mps_PALc(dname, params_json) {
+  mps_PALc(pname, params) {
+    //bodyData: data will send to server
+    //params: list data - JSON form
+    // params = {"num_nodes":6,"num_segments":6,"node_coords":[[280,200],[280,340],[460,340],[460,420],[580,420],[580,120]],"node_names":[null,null,null,null,null,null],"segments":[[0,1],[1,2],[2,3],[3,4],[4,5],[0,5]],"segment_names":[null,"SeA","SeB",null,null,"SeC"],"surfaces":[],"surface_names":[],"nodal_loads":[null,null,null,null,null,null],"segment_loads":[null,null,null,null,null,null],"text-data":["","",""]}
     let bodyData = {
-      rhs: [dname, params_json],
+      rhs: [pname, params], //rhs: reading - used when send data
       nargout: 1,
       outputFormat: { mode: "small", nanType: "object" },
     };
@@ -1083,21 +1086,14 @@ class Paint {
         "Content-Type": "application/json",
       },
       method: "POST",
-      url: "http://34.23.153.57:5902/matfun/mps_PAL",
+      // url: "http://localhost:5902/matfun/mps_PAL",
+      url: "http://localhost:9910/bondTools/firstAPI",
       data: bodyData,
     });
+
     promise.then((result) => {
-      // console.log(result)
-      // "lhs" is format in matlab and you can see data in it by 2 ways:
-      //the first way: see data in console
-      console.log(result.data);
-
-      //the second way: save data as txt or json file
-      let response = JSON.stringify(result.data);
-      let blob = new Blob([response], { type: "text/plain;charset=utf-8" });
-
-      //saveAs(blob, "logFile.txt");
-      saveAs(blob, "logFile.json");
+      let receiveData = result.data["lhs"][0];
+      Mesh.prototype.openFileSoln(receiveData);
     });
 
     promise.catch(function (err) {

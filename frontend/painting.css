@@ -546,3 +546,20 @@ button {
 .inputImage:hover {
     background-size: 35px 35px;
 }
+
+#meshing{
+    background: url(img/mesh.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#meshing:hover {
+    background-size: 35px 35px;
+}
