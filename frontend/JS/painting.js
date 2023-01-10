@@ -375,6 +375,28 @@ class Paint {
         this.ctx.strokeStyle = "grey";
         this.drawGrid();
       }
+      else if (dataLogFile.length > 1) {
+        console.log('up')
+        console.log(dataLogFileIndex)
+        if (dataLogFileIndex === 0) {
+          dataLogFileIndex += 1;
+          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
+          
+        }
+        else if (dataLogFileIndex === dataLogFile.length - 1) {
+          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
+        }
+        else {
+          dataLogFileIndex += 1;
+          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
+          
+        }
+
+      }
+
+      else if (dataLogFile.length === 1) {
+        document.getElementById("textBox").value = dataLogFile.at(0);
+      }
     }
     //KEYDOWN
     if (event.keyCode === 40) {
@@ -393,6 +415,24 @@ class Paint {
         this.ctx.strokeStyle = "grey";
         this.drawGrid();
       }
+      else if (dataLogFile.length > 1) {
+        console.log('down')
+        if (dataLogFileIndex === 0) {
+          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
+        }
+        else if (dataLogFileIndex === dataLogFile.length - 1) {
+          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
+          dataLogFileIndex -= 1;
+        }
+        else {
+          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
+          dataLogFileIndex -= 1;
+        }
+
+      }
+      else if (dataLogFile.length === 1) {
+        document.getElementById("textBox").value = dataLogFile.at(0);
+      }
     }
 
     //DELETE
@@ -401,25 +441,11 @@ class Paint {
     }
     //ENTER
     if (event.keyCode === 13) {
-      dataLogFile.push(this.valueComment.value);
-      this.valueComment.value = "";
-      let strings = "";
-      let reverseData = [...dataLogFile].reverse();
-      for (let i in reverseData) {
-        strings += reverseData[i] + "<br>";
+      if (this.valueComment.value !== "") {
+        dataLogFile.push(this.valueComment.value);
+        this.valueComment.value = "";
       }
-      // console.log(strings)
-      document.getElementById("valueInputed").innerHTML = `
-      <p style="background-color: #ffffff;"> ${strings} <br></p>
-      `;
-      dataLogFileIndex = 0;
-    }
-    //arrow up
-    if (event.keyCode === 38) {
-      dataLogFileIndex += 1;
-      document.getElementById("textBox").value = dataLogFile.at(
-        -dataLogFileIndex
-      );
+      PaintIn.renderCommand("textCommands");
     }
 
     //F2 input length Line
@@ -887,6 +913,13 @@ class Paint {
     this.arrMultiCurObj = [];
     this.renderProperty("off", "");
     this.renderObject(processingData.allObject);
+    PaintIn.clearCommands("textCommands");
+  }
+
+  clearCommands() {
+    dataLogFile = [];
+    dataLogFileIndex = 0;
+    PaintIn.renderCommand("textCommands");
   }
 
   choiceEvent() {
@@ -1094,10 +1127,16 @@ class Paint {
     promise.then((result) => {
       let receiveData = result.data["lhs"][0];
       Mesh.prototype.openFileSoln(receiveData);
+      if (receiveData !== undefined) {
+        dataLogFile.push(JSON.stringify(receiveData));
+        PaintIn.renderCommand("textCommands");
+      }
     });
 
     promise.catch(function (err) {
       console.log("err", err);
+      dataLogFile.push(JSON.stringify(err));
+      PaintIn.renderCommand("textCommands");
     });
   }
 
@@ -1513,7 +1552,23 @@ class Paint {
                   </p>
               </div>
                   `;
-                  
+        break;
+      case "textCommands":
+        //render Text commands
+        dataLogFileIndex = dataLogFile.length - 1;
+        let strings = "";
+        let reverseData = [...dataLogFile].reverse();
+        for (let i in reverseData) {
+          strings += reverseData[i] + "<br>";
+        }
+        // console.log(strings)
+        document.getElementById("valueInputed").innerHTML = `
+      
+      <p style="background-color: #ffffff; 
+      height: 100%;
+      overflow: scroll;
+      border: 1px solid #0784d1;"> ${strings}</p>
+      `;
     }
   }
 
@@ -1532,8 +1587,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
