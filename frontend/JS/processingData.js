@@ -324,10 +324,6 @@ class processingData {
     //
     // receive data
     let listData = processingData.prototype.saveObj();
-    processingData.prototype.detectArea(
-      processingData.allPoint,
-      processingData.allLine
-    );
     let promise = axios({
       method: "POST",
       // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
@@ -347,39 +343,39 @@ class processingData {
     });
   }
 
-  detectArea(nodes, segments) {
-    // GET NODE COORDINATES AND SEGMENTS
-    let raw_node_coords = [...nodes];
-    let arrSegment = [...segments];
+  // detectArea(nodes, segments) {
+  //   // GET NODE COORDINATES AND SEGMENTS
+  //   let raw_node_coords = [...nodes];
+  //   let arrSegment = [...segments];
 
-    //SCALE AND ROUND NODE COORDINATES
-    let scale = 4;
-    let node_coords = [];
-    for (let node of raw_node_coords) {
-      let node_coord = [
-        [Math.round(node.x * scale), Math.round(node.y * scale)],
-      ];
-      node_coords.push(node_coord);
-    }
-    // console.log(node_coords)
+  //   //SCALE AND ROUND NODE COORDINATES
+  //   let scale = 4;
+  //   let node_coords = [];
+  //   for (let node of raw_node_coords) {
+  //     let node_coord = [
+  //       [Math.round(node.x * scale), Math.round(node.y * scale)],
+  //     ];
+  //     node_coords.push(node_coord);
+  //   }
+  //   // console.log(node_coords)
 
-    //CREATE MATRIX
-    // let matrix = processingData.prototype.matrix(6000, 6000);
-    // let matrix = new cv.Mat({'width': 100, 'height': 100}, cv.CV_8U1,0.0);
-    mat1 = cv.matFromArray(3, 3, cv.CV_32FC1, 0);
-    // let mat2 = cv.matFromArray(3, 3, cv.CV_32FC1, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    // let dst = new cv.Mat();
-    // let matrix = new cv.Mat();
-    // console.log(mat1);
+  //   //CREATE MATRIX
+  //   // let matrix = processingData.prototype.matrix(6000, 6000);
+  //   // let matrix = new cv.Mat({'width': 100, 'height': 100}, cv.CV_8U1,0.0);
+  //   mat1 = cv.matFromArray(3, 3, cv.CV_32FC1, 0);
+  //   // let mat2 = cv.matFromArray(3, 3, cv.CV_32FC1, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  //   // let dst = new cv.Mat();
+  //   // let matrix = new cv.Mat();
+  //   // console.log(mat1);
 
-    // DRAW SEGMENTS
-    // for (let segment in arrSegment) {
-    //   let start_node = node_coords[segment];
-    //   let end_node = node_coords[segment[1]];
-    //   cv.line(matrix, start_node, end_node, (255, 0, 0), 2);
-    //   console.log(start_node);
-    // }
-  }
+  //   // DRAW SEGMENTS
+  //   // for (let segment in arrSegment) {
+  //   //   let start_node = node_coords[segment];
+  //   //   let end_node = node_coords[segment[1]];
+  //   //   cv.line(matrix, start_node, end_node, (255, 0, 0), 2);
+  //   //   console.log(start_node);
+  //   // }
+  // }
 
   matrix(m, n) {
     let result = [];

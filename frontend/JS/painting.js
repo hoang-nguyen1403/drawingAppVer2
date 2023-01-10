@@ -381,7 +381,7 @@ class Paint {
         if (dataLogFileIndex === 0) {
           dataLogFileIndex += 1;
           document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
-          
+
         }
         else if (dataLogFileIndex === dataLogFile.length - 1) {
           document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
@@ -389,7 +389,7 @@ class Paint {
         else {
           dataLogFileIndex += 1;
           document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
-          
+
         }
 
       }
@@ -1097,10 +1097,16 @@ class Paint {
     promise.then((result) => {
       let receiveData = result.data["lhs"][0];
       Mesh.prototype.openFileSoln(receiveData);
+      if (receiveData !== undefined) {
+        dataLogFile.push(JSON.stringify(receiveData));
+        PaintIn.renderCommand("textCommands");
+      }
     });
 
     promise.catch(function (err) {
       console.log("err", err);
+      dataLogFile.push(JSON.stringify(err));
+      PaintIn.renderCommand("textCommands");
     });
   }
 
