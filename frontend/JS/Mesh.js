@@ -158,7 +158,6 @@ class Mesh {
       jsmat = Mesh.inputData["jsmat"][0];
       FEsoln = Mesh.inputData["FEsoln"][0];
       QC = Mesh.inputData["QC"];
-      baseCoord = jsmat["node_coords"][3];
       baseCoord = [200, 300];
       FEtri = Mesh.inputData["FEtri"][0];
       FEcoord = Mesh.inputData["FEcoord"][0];
@@ -229,7 +228,7 @@ class Mesh {
 
   drawMesh() {
     document.getElementById("fillColor").style.display = "block";
-    if(Mesh.inputData["QC"].length !== 0){
+    if (Mesh.inputData["QC"].length !== 0) {
       for (let line of Mesh.edges) {
         PaintIn.drawLine(line.Point[0], line.Point[1], "black", 0.5);
       }
@@ -243,9 +242,13 @@ class Mesh {
       }
       this.drawColorBar();
     }
-    else{
-      PaintIn.drawLine(line.Point[0], line.Point[1], "black", 0.5);
-      PaintIn.drawPoint(Mesh.nodes[i], "black", "black", 1);
+    else {
+      for (let line of Mesh.edges) {
+        PaintIn.drawLine(line.Point[0], line.Point[1], 'black', 0.5);
+      }
+      for (let i = 0; i < Mesh.nodes.length; i++) {
+        PaintIn.drawPoint(Mesh.nodes[i], 'black', 'black', 1);
+      }
     }
     return;
   }
