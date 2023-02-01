@@ -18,7 +18,6 @@ class Paint {
     this.curValSelect = "On";
 
     this.curValName = document.getElementById("valueName");
-
     this.curValPointLoad = document.getElementById("pointLoad");
     this.curValPressLoad = document.getElementById("pressLoad");
     // this.curValAxialForce = document.getElementById('axialForce');
@@ -98,13 +97,19 @@ class Paint {
     this.arrMultiCurObj = [];
     //addValue
     this.arrCurValueObj = [];
-    // this.hasInput = false;
     this.curPoint = [];
     this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
     this.canvas.style.cursor = this.currentCursor;
     this.controlCanvas();
+
+    //requestAPI
+    this.APIurl = document.getElementById("urlInputted");
+
+    //move Obj
+    this.movingObj = false;
   }
 
+  // Press button change mode
   changeMode() {
     if (this.curValDrawing.value === "Off") {
       // mode drawing
@@ -151,6 +156,7 @@ class Paint {
       this.offButtonDraw(this.currentValueLine, "line");
     }
   }
+
   undo() {
     if (this.image !== null) {
       this.ctx.drawImage(
@@ -168,82 +174,143 @@ class Paint {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  onOffButtonDraw(currentActive, nameID) {
-    if (currentActive.value === "Off") {
-      currentActive.value = "On";
-      this.pen = nameID;
-      this.curValSelect = "Off";
-      this.mouseMoveStatus = true;
-      document.getElementById(nameID).classList.add("active");
-    } else {
-      currentActive.value = "Off";
-      this.pen = "select";
-      this.curValSelect = "On";
-      document.getElementById(nameID).classList.remove("active");
-      //change cursor
-      this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
-      this.canvas.style.cursor = this.currentCursor;
+  // Render Note Commands
+  addCommand(text, x, y) {
+    PaintIn.ctx.font = "13px Arial";
+    PaintIn.ctx.fillStyle = "red";
+    PaintIn.ctx.fillText(text, x, y);
+  }
+  //
+
+  //Press button new/clear all Canvas
+  clearAll() {
+    this.isCancled = false;
+    this.offButtonDraw(this.currentValueLine, "line");
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
+    this.pen = "select";
+    this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
+    this.canvas.style.cursor = this.currentCursor;
+    this.arrMouseDownPosition = [];
+    // this.arr = [];
+    this.curSelectBox = [];
+    this.arrLineX = [];
+    this.arrLineY = [];
+    this.arrCircleX = [];
+    this.arrCircleY = [];
+    this.arrRectX = [];
+    this.arrRectY = [];
+    this.arrLineColor = [];
+    this.arrLineWidth = [];
+
+    if (this.currentValueGrid.value == "On") {
+      this.ctx.strokeStyle = "grey";
+      this.drawGrid();
     }
-    // this.renderObject(processingData.allObject);
+    //---// clear saved data
+    processingData.allLine = [];
+    processingData.allPoint = [];
+    processingData.allArea = [];
+    processingData.allObject = [];
+    this.arrCurObj = [];
+    this.arrMultiCurObj = [];
+    this.renderProperty("off", "");
+    this.renderObject(processingData.allObject);
+    PaintIn.clearCommands("textCommands");
   }
 
-  onButtonDraw(currentActive, nameID) {
-    if (currentActive.value === "Off") {
-      currentActive.value = "On";
-      this.pen = nameID;
-      this.curValSelect = "Off";
-      this.mouseMoveStatus = true;
-      document.getElementById(nameID).classList.add("active");
-    }
+  //set up color, size for pen
+  choiceEvent() {
+    this.toolbar.addEventListener("change", (e) => {
+      if (e.target.id === "line_color") {
+        this.currentColor = e.target.value;
+      }
+
+      if (e.target.id === "line_size") {
+        this.currentWidth = e.target.value;
+      }
+
+      if (e.target.id === "sizeGrid") {
+        if (this.currentValueGrid.value == "On") {
+          this.deltaGrid = e.target.value;
+          this.ctx.fillStyle = "white";
+          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+          // function update object saved
+          //redraw object
+          this.renderObject(processingData.allLine);
+
+          this.ctx.strokeStyle = "grey";
+          this.drawGrid();
+        }
+        // console.log(this.currentValueGrid.value)
+      }
+    });
   }
 
-  offButtonDraw(currentActive, nameID) {
-    if (currentActive.value === "On") {
-      currentActive.value = "Off";
-      this.pen = "select";
-      this.curValSelect = "On";
-      document.getElementById(nameID).classList.remove("active");
-    }
-    // this.renderObject(processingData.allObject);
+  //set up event of Mouse
+  listenEvent() {
+    this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
+    this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
+    this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
+    document.addEventListener("keydown", (event) => this.keyDown(event));
+    this.canvas.addEventListener("click", (event) => this.selectObj(event));
+    // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
+    //up file event
+    document.getElementById("openFile").addEventListener("change", function () {
+      var fr = new FileReader();
+      fr.onload = function () {
+        let inputData = JSON.parse(fr.result);
+        if (inputData["jsmat"] !== undefined) {
+          processingData.prototype.createMeshData(inputData);
+        } else {
+          PaintIn.clearAll();
+          processingData.prototype.createData(inputData);
+          //update screen
+          PaintIn.renderObject(processingData.allObject);
+        }
+      };
+      fr.readAsText(this.files[0]);
+    });
+
+    //input img
+    let form = document.getElementById("inputImg");
+    form.addEventListener("change", function (event) {
+      event.preventDefault();
+      const formData = new FormData(form[0]);
+      formData.append("file", $("#inputImg")[0].files[0]);
+      let promise = axios({
+        method: "POST",
+        url: "https://vysecondapp.herokuapp.com/v1/picture/",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      promise.then((result) => {
+        processingData.prototype.createData(result.data);
+        //update screen
+        PaintIn.renderObject(processingData.allObject);
+      });
+
+      promise.catch(function (err) {
+        console.log("err", err);
+      });
+    });
+
+    //make canvas responsive
+    onresize = (event) => {
+      PaintIn.canvas.width =
+        document.getElementById("wrap_canvas_div").clientWidth;
+      PaintIn.canvas.height =
+        document.getElementById("wrap_canvas_div").clientHeight;
+      PaintIn.renderObject(processingData.allObject);
+    };
   }
 
-  onOffButton(currentActive, nameID) {
-    if (currentActive.value === "Off") {
-      currentActive.value = "On";
-      //thuc hien chuc nang
-      this.pen = undefined;
-      this.curValSelect = "Off";
-      this.mouseMoveStatus = true;
-      document.getElementById(nameID).classList.add("active");
-    } else {
-      currentActive.value = "Off";
-      document.getElementById(nameID).classList.remove("active");
-      //change cursor
-      this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
-      this.canvas.style.cursor = this.currentCursor;
-      this.curValSelect = "On";
-      this.pen = "select";
-    }
-    // this.renderObject(processingData.allObject);
-  }
-  offButton(currentActive, nameID) {
-    if (currentActive.value === "On") {
-      currentActive.value = "Off";
-      this.curValSelect = "On";
-      this.pen = "select";
-      document.getElementById(nameID).classList.remove("active");
-    }
-    // this.renderObject(processingData.allObject);
-  }
-
-  hiddenButton(nameID) {
-    document.getElementById(nameID).style.display = "none";
-  }
-
-  visibleButton(nameID) {
-    document.getElementById(nameID).style.display = "block";
-  }
-
+  //set up keyDown
   keyDown(event) {
     //SPACE
     if (event.keyCode === 32) {
@@ -441,10 +508,23 @@ class Paint {
     }
     //ENTER
     if (event.keyCode === 13) {
+      if (this.valueComment.value === "l" && this.pen === "select") {
+        //shortcut for draw line
+        // press l
+        //change cursor
+        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
+        this.canvas.style.cursor = this.currentCursor;
+        let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
+        this.keyDown(spaceKey);
+        this.onButtonDraw(this.currentValueLine, "line");
+        this.renderObject(processingData.allObject);
+      }
+
       if (this.valueComment.value !== "") {
         dataLogFile.push(this.valueComment.value);
         this.valueComment.value = "";
       }
+
       PaintIn.renderCommand("textCommands");
     }
 
@@ -457,23 +537,109 @@ class Paint {
       inputLenght(xC, yC, currentLine);
       this.mouseMoveStatus = false;
     }
+  }
 
-    //shortcut for draw line
-    // press l
-    if (event.keyCode === 76 && this.pen === "select") {
+  //set up grid for Canvas
+  buttonGrid() {
+    this.arrGrid = [];
+    this.getNodePos();
+
+    this.arrGrid = this.concatArr(this.arrGrid, this.arrRecordNode);
+    // console.log(this.arrGrid.length)
+
+    if (this.currentValueGrid.value == "Off") {
+      this.currentValueGrid.value = "On";
+      this.ctx.strokeStyle = "grey";
+      this.drawGrid();
+    } else {
+      this.currentValueGrid.value = "Off";
+      // this.ctx.strokeStyle = 'white';
+      this.ctx.fillStyle = "white";
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+    // console.log(this.currentValueGrid.value)
+    this.renderObject(processingData.allObject);
+  }
+  //=========================================
+  onOffButtonDraw(currentActive, nameID) {
+    if (currentActive.value === "Off") {
+      currentActive.value = "On";
+      this.pen = nameID;
+      this.curValSelect = "Off";
+      this.mouseMoveStatus = true;
+      document.getElementById(nameID).classList.add("active");
+    } else {
+      currentActive.value = "Off";
+      this.pen = "select";
+      this.curValSelect = "On";
+      document.getElementById(nameID).classList.remove("active");
       //change cursor
-      this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
+      this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
       this.canvas.style.cursor = this.currentCursor;
-      let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
-      this.keyDown(spaceKey);
-      this.onButtonDraw(this.currentValueLine, "line");
-      this.renderObject(processingData.allObject);
+    }
+    // this.renderObject(processingData.allObject);
+  }
+
+  onButtonDraw(currentActive, nameID) {
+    if (currentActive.value === "Off") {
+      currentActive.value = "On";
+      this.pen = nameID;
+      this.curValSelect = "Off";
+      this.mouseMoveStatus = true;
+      document.getElementById(nameID).classList.add("active");
     }
   }
 
-  concatArr(arr1, arr2) {
-    return arr1.concat(arr2);
+  offButtonDraw(currentActive, nameID) {
+    if (currentActive.value === "On") {
+      currentActive.value = "Off";
+      this.pen = "select";
+      this.curValSelect = "On";
+      document.getElementById(nameID).classList.remove("active");
+    }
+    // this.renderObject(processingData.allObject);
   }
+
+  onOffButton(currentActive, nameID) {
+    if (currentActive.value === "Off") {
+      currentActive.value = "On";
+      //thuc hien chuc nang
+      this.pen = undefined;
+      this.curValSelect = "Off";
+      this.mouseMoveStatus = true;
+      document.getElementById(nameID).classList.add("active");
+    } else {
+      currentActive.value = "Off";
+      document.getElementById(nameID).classList.remove("active");
+      //change cursor
+      this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
+      this.canvas.style.cursor = this.currentCursor;
+      this.curValSelect = "On";
+      this.pen = "select";
+    }
+    // this.renderObject(processingData.allObject);
+  }
+
+  offButton(currentActive, nameID) {
+    if (currentActive.value === "On") {
+      currentActive.value = "Off";
+      this.curValSelect = "On";
+      this.pen = "select";
+      document.getElementById(nameID).classList.remove("active");
+    }
+    // this.renderObject(processingData.allObject);
+  }
+
+  hiddenButton(nameID) {
+    document.getElementById(nameID).style.display = "none";
+  }
+
+  visibleButton(nameID) {
+    document.getElementById(nameID).style.display = "block";
+  }
+  //============================================================
+
+  // Choose button draw
 
   // chooseBrush() {
   //     this.offButtonDraw(this.currentValueLine, "line");
@@ -562,170 +728,11 @@ class Paint {
   //     this.onOffButtonDraw(this.currentValueSpl, "spl");
   // }
 
-  selectObj(event) {
-    if (this.pen !== "select") {
-      return;
-    }
-    //boundingbox select
-    let topPoint = this.curSelectBox[0];
-    let bottomPoint = this.curSelectBox[1];
-    if (
-      this.mouseDownPos.x !== this.lastMouseUpPos.x &&
-      this.mouseDownPos.y !== this.lastMouseUpPos.y
-    ) {
-      //reset arrCurObj
-      this.arrCurObj = [];
-      this.arrMultiCurObj = [];
-      //create select box
-      if (bottomPoint[0] > topPoint[0] && bottomPoint[1] > topPoint[1]) {
-        switch (this.multiSelectType) {
-          case "Point": {
-            processingData.allPoint.forEach((obj) => {
-              if (obj.isInBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
-              }
-            });
-            break;
-          }
-          case "Line": {
-            processingData.allLine.forEach((obj) => {
-              if (obj.isInBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
-              }
-            });
-            break;
-          }
-          case "Area": {
-            processingData.allArea.forEach((obj) => {
-              if (obj.isInBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
-              }
-            });
-            break;
-          }
-        }
-      } else {
-        switch (this.multiSelectType) {
-          case "Point": {
-            processingData.allPoint.forEach((obj) => {
-              if (obj.isTouchBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
-              }
-            });
-            break;
-          }
-          case "Line": {
-            processingData.allLine.forEach((obj) => {
-              if (obj.isTouchBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
-              }
-            });
-            break;
-          }
-          case "Area": {
-            processingData.allArea.forEach((obj) => {
-              if (obj.isTouchBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
-              }
-            });
-            break;
-          }
-        }
-      }
-      //set defaul obj type
-      this.multiSelectType = this.multiSelectTypeDefault;
-      // } else {
-      //     //reset arrMultiCurObj
-      //     this.arrMultiCurObj = [];
-      //     this.arrCurObj = [];
-      //     //find obj
-      //     processingData.allObject.reverse();
-      //     let selectedObj = processingData.allObject.find((pointObj) => pointObj.isInBox(topLeftPoint, bottomRigthPoint));
-      //     if (selectedObj !== undefined) {
-      //         this.arrCurObj[0] = selectedObj;
-      //     }
-      //     processingData.allObject.reverse();
-      // }
-      //clear select box
-      // this.curSelectBox = [];
-      //update screen
-      this.renderObject(processingData.allObject);
-      return;
-    }
-    //click select
-    //delete last selectbox
-    this.curSelectBox = [];
-    if (
-      this.curValName.value === "Off" &&
-      this.curValPointLoad.value === "Off" &&
-      this.curValPressLoad.value === "Off" &&
-      this.curValMoment.value === "Off" &&
-      this.curValSelect === "On"
-    ) {
-      this.isCancled = false;
-      if (event.ctrlKey) {
-        //transfer data
-        if (this.arrCurObj[0] !== undefined)
-          this.arrMultiCurObj.push(this.arrCurObj[0]);
-        //turn off single mode
-        this.arrCurObj = [];
-        //trace obj
-        let selectedObj = processingData.allObject.find((obj) =>
-          obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
-        );
-        if (selectedObj === undefined) {
-          this.renderObject(processingData.allObject);
-          return;
-        }
-        if (this.arrMultiCurObj.indexOf(selectedObj) !== -1) {
-          this.renderObject(processingData.allObject);
-          this.arrMultiCurObj.splice(
-            this.arrMultiCurObj.indexOf(selectedObj),
-            1
-          );
-        } else {
-          //add
-          this.renderObject(processingData.allObject);
-          if (this.arrMultiCurObj[0] !== undefined) {
-            if (selectedObj.className === this.arrMultiCurObj[0].className) {
-              this.arrMultiCurObj.push(selectedObj);
-            }
-          } else {
-            this.arrMultiCurObj.push(selectedObj);
-          }
-        }
-      } else {
-        //normal last multicurrent obj
-        this.renderObject(processingData.allObject);
-        //turn off multi mode
-        this.arrMultiCurObj = [];
-        //trace obj
-        let selectedObj = processingData.allObject.find((obj) =>
-          obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
-        );
-        if (selectedObj === undefined) {
-          document.getElementById("BDCondition").style.display = "none";
-          this.arrCurObj = [];
-          this.renderObject(processingData.allObject);
-        } else if (
-          JSON.stringify(this.arrCurObj[0]) === JSON.stringify(selectedObj)
-        ) {
-          document.getElementById("BDCondition").style.display = "none";
-          this.arrCurObj = [];
-        } else {
-          this.arrCurObj[0] = selectedObj;
-        }
-      }
-    }
-    this.renderObject(processingData.allObject);
+  concatArr(arr1, arr2) {
+    return arr1.concat(arr2);
   }
 
-  addCommand(text, x, y) {
-    PaintIn.ctx.font = "13px Arial";
-    PaintIn.ctx.fillStyle = "red";
-    PaintIn.ctx.fillText(text, x, y);
-  }
-
+  //press button Name, Fore, Moment
   addValueName() {
     //change cursor
     this.currentCursor = "url(frontend/img/text_cursor.svg), default";
@@ -879,271 +886,170 @@ class Paint {
     this.renderObject(processingData.allObject);
   }
 
-  clearAll() {
-    this.isCancled = false;
-    this.offButtonDraw(this.currentValueLine, "line");
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
-    this.pen = "select";
-    this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
-    this.canvas.style.cursor = this.currentCursor;
-    this.arrMouseDownPosition = [];
-    // this.arr = [];
+  //=================================================================
+  //feature in Canvas
+  selectObj(event) {
+    if (this.pen !== "select") {
+      return;
+    }
+    //boundingbox select
+    let topPoint = this.curSelectBox[0];
+    let bottomPoint = this.curSelectBox[1];
+
+    if (
+      this.mouseDownPos.x !== this.lastMouseUpPos.x &&
+      this.mouseDownPos.y !== this.lastMouseUpPos.y
+    ) {
+      //reset arrCurObj
+      this.arrCurObj = [];
+      this.arrMultiCurObj = [];
+
+      // if (PaintIn.arrCurObj.length !== 0 || PaintIn.arrMultiCurObj.length !== 0) {
+      //   return;
+      // }
+
+      //create select box
+      if (bottomPoint[0] > topPoint[0] && bottomPoint[1] > topPoint[1]) {
+        switch (this.multiSelectType) {
+          case "Point": {
+            processingData.allPoint.forEach((obj) => {
+              if (obj.isInBox(topPoint, bottomPoint)) {
+                this.arrMultiCurObj.push(obj);
+              }
+            });
+            break;
+          }
+          case "Line": {
+            processingData.allLine.forEach((obj) => {
+              if (obj.isInBox(topPoint, bottomPoint)) {
+                this.arrMultiCurObj.push(obj);
+              }
+            });
+            break;
+          }
+          case "Area": {
+            processingData.allArea.forEach((obj) => {
+              if (obj.isInBox(topPoint, bottomPoint)) {
+                this.arrMultiCurObj.push(obj);
+              }
+            });
+            break;
+          }
+        }
+      } else {
+        switch (this.multiSelectType) {
+          case "Point": {
+            processingData.allPoint.forEach((obj) => {
+              if (obj.isTouchBox(topPoint, bottomPoint)) {
+                this.arrMultiCurObj.push(obj);
+              }
+            });
+            break;
+          }
+          case "Line": {
+            processingData.allLine.forEach((obj) => {
+              if (obj.isTouchBox(topPoint, bottomPoint)) {
+                this.arrMultiCurObj.push(obj);
+              }
+            });
+            break;
+          }
+          case "Area": {
+            processingData.allArea.forEach((obj) => {
+              if (obj.isTouchBox(topPoint, bottomPoint)) {
+                this.arrMultiCurObj.push(obj);
+              }
+            });
+            break;
+          }
+        }
+      }
+      //set defaul obj type
+      this.multiSelectType = this.multiSelectTypeDefault;
+      // } else {
+      //     //reset arrMultiCurObj
+      //     this.arrMultiCurObj = [];
+      //     this.arrCurObj = [];
+      //     //find obj
+      //     processingData.allObject.reverse();
+      //     let selectedObj = processingData.allObject.find((pointObj) => pointObj.isInBox(topLeftPoint, bottomRigthPoint));
+      //     if (selectedObj !== undefined) {
+      //         this.arrCurObj[0] = selectedObj;
+      //     }
+      //     processingData.allObject.reverse();
+      // }
+      //clear select box
+      // this.curSelectBox = [];
+      //update screen
+      this.renderObject(processingData.allObject);
+      return;
+    }
+    //click select
+    //delete last selectbox
     this.curSelectBox = [];
-    this.arrLineX = [];
-    this.arrLineY = [];
-    this.arrCircleX = [];
-    this.arrCircleY = [];
-    this.arrRectX = [];
-    this.arrRectY = [];
-    this.arrLineColor = [];
-    this.arrLineWidth = [];
-
-    if (this.currentValueGrid.value == "On") {
-      this.ctx.strokeStyle = "grey";
-      this.drawGrid();
-    }
-    //---// clear saved data
-    processingData.allLine = [];
-    processingData.allPoint = [];
-    processingData.allArea = [];
-    processingData.allObject = [];
-    this.arrCurObj = [];
-    this.arrMultiCurObj = [];
-    this.renderProperty("off", "");
-    this.renderObject(processingData.allObject);
-    PaintIn.clearCommands("textCommands");
-  }
-
-  clearCommands() {
-    dataLogFile = [];
-    dataLogFileIndex = 0;
-    PaintIn.renderCommand("textCommands");
-  }
-
-  choiceEvent() {
-    this.toolbar.addEventListener("change", (e) => {
-      if (e.target.id === "line_color") {
-        this.currentColor = e.target.value;
-      }
-
-      if (e.target.id === "line_size") {
-        this.currentWidth = e.target.value;
-      }
-
-      if (e.target.id === "sizeGrid") {
-        if (this.currentValueGrid.value == "On") {
-          this.deltaGrid = e.target.value;
-          this.ctx.fillStyle = "white";
-          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-          // function update object saved
-          //redraw object
-          this.renderObject(processingData.allLine);
-
-          this.ctx.strokeStyle = "grey";
-          this.drawGrid();
+    if (
+      this.curValName.value === "Off" &&
+      this.curValPointLoad.value === "Off" &&
+      this.curValPressLoad.value === "Off" &&
+      this.curValMoment.value === "Off" &&
+      this.curValSelect === "On"
+    ) {
+      this.isCancled = false;
+      if (event.ctrlKey) {
+        //transfer data
+        if (this.arrCurObj[0] !== undefined)
+          this.arrMultiCurObj.push(this.arrCurObj[0]);
+        //turn off single mode
+        this.arrCurObj = [];
+        //trace obj
+        let selectedObj = processingData.allObject.find((obj) =>
+          obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
+        );
+        if (selectedObj === undefined) {
+          this.renderObject(processingData.allObject);
+          return;
         }
-        // console.log(this.currentValueGrid.value)
-      }
-    });
-  }
-
-  buttonGrid() {
-    this.arrGrid = [];
-    this.getNodePos();
-
-    this.arrGrid = this.concatArr(this.arrGrid, this.arrRecordNode);
-    // console.log(this.arrGrid.length)
-
-    if (this.currentValueGrid.value == "Off") {
-      this.currentValueGrid.value = "On";
-      this.ctx.strokeStyle = "grey";
-      this.drawGrid();
-    } else {
-      this.currentValueGrid.value = "Off";
-      // this.ctx.strokeStyle = 'white';
-      this.ctx.fillStyle = "white";
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-    // console.log(this.currentValueGrid.value)
-    this.renderObject(processingData.allObject);
-  }
-
-  listenEvent() {
-    this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
-    this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
-    this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
-    document.addEventListener("keydown", (event) => this.keyDown(event));
-    this.canvas.addEventListener("click", (event) => this.selectObj(event));
-    // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
-    //up file event
-    document.getElementById("openFile").addEventListener("change", function () {
-      var fr = new FileReader();
-      fr.onload = function () {
-        let inputData = JSON.parse(fr.result);
-        if (inputData["jsmat"] !== undefined) {
-          processingData.prototype.createMeshData(inputData);
+        if (this.arrMultiCurObj.indexOf(selectedObj) !== -1) {
+          this.renderObject(processingData.allObject);
+          this.arrMultiCurObj.splice(
+            this.arrMultiCurObj.indexOf(selectedObj),
+            1
+          );
         } else {
-          PaintIn.clearAll();
-          processingData.prototype.createData(inputData);
-          //update screen
-          PaintIn.renderObject(processingData.allObject);
+          //add
+          this.renderObject(processingData.allObject);
+          if (this.arrMultiCurObj[0] !== undefined) {
+            if (selectedObj.className === this.arrMultiCurObj[0].className) {
+              this.arrMultiCurObj.push(selectedObj);
+            }
+          } else {
+            this.arrMultiCurObj.push(selectedObj);
+          }
         }
-      };
-      fr.readAsText(this.files[0]);
-    });
-
-    //input img
-    let form = document.getElementById("inputImg");
-    form.addEventListener("change", function (event) {
-      event.preventDefault();
-      const formData = new FormData(form[0]);
-      formData.append("file", $("#inputImg")[0].files[0]);
-      let promise = axios({
-        method: "POST",
-        url: "https://vysecondapp.herokuapp.com/v1/picture/",
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      promise.then((result) => {
-        processingData.prototype.createData(result.data);
-        //update screen
-        PaintIn.renderObject(processingData.allObject);
-      });
-
-      promise.catch(function (err) {
-        console.log("err", err);
-      });
-    });
-
-    //make canvas responsive
-    onresize = (event) => {
-      PaintIn.canvas.width =
-        document.getElementById("wrap_canvas_div").clientWidth;
-      PaintIn.canvas.height =
-        document.getElementById("wrap_canvas_div").clientHeight;
-      PaintIn.renderObject(processingData.allObject);
-    };
-  }
-
-  // getAPI() {
-  //   let listData = processingData.prototype.saveObj();
-  //   let promise = axios({
-  //     method: "POST",
-
-  //     url: 'https://vyfirstapp.herokuapp.com/v1/article/',
-  //     data: listData,
-  //   });
-
-  //   // var promise = axios({
-  //   //     url: 'http://localhost:8000/v1/article',
-  //   //     method: "GET",
-  //   // });
-
-  //   promise.then((result) => {
-  //     console.log(result.data);
-  //     Mesh.prototype.openFileSoln(result.data);
-  //   });
-
-  //   promise.catch(function (err) {
-  //     console.log("err", err);
-  //   });
-  // }
-
-  //   getAPI() {
-  //     // request
-  //     let listData = processingData.prototype.saveObj();
-  //     console.log(listData); // data type: dictionary
-  //     let params = { "rhs": [listData], "nargout": 1, "outputFormat": { "mode": "small", "nanType": "object" } };
-
-  //     let promise = axios({
-  //         method: "POST",
-  //         url: 'http://localhost:9910/BondTools/firstAPI',
-  //         data: params,
-  //     });
-
-  //     promise.then((result) => {
-  //         // console.log(result.data);
-  //         let receiveData = result.data['lhs'][0]; //MATLAB response body is {"lhs":[receiveData]}
-  //         console.log(receiveData);
-  //         Mesh.prototype.openFileSoln(receiveData); //draw Messh
-  //     });
-
-  //     promise.catch(function (err) {
-  //         console.log("err", err);
-  //     });
-  // }
-
-  getAPI() {
-    // request
-    let listData = processingData.prototype.saveObj();
-    let params = {
-      rhs: [listData],
-      nargout: 1,
-      outputFormat: { mode: "small", nanType: "object" },
-    };
-
-    let promise = axios({
-      method: "POST",
-      url: "http://localhost:9910/BondTools/firstAPI",
-      data: params,
-    });
-
-    promise.then((result) => {
-      let receiveData = result.data["lhs"][0];
-      Mesh.prototype.openFileSoln(receiveData);
-      if (receiveData !== undefined) {
-        dataLogFile.push(JSON.stringify(receiveData));
-        PaintIn.renderCommand("textCommands");
+      } else {
+        //normal last multicurrent obj
+        this.renderObject(processingData.allObject);
+        //turn off multi mode
+        this.arrMultiCurObj = [];
+        //trace obj
+        let selectedObj = processingData.allObject.find((obj) =>
+          obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
+        );
+        if (selectedObj === undefined) {
+          document.getElementById("BDCondition").style.display = "none";
+          this.arrCurObj = [];
+          this.renderObject(processingData.allObject);
+        } else if (
+          JSON.stringify(this.arrCurObj[0]) === JSON.stringify(selectedObj)
+        ) {
+          document.getElementById("BDCondition").style.display = "none";
+          this.arrCurObj = [];
+        } else {
+          this.arrCurObj[0] = selectedObj;
+        }
       }
-    });
-
-    promise.catch(function (err) {
-      console.log("err", err);
-      dataLogFile.push(JSON.stringify(err));
-      PaintIn.renderCommand("textCommands");
-    });
-  }
-
-  mps_PALc(pname, params) {
-    //bodyData: data will send to server
-    //params: list data - JSON form
-    // params = {"num_nodes":6,"num_segments":6,"node_coords":[[280,200],[280,340],[460,340],[460,420],[580,420],[580,120]],"node_names":[null,null,null,null,null,null],"segments":[[0,1],[1,2],[2,3],[3,4],[4,5],[0,5]],"segment_names":[null,"SeA","SeB",null,null,"SeC"],"surfaces":[],"surface_names":[],"nodal_loads":[null,null,null,null,null,null],"segment_loads":[null,null,null,null,null,null],"text-data":["","",""]}
-    let bodyData = {
-      rhs: [pname, params], //rhs: reading - used when send data
-      nargout: 1,
-      outputFormat: { mode: "small", nanType: "object" },
-    };
-
-    let promise = axios({
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      // url: "http://localhost:5902/matfun/mps_PAL",
-      url: "http://localhost:9910/bondTools/firstAPI",
-      data: bodyData,
-    });
-
-    promise.then((result) => {
-      let receiveData = result.data["lhs"][0];
-      Mesh.prototype.openFileSoln(receiveData);
-      if (receiveData !== undefined) {
-        dataLogFile.push(JSON.stringify(receiveData));
-        PaintIn.renderCommand("textCommands");
-      }
-    });
-
-    promise.catch(function (err) {
-      console.log("err", err);
-      dataLogFile.push(JSON.stringify(err));
-      PaintIn.renderCommand("textCommands");
-    });
+    }
+    this.renderObject(processingData.allObject);
   }
 
   getMousePosition(event) {
@@ -1511,6 +1417,9 @@ class Paint {
       (this.pen === undefined || this.pen === "select") &&
       this.curValSelect === "On"
     ) {
+      // if (PaintIn.movingObj === true && PaintIn.arrCurObj.length === 0 || PaintIn.arrMultiCurObj.length === 0) {
+      //   return;
+      // }
       //draw bounding box
       this.undo();
       this.ctx.beginPath();
@@ -1527,6 +1436,161 @@ class Paint {
       );
     }
     this.currentMouseDownPos = mouseMovePos;
+  }
+  //====================================================================
+
+  // getAPI() {
+  //   let listData = processingData.prototype.saveObj();
+  //   let promise = axios({
+  //     method: "POST",
+
+  //     url: 'https://vyfirstapp.herokuapp.com/v1/article/',
+  //     data: listData,
+  //   });
+
+  //   // var promise = axios({
+  //   //     url: 'http://localhost:8000/v1/article',
+  //   //     method: "GET",
+  //   // });
+
+  //   promise.then((result) => {
+  //     console.log(result.data);
+  //     Mesh.prototype.openFileSoln(result.data);
+  //   });
+
+  //   promise.catch(function (err) {
+  //     console.log("err", err);
+  //   });
+  // }
+
+  //   getAPI() {
+  //     // request
+  //     let listData = processingData.prototype.saveObj();
+  //     console.log(listData); // data type: dictionary
+  //     let params = { "rhs": [listData], "nargout": 1, "outputFormat": { "mode": "small", "nanType": "object" } };
+
+  //     let promise = axios({
+  //         method: "POST",
+  //         url: 'http://localhost:9910/BondTools/firstAPI',
+  //         data: params,
+  //     });
+
+  //     promise.then((result) => {
+  //         // console.log(result.data);
+  //         let receiveData = result.data['lhs'][0]; //MATLAB response body is {"lhs":[receiveData]}
+  //         console.log(receiveData);
+  //         Mesh.prototype.openFileSoln(receiveData); //draw Messh
+  //     });
+
+  //     promise.catch(function (err) {
+  //         console.log("err", err);
+  //     });
+  // }
+
+  // get API simulation
+  getAPI() {
+    // request
+    let listData = processingData.prototype.saveObj();
+    let params = {
+      rhs: [listData],
+      nargout: 1,
+      outputFormat: { mode: "small", nanType: "object" },
+    };
+
+    let promise = axios({
+      method: "POST",
+      url: "http://localhost:9910/BondTools/firstAPI",
+      data: params,
+    });
+
+    promise.then((result) => {
+      let receiveData = result.data["lhs"][0];
+      Mesh.prototype.openFileSoln(receiveData);
+      if (receiveData !== undefined) {
+        dataLogFile.push(JSON.stringify(receiveData));
+        PaintIn.renderCommand("textCommands");
+      }
+    });
+
+    promise.catch(function (err) {
+      console.log("err", err);
+      dataLogFile.push(JSON.stringify(err));
+      PaintIn.renderCommand("textCommands");
+    });
+  }
+
+  testAPI() {
+    if (PaintIn.APIurl.value !== "") {
+      urlSendRequest = PaintIn.APIurl.value;
+      let pname = 'data';
+      let params = processingData.prototype.saveObj();
+      let bodyData = {
+        rhs: [pname, params], //rhs: reading - used when send data
+        nargout: 1,
+        outputFormat: { mode: "small", nanType: "object" },
+      };
+
+      let promise = axios({
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        url: urlSendRequest,
+        data: bodyData,
+      });
+
+      promise.then((result) => {
+        let receiveData = result.data["lhs"][0];
+        if (receiveData !== undefined) {
+          dataLogFile.push(JSON.stringify(receiveData));
+          PaintIn.renderCommand("textCommands");
+        }
+      });
+
+      promise.catch(function (err) {
+        console.log("err", err);
+        dataLogFile.push(JSON.stringify(err));
+        PaintIn.renderCommand("textCommands");
+      });
+    }
+  }
+
+  //get API meshing
+  mps_PALc(pname, params) {
+    //bodyData: data will send to server
+    //params: list data - JSON form
+    // params = {"num_nodes":6,"num_segments":6,"node_coords":[[280,200],[280,340],[460,340],[460,420],[580,420],[580,120]],"node_names":[null,null,null,null,null,null],"segments":[[0,1],[1,2],[2,3],[3,4],[4,5],[0,5]],"segment_names":[null,"SeA","SeB",null,null,"SeC"],"surfaces":[],"surface_names":[],"nodal_loads":[null,null,null,null,null,null],"segment_loads":[null,null,null,null,null,null],"text-data":["","",""]}
+    let bodyData = {
+      rhs: [pname, params], //rhs: reading - used when send data
+      nargout: 1,
+      outputFormat: { mode: "small", nanType: "object" },
+    };
+
+    let promise = axios({
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      // url: "http://localhost:5902/matfun/mps_PAL",
+      url: "http://localhost:9910/bondTools/firstAPI",
+      url: urlSendRequest,
+      data: bodyData,
+    });
+
+    promise.then((result) => {
+      let receiveData = result.data["lhs"][0];
+      Mesh.prototype.openFileSoln(receiveData);
+      if (receiveData !== undefined) {
+        dataLogFile.push(JSON.stringify(receiveData));
+        PaintIn.renderCommand("textCommands");
+      }
+    });
+
+    promise.catch(function (err) {
+      console.log("err", err);
+      dataLogFile.push(JSON.stringify(err));
+      PaintIn.renderCommand("textCommands");
+    });
   }
 
   renderCommand(mode) {
@@ -1582,6 +1646,8 @@ class Paint {
 
   // }
 
+  //========================================================
+  //drawing
   getAngleLineAndOx(line) {
     //d1: Ox
     //d2: line
@@ -2314,6 +2380,7 @@ class Paint {
       this.renderCommand("Off");
     }
   }
+
   deleteCurObj() {
     this.isCancled = false;
     for (let Obj of this.arrCurObj) {
@@ -2575,6 +2642,7 @@ class Paint {
       }
     }
   }
+
   delLoad(tagId) {
     let obj = this.arrCurObj[0];
     let selectTag = document.getElementById(tagId);
@@ -2588,6 +2656,7 @@ class Paint {
     }
     this.renderObject(processingData.allObject);
   }
+
   changeLoad(loadIndex, newValue, type) {
     switch (type) {
       case "force": {
@@ -2625,6 +2694,7 @@ class Paint {
     }
     this.renderObject(processingData.allObject);
   }
+
   //--------------------------------
 
   fillArea(AreaObj, fillColor = "rgb(0 115 255 / 10%)") {
@@ -2712,10 +2782,12 @@ class Paint {
     this.ctx.fillStyle = fillColor;
     this.ctx.fill();
   }
+
   setCursor(style = "default") {
     //set mouse cursor
     this.canvas.style.cursor = style;
   }
+
   drawBC(obj, key) {
     if (obj.className === "Point") {
       switch (key) {
@@ -2917,6 +2989,7 @@ class Paint {
       }
     }
   }
+
   simulateMouseEvent(type, pos) {
     let rect = this.canvas.getBoundingClientRect();
     let newEvent = new MouseEvent(type, {
@@ -2939,10 +3012,11 @@ class Paint {
     }
   }
 
-  getValueInTextBox() {
-    if (window.event.keyCode == 13) {
-      inputComments();
-    }
+  //clear area Text commands
+  clearCommands() {
+    dataLogFile = [];
+    dataLogFileIndex = 0;
+    PaintIn.renderCommand("textCommands");
   }
 
   // saveLogFile() {
@@ -2972,4 +3046,14 @@ const PaintIn = new Paint();
 PaintIn.curValDrawing.value = "On";
 var dataLogFile = [];
 let dataLogFileIndex = 0;
+var urlSendRequest = "";
 // const commands = ["line"];
+
+// Press button:
+// Open: listenEvent()
+// Save: SavedOjb() (processingData)
+//ClearAll/New: clearAll()
+//Meshing: mps_PALc
+//OpenFile_Solu/ Simulation: getAPI()
+//changeMode: changeMode()
+//inputImg: listenEvent()

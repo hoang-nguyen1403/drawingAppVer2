@@ -445,40 +445,41 @@ function inputComments() {
   PaintIn.renderObject(processingData.allObject);
 }
 
-function inputComments() {
-  if (PaintIn.valueComment.value.includes(",")) {
-    let old_comma_index = 0;
-    let inputValue = [];
-    for (let i = 0; i < PaintIn.valueComment.value.length; i++) {
-      if (PaintIn.valueComment.value[i] === ",") {
-        inputValue.push(
-          JSON.stringify(PaintIn.valueComment.value.slice(old_comma_index, i))
-        );
-        old_comma_index = i + 1;
-      }
-    }
-    inputValue.push(
-      JSON.stringify(
-        PaintIn.valueComment.value.slice(
-          old_comma_index,
-          PaintIn.valueComment.value.length
-        )
-      )
-    );
-    console.log(inputValue);
+// function inputComments() {
+//   if (PaintIn.valueComment.value.includes(",")) {
+//     let old_comma_index = 0;
+//     let inputValue = [];
+//     for (let i = 0; i < PaintIn.valueComment.value.length; i++) {
+//       if (PaintIn.valueComment.value[i] === ",") {
+//         inputValue.push(
+//           JSON.stringify(PaintIn.valueComment.value.slice(old_comma_index, i))
+//         );
+//         old_comma_index = i + 1;
+//       }
+//     }
+//     inputValue.push(
+//       JSON.stringify(
+//         PaintIn.valueComment.value.slice(
+//           old_comma_index,
+//           PaintIn.valueComment.value.length
+//         )
+//       )
+//     );
+//     console.log(inputValue);
 
-    switch (inputValue[0]) {
-      case "p":
-        console.log("point");
-        break;
-      case "l":
-        console.log("line");
-        break;
-      default:
-        console.log(inputValue[0]);
-    }
-  }
-}
+//     switch (inputValue[0]) {
+//       case "p":
+//         console.log("point");
+//         break;
+//       case "l":
+//         console.log("line");
+//         break;
+//       default:
+//         console.log(inputValue[0]);
+//     }
+//   }
+// }
+
 // function getPoint(start, cur, l) {
 //     let a = cur[0] - start[0];
 //     let b = cur[1] - start[1];

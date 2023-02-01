@@ -122,8 +122,8 @@ body {
 
 #property {
     position: absolute;
-    right: 25px;
-    top: 20%;
+    right: 50%;
+    bottom: 1%;
     width: 150px;
     display: none;
     flex-direction: column;
@@ -579,3 +579,33 @@ button {
 #meshing:hover {
     background-size: 35px 35px;
 }
+
+/* requestAPI */
+.request {
+    width: 40%;
+    position: fixed;
+    right: 0%;
+}
+
+#urlInputted{
+    position: fixed;
+    width: 300px;
+    margin: 17px;
+    right: 9%;
+}
+
+#sendRequest {
+    background: url(img/request.png);
+    background-color: #ffffff;
+    background-position: center;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    position: fixed;
+    right: 5%;
+    margin: 5px;
+}
+
+#sendRequest:hover {
+    background-size: 35px 35px;
+}
+
