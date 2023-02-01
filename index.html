@@ -82,7 +82,7 @@
 				<button id="Clear_all" type="button" onclick="PaintIn.clearAll()"></button>
 
 				<!-- request -->
-				<button id="meshing" onclick="PaintIn.mps_PALc('data',processingData.prototype.saveObj())"></button>
+				<button id="meshing" onclick="PaintIn.mps_PALc('data',processingData.prototype.saveObj());"></button>
 				<button id="openFile_Solu" onclick="PaintIn.getAPI()"></button>
 				<label id="ChangeMode">
 					<button id="modeDrawing" type="button" onclick="PaintIn.changeMode()" value="On"></button>
@@ -91,6 +91,11 @@
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
 						style="display: none">
 				</label>
+				<label class="request">
+					<input type="text" id="urlInputted" value="">
+					<button id="sendRequest" type="button" onclick="PaintIn.testAPI()"></button>
+				</label>
+
 			</div>
 			<div id="wrap_canvas_div">
 				<canvas id="myCanvas">
@@ -117,9 +122,11 @@
 
 			<div id="tab-comments">
 				<p id="lableTab">Text comments</p>
-				<input type="text" id="textBox" value="" onkeydown="PaintIn.getValueInTextBox()">
+				<input type="text" id="textBox" value="">
 
 				<div id="valueInputed">
+					<p style="background-color: #ffffff; height: 100%; overflow: scroll; border: 1px solid #0784d1;">
+					</p>
 				</div>
 
 				<div id="clearButton">
