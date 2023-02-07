@@ -106,7 +106,8 @@ class Paint {
     this.APIurl = document.getElementById("urlInputted");
 
     //move Obj
-    this.movingObj = false;
+    this.isMovingObj = false;
+    this.lastMouseMove = [0, 0];
   }
 
   // Press button change mode
@@ -336,6 +337,7 @@ class Paint {
       }
       this.isCancled = false;
       this.pen = "select";
+      this.isMovingObj = false;
 
       // if (this.currentValueSelect.value === "On") {
       //     this.pen = "select";
@@ -518,6 +520,9 @@ class Paint {
         this.keyDown(spaceKey);
         this.onButtonDraw(this.currentValueLine, "line");
         this.renderObject(processingData.allObject);
+      }
+      else if (this.valueComment.value === "m" && this.pen === "select") {
+        this.isMovingObj = true;
       }
 
       if (this.valueComment.value !== "") {
@@ -889,167 +894,196 @@ class Paint {
   //=================================================================
   //feature in Canvas
   selectObj(event) {
-    if (this.pen !== "select") {
+    if (this.pen !== "select" || this.curValSelect === "Off"
+    ) {
       return;
     }
-    //boundingbox select
-    let topPoint = this.curSelectBox[0];
-    let bottomPoint = this.curSelectBox[1];
+    else {
+      //boundingbox select
+      if (!this.isMovingObj) {
+        let topPoint = this.curSelectBox[0];
+        let bottomPoint = this.curSelectBox[1];
+        if (
+          this.mouseDownPos.x !== this.lastMouseUpPos.x &&
+          this.mouseDownPos.y !== this.lastMouseUpPos.y
+        ) {
+          //reset arrCurObj
+          this.arrCurObj = [];
+          this.arrMultiCurObj = [];
 
-    if (
-      this.mouseDownPos.x !== this.lastMouseUpPos.x &&
-      this.mouseDownPos.y !== this.lastMouseUpPos.y
-    ) {
-      //reset arrCurObj
-      this.arrCurObj = [];
-      this.arrMultiCurObj = [];
-
-      // if (PaintIn.arrCurObj.length !== 0 || PaintIn.arrMultiCurObj.length !== 0) {
-      //   return;
-      // }
-
-      //create select box
-      if (bottomPoint[0] > topPoint[0] && bottomPoint[1] > topPoint[1]) {
-        switch (this.multiSelectType) {
-          case "Point": {
-            processingData.allPoint.forEach((obj) => {
-              if (obj.isInBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
+          //create select box
+          if (bottomPoint[0] > topPoint[0] && bottomPoint[1] > topPoint[1]) {
+            switch (this.multiSelectType) {
+              case "Point": {
+                processingData.allPoint.forEach((obj) => {
+                  if (obj.isInBox(topPoint, bottomPoint)) {
+                    this.arrMultiCurObj.push(obj);
+                  }
+                });
+                break;
               }
-            });
-            break;
-          }
-          case "Line": {
-            processingData.allLine.forEach((obj) => {
-              if (obj.isInBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
+              case "Line": {
+                processingData.allLine.forEach((obj) => {
+                  if (obj.isInBox(topPoint, bottomPoint)) {
+                    this.arrMultiCurObj.push(obj);
+                  }
+                });
+                break;
               }
-            });
-            break;
-          }
-          case "Area": {
-            processingData.allArea.forEach((obj) => {
-              if (obj.isInBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
+              case "Area": {
+                processingData.allArea.forEach((obj) => {
+                  if (obj.isInBox(topPoint, bottomPoint)) {
+                    this.arrMultiCurObj.push(obj);
+                  }
+                });
+                break;
               }
-            });
-            break;
-          }
-        }
-      } else {
-        switch (this.multiSelectType) {
-          case "Point": {
-            processingData.allPoint.forEach((obj) => {
-              if (obj.isTouchBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
+            }
+          } else {
+            switch (this.multiSelectType) {
+              case "Point": {
+                processingData.allPoint.forEach((obj) => {
+                  if (obj.isTouchBox(topPoint, bottomPoint)) {
+                    this.arrMultiCurObj.push(obj);
+                  }
+                });
+                break;
               }
-            });
-            break;
-          }
-          case "Line": {
-            processingData.allLine.forEach((obj) => {
-              if (obj.isTouchBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
+              case "Line": {
+                processingData.allLine.forEach((obj) => {
+                  if (obj.isTouchBox(topPoint, bottomPoint)) {
+                    this.arrMultiCurObj.push(obj);
+                  }
+                });
+                break;
               }
-            });
-            break;
-          }
-          case "Area": {
-            processingData.allArea.forEach((obj) => {
-              if (obj.isTouchBox(topPoint, bottomPoint)) {
-                this.arrMultiCurObj.push(obj);
+              case "Area": {
+                processingData.allArea.forEach((obj) => {
+                  if (obj.isTouchBox(topPoint, bottomPoint)) {
+                    this.arrMultiCurObj.push(obj);
+                  }
+                });
+                break;
               }
-            });
-            break;
+            }
           }
-        }
-      }
-      //set defaul obj type
-      this.multiSelectType = this.multiSelectTypeDefault;
-      // } else {
-      //     //reset arrMultiCurObj
-      //     this.arrMultiCurObj = [];
-      //     this.arrCurObj = [];
-      //     //find obj
-      //     processingData.allObject.reverse();
-      //     let selectedObj = processingData.allObject.find((pointObj) => pointObj.isInBox(topLeftPoint, bottomRigthPoint));
-      //     if (selectedObj !== undefined) {
-      //         this.arrCurObj[0] = selectedObj;
-      //     }
-      //     processingData.allObject.reverse();
-      // }
-      //clear select box
-      // this.curSelectBox = [];
-      //update screen
-      this.renderObject(processingData.allObject);
-      return;
-    }
-    //click select
-    //delete last selectbox
-    this.curSelectBox = [];
-    if (
-      this.curValName.value === "Off" &&
-      this.curValPointLoad.value === "Off" &&
-      this.curValPressLoad.value === "Off" &&
-      this.curValMoment.value === "Off" &&
-      this.curValSelect === "On"
-    ) {
-      this.isCancled = false;
-      if (event.ctrlKey) {
-        //transfer data
-        if (this.arrCurObj[0] !== undefined)
-          this.arrMultiCurObj.push(this.arrCurObj[0]);
-        //turn off single mode
-        this.arrCurObj = [];
-        //trace obj
-        let selectedObj = processingData.allObject.find((obj) =>
-          obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
-        );
-        if (selectedObj === undefined) {
+          //set defaul obj type
+          this.multiSelectType = this.multiSelectTypeDefault;
+          // } else {
+          //     //reset arrMultiCurObj
+          //     this.arrMultiCurObj = [];
+          //     this.arrCurObj = [];
+          //     //find obj
+          //     processingData.allObject.reverse();
+          //     let selectedObj = processingData.allObject.find((pointObj) => pointObj.isInBox(topLeftPoint, bottomRigthPoint));
+          //     if (selectedObj !== undefined) {
+          //         this.arrCurObj[0] = selectedObj;
+          //     }
+          //     processingData.allObject.reverse();
+          // }
+          //clear select box
+          // this.curSelectBox = [];
+          //update screen
           this.renderObject(processingData.allObject);
           return;
         }
-        if (this.arrMultiCurObj.indexOf(selectedObj) !== -1) {
-          this.renderObject(processingData.allObject);
-          this.arrMultiCurObj.splice(
-            this.arrMultiCurObj.indexOf(selectedObj),
-            1
+      }
+      //click select
+      //delete last selectbox
+      this.curSelectBox = [];
+      if (
+        this.curValName.value === "Off" &&
+        this.curValPointLoad.value === "Off" &&
+        this.curValPressLoad.value === "Off" &&
+        this.curValMoment.value === "Off" &&
+        this.curValSelect === "On"
+      ) {
+        this.isCancled = false;
+        if (event.ctrlKey) {
+          //transfer data
+          if (this.arrCurObj[0] !== undefined)
+            this.arrMultiCurObj.push(this.arrCurObj[0]);
+          //turn off single mode
+          this.arrCurObj = [];
+          //trace obj
+          let selectedObj = processingData.allObject.find((obj) =>
+            obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
           );
-        } else {
-          //add
-          this.renderObject(processingData.allObject);
-          if (this.arrMultiCurObj[0] !== undefined) {
-            if (selectedObj.className === this.arrMultiCurObj[0].className) {
+          if (selectedObj === undefined) {
+            this.renderObject(processingData.allObject);
+            return;
+          }
+          if (this.arrMultiCurObj.indexOf(selectedObj) !== -1) {
+            this.renderObject(processingData.allObject);
+            this.arrMultiCurObj.splice(
+              this.arrMultiCurObj.indexOf(selectedObj),
+              1
+            );
+          } else {
+            //add
+            this.renderObject(processingData.allObject);
+            if (this.arrMultiCurObj[0] !== undefined) {
+              if (selectedObj.className === this.arrMultiCurObj[0].className) {
+                this.arrMultiCurObj.push(selectedObj);
+              }
+            } else {
               this.arrMultiCurObj.push(selectedObj);
             }
+          }
+        } else {
+          //normal last multicurrent obj
+          this.renderObject(processingData.allObject);
+          //turn off multi mode
+          this.arrMultiCurObj = [];
+          //trace obj
+          let selectedObj = processingData.allObject.find((obj) =>
+            obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
+          );
+          if (selectedObj === undefined) {
+            document.getElementById("BDCondition").style.display = "none";
+            this.arrCurObj = [];
+            this.renderObject(processingData.allObject);
+          } else if (
+            JSON.stringify(this.arrCurObj[0]) === JSON.stringify(selectedObj)
+          ) {
+            document.getElementById("BDCondition").style.display = "none";
+            this.arrCurObj = [];
           } else {
-            this.arrMultiCurObj.push(selectedObj);
+            this.arrCurObj[0] = selectedObj;
           }
         }
-      } else {
-        //normal last multicurrent obj
-        this.renderObject(processingData.allObject);
-        //turn off multi mode
-        this.arrMultiCurObj = [];
-        //trace obj
-        let selectedObj = processingData.allObject.find((obj) =>
-          obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
-        );
-        if (selectedObj === undefined) {
-          document.getElementById("BDCondition").style.display = "none";
-          this.arrCurObj = [];
-          this.renderObject(processingData.allObject);
-        } else if (
-          JSON.stringify(this.arrCurObj[0]) === JSON.stringify(selectedObj)
-        ) {
-          document.getElementById("BDCondition").style.display = "none";
-          this.arrCurObj = [];
-        } else {
-          this.arrCurObj[0] = selectedObj;
-        }
+      }
+      this.renderObject(processingData.allObject);
+    }
+  }
+
+  deleteCurObj() {
+    this.isCancled = false;
+    for (let Obj of this.arrCurObj) {
+      if (Obj.className === "Point") {
+        processingData.allPoint.splice(processingData.allPoint.indexOf(Obj), 1); //delete in allPoint
+      } else if (Obj.className === "Line") {
+        processingData.allLine.splice(processingData.allLine.indexOf(Obj), 1); //delete in allLine
+      } else if (Obj.className === "Area") {
+        processingData.allArea.splice(processingData.allArea.indexOf(Obj), 1); //delete in allArea
       }
     }
+    this.arrCurObj = [];
+    for (let Obj of this.arrMultiCurObj) {
+      if (Obj.className === "Point") {
+        processingData.allPoint.splice(processingData.allPoint.indexOf(Obj), 1); //delete in allPoint
+      } else if (Obj.className === "Line") {
+        processingData.allLine.splice(processingData.allLine.indexOf(Obj), 1); //delete in allLine
+      } else if (Obj.className === "Area") {
+        processingData.allArea.splice(processingData.allArea.indexOf(Obj), 1); //delete in allArea
+      }
+    }
+    this.arrMultiCurObj = [];
+    //update storage
+    processingData.prototype.updateStorage();
+    //update screen
     this.renderObject(processingData.allObject);
+    this.renderProperty("off", "");
   }
 
   getMousePosition(event) {
@@ -1248,6 +1282,10 @@ class Paint {
     //         processingData.prototype.addObject(newPoint, processingData.allPoint);
     //     }
     // };
+    // if (this.isMovingObj && this.arrCurObj.length === 0) {
+    //   processingData.prototype.areaDetect(processingData.allLine);
+    //   PaintIn.renderObject(processingData.allObject);
+    // }
   }
 
   mouseUp(event) {
@@ -1264,13 +1302,13 @@ class Paint {
     // this.image.src = this.canvas.toDataURL("frontend/image/bmp ", 1.0);
     let mouseMovePos = this.getMousePosition(event);
     this.currentMouseMovePos = this.getMousePosition(event);
-    let mouseMoveCoordination = this.changeOrigin(event);
+    // let mouseMoveCoordination = this.changeOrigin(event);
     // this.renderObject(processingData.allObject);
 
     //
-    // document.getElementById("display_coord").innerHTML = '[' + this.currentMouseMovePos.x + ' ; ' + this.currentMouseMovePos.y + ']';
-    document.getElementById("display_coord").innerHTML =
-      "[" + mouseMoveCoordination.x + " ; " + mouseMoveCoordination.y + "]";
+    document.getElementById("display_coord").innerHTML = '[' + this.currentMouseMovePos.x + ' ; ' + this.currentMouseMovePos.y + ']';
+    // document.getElementById("display_coord").innerHTML =
+    //   "[" + mouseMoveCoordination.x + " ; " + mouseMoveCoordination.y + "]";
     //
     if (
       this.currentValueGrid.value == "On" &&
@@ -1383,13 +1421,13 @@ class Paint {
     // }
 
     // drag
-    // if (this.isPainting && this.arrCurObj.length !== 0 &&
-    //     this.curValPointLoad.value === "Off" &&
-    //     this.curValPressLoad.value === "Off" &&
-    //     this.curValMoment.value === "Off" &&
-    //     this.curValName.value === "Off" ) {
-    //     processingData.prototype.moveObject(this.arrCurObj[0], [this.currentMouseDownPos.x, this.currentMouseDownPos.y])
-    // }
+    if (this.isPainting && this.isMovingObj && this.arrCurObj.length !== 0 &&
+      this.curValPointLoad.value === "Off" &&
+      this.curValPressLoad.value === "Off" &&
+      this.curValMoment.value === "Off" &&
+      this.curValName.value === "Off") {
+      processingData.prototype.moveObject(this.arrCurObj[0])
+    }
 
     // //change mouse (test)
     // let lineButton = document.getElementById("line").value;
@@ -1413,13 +1451,10 @@ class Paint {
     // }
     //bounding box
     if (
-      this.isPainting &&
+      this.isPainting && (!this.isMovingObj) &&
       (this.pen === undefined || this.pen === "select") &&
       this.curValSelect === "On"
     ) {
-      // if (PaintIn.movingObj === true && PaintIn.arrCurObj.length === 0 || PaintIn.arrMultiCurObj.length === 0) {
-      //   return;
-      // }
       //draw bounding box
       this.undo();
       this.ctx.beginPath();
@@ -1434,6 +1469,9 @@ class Paint {
         bottomRigthPoint[0] - topLeftPoint[0],
         bottomRigthPoint[1] - topLeftPoint[1]
       );
+
+      //save the last mouse move
+      this.lastMouseMove = bottomRigthPoint;
     }
     this.currentMouseDownPos = mouseMovePos;
   }
@@ -1540,11 +1578,20 @@ class Paint {
       });
 
       promise.then((result) => {
-        let receiveData = result.data["lhs"][0];
-        if (receiveData !== undefined) {
-          dataLogFile.push(JSON.stringify(receiveData));
+        let receiveData;
+        try {
+          receiveData = result.data["lhs"][0];
+          if (receiveData !== undefined) {
+            dataLogFile.push(JSON.stringify(receiveData));
+            PaintIn.renderCommand("textCommands");
+          }
+        }
+        catch (err) {
+          console.log(result)
+          dataLogFile.push(JSON.stringify(result.data));
           PaintIn.renderCommand("textCommands");
         }
+
       });
 
       promise.catch(function (err) {
@@ -2381,35 +2428,6 @@ class Paint {
     }
   }
 
-  deleteCurObj() {
-    this.isCancled = false;
-    for (let Obj of this.arrCurObj) {
-      if (Obj.className === "Point") {
-        processingData.allPoint.splice(processingData.allPoint.indexOf(Obj), 1); //delete in allPoint
-      } else if (Obj.className === "Line") {
-        processingData.allLine.splice(processingData.allLine.indexOf(Obj), 1); //delete in allLine
-      } else if (Obj.className === "Area") {
-        processingData.allArea.splice(processingData.allArea.indexOf(Obj), 1); //delete in allArea
-      }
-    }
-    this.arrCurObj = [];
-    for (let Obj of this.arrMultiCurObj) {
-      if (Obj.className === "Point") {
-        processingData.allPoint.splice(processingData.allPoint.indexOf(Obj), 1); //delete in allPoint
-      } else if (Obj.className === "Line") {
-        processingData.allLine.splice(processingData.allLine.indexOf(Obj), 1); //delete in allLine
-      } else if (Obj.className === "Area") {
-        processingData.allArea.splice(processingData.allArea.indexOf(Obj), 1); //delete in allArea
-      }
-    }
-    this.arrMultiCurObj = [];
-    //update storage
-    processingData.prototype.updateStorage();
-    //update screen
-    this.renderObject(processingData.allObject);
-    this.renderProperty("off", "");
-  }
-
   renderProperty(mode, Obj) {
     document.getElementById("property").style.display = "flex";
     switch (mode) {
@@ -2449,48 +2467,99 @@ class Paint {
           if (moments.indexOf(moment) === 0) firstMomentValue = `${value}`;
         }
         //
-        document.getElementById("property").innerHTML = `
-                  <p id="property_label">Properties</p>
-                  <div>
-                      <p>x</p>
-                      <div>${math.round(Obj.x, 2)}</div>
+        if (!this.isMovingObj) {
+          document.getElementById("property").innerHTML = `
+          <p id="property_label">Properties</p>
+          <div>
+              <p>Name</p>
+              <div>${Obj.name}</div>
+          </div>
+          <div>
+            <p>x</p>
+            <div>
+              ${math.round(Obj.x, 2)}
+            </div>
+          </div>
+          <div>
+            <p>y</p>
+            <div>
+              ${math.round(Obj.y, 2)}
+            </div>
+          </div>
+          <div>
+              <p>Force</p>
+              <div>
+                  <div class="select-editable">
+                      <select  class="select-editable" id="forcesDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                          ${selectForces}
+                      </select>
+                      <input type="text" name="format" value="${firstForceValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'force')"/>
                   </div>
-                  <div>
-                      <p>y</p>
-                      <div>${math.round(Obj.y, 2)}</div>
+                  <button class="delLoadButton" onclick="PaintIn.delLoad('forcesDropdown')"
+                  </button>
+              </div>
+          </div>
+          <div>
+              <p>Moment</p>
+              <div>
+                  <div class="select-editable">
+                      <select class="select-editable" id="momentsDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                          ${selectMoments}
+                      </select>
+                      <input type="text" name="format" value="${firstMomentValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'moment')"/>
                   </div>
-                  <div>
-                      <p>Name</p>
-                      <div>${Obj.name}</div>
+                  <button class="delLoadButton" onclick="PaintIn.delLoad('momentsDropdown')">
+                  </button>
+              </div>
+          </div>
+          `;
+          break;
+        }
+        else {
+          document.getElementById("property").innerHTML = `
+          <p id="property_label">Properties</p>
+          <div>
+              <p>Name</p>
+              <div>${Obj.name}</div>
+          </div>
+          <div>
+			      <p>Coordinate</p>
+			        <div>
+				        <div class="coordinate">
+					        <input type="text" name="format" value="[${math.round(Obj.x, 2)}, ${math.round(Obj.y, 2)}]"
+						      onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
+				        </div>
+			        </div>
+		      </div>
+          <div>
+              <p>Force</p>
+              <div>
+                  <div class="select-editable">
+                      <select  class="select-editable" id="forcesDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                          ${selectForces}
+                      </select>
+                      <input type="text" name="format" value="${firstForceValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'force')"/>
                   </div>
-                  <div>
-                      <p>Force</p>
-                      <div>
-                          <div class="select-editable">
-                              <select  class="select-editable" id="forcesDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
-                                  ${selectForces}
-                              </select>
-                              <input type="text" name="format" value="${firstForceValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'force')"/>
-                          </div>
-                          <button class="delLoadButton" onclick="PaintIn.delLoad('forcesDropdown')"
-                          </button>
-                      </div>
+                  <button class="delLoadButton" onclick="PaintIn.delLoad('forcesDropdown')"
+                  </button>
+              </div>
+          </div>
+          <div>
+              <p>Moment</p>
+              <div>
+                  <div class="select-editable">
+                      <select class="select-editable" id="momentsDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                          ${selectMoments}
+                      </select>
+                      <input type="text" name="format" value="${firstMomentValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'moment')"/>
                   </div>
-                  <div>
-                      <p>Moment</p>
-                      <div>
-                          <div class="select-editable">
-                              <select class="select-editable" id="momentsDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
-                                  ${selectMoments}
-                              </select>
-                              <input type="text" name="format" value="${firstMomentValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'moment')"/>
-                          </div>
-                          <button class="delLoadButton" onclick="PaintIn.delLoad('momentsDropdown')">
-                          </button>
-                      </div>
-                  </div>
-                  `;
-        break;
+                  <button class="delLoadButton" onclick="PaintIn.delLoad('momentsDropdown')">
+                  </button>
+              </div>
+          </div>
+          `;
+          break;
+        }
       }
       case "line": {
         //create list force
@@ -2514,18 +2583,28 @@ class Paint {
                   <p id="property_label">Properties</p>
                   <div>
                       <p>Point 1</p>
-                      <div>[${math.round(Obj.Point[0].x, 2)},${math.round(
-          Obj.Point[0].y,
-          2
-        )}]</div>
+                      <div>
+                        <div class="coordinate">
+                          <input type="text" name="format" value="[${math.round(Obj.Point[0].x, 2)},${math.round(
+                            Obj.Point[0].y,
+                            2
+                          )}]"
+                          onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
+                        </div>
+                      </div>
                   </div>
+
                   <div>
                       <p>Point 2</p>
-                      <div>[${math.round(Obj.Point[1].x, 2)},${math.round(
-          Obj.Point[1].y,
-          2
-        )}]</div>
+                      <div>
+                        <div class="coordinate">
+                          <input type="text" name="format" 
+                          value="[${math.round(Obj.Point[1].x, 2)},${math.round(Obj.Point[1].y,2)}]"
+                          onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
+                        </div>
+                      </div>
                   </div>
+
                   <div>
                       <p>Length</p>
                       <div>${math.round(Obj.length, 2)}</div>
@@ -2690,6 +2769,33 @@ class Paint {
         this.arrCurObj[0].lineLoads[loadIndex].parameters.node_0 = node_0;
         this.arrCurObj[0].lineLoads[loadIndex].parameters.node_1 = node_1;
         break;
+      }
+    }
+    this.renderObject(processingData.allObject);
+  }
+
+  changeCoordinate(obj, newValue) {
+    switch (obj.className) {
+      case "Point": {
+        if (!newValue.includes(",")) return;
+        let newX = Number(newValue.slice(1, newValue.indexOf(",")));
+        let newY = Number(newValue.slice(newValue.indexOf(",") + 1, newValue.length - 1));
+        let newLocation = [newX, newY];
+        obj.point = newLocation;
+        obj.x = newLocation[0];
+        obj.y = newLocation[1];
+        console.log(obj)
+        processingData.allLine.forEach((line) => line.getLength());
+        processingData.allArea.forEach((area) => {
+          area.getPointFlow();
+          area.getArea();
+          area.getCenter();
+          area.getPerimeter();
+        });
+        break;
+      }
+      case "Line": {
+        
       }
     }
     this.renderObject(processingData.allObject);

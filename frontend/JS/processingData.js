@@ -1208,10 +1208,78 @@ class processingData {
     let tree = new kdTree(listPoints, distance, ["x", "y"]);
     return tree.nearest(currentPoint, 1, maxDistance)[0];
   }
-  moveObject(obj, newLocation) {
+  // moveObject(obj, newLocation) {
+  //   switch (obj.className) {
+  //     case "Point":
+  //       {
+  //         obj.point = newLocation;
+  //         obj.x = newLocation[0];
+  //         obj.y = newLocation[1];
+  //         processingData.allLine.forEach((line) => line.getLength());
+  //         processingData.allArea.forEach((area) => {
+  //           area.getPointFlow();
+  //           area.getArea();
+  //           area.getCenter();
+  //           area.getPerimeter();
+  //         });
+  //       }
+  //       break;
+  //     case "Line": {
+  //       //move point
+  //       let point1 = obj.Point[0].point;
+  //       let point2 = obj.Point[1].point;
+  //       let centerPoint = math.divide(math.add(point1, point2), 2);
+  //       let translateVect = math.subtract(newLocation, centerPoint);
+  //       let newPoint1 = math.add(point1, translateVect);
+  //       let newPoint2 = math.add(point2, translateVect);
+  //       //create new point obj
+  //       let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
+  //       let newPointObj2 = new Point(newPoint2, obj.Point[1].name);
+  //       //change old point
+  //       obj.Point[0] = newPointObj1;
+  //       obj.Point[1] = newPointObj2;
+  //       break;
+  //     }
+  //     // case "Area":
+  //     //     {
+  //     //         let centerPoint = obj.center;
+  //     //         let translateVect = math.subtract(newLocation, centerPoint);
+  //     //         // move line
+  //     //         for (let line of obj.Line) {
+  //     //             //move point
+  //     //             let point1 = line.Point[0].point;
+  //     //             let point2 = line.Point[1].point;
+  //     //             let newPoint1 = math.add(point1, translateVect);
+  //     //             let newPoint2 = math.add(point2, translateVect);
+  //     //             //create new point obj
+  //     //             let newPointObj1 = new Point(newPoint1, line.Point[0].name);
+  //     //             let newPointObj2 = new Point(newPoint2, line.Point[1].name);
+  //     //             //change old point
+  //     //             let newLineObj = new Line(newPointObj1, newPointObj2, line.name, line.lineColor, line.lineWidth);
+  //     //             //delete old line
+  //     //             processingData.allLine.splice(processingData.allLine.indexOf(line), 1);
+  //     //             //
+  //     //             obj.Line[obj.Line.indexOf(line)] = newLineObj;
+  //     //         }
+  //     //         //move center point
+  //     //         obj.center = newLocation;
+  //     //         //move PointFlow
+  //     //         for (let i = 0; i <= obj.pointFlow.length - 1; i++) {
+  //     //             obj.pointFlow[i] = math.add(obj.pointFlow[i], translateVect);
+  //     //         }
+  //     //         break;
+  //     //     }
+  //   }
+  //   this.updateStorage();
+  //   //refresh screen
+  //   PaintIn.renderObject(processingData.allObject);
+  // }
+  moveObject(obj) {
+    //SINGLE 
     switch (obj.className) {
       case "Point":
         {
+          let newLocation = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
           obj.point = newLocation;
           obj.x = newLocation[0];
           obj.y = newLocation[1];
@@ -1228,10 +1296,20 @@ class processingData {
         //move point
         let point1 = obj.Point[0].point;
         let point2 = obj.Point[1].point;
+
+        let newLocation = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
         let centerPoint = math.divide(math.add(point1, point2), 2);
         let translateVect = math.subtract(newLocation, centerPoint);
+        // console.log(translateVect);
+
+        // let pointMoveTo = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
+        // let pointStartMove = [PaintIn.mouseDownPos.x, PaintIn.mouseDownPos.y];
+        // let translateVect = math.subtract(pointMoveTo, pointStartMove);
         let newPoint1 = math.add(point1, translateVect);
         let newPoint2 = math.add(point2, translateVect);
+
+        // let newPoint1 = math.add(point1, translateVect);
+        // let newPoint2 = math.add(point2, translateVect);
         //create new point obj
         let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
         let newPointObj2 = new Point(newPoint2, obj.Point[1].name);

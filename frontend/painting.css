@@ -153,7 +153,7 @@ body {
 }
 
 #property>div>p {
-    width: 37%;
+    width: 40%;
     height: 100%;
     display: flex;
     align-items: center;
@@ -419,6 +419,24 @@ button {
     height: 19px;
 }
 
+.coordinate {
+    position: relative;
+    background-color: white;
+    border: solid grey 1px;
+    width: 80px;
+    height: 19px;
+}
+
+.coordinate input{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 75px; 
+    padding: 1px;
+    font-size: 12px;
+    border: none;
+} 
+
 .select-editable select {
     position: absolute;
     top: 0px;
@@ -587,7 +605,7 @@ button {
     right: 0%;
 }
 
-#urlInputted{
+#urlInputted {
     position: fixed;
     width: 300px;
     margin: 17px;
@@ -608,4 +626,3 @@ button {
 #sendRequest:hover {
     background-size: 35px 35px;
 }
-
