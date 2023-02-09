@@ -19,7 +19,8 @@ function inputName(x, y, obj) {
       PaintIn.drawText(obj, this.value());
       obj.name = this.value();
       if(obj.className === "Area"){
-        obj.coordNaming = [PaintIn.mouseDownPos.x,PaintIn.mouseDownPos.y];
+        const coorName = [PaintIn.mouseDownPos.x,PaintIn.mouseDownPos.y];
+        obj.coordNaming = coorName;
       }
       this.destroy();
       nameID = undefined;

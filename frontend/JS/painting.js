@@ -521,7 +521,7 @@ class Paint {
         this.onButtonDraw(this.currentValueLine, "line");
         this.renderObject(processingData.allObject);
       }
-      else if (this.valueComment.value === "m" && this.pen === "select") {
+      else if ((this.valueComment.value === "m" ||this.valueComment.value === "M"||this.valueComment.value === "move"||this.valueComment.value === "Move")&& this.pen === "select") {
         this.isMovingObj = true;
       }
 
