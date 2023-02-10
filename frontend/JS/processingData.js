@@ -328,7 +328,6 @@ class processingData {
     let surfaces = [];
     let surface_names = [];
     let surface_coords = [];
-    console.log(processingData.allPoint);
     for (let point of processingData.allPoint) {
       nodes.push(point.point);
     }
@@ -363,6 +362,7 @@ class processingData {
     });
 
     promise.then((result) => {
+      console.log(result.data)
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
     });
@@ -848,10 +848,15 @@ class processingData {
       //create area
       let pointInArea = [];
       let rawArea = inputData["surfaces"][i];
+      let coordName = inputData["surface_coords"][i];
+      console.log(coordName);
       for (let ii = 0; ii < rawArea.length; ii++) {
         pointInArea.push(allPoint[rawArea[ii]].point);
       }
       let area = new Area(allLineOfArea, inputData["surface_names"][i]);
+      if (coordName !== undefined) {
+        area.coordNaming = coordName;
+      }
       allArea.push(area);
     }
     //add data
@@ -1515,6 +1520,21 @@ class Area {
     //center
     this.center = [];
     this.getCenter();
+    // this.toString();
+    // this.importData(this.toString());
+  }
+
+  toString() {
+    return JSON.stringify(this);
+  }
+
+  importData(stringData) {
+    const data = JSON.parse(stringData);
+    const listKeys = Object.keys(data);
+    console.log(listKeys);
+    listKeys.forEach((key) => {
+      this[key] = data[key];
+    });
   }
   //calc Perimeter
   getPerimeter() {
