@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() { }
+  constructor() {}
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -362,7 +362,7 @@ class processingData {
     });
 
     promise.then((result) => {
-      console.log(result.data)
+      console.log(result.data);
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
     });
@@ -414,7 +414,7 @@ class processingData {
     return result;
   }
 
-  setObjName(obj) { }
+  setObjName(obj) {}
 
   InterPolationFunction(arrX, arrY) {
     let allFunc = [];
@@ -442,8 +442,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-        ((arrY[row + 1] - arrY[row]) / h[row] -
-          (arrY[row] - arrY[row - 1]) / h[row - 1])
+          ((arrY[row + 1] - arrY[row]) / h[row] -
+            (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -455,7 +455,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-        3;
+          3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -1314,11 +1314,14 @@ class processingData {
   //   PaintIn.renderObject(processingData.allObject);
   // }
   moveObject(obj) {
-    //SINGLE 
+    //SINGLE
     switch (obj.className) {
       case "Point":
         {
-          let newLocation = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
+          let newLocation = [
+            PaintIn.currentMouseDownPos.x,
+            PaintIn.currentMouseDownPos.y,
+          ];
           obj.point = newLocation;
           obj.x = newLocation[0];
           obj.y = newLocation[1];
@@ -1336,7 +1339,10 @@ class processingData {
         let point1 = obj.Point[0].point;
         let point2 = obj.Point[1].point;
 
-        let newLocation = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
+        let newLocation = [
+          PaintIn.currentMouseDownPos.x,
+          PaintIn.currentMouseDownPos.y,
+        ];
         let centerPoint = math.divide(math.add(point1, point2), 2);
         let translateVect = math.subtract(newLocation, centerPoint);
         // console.log(translateVect);

@@ -4,10 +4,22 @@ from scipy.spatial import cKDTree
 
 
 def detectArea(data):
-    # =============== GET NODE COORDINATES AND SEGMENTS ============================
+    print('input:\n', data)
+    # =============== GET DATA ============================
     raw_node_coords = data['node_coords']
     segments = data['segments']
+    old_surfaces = data['surfaces']
+    old_surface_names = data['surface_names']
 
+    # =============== GET NAMED SURFACES ============================
+    named_surfaces = []
+    named_surface_names = []
+    for idx, name in enumerate(old_surface_names):
+        if name is not None:
+            named_surfaces.append(old_surfaces[idx])
+            named_surface_names.append(name)
+    print(named_surfaces, named_surface_names)
+    
     # =============== SCALE AND ROUND NODE COORDINATES =========================
     scale = 4
     scale_node_coords = [[round(x*scale),round(y*scale)] for [x,y] in raw_node_coords]
@@ -35,7 +47,8 @@ def detectArea(data):
     
     surface_nodes = [] # list of nodes that make a surface
     # surface_segments = [] # list of segments that make a surface
-    surfaces = [] # list of many surfaces
+    surfaces = []
+    surface_names = []
 
     # =============== FIND WHICH NODES THAT MAKE A SURFACE =============================
     for contour in contours:
@@ -63,15 +76,20 @@ def detectArea(data):
         #             surface_segments.append(j)
         #             break
 
-        all_surfaces = data['surfaces'] + surfaces
-        sort_surfaces = [sorted(surface) for surface in all_surfaces]
+        sort_surfaces = [sorted(surface) for surface in surfaces]
         if len(surface_nodes) >= 3 and sorted(surface_nodes) not in sort_surfaces:
             surfaces.append(surface_nodes)
+            surface_name = None
+            for idx, named_surface in enumerate(named_surfaces):
+                if sorted(surface_nodes) == sorted(named_surface):
+                    surface_name = named_surface_names[idx]
+            print(surface_name)
+            surface_names.append(surface_name)
         surface_nodes = []
         # surface_segments = []
         # surface_nodes_copy = []
     
-    data['surfaces'] += surfaces
-    data['surface_names'] += [None]*len(surfaces)
-    # print(data)
+    data['surfaces'] = surfaces
+    data['surface_names'] = surface_names
+    print('output:\n', data)
     return data
