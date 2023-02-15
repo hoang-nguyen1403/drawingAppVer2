@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() { }
+  constructor() {}
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -415,7 +415,7 @@ class processingData {
     return result;
   }
 
-  setObjName(obj) { }
+  setObjName(obj) {}
 
   InterPolationFunction(arrX, arrY) {
     let allFunc = [];
@@ -443,8 +443,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-        ((arrY[row + 1] - arrY[row]) / h[row] -
-          (arrY[row] - arrY[row - 1]) / h[row - 1])
+          ((arrY[row + 1] - arrY[row]) / h[row] -
+            (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -456,7 +456,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-        3;
+          3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -849,10 +849,15 @@ class processingData {
       //create area
       let pointInArea = [];
       let rawArea = inputData["surfaces"][i];
+      let coordName = inputData["surface_coords"][i];
+      console.log(coordName);
       for (let ii = 0; ii < rawArea.length; ii++) {
         pointInArea.push(allPoint[rawArea[ii]].point);
       }
       let area = new Area(allLineOfArea, inputData["surface_names"][i]);
+      if (coordName !== undefined) {
+        area.coordNaming = coordName;
+      }
       allArea.push(area);
     }
     //add data
@@ -1310,11 +1315,14 @@ class processingData {
   //   PaintIn.renderObject(processingData.allObject);
   // }
   moveObject(obj) {
-    //SINGLE 
+    //SINGLE
     switch (obj.className) {
       case "Point":
         {
-          let newLocation = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
+          let newLocation = [
+            PaintIn.currentMouseDownPos.x,
+            PaintIn.currentMouseDownPos.y,
+          ];
           obj.point = newLocation;
           obj.x = newLocation[0];
           obj.y = newLocation[1];
@@ -1332,7 +1340,10 @@ class processingData {
         let point1 = obj.Point[0].point;
         let point2 = obj.Point[1].point;
 
-        let newLocation = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
+        let newLocation = [
+          PaintIn.currentMouseDownPos.x,
+          PaintIn.currentMouseDownPos.y,
+        ];
         let centerPoint = math.divide(math.add(point1, point2), 2);
         let translateVect = math.subtract(newLocation, centerPoint);
         // console.log(translateVect);
@@ -1516,6 +1527,21 @@ class Area {
     //center
     this.center = [];
     this.getCenter();
+    // this.toString();
+    // this.importData(this.toString());
+  }
+
+  toString() {
+    return JSON.stringify(this);
+  }
+
+  importData(stringData) {
+    const data = JSON.parse(stringData);
+    const listKeys = Object.keys(data);
+    console.log(listKeys);
+    listKeys.forEach((key) => {
+      this[key] = data[key];
+    });
   }
   //calc Perimeter
   getPerimeter() {

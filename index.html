@@ -26,13 +26,13 @@
 			</div>
 
 			<div>
-				<button id="grid" type="button" class="option-btn btn-off btn" onclick="PaintIn.buttonGrid()"
+				<button id="grid" title="Grid" type="button" class="option-btn btn-off btn" onclick="PaintIn.buttonGrid()"
 					style="background-image: url(frontend/img/grid.png)" value="Off"></button>
 				<!-- <input type="range" name="sizeGrid" min="10" max="100" id="sizeGrid" class="rangeSlider"> -->
 			</div>
 			<!-- <button id="brush" class="btn" type="button" onclick="PaintIn.chooseBrush()" value="Off"
 					style="background-image: url(frontend/img/brush.png)"></button> -->
-			<button id="line" class="btn" type="button" onclick="PaintIn.chooseLine()" value="Off"
+			<button id="line" title="Line" class="btn" type="button" onclick="PaintIn.chooseLine()" value="Off"
 				style="background-image: url(frontend/img/line.png)"></button>
 			<!-- <button id="circle" class="btn" type="button" onclick="PaintIn.chooseCircle()" value="Off"
 					style="background-image: url(frontend/img/circle.png)"></button>
@@ -75,25 +75,25 @@
 			</div> -->
 
 			<div id=tool_top>
-				<label id="openFile_label">
+				<label id="openFile_label" title="Open">
 					<input type="file" name="openFile" id="openFile" style="display: none">
 				</label>
-				<button id="saveFile" type="button" onclick="processingData.prototype.saveAsData()"></button>
-				<button id="Clear_all" type="button" onclick="PaintIn.clearAll()"></button>
+				<button id="saveFile" title="Save" type="button" onclick="processingData.prototype.saveAsData()"></button>
+				<button id="Clear_all" title="Clear" type="button" onclick="PaintIn.clearAll()"></button>
 
 				<!-- request -->
-				<button id="meshing" onclick="PaintIn.mps_PALc('data',processingData.prototype.saveObj());"></button>
-				<button id="openFile_Solu" onclick="PaintIn.getAPI()"></button>
+				<button id="meshing" title="Mesh" onclick="PaintIn.mps_PALc('data',processingData.prototype.saveObj());"></button>
+				<button id="openFile_Solu" title="Solve" onclick="PaintIn.getAPI()"></button>
 				<label id="ChangeMode">
-					<button id="modeDrawing" type="button" onclick="PaintIn.changeMode()" value="On"></button>
+					<button id="modeDrawing" title="Drawing mode" type="button" onclick="PaintIn.changeMode()" value="On"></button>
 				</label>
-				<label class="inputImage">
+				<label class="inputImage" title="Open image">
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
 						style="display: none">
 				</label>
 				<label class="request">
 					<input type="text" id="urlInputted" value="">
-					<button id="sendRequest" type="button" onclick="PaintIn.testAPI()"></button>
+					<button id="sendRequest" title="Request" type="button" onclick="PaintIn.testAPI()"></button>
 				</label>
 
 			</div>
