@@ -21,7 +21,7 @@ class processingData {
     let sameObj = saveArr.find(
       (value) => JSON.stringify(value) === JSON.stringify(newObject)
     ); // chuyen ve string de so sanh element trong array
-    if (sameObj === undefined) {
+    if (sameObj === undefined || sameObj === null) {
       saveArr.push(newObject); //neu khong co phan tu tuong tu thi add phan tu do
     }
     return sameObj; // neu co phan tu tuong tu thi chi lay 1 phan tu
@@ -328,7 +328,6 @@ class processingData {
     let surfaces = [];
     let surface_names = [];
     let surface_coords = [];
-    console.log(processingData.allPoint);
     for (let point of processingData.allPoint) {
       nodes.push(point.point);
     }
@@ -352,6 +351,7 @@ class processingData {
     jsonData.surface_names = surface_names;
 
     let dataRequest = JSON.stringify(jsonData);
+    console.log('requestData', dataRequest);
 
     let promise = axios({
       method: "POST",
@@ -363,6 +363,7 @@ class processingData {
     });
 
     promise.then((result) => {
+      // console.log('result', result.data);
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
     });

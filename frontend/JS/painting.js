@@ -1102,8 +1102,8 @@ class Paint {
       this.curValDrawing.value === "On"
     ) {
       return {
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
+        x:  Math.round(event.clientX - rect.left),
+        y:  Math.round(event.clientY - rect.top)
       };
     }
   }
@@ -1113,8 +1113,8 @@ class Paint {
     let offSetY = this.canvas.height;
     var pos = this.getMousePosition(event);
     return {
-      x: pos.x - offSetX,
-      y: -(pos.y - offSetY),
+      x: Math.round(pos.x - offSetX),
+      y: Math.round(-(pos.y - offSetY))
     };
   }
 
