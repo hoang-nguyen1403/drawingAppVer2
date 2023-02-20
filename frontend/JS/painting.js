@@ -443,27 +443,22 @@ class Paint {
         this.arrGrid = this.concatArr(this.arrGrid, this.arrRecordNode);
         this.ctx.strokeStyle = "grey";
         this.drawGrid();
-      }
-      else if (dataLogFile.length > 1) {
-        console.log('up')
-        console.log(dataLogFileIndex)
+      } else if (dataLogFile.length > 1) {
+        console.log("up");
+        console.log(dataLogFileIndex);
         if (dataLogFileIndex === 0) {
           dataLogFileIndex += 1;
-          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
-
-        }
-        else if (dataLogFileIndex === dataLogFile.length - 1) {
-          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
-        }
-        else {
+          document.getElementById("textBox").value =
+            dataLogFile.at(dataLogFileIndex);
+        } else if (dataLogFileIndex === dataLogFile.length - 1) {
+          document.getElementById("textBox").value =
+            dataLogFile.at(dataLogFileIndex);
+        } else {
           dataLogFileIndex += 1;
-          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
-
+          document.getElementById("textBox").value =
+            dataLogFile.at(dataLogFileIndex);
         }
-
-      }
-
-      else if (dataLogFile.length === 1) {
+      } else if (dataLogFile.length === 1) {
         document.getElementById("textBox").value = dataLogFile.at(0);
       }
     }
@@ -483,23 +478,21 @@ class Paint {
 
         this.ctx.strokeStyle = "grey";
         this.drawGrid();
-      }
-      else if (dataLogFile.length > 1) {
-        console.log('down')
+      } else if (dataLogFile.length > 1) {
+        console.log("down");
         if (dataLogFileIndex === 0) {
-          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
-        }
-        else if (dataLogFileIndex === dataLogFile.length - 1) {
-          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
+          document.getElementById("textBox").value =
+            dataLogFile.at(dataLogFileIndex);
+        } else if (dataLogFileIndex === dataLogFile.length - 1) {
+          document.getElementById("textBox").value =
+            dataLogFile.at(dataLogFileIndex);
+          dataLogFileIndex -= 1;
+        } else {
+          document.getElementById("textBox").value =
+            dataLogFile.at(dataLogFileIndex);
           dataLogFileIndex -= 1;
         }
-        else {
-          document.getElementById("textBox").value = dataLogFile.at(dataLogFileIndex);
-          dataLogFileIndex -= 1;
-        }
-
-      }
-      else if (dataLogFile.length === 1) {
+      } else if (dataLogFile.length === 1) {
         document.getElementById("textBox").value = dataLogFile.at(0);
       }
     }
@@ -520,8 +513,13 @@ class Paint {
         this.keyDown(spaceKey);
         this.onButtonDraw(this.currentValueLine, "line");
         this.renderObject(processingData.allObject);
-      }
-      else if ((this.valueComment.value === "m" ||this.valueComment.value === "M"||this.valueComment.value === "move"||this.valueComment.value === "Move")&& this.pen === "select") {
+      } else if (
+        (this.valueComment.value === "m" ||
+          this.valueComment.value === "M" ||
+          this.valueComment.value === "move" ||
+          this.valueComment.value === "Move") &&
+        this.pen === "select"
+      ) {
         this.isMovingObj = true;
       }
 
@@ -894,11 +892,9 @@ class Paint {
   //=================================================================
   //feature in Canvas
   selectObj(event) {
-    if (this.pen !== "select" || this.curValSelect === "Off"
-    ) {
+    if (this.pen !== "select" || this.curValSelect === "Off") {
       return;
-    }
-    else {
+    } else {
       //boundingbox select
       if (!this.isMovingObj) {
         let topPoint = this.curSelectBox[0];
@@ -1306,7 +1302,12 @@ class Paint {
     // this.renderObject(processingData.allObject);
 
     //
-    document.getElementById("display_coord").innerHTML = '[' + this.currentMouseMovePos.x + ' ; ' + this.currentMouseMovePos.y + ']';
+    document.getElementById("display_coord").innerHTML =
+      "[" +
+      this.currentMouseMovePos.x +
+      " ; " +
+      this.currentMouseMovePos.y +
+      "]";
     // document.getElementById("display_coord").innerHTML =
     //   "[" + mouseMoveCoordination.x + " ; " + mouseMoveCoordination.y + "]";
     //
@@ -1421,12 +1422,16 @@ class Paint {
     // }
 
     // drag
-    if (this.isPainting && this.isMovingObj && this.arrCurObj.length !== 0 &&
+    if (
+      this.isPainting &&
+      this.isMovingObj &&
+      this.arrCurObj.length !== 0 &&
       this.curValPointLoad.value === "Off" &&
       this.curValPressLoad.value === "Off" &&
       this.curValMoment.value === "Off" &&
-      this.curValName.value === "Off") {
-      processingData.prototype.moveObject(this.arrCurObj[0])
+      this.curValName.value === "Off"
+    ) {
+      processingData.prototype.moveObject(this.arrCurObj[0]);
     }
 
     // //change mouse (test)
@@ -1451,7 +1456,8 @@ class Paint {
     // }
     //bounding box
     if (
-      this.isPainting && (!this.isMovingObj) &&
+      this.isPainting &&
+      !this.isMovingObj &&
       (this.pen === undefined || this.pen === "select") &&
       this.curValSelect === "On"
     ) {
@@ -1560,7 +1566,7 @@ class Paint {
   testAPI() {
     if (PaintIn.APIurl.value !== "") {
       urlSendRequest = PaintIn.APIurl.value;
-      let pname = 'data';
+      let pname = "data";
       let params = processingData.prototype.saveObj();
       let bodyData = {
         rhs: [pname, params], //rhs: reading - used when send data
@@ -1585,13 +1591,11 @@ class Paint {
             dataLogFile.push(JSON.stringify(receiveData));
             PaintIn.renderCommand("textCommands");
           }
-        }
-        catch (err) {
-          console.log(result)
+        } catch (err) {
+          console.log(result);
           dataLogFile.push(JSON.stringify(result.data));
           PaintIn.renderCommand("textCommands");
         }
-
       });
 
       promise.catch(function (err) {
@@ -1684,7 +1688,8 @@ class Paint {
       <p style="background-color: #ffffff; 
       height: 100%;
       overflow: scroll;
-      border: 1px solid #0784d1;"> ${strings}</p>
+      border: 1px solid #0784d1;
+      user-select: text;"> ${strings}</p>
       `;
     }
   }
@@ -1706,8 +1711,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -2514,8 +2519,7 @@ class Paint {
           </div>
           `;
           break;
-        }
-        else {
+        } else {
           document.getElementById("property").innerHTML = `
           <p id="property_label">Properties</p>
           <div>
@@ -2526,7 +2530,10 @@ class Paint {
 			      <p>Coordinate</p>
 			        <div>
 				        <div class="coordinate">
-					        <input type="text" name="format" value="[${math.round(Obj.x, 2)}, ${math.round(Obj.y, 2)}]"
+					        <input type="text" name="format" value="[${math.round(
+                    Obj.x,
+                    2
+                  )}, ${math.round(Obj.y, 2)}]"
 						      onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
 				        </div>
 			        </div>
@@ -2585,10 +2592,10 @@ class Paint {
                       <p>Point 1</p>
                       <div>
                         <div class="coordinate">
-                          <input type="text" name="format" value="[${math.round(Obj.Point[0].x, 2)},${math.round(
-                            Obj.Point[0].y,
+                          <input type="text" name="format" value="[${math.round(
+                            Obj.Point[0].x,
                             2
-                          )}]"
+                          )},${math.round(Obj.Point[0].y, 2)}]"
                           onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                         </div>
                       </div>
@@ -2599,7 +2606,10 @@ class Paint {
                       <div>
                         <div class="coordinate">
                           <input type="text" name="format" 
-                          value="[${math.round(Obj.Point[1].x, 2)},${math.round(Obj.Point[1].y,2)}]"
+                          value="[${math.round(Obj.Point[1].x, 2)},${math.round(
+          Obj.Point[1].y,
+          2
+        )}]"
                           onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                         </div>
                       </div>
@@ -2779,12 +2789,14 @@ class Paint {
       case "Point": {
         if (!newValue.includes(",")) return;
         let newX = Number(newValue.slice(1, newValue.indexOf(",")));
-        let newY = Number(newValue.slice(newValue.indexOf(",") + 1, newValue.length - 1));
+        let newY = Number(
+          newValue.slice(newValue.indexOf(",") + 1, newValue.length - 1)
+        );
         let newLocation = [newX, newY];
         obj.point = newLocation;
         obj.x = newLocation[0];
         obj.y = newLocation[1];
-        console.log(obj)
+        console.log(obj);
         processingData.allLine.forEach((line) => line.getLength());
         processingData.allArea.forEach((area) => {
           area.getPointFlow();
@@ -2795,7 +2807,6 @@ class Paint {
         break;
       }
       case "Line": {
-        
       }
     }
     this.renderObject(processingData.allObject);
