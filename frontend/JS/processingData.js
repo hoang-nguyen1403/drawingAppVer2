@@ -355,9 +355,9 @@ class processingData {
     let promise = axios({
       method: "POST",
       // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
-      // url: "http://127.0.0.1:8000/v1/detectArea/",
+      url: "http://127.0.0.1:8000/v1/detectArea/",
 
-      url: "http://34.125.158.207:8000/v1/detectArea/",
+      // url: "http://34.125.158.207:8000/v1/detectArea/",
       data: dataRequest,
     });
 
