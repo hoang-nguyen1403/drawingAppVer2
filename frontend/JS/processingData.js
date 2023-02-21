@@ -118,15 +118,15 @@ class processingData {
             widthList,
             arrForceLine
           );
-          console.log('rawData', AllLineObj);
+          // console.log('rawData', AllLineObj);
           //save line
           for (let line of AllLineObj) {
             processingData.prototype.addObject(line, processingData.allLine);
           }
         }
-        console.log("Sumline", processingData.allLine);
+        // console.log("Sumline", processingData.allLine);
         for (let line of processingData.allLine) {
-          console.log("line_i", line)
+          // console.log("line_i", line)
         }
         this.updateStorage();
         break;
@@ -767,8 +767,8 @@ class processingData {
 
     //create line
     let allLine = [];
-    console.log("input data->>>>>>>>>>>>");
-    console.log(inputData["segments"]);
+    // console.log("input data->>>>>>>>>>>>");
+    // console.log(inputData["segments"]);
     for (let i = 0; i <= inputData["segments"].length - 1; i++) {
       let point1 = allPoint[inputData["segments"][i][0]];
       let point2 = allPoint[inputData["segments"][i][1]];
@@ -1143,7 +1143,7 @@ class Area {
   importData(stringData) {
     const data = JSON.parse(stringData);
     const listKeys = Object.keys(data);
-    console.log(listKeys);
+    // console.log(listKeys);
     listKeys.forEach((key) => {
       this[key] = data[key];
     });
