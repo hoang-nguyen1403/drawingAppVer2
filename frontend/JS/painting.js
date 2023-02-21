@@ -326,6 +326,7 @@ class Paint {
       if (this.pen === "line") {
         this.undo();
         processingData.prototype.areaDetect(processingData.allLine);
+        console.log(processingData.allLine)
         this.addNode();
       }
     }
@@ -1103,7 +1104,7 @@ class Paint {
     ) {
       return {
         x:  Math.round(event.clientX - rect.left),
-        y:  Math.round(event.clientY - rect.top)
+        y:  Math.round(event.clientY - rect.top),
       };
     }
   }
@@ -1114,7 +1115,7 @@ class Paint {
     var pos = this.getMousePosition(event);
     return {
       x: Math.round(pos.x - offSetX),
-      y: Math.round(-(pos.y - offSetY))
+      y: Math.round(-(pos.y - offSetY)),
     };
   }
 
@@ -1286,6 +1287,7 @@ class Paint {
     //   processingData.prototype.areaDetect(processingData.allLine);
     //   PaintIn.renderObject(processingData.allObject);
     // }
+    processingData.prototype.updateStorage();
   }
 
   mouseUp(event) {
@@ -2253,7 +2255,7 @@ class Paint {
     for (let i = arrObj.length - 1; i >= 0; i--) {
       if (arrObj[i] instanceof Area) {
         this.fillArea(arrObj[i]);
-        if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
+        if (arrObj[i].name !== undefined && arrObj[i].name !== "undefined" && arrObj[i].name !== null) {
           this.drawText(arrObj[i], arrObj[i].name);
         }
       } else if (arrObj[i] instanceof Line) {
@@ -2263,7 +2265,7 @@ class Paint {
           arrObj[i].color,
           arrObj[i].width
         );
-        if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
+        if (arrObj[i].name !== undefined && arrObj[i].name !== "undefined" && arrObj[i].name !== null) {
           this.drawText(arrObj[i], arrObj[i].name);
         }
 

@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() {}
+  constructor() { }
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -21,7 +21,7 @@ class processingData {
     let sameObj = saveArr.find(
       (value) => JSON.stringify(value) === JSON.stringify(newObject)
     ); // chuyen ve string de so sanh element trong array
-    if (sameObj === undefined || sameObj === null) {
+    if (sameObj === undefined) {
       saveArr.push(newObject); //neu khong co phan tu tuong tu thi add phan tu do
     }
     return sameObj; // neu co phan tu tuong tu thi chi lay 1 phan tu
@@ -118,10 +118,15 @@ class processingData {
             widthList,
             arrForceLine
           );
+          console.log('rawData', AllLineObj);
           //save line
           for (let line of AllLineObj) {
             processingData.prototype.addObject(line, processingData.allLine);
           }
+        }
+        console.log("Sumline", processingData.allLine);
+        for (let line of processingData.allLine) {
+          console.log("line_i", line)
         }
         this.updateStorage();
         break;
@@ -363,7 +368,7 @@ class processingData {
     });
 
     promise.then((result) => {
-      // console.log('result', result.data);
+      console.log('result', result.data);
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
     });
@@ -373,40 +378,6 @@ class processingData {
     });
   }
 
-  // detectArea(nodes, segments) {
-  //   // GET NODE COORDINATES AND SEGMENTS
-  //   let raw_node_coords = [...nodes];
-  //   let arrSegment = [...segments];
-
-  //   //SCALE AND ROUND NODE COORDINATES
-  //   let scale = 4;
-  //   let node_coords = [];
-  //   for (let node of raw_node_coords) {
-  //     let node_coord = [
-  //       [Math.round(node.x * scale), Math.round(node.y * scale)],
-  //     ];
-  //     node_coords.push(node_coord);
-  //   }
-  //   // console.log(node_coords)
-
-  //   //CREATE MATRIX
-  //   // let matrix = processingData.prototype.matrix(6000, 6000);
-  //   // let matrix = new cv.Mat({'width': 100, 'height': 100}, cv.CV_8U1,0.0);
-  //   mat1 = cv.matFromArray(3, 3, cv.CV_32FC1, 0);
-  //   // let mat2 = cv.matFromArray(3, 3, cv.CV_32FC1, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  //   // let dst = new cv.Mat();
-  //   // let matrix = new cv.Mat();
-  //   // console.log(mat1);
-
-  //   // DRAW SEGMENTS
-  //   // for (let segment in arrSegment) {
-  //   //   let start_node = node_coords[segment];
-  //   //   let end_node = node_coords[segment[1]];
-  //   //   cv.line(matrix, start_node, end_node, (255, 0, 0), 2);
-  //   //   console.log(start_node);
-  //   // }
-  // }
-
   matrix(m, n) {
     let result = [];
     for (let i = 0; i < n; i++) {
@@ -415,9 +386,7 @@ class processingData {
     return result;
   }
 
-  setObjName(obj) {}
-
-  InterPolationFunction(arrX, arrY) {
+  InterPolationFunction(arrX, arrY) { //SPL
     let allFunc = [];
     let sizeMatrix = arrX.length;
     let A = math.zeros(sizeMatrix, sizeMatrix);
@@ -443,8 +412,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-          ((arrY[row + 1] - arrY[row]) / h[row] -
-            (arrY[row] - arrY[row - 1]) / h[row - 1])
+        ((arrY[row + 1] - arrY[row]) / h[row] -
+          (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -456,7 +425,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-          3;
+        3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -584,16 +553,6 @@ class processingData {
     };
     dataSaved = JSON.stringify(jsonObject);
     return dataSaved;
-    //save to file
-    // var fs = require('fs');
-    // fs.writeFile('user.json', jsonData, (err) => {
-    //     if (err) {
-    //         throw err;
-    //     }
-    //     console.log("JSON data is saved.");
-    // });
-    // var blob = new Blob([jsonData], { type: "text/plain;charset=utf-8" });
-    // saveAs(blob, "data.json");
   }
 
   saveAsData() {
@@ -701,6 +660,7 @@ class processingData {
     }
     for (let line of processingData.allLine) {
       processingData.allObject.push(line);
+      // console.log('line1',line)
       let point1 = line.Point[0];
       let point2 = line.Point[1];
       let sameObj1 = this.addObject(point1, processingData.allPoint);
@@ -807,6 +767,8 @@ class processingData {
 
     //create line
     let allLine = [];
+    console.log("input data->>>>>>>>>>>>");
+    console.log(inputData["segments"]);
     for (let i = 0; i <= inputData["segments"].length - 1; i++) {
       let point1 = allPoint[inputData["segments"][i][0]];
       let point2 = allPoint[inputData["segments"][i][1]];
@@ -850,14 +812,10 @@ class processingData {
       let pointInArea = [];
       let rawArea = inputData["surfaces"][i];
       let coordName = inputData["surface_coords"][i];
-      console.log(coordName);
       for (let ii = 0; ii < rawArea.length; ii++) {
         pointInArea.push(allPoint[rawArea[ii]].point);
       }
-      let area = new Area(allLineOfArea, inputData["surface_names"][i]);
-      if (coordName !== undefined) {
-        area.coordNaming = coordName;
-      }
+      let area = new Area(allLineOfArea, inputData["surface_names"][i], coordName);
       allArea.push(area);
     }
     //add data
@@ -867,233 +825,7 @@ class processingData {
     //update storage
     this.updateStorage();
   }
-  // createMeshData(inputData) {
-  //   let jsmat = inputData["jsmat"];
-  //   let FEtri = inputData["FEtri"];
-  //   let FEcoord = inputData["FEcoord"];
-  //   let FEsoln = inputData["FEsoln"];
-  //   let QC = inputData["QC"];
-  //   let baseCoord = jsmat["node_coords"][3];
-  //   baseCoord = [200, 300];
-  //   let scale = 400;
-  //   let rotMatrix = [
-  //     [math.cos(math.PI / 2), -math.sin(math.PI / 2)],
-  //     [math.sin(math.PI / 2), math.cos(math.PI / 2)],
-  //   ];
-  //   let maxValue = math.max(FEsoln);
-  //   let minValue = math.min(FEsoln);
-  //   let delta = math.abs(minValue);
-  //   delta = math.ceil(delta, 1);
-  //   let nshades = math.ceil((maxValue + delta) * 100);
-  //   let colors = colormap({
-  //     colormap: "jet",
-  //     nshades: nshades,
-  //     format: "rgba",
-  //     alpha: 1,
-  //   });
-  //   //fill element
-  //   for (let surface of FEtri) {
-  //     let coordXs = [];
-  //     let coordYs = [];
-  //     let nodeColors = [];
-  //     for (let i = 0; i < surface.length - 3; i++) {
-  //       let nodeIndex = surface[i];
-  //       let nodeCoord = [...FEcoord[nodeIndex - 1]];
-  //       //scale
-  //       nodeCoord[0] *= scale;
-  //       nodeCoord[1] *= scale;
-  //       //move system
-  //       nodeCoord[0] -= 100;
-  //       nodeCoord[1] -= 100;
-  //       //rot
-  //       nodeCoord = math.multiply(nodeCoord, rotMatrix);
-  //       nodeCoord = nodeCoord.flat();
-  //       //move system
-  //       nodeCoord[0] += baseCoord[0] + 100;
-  //       nodeCoord[1] += baseCoord[1] + 100;
-  //       coordXs.push(nodeCoord[0]);
-  //       coordYs.push(nodeCoord[1]);
-  //       //color
-  //       let colorIndex = math.round((FEsoln[nodeIndex - 1] + delta) * nshades);
-  //       let color = colors[colorIndex];
-  //       nodeColors.push(color);
-  //     }
-  //     this.polygonFill(coordXs, coordYs, nodeColors);
-  //   }
-  //   //create color bar
-  //   //size
-  //   let xMin = 200;
-  //   let xMax = 600;
-  //   let yMin = 100;
-  //   let yMax = 500;
-  //   let xCBSpace = 70;
 
-  //   let n = 10;
-  //   let base = [xMax + xCBSpace, yMin];
-  //   let width = 50;
-  //   let height = yMax - base[1];
-  //   let dy = height / n;
-  //   let rangeY = math.range(base[1], yMax, dy);
-  //   let barcolors = colormap({
-  //     colormap: "jet",
-  //     nshades: 10,
-  //     format: "hex",
-  //     alpha: 1,
-  //   });
-  //   barcolors.reverse();
-  //   //
-  //   let dValue = (maxValue - minValue) / (n - 1);
-  //   let value = math.range(minValue, maxValue + dValue, dValue);
-  //   value._data.reverse();
-  //   for (let i = 0; i <= rangeY._data.length - 1; i++) {
-  //     //fill block
-  //     PaintIn.ctx.fillStyle = barcolors[i];
-  //     PaintIn.ctx.fillRect(base[0], rangeY._data[i], width, dy);
-  //     //render value of block
-  //     let xTextSpace = 15;
-  //     let xPos = base[0] + width + xTextSpace;
-  //     let yPos = rangeY._data[i] + dy / 2;
-  //     PaintIn.ctx.strokeText(math.round(value._data[i], 2), xPos, yPos);
-  //   }
-  //   //draw box
-  //   PaintIn.ctx.rect(base[0], base[1], width, yMax - base[1]);
-  //   PaintIn.ctx.lineWidth = 2;
-  //   PaintIn.ctx.stroke();
-  //   return;
-  //   //
-  //   for (let surface of FEtri) {
-  //     // if (FEtri.indexOf(surface) === 100) {
-  //     //     this.updateStorage();
-  //     //     PaintIn.renderObject(processingData.allObject);
-  //     // return
-  //     // }
-
-  //     PaintIn.ctx.beginPath();
-  //     let indexOfNode0 = surface[0];
-
-  //     let nodeCoord0 = [...FEcoord[indexOfNode0 - 1]];
-  //     //scale
-  //     nodeCoord0[0] *= scale;
-  //     nodeCoord0[1] *= scale;
-  //     //move system
-  //     nodeCoord0[0] -= 100;
-  //     nodeCoord0[1] -= 100;
-  //     //rot
-  //     nodeCoord0 = math.multiply(nodeCoord0, rotMatrix);
-  //     nodeCoord0 = nodeCoord0.flat();
-  //     // //move system
-  //     nodeCoord0[0] += baseCoord[0] + 100;
-  //     nodeCoord0[1] += baseCoord[1] + 100;
-
-  //     PaintIn.ctx.moveTo(nodeCoord0[0], nodeCoord0[1]);
-  //     let sortNodeIndex = [5, 1, 3, 2, 4];
-  //     for (let i of sortNodeIndex) {
-  //       let indexOfNextNode = surface[i];
-  //       let nextNodeCoord = [...FEcoord[indexOfNextNode - 1]];
-  //       //scale
-  //       nextNodeCoord[0] *= scale;
-  //       nextNodeCoord[1] *= scale;
-  //       //move system
-  //       nextNodeCoord[0] -= 100;
-  //       nextNodeCoord[1] -= 100;
-  //       //rot
-  //       nextNodeCoord = math.multiply(nextNodeCoord, rotMatrix);
-  //       nextNodeCoord = nextNodeCoord.flat();
-  //       //move system
-  //       nextNodeCoord[0] += baseCoord[0] + 100;
-  //       nextNodeCoord[1] += baseCoord[1] + 100;
-
-  //       PaintIn.ctx.lineTo(nextNodeCoord[0], nextNodeCoord[1]);
-  //     }
-  //     PaintIn.ctx.closePath();
-  //     PaintIn.ctx.lineWidth = 0.5;
-  //     PaintIn.ctx.stroke();
-
-  //     // let node0 = math.add(math.multiply(FEcoord[surface[0] - 1], scale), baseCoord);
-  //     // let node1 = math.add(math.multiply(FEcoord[surface[1] - 1], scale), baseCoord);
-  //     // let node2 = math.add(math.multiply(FEcoord[surface[2] - 1], scale), baseCoord);
-  //     // let node3 = math.add(math.multiply(FEcoord[surface[3] - 1], scale), baseCoord);
-  //     // let node4 = math.add(math.multiply(FEcoord[surface[4] - 1], scale), baseCoord);
-  //     // let node5 = math.add(math.multiply(FEcoord[surface[5] - 1], scale), baseCoord);
-
-  //     // let nodeObjs = processingData.prototype.createPoint(
-  //     //     [node0[0], node1[0], node2[0], node3[0], node4[0], node5[0]],
-  //     //     [node0[1], node1[1], node2[1], node3[1], node4[1], node5[1]],
-  //     //     Array(6).fill(null),
-  //     //     Array(6).fill(null)
-  //     // );
-  //     // //add point
-  //     // processingData.allPoint.push(node0)
-  //     // processingData.allPoint.push(node1)
-  //     // processingData.allPoint.push(node2)
-  //     // processingData.allPoint.push(node3)
-  //     // processingData.allPoint.push(node4)
-  //     // processingData.allPoint.push(node5)
-  //     // processingData.allObject.push(node0)
-  //     // processingData.allObject.push(node1)
-  //     // processingData.allObject.push(node2)
-  //     // processingData.allObject.push(node3)
-  //     // processingData.allObject.push(node4)
-  //     // processingData.allObject.push(node5)
-  //     // // 0 5 1 3 2 4
-  //     // let lineObj1 = new Line(nodeObjs[0], nodeObjs[5], null, "black", 1);
-  //     // let lineObj2 = new Line(nodeObjs[5], nodeObjs[1], null, "black", 1);
-  //     // let lineObj3 = new Line(nodeObjs[1], nodeObjs[3], null, "black", 1);
-  //     // let lineObj4 = new Line(nodeObjs[3], nodeObjs[2], null, "black", 1);
-  //     // let lineObj5 = new Line(nodeObjs[2], nodeObjs[4], null, "black", 1);
-  //     // let lineObj6 = new Line(nodeObjs[4], nodeObjs[0], null, "black", 1);
-  //     // processingData.allLine.push(lineObj1)
-  //     // processingData.allLine.push(lineObj2)
-  //     // processingData.allLine.push(lineObj3)
-  //     // processingData.allLine.push(lineObj4)
-  //     // processingData.allLine.push(lineObj5)
-  //     // processingData.allLine.push(lineObj6)
-  //     // processingData.allObject.push(lineObj1)
-  //     // processingData.allObject.push(lineObj2)
-  //     // processingData.allObject.push(lineObj3)
-  //     // processingData.allObject.push(lineObj4)
-  //     // processingData.allObject.push(lineObj5)
-  //     // processingData.allObject.push(lineObj6)
-
-  //     // this.addObject(lineObj1, processingData.allLine);
-  //     // this.addObject(lineObj2, processingData.allLine);
-  //     // this.addObject(lineObj3, processingData.allLine);
-  //     // this.addObject(lineObj4, processingData.allLine);
-  //     // this.addObject(lineObj5, processingData.allLine);
-  //     // this.addObject(lineObj6, processingData.allLine);
-
-  //     // let area = new Area([lineObj1, lineObj2, lineObj3, lineObj4, lineObj5, lineObj6], null);
-  //     // processingData.allArea.push(area)
-  //     // processingData.allObject.push(area)
-  //   }
-
-  //   //print node
-  //   for (let i = 0; i <= FEcoord.length - 1; i++) {
-  //     //scale
-  //     FEcoord[i][0] *= scale;
-  //     FEcoord[i][1] *= scale;
-  //     //move system
-  //     FEcoord[i][0] -= 100;
-  //     FEcoord[i][1] -= 100;
-  //     //rot
-  //     // console.log(FEcoord[i])
-  //     FEcoord[i] = math.multiply(FEcoord[i], rotMatrix);
-  //     FEcoord[i] = FEcoord[i].flat();
-  //     // console.log(FEcoord[i])
-  //     // //move system
-  //     FEcoord[i][0] += baseCoord[0] + 100;
-  //     FEcoord[i][1] += baseCoord[1] + 100;
-  //     PaintIn.ctx.beginPath();
-  //     PaintIn.ctx.arc(FEcoord[i][0], FEcoord[i][1], 1.5, 0, 2 * math.PI);
-  //     let colorIndex = math.round((FEsoln[i] + delta) * 100);
-  //     PaintIn.ctx.strokeStyle = colors[colorIndex];
-  //     PaintIn.ctx.stroke();
-  //   }
-  //   // // this.updateStorage();
-  //   // // PaintIn.renderObject(processingData.allObject);
-
-  //   return;
-  // }
   polygonFill(coordXs, coordYs, colors) {
     let xMin = math.min(coordXs);
     let xMax = math.max(coordXs);
@@ -1171,76 +903,7 @@ class processingData {
       }
     }
   }
-  // drawMesh(inputData) {
-  //   let jsmat = inputData["jsmat"];
-  //   let FEtri = inputData["FEtri"];
-  //   let FEcoord = inputData["FEcoord"];
-  //   let baseCoord = jsmat["node_coords"][3];
-  //   let scale = 200; //max lenght in object
 
-  //   //     for (let surface of FEtri) {
-  //   //         let node0 = math.add(math.multiply(FEcoord[surface[0] - 1], scale), baseCoord);
-  //   //         let node1 = math.add(math.multiply(FEcoord[surface[1] - 1], scale), baseCoord);
-  //   //         let node2 = math.add(math.multiply(FEcoord[surface[2] - 1], scale), baseCoord);
-  //   //         let node3 = math.add(math.multiply(FEcoord[surface[3] - 1], scale), baseCoord);
-  //   //         let node4 = math.add(math.multiply(FEcoord[surface[4] - 1], scale), baseCoord);
-  //   //         let node5 = math.add(math.multiply(FEcoord[surface[5] - 1], scale), baseCoord);
-  //   //         let nodeObjs = processingData.prototype.createPoint(
-  //   //             [node0[0], node1[0], node2[0], node3[0], node4[0], node5[0]],
-  //   //             [node0[1], node1[1], node2[1], node3[1], node4[1], node5[1]],
-  //   //             Array(6).fill(null),
-  //   //             Array(6).fill(null)
-  //   //         );
-
-  //   //         node0 = processingData.prototype.createPoint([node0[0]], [node0[1]], Array(1).fill(null),
-  //   //             Array(1).fill(null));
-  //   //         node1 = processingData.prototype.createPoint([node1[0]], [node1[1]], Array(1).fill(null),
-  //   //             Array(1).fill(null));
-  //   //         node2 = processingData.prototype.createPoint([node2[0]], [node2[1]], Array(1).fill(null),
-  //   //             Array(1).fill(null));
-  //   //         node3 = processingData.prototype.createPoint([node3[0]], [node3[1]], Array(1).fill(null),
-  //   //             Array(1).fill(null));
-  //   //         node4 = processingData.prototype.createPoint([node4[0]], [node4[1]], Array(1).fill(null),
-  //   //             Array(1).fill(null));
-  //   //         node5 = processingData.prototype.createPoint([node5[0]], [node5[1]], Array(1).fill(null),
-  //   //             Array(1).fill(null));
-
-  //   //         arrPointSolu.push(node0[0], node1[0], node2[0], node3[0], node4[0], node5[0]);
-
-  //   //         // 0 5 1 3 2 4
-  //   //         let lineObj1 = new Line(nodeObjs[0], nodeObjs[5], null, "black", 1);
-  //   //         let lineObj2 = new Line(nodeObjs[5], nodeObjs[1], null, "black", 1);
-  //   //         let lineObj3 = new Line(nodeObjs[1], nodeObjs[3], null, "black", 1);
-  //   //         let lineObj4 = new Line(nodeObjs[3], nodeObjs[2], null, "black", 1);
-  //   //         let lineObj5 = new Line(nodeObjs[2], nodeObjs[4], null, "black", 1);
-  //   //         let lineObj6 = new Line(nodeObjs[4], nodeObjs[0], null, "black", 1);
-
-  //   //         arrLineSolu.push(lineObj1, lineObj2, lineObj3, lineObj4, lineObj5, lineObj6);
-  //   //     }
-
-  //   //     processingData.allLine = [];
-  //   //     processingData.allPoint = [];
-
-  //   //     processingData.allLine = arrLineSolu;
-  //   //     for (let line of processingData.allLine) {
-  //   //         processingData.allObject.push(line);
-  //   //     }
-
-  //   //     processingData.allPoint = arrPointSolu;
-  //   //     for (let point of processingData.allPoint) {
-  //   //         processingData.allObject.push(point);
-  //   //     }
-
-  //   //     PaintIn.renderObject(processingData.allObject);
-  //   //     return
-  //   // }
-  //   // getNearest(listPoints, currentPoint, maxDistance) {
-  //   //     let distance = function (a, b) {
-  //   //         return math.norm([a[0] - b[0], a[1] - b[1]]);
-  //   //     }
-  //   //     let tree = new kdTree(listPoints, distance, [0, 1]);
-  //   //     return tree.nearest(currentPoint, 1, maxDistance)[0];
-  // }
   getNearest(listPoints, currentPoint, maxDistance) {
     let distance = function (a, b) {
       return math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
@@ -1248,72 +911,7 @@ class processingData {
     let tree = new kdTree(listPoints, distance, ["x", "y"]);
     return tree.nearest(currentPoint, 1, maxDistance)[0];
   }
-  // moveObject(obj, newLocation) {
-  //   switch (obj.className) {
-  //     case "Point":
-  //       {
-  //         obj.point = newLocation;
-  //         obj.x = newLocation[0];
-  //         obj.y = newLocation[1];
-  //         processingData.allLine.forEach((line) => line.getLength());
-  //         processingData.allArea.forEach((area) => {
-  //           area.getPointFlow();
-  //           area.getArea();
-  //           area.getCenter();
-  //           area.getPerimeter();
-  //         });
-  //       }
-  //       break;
-  //     case "Line": {
-  //       //move point
-  //       let point1 = obj.Point[0].point;
-  //       let point2 = obj.Point[1].point;
-  //       let centerPoint = math.divide(math.add(point1, point2), 2);
-  //       let translateVect = math.subtract(newLocation, centerPoint);
-  //       let newPoint1 = math.add(point1, translateVect);
-  //       let newPoint2 = math.add(point2, translateVect);
-  //       //create new point obj
-  //       let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
-  //       let newPointObj2 = new Point(newPoint2, obj.Point[1].name);
-  //       //change old point
-  //       obj.Point[0] = newPointObj1;
-  //       obj.Point[1] = newPointObj2;
-  //       break;
-  //     }
-  //     // case "Area":
-  //     //     {
-  //     //         let centerPoint = obj.center;
-  //     //         let translateVect = math.subtract(newLocation, centerPoint);
-  //     //         // move line
-  //     //         for (let line of obj.Line) {
-  //     //             //move point
-  //     //             let point1 = line.Point[0].point;
-  //     //             let point2 = line.Point[1].point;
-  //     //             let newPoint1 = math.add(point1, translateVect);
-  //     //             let newPoint2 = math.add(point2, translateVect);
-  //     //             //create new point obj
-  //     //             let newPointObj1 = new Point(newPoint1, line.Point[0].name);
-  //     //             let newPointObj2 = new Point(newPoint2, line.Point[1].name);
-  //     //             //change old point
-  //     //             let newLineObj = new Line(newPointObj1, newPointObj2, line.name, line.lineColor, line.lineWidth);
-  //     //             //delete old line
-  //     //             processingData.allLine.splice(processingData.allLine.indexOf(line), 1);
-  //     //             //
-  //     //             obj.Line[obj.Line.indexOf(line)] = newLineObj;
-  //     //         }
-  //     //         //move center point
-  //     //         obj.center = newLocation;
-  //     //         //move PointFlow
-  //     //         for (let i = 0; i <= obj.pointFlow.length - 1; i++) {
-  //     //             obj.pointFlow[i] = math.add(obj.pointFlow[i], translateVect);
-  //     //         }
-  //     //         break;
-  //     //     }
-  //   }
-  //   this.updateStorage();
-  //   //refresh screen
-  //   PaintIn.renderObject(processingData.allObject);
-  // }
+
   moveObject(obj) {
     //SINGLE
     switch (obj.className) {
@@ -1332,6 +930,8 @@ class processingData {
             area.getArea();
             area.getCenter();
             area.getPerimeter();
+            area.name = undefined;
+            area.coordNaming = undefined;
           });
         }
         break;
@@ -1462,12 +1062,17 @@ class Line {
     //length
     this.length;
     this.getLength();
+    this.bisectingPoint;
+    this.getBisectingPoint();
   }
   //calc length of line
   getLength() {
     this.length = math.norm(
       math.subtract(this.Point[0].point, this.Point[1].point)
     );
+  }
+  getBisectingPoint() {
+    this.bisectingPoint = [(this.Point[0].x + this.Point[1].x) / 2, (this.Point[0].y + this.Point[1].y) / 2];
   }
   //get Point in line
   getPointInLine(numPoint) {
@@ -1509,11 +1114,11 @@ class Line {
 }
 //Area
 class Area {
-  constructor(LineList, AreaName) {
+  constructor(LineList, AreaName, coorName) {
     this.className = "Area";
     this.Line = LineList;
     this.name = AreaName;
-    this.coordNaming = [];
+    this.coordNaming = coorName;
     //pointFlow
     // this.pointFlow = pointInArea;
     this.pointFlow = [];
