@@ -45,13 +45,7 @@
 		</div>
 
 		<div id="center_div">
-			<!-- <div id="namingAreaMode">
-				<button id="areaNaming" class="btn" type="button" onclick="namingArea()" value="Off"
-					style="background-image: url(frontend/img/apply_name.svg)"></button>
-			</div> -->
 			<div id="BDCondition">
-				<!-- <button id="select" class="btn" type="button" onclick="PaintIn.chooseSelect()" value="Off"
-					style="background-image: url(frontend/img/select.png)"></button> -->
 				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
 					style="background-image: url(frontend/img/apply_name.svg)"></button>
 				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
@@ -91,11 +85,17 @@
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
 						style="display: none">
 				</label>
-				<label class="request">
-					<input type="text" id="urlInputted" value="">
-					<input type="text" id="functionNameInputted" value="">
+				<div class="request">
+					<label class="url">
+						<p>url</p>
+						<input type="text" id="urlInputted" value="">
+					</label>
+					<label class="functionName">
+						<p>Function name</p>
+						<input type="text" id="functionNameInputted" value="">
+					</label>
 					<button id="sendRequest" title="Request" type="button" onclick="PaintIn.testAPI()"></button>
-				</label>
+				</div>
 				<button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button>
 
 			</div>
