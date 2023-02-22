@@ -600,7 +600,18 @@ button {
 
 /* requestAPI */
 .request {
-    right: 0%;
+    right: 10%;
+    position: fixed;
+}
+
+.request .url p{
+    display: inline-grid;
+    width: 10px;
+}
+
+.request .functionName p{
+    display: inline-grid;
+    width: 100px;
 }
 
 #urlInputted {
@@ -614,7 +625,6 @@ button {
 
 #functionNameInputted {
     width: 300px;
-    margin: 17px;
     background-color: #ffffff;
     background-position: center;
     background-size: 300px;
@@ -629,6 +639,7 @@ button {
     background-repeat: no-repeat;
     position: fixed;
     margin: 5px;
+    right: 5%;
 }
 
 #sendRequest:hover {
