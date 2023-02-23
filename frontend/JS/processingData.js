@@ -356,7 +356,6 @@ class processingData {
     jsonData.surface_names = surface_names;
 
     let dataRequest = JSON.stringify(jsonData);
-    console.log('requestData', dataRequest);
 
     let promise = axios({
       method: "POST",
@@ -368,7 +367,6 @@ class processingData {
     });
 
     promise.then((result) => {
-      console.log('result', result.data);
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
     });
@@ -926,12 +924,19 @@ class processingData {
           obj.y = newLocation[1];
           processingData.allLine.forEach((line) => line.getLength());
           processingData.allArea.forEach((area) => {
-            area.getPointFlow();
-            area.getArea();
-            area.getCenter();
-            area.getPerimeter();
-            area.name = undefined;
-            area.coordNaming = undefined;
+            for (let line of area.Line) {
+              if (
+                JSON.stringify(line.Point[0]) === JSON.stringify(obj) ||
+                JSON.stringify(line.Point[1]) === JSON.stringify(obj)
+              ) {
+                area.getPointFlow();
+                area.getArea();
+                area.getCenter();
+                area.getPerimeter();
+                area.name = "undefined";
+                area.coordNaming = [];
+              }
+            }
           });
         }
         break;
@@ -946,22 +951,29 @@ class processingData {
         ];
         let centerPoint = math.divide(math.add(point1, point2), 2);
         let translateVect = math.subtract(newLocation, centerPoint);
-        // console.log(translateVect);
-
-        // let pointMoveTo = [PaintIn.currentMouseDownPos.x, PaintIn.currentMouseDownPos.y];
-        // let pointStartMove = [PaintIn.mouseDownPos.x, PaintIn.mouseDownPos.y];
-        // let translateVect = math.subtract(pointMoveTo, pointStartMove);
         let newPoint1 = math.add(point1, translateVect);
         let newPoint2 = math.add(point2, translateVect);
 
-        // let newPoint1 = math.add(point1, translateVect);
-        // let newPoint2 = math.add(point2, translateVect);
         //create new point obj
         let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
         let newPointObj2 = new Point(newPoint2, obj.Point[1].name);
         //change old point
         obj.Point[0] = newPointObj1;
         obj.Point[1] = newPointObj2;
+
+        processingData.allArea.forEach((area) => {
+          for (let line of area.Line) {
+            if (
+              JSON.stringify(line) === JSON.stringify(obj)
+            ) {
+              //delele line is moved
+              PaintIn.arrCurObj.push(line);
+              PaintIn.deleteCurObj();
+              PaintIn.arrCurObj.push(area);
+              PaintIn.deleteCurObj();
+            }
+          }
+        });
         break;
       }
       // case "Area":

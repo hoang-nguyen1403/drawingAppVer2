@@ -104,6 +104,7 @@ class Paint {
 
     //requestAPI
     this.APIurl = document.getElementById("urlInputted");
+    this.nameMatlabFunction = document.getElementById("functionNameInputted");
 
     //move Obj
     this.isMovingObj = false;
@@ -322,31 +323,23 @@ class Paint {
       this.arrMultiCurObj = [];
       //
       this.isCancled = false;
-      // processingData.prototype.separateData();
       if (this.pen === "line") {
         this.undo();
         processingData.prototype.areaDetect(processingData.allLine);
-        console.log(processingData.allLine)
         this.addNode();
       }
     }
     //ESC
     if (event.keyCode === 27) {
-      // processingData.prototype.separateData();
       if (this.pen === "line") {
         processingData.prototype.areaDetect(processingData.allLine);
       }
       this.isCancled = false;
       this.pen = "select";
-      this.isMovingObj = false;
-
-      // if (this.currentValueSelect.value === "On") {
-      //     this.pen = "select";
-      // }
-      // else {
-      //     this.pen = '';
-      // }
-      // this.arr = [];
+      if (this.isMovingObj) {
+        this.isMovingObj = false;
+        processingData.prototype.areaDetect(processingData.allLine);
+      }
       this.arrLineX = [];
       this.arrLineY = [];
       this.arrCircleX = [];
@@ -1099,8 +1092,8 @@ class Paint {
       this.curValDrawing.value === "On"
     ) {
       return {
-        x:  Math.round(event.clientX - rect.left),
-        y:  Math.round(event.clientY - rect.top),
+        x: Math.round(event.clientX - rect.left),
+        y: Math.round(event.clientY - rect.top),
       };
     }
   }
@@ -1568,7 +1561,7 @@ class Paint {
   testAPI() {
     if (PaintIn.APIurl.value !== "") {
       urlSendRequest = PaintIn.APIurl.value;
-      let pname = "data";
+      let pname = PaintIn.nameMatlabFunction.value;
       let params = processingData.prototype.saveObj();
       let bodyData = {
         rhs: [pname, params], //rhs: reading - used when send data
@@ -1713,8 +1706,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -2533,9 +2526,9 @@ class Paint {
 			        <div>
 				        <div class="coordinate">
 					        <input type="text" name="format" value="[${math.round(
-                    Obj.x,
-                    2
-                  )}, ${math.round(Obj.y, 2)}]"
+            Obj.x,
+            2
+          )}, ${math.round(Obj.y, 2)}]"
 						      onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
 				        </div>
 			        </div>
@@ -2595,9 +2588,9 @@ class Paint {
                       <div>
                         <div class="coordinate">
                           <input type="text" name="format" value="[${math.round(
-                            Obj.Point[0].x,
-                            2
-                          )},${math.round(Obj.Point[0].y, 2)}]"
+          Obj.Point[0].x,
+          2
+        )},${math.round(Obj.Point[0].y, 2)}]"
                           onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                         </div>
                       </div>
