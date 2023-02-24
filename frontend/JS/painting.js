@@ -2563,6 +2563,81 @@ class Paint {
           break;
         }
       }
+      // case "line": {
+      //   //create list force
+      //   let selectNormalPress = "";
+      //   let firstValue = null;
+      //   if (Obj.lineLoads !== null) {
+      //     for (let normalPress of Obj.lineLoads) {
+      //       let node0 = normalPress.parameters.node_0;
+      //       let node1 = normalPress.parameters.node_1;
+      //       selectNormalPress += `<option value=${Obj.lineLoads.indexOf(
+      //         normalPress
+      //       )}>${node0},${node1}</option>`;
+      //       //get first value
+      //       if (Obj.lineLoads.indexOf(normalPress) === 0) {
+      //         firstValue = `${node0},${node1}`;
+      //       }
+      //     }
+      //   }
+
+      //   document.getElementById("property").innerHTML = `
+      //             <p id="property_label">Properties</p>
+      //             <div>
+      //                 <p>Point 1</p>
+      //                 <div>
+      //                   <div class="coordinate">
+      //                     <input type="text" name="format" value="[${math.round(
+      //     Obj.Point[0].x,
+      //     2
+      //   )},${math.round(Obj.Point[0].y, 2)}]"
+      //                     onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
+      //                   </div>
+      //                 </div>
+      //             </div>
+
+      //             <div>
+      //                 <p>Point 2</p>
+      //                 <div>
+      //                   <div class="coordinate">
+      //                     <input type="text" name="format" 
+      //                     value="[${math.round(Obj.Point[1].x, 2)},${math.round(
+      //     Obj.Point[1].y,
+      //     2
+      //   )}]"
+      //                     onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
+      //                   </div>
+      //                 </div>
+      //             </div>
+
+      //             <div>
+      //                 <p>Length</p>
+      //                 <div>${math.round(Obj.length, 2)}</div>
+      //             </div>
+      //             <div>
+      //                 <p>Line</p>
+      //                 <div>1</div>
+      //             </div>
+      //             <div>
+      //                 <p>Name</p>
+      //                 <div>${Obj.name}</div>
+      //             </div>
+      //             <div>
+      //                 <p>Normal Press</p>
+      //                 <div>
+      //                     <div class="select-editable">
+      //                         <select id="normalPressesDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+      //                             ${selectNormalPress}
+      //                         </select>
+      //                         <input type="text" name="format" value="${firstValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'normalPress')"/>
+      //                     </div>
+      //                     <button class="delLoadButton" onclick="PaintIn.delLoad('normalPressesDropdown')">
+      //                     </button>
+      //                 </div>
+      //             </div>
+      //             `;
+      //   break;
+      // }
       case "line": {
         //create list force
         let selectNormalPress = "";
@@ -2576,7 +2651,7 @@ class Paint {
             )}>${node0},${node1}</option>`;
             //get first value
             if (Obj.lineLoads.indexOf(normalPress) === 0) {
-              firstValue = `${node0},${node1}`;
+              firstValue = ${node0},${node1};
             }
           }
         }
@@ -2585,31 +2660,18 @@ class Paint {
                   <p id="property_label">Properties</p>
                   <div>
                       <p>Point 1</p>
-                      <div>
-                        <div class="coordinate">
-                          <input type="text" name="format" value="[${math.round(
-          Obj.Point[0].x,
+                      <div>[${math.round(Obj.Point[0].x, 2)},${math.round(
+          Obj.Point[0].y,
           2
-        )},${math.round(Obj.Point[0].y, 2)}]"
-                          onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
-                        </div>
-                      </div>
+        )}]</div>
                   </div>
-
                   <div>
                       <p>Point 2</p>
-                      <div>
-                        <div class="coordinate">
-                          <input type="text" name="format" 
-                          value="[${math.round(Obj.Point[1].x, 2)},${math.round(
+                      <div>[${math.round(Obj.Point[1].x, 2)},${math.round(
           Obj.Point[1].y,
           2
-        )}]"
-                          onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
-                        </div>
-                      </div>
+        )}]</div>
                   </div>
-
                   <div>
                       <p>Length</p>
                       <div>${math.round(Obj.length, 2)}</div>
