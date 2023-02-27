@@ -106,6 +106,7 @@ class Paint {
     this.APIurl = document.getElementById("urlInputted");
 
     //move Obj
+    this.isMovingObj = false;
     this.lastMouseMove = [0, 0];
   }
 
@@ -2434,6 +2435,7 @@ class Paint {
     document.getElementById("property").style.display = "flex";
     switch (mode) {
       case "point": {
+        this.isMovingObj = true;
         //classify load
         let forces = [];
         let moments = [];
@@ -2517,6 +2519,7 @@ class Paint {
         break;
       }
       case "line": {
+        this.isMovingObj = true;
         //create list force
         let selectNormalPress = "";
         let firstValue = null;
@@ -2592,6 +2595,7 @@ class Paint {
         break;
       }
       case "off": {
+        this.isMovingObj = false;
         document.getElementById("property").style.display = "none";
         document.getElementById("property").innerHTML = `
                   <p id="property_label"></p>
@@ -2599,6 +2603,7 @@ class Paint {
         break;
       }
       case "multi": {
+        this.isMovingObj = false;
         let allObjInBox = [];
         if (this.curSelectBox.length !== 0) {
           processingData.allObject.forEach((obj) => {
@@ -2644,6 +2649,7 @@ class Paint {
         break;
       }
       case "area": {
+        this.isMovingObj = false;
         document.getElementById("property").innerHTML = `
                   <p id="property_label">Properties</p>
                   <div>
