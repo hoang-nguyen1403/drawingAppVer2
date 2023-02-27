@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() { }
+  constructor() {}
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -384,7 +384,8 @@ class processingData {
     return result;
   }
 
-  InterPolationFunction(arrX, arrY) { //SPL
+  InterPolationFunction(arrX, arrY) {
+    //SPL
     let allFunc = [];
     let sizeMatrix = arrX.length;
     let A = math.zeros(sizeMatrix, sizeMatrix);
@@ -410,8 +411,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-        ((arrY[row + 1] - arrY[row]) / h[row] -
-          (arrY[row] - arrY[row - 1]) / h[row - 1])
+          ((arrY[row + 1] - arrY[row]) / h[row] -
+            (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -423,7 +424,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-        3;
+          3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -813,7 +814,11 @@ class processingData {
       for (let ii = 0; ii < rawArea.length; ii++) {
         pointInArea.push(allPoint[rawArea[ii]].point);
       }
-      let area = new Area(allLineOfArea, inputData["surface_names"][i], coordName);
+      let area = new Area(
+        allLineOfArea,
+        inputData["surface_names"][i],
+        coordName
+      );
       allArea.push(area);
     }
     //add data
@@ -963,9 +968,7 @@ class processingData {
 
         processingData.allArea.forEach((area) => {
           for (let line of area.Line) {
-            if (
-              JSON.stringify(line) === JSON.stringify(obj)
-            ) {
+            if (JSON.stringify(line) === JSON.stringify(obj)) {
               //delele line is moved
               PaintIn.arrCurObj.push(line);
               PaintIn.deleteCurObj();
@@ -1084,7 +1087,10 @@ class Line {
     );
   }
   getBisectingPoint() {
-    this.bisectingPoint = [(this.Point[0].x + this.Point[1].x) / 2, (this.Point[0].y + this.Point[1].y) / 2];
+    this.bisectingPoint = [
+      (this.Point[0].x + this.Point[1].x) / 2,
+      (this.Point[0].y + this.Point[1].y) / 2,
+    ];
   }
   //get Point in line
   getPointInLine(numPoint) {
