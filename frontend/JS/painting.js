@@ -1163,6 +1163,7 @@ class Paint {
       // };
     } else {
       let arrPoints = [];
+      console.log(processingData.allPoint);
       processingData.allPoint.forEach((value) =>
         arrPoints.push({ x: value.x, y: value.y })
       );
@@ -1215,6 +1216,7 @@ class Paint {
         this.arrLineY
       );
     }
+    console.log(this.arrLineX);
     // Rect
     // console.log(this.arrRectX);
     if (this.arrRectX.length % 2 === 0 && this.arrRectX.length !== 0) {

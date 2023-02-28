@@ -356,7 +356,7 @@ class processingData {
     jsonData.surface_names = surface_names;
 
     let dataRequest = JSON.stringify(jsonData);
-
+    console.log(dataRequest);
     let promise = axios({
       method: "POST",
       // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
@@ -367,6 +367,7 @@ class processingData {
     });
 
     promise.then((result) => {
+      console.log(result.data);
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
     });
@@ -961,19 +962,16 @@ class processingData {
         obj.Point[0] = newPointObj1;
         obj.Point[1] = newPointObj2;
 
-        processingData.allArea.forEach((area) => {
-          for (let line of area.Line) {
-            if (
-              JSON.stringify(line) === JSON.stringify(obj)
-            ) {
-              //delele line is moved
-              PaintIn.arrCurObj.push(line);
-              PaintIn.deleteCurObj();
-              PaintIn.arrCurObj.push(area);
-              PaintIn.deleteCurObj();
-            }
-          }
-        });
+        // processingData.allArea.forEach((area) => {
+        //   for (let line of area.Line) {
+        //     if (
+        //       JSON.stringify(line) === JSON.stringify(obj)
+        //     ) {
+        //       PaintIn.arrMultiCurObj.push(area);
+        //       PaintIn.deleteCurObj();
+        //     }
+        //   }
+        // });
         break;
       }
       // case "Area":
