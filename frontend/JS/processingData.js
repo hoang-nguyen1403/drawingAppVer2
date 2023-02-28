@@ -961,40 +961,75 @@ class processingData {
         //create new point obj
         let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
         let newPointObj2 = new Point(newPoint2, obj.Point[1].name);
+        let pointLinks1 = [];
+        let pointLinks2 = [];
+        processingData.allLine.forEach((line) => {
+          if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[0])) {
+            line.Point[0] = obj.Point[0];
+            pointLinks1.push(line.Point[0]);
+          }
+          else if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[0])) {
+            line.Point[1] = obj.Point[0];
+            pointLinks1.push(line.Point[1]);
+          }
+          else if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[1])) {
+            line.Point[0] = obj.Point[1];
+            pointLinks2.push(line.Point[0]);
+          }
+          else if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[1])) {
+            line.Point[1] = obj.Point[1];
+            pointLinks2.push(line.Point[1]);
+          }
+        });
 
+        let areaChanges = [];
         processingData.allArea.forEach((area) => {
           for (let line of area.Line) {
-            if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[0])) {
-              //change old point
-              obj.Point[0] = newPointObj1;
-              obj.Point[1] = newPointObj2;
-              line.Point[0] = obj.Point[0];
+            let point1 = obj.Point[0];
+            let point2 = obj.Point[1];
+            if (
+              JSON.stringify(line.Point[0]) == JSON.stringify(point1) ||
+              JSON.stringify(line.Point[0]) == JSON.stringify(point2) ||
+              JSON.stringify(line.Point[1]) == JSON.stringify(point1) ||
+              JSON.stringify(line.Point[1]) == JSON.stringify(point2) 
+            ) {
+              processingData.prototype.addObject(area,areaChanges);
             }
-            else if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[1])) {
-              //change old point
-              obj.Point[0] = newPointObj1;
-              obj.Point[1] = newPointObj2;
-              line.Point[0] = obj.Point[1];
+          }
+        });
+
+        processingData.allLine.forEach((line) => {
+          for (let point of pointLinks1) {
+            if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
+              line.Point[0] = newPointObj1;
             }
-            if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[1])) {
-              //change old point
-              obj.Point[0] = newPointObj1;
-              obj.Point[1] = newPointObj2;
-              line.Point[1] = obj.Point[1];
+            if (JSON.stringify(line.Point[1]) === JSON.stringify(point)) {
+              line.Point[1] = newPointObj1;
             }
-            else if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[0])) {
-              //change old point
-              obj.Point[0] = newPointObj1;
-              obj.Point[1] = newPointObj2;
-              line.Point[1] = obj.Point[0];
+          }
+          for (let point of pointLinks2) {
+            if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
+              line.Point[0] = newPointObj2;
             }
-            line.getLength();
-            area.getPointFlow();
-            area.getArea();
-            area.getCenter();
-            area.getPerimeter();
-            area.name = "undefined";
-            area.coordNaming = [];
+            if (JSON.stringify(line.Point[1]) === JSON.stringify(point)) {
+              line.Point[1] = newPointObj2;
+            }
+          }
+          line.getLength();
+        });
+
+        processingData.allArea.forEach((area) => {
+          for (let areaChanged of areaChanges) {
+            if (
+              JSON.stringify(area) == JSON.stringify(areaChanged)
+            ) {
+              area.getPointFlow();
+              area.getArea();
+              area.getCenter();
+              area.getPerimeter();
+              area.name = "undefined";
+              area.coordNaming = [];
+            }
           }
         });
         break;

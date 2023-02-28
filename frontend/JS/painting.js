@@ -398,6 +398,11 @@ class Paint {
           this.renderObject(processingData.allObject);
         }
       }
+
+      if(PaintIn.isMovingObj){
+        processingData.prototype.areaDetect(processingData.allLine);
+        PaintIn.isMovingObj = false;
+      }
       //delete after destroy input box to compare conditions
       this.arrMultiCurObj = [];
       this.arrCurObj = [];
