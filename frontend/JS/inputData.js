@@ -18,8 +18,8 @@ function inputName(x, y, obj) {
     onsubmit: function () {
       PaintIn.drawText(obj, this.value());
       obj.name = this.value();
-      if(obj.className === "Area"){
-        const coorName = [PaintIn.mouseDownPos.x,PaintIn.mouseDownPos.y];
+      if (obj.className === "Area") {
+        const coorName = [PaintIn.mouseDownPos.x, PaintIn.mouseDownPos.y];
         obj.coordNaming = coorName;
       }
       this.destroy();
