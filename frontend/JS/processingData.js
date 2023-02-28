@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() {}
+  constructor() { }
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -410,8 +410,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-          ((arrY[row + 1] - arrY[row]) / h[row] -
-            (arrY[row] - arrY[row - 1]) / h[row - 1])
+        ((arrY[row + 1] - arrY[row]) / h[row] -
+          (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -423,7 +423,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-          3;
+        3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -962,9 +962,41 @@ class processingData {
         let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
         let newPointObj2 = new Point(newPoint2, obj.Point[1].name);
 
-        //change old point
-        obj.Point[0] = newPointObj1;
-        obj.Point[1] = newPointObj2;
+        processingData.allArea.forEach((area) => {
+          for (let line of area.Line) {
+            if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[0])) {
+              //change old point
+              obj.Point[0] = newPointObj1;
+              obj.Point[1] = newPointObj2;
+              line.Point[0] = obj.Point[0];
+            }
+            else if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[1])) {
+              //change old point
+              obj.Point[0] = newPointObj1;
+              obj.Point[1] = newPointObj2;
+              line.Point[0] = obj.Point[1];
+            }
+            if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[1])) {
+              //change old point
+              obj.Point[0] = newPointObj1;
+              obj.Point[1] = newPointObj2;
+              line.Point[1] = obj.Point[1];
+            }
+            else if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[0])) {
+              //change old point
+              obj.Point[0] = newPointObj1;
+              obj.Point[1] = newPointObj2;
+              line.Point[1] = obj.Point[0];
+            }
+            line.getLength();
+            area.getPointFlow();
+            area.getArea();
+            area.getCenter();
+            area.getPerimeter();
+            area.name = "undefined";
+            area.coordNaming = [];
+          }
+        });
         break;
       }
       // case "Area":

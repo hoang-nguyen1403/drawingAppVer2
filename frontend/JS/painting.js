@@ -1062,7 +1062,7 @@ class Paint {
           }
         });
         //delete multi area
-        for(let area of areaDels){
+        for (let area of areaDels) {
           processingData.allArea.splice(processingData.allArea.indexOf(area), 1); //delete in allArea
         }
         processingData.allLine.splice(processingData.allLine.indexOf(Obj), 1); //delete in allLine
@@ -1438,6 +1438,7 @@ class Paint {
       this.curValName.value === "Off"
     ) {
       processingData.prototype.moveObject(this.arrCurObj[0]);
+      // processingData.prototype.areaDetect(processingData.allLine);
     }
 
     // //change mouse (test)
