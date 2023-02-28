@@ -356,7 +356,6 @@ class processingData {
     jsonData.surface_names = surface_names;
 
     let dataRequest = JSON.stringify(jsonData);
-
     let promise = axios({
       method: "POST",
       // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
@@ -962,21 +961,10 @@ class processingData {
         //create new point obj
         let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
         let newPointObj2 = new Point(newPoint2, obj.Point[1].name);
+
         //change old point
         obj.Point[0] = newPointObj1;
         obj.Point[1] = newPointObj2;
-
-        processingData.allArea.forEach((area) => {
-          for (let line of area.Line) {
-            if (JSON.stringify(line) === JSON.stringify(obj)) {
-              //delele line is moved
-              PaintIn.arrCurObj.push(line);
-              PaintIn.deleteCurObj();
-              PaintIn.arrCurObj.push(area);
-              PaintIn.deleteCurObj();
-            }
-          }
-        });
         break;
       }
       // case "Area":
@@ -1046,7 +1034,7 @@ class Point {
   }
   isTouchBox(topRightPoint, bottomLeftPoint) {
     let point = this.point;
-    if (
+    if (topRightPoint != undefined &&
       topRightPoint[0] > point[0] &&
       topRightPoint[1] < point[1] &&
       point[0] > bottomLeftPoint[0] &&

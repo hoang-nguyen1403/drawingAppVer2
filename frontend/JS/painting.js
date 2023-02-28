@@ -326,7 +326,6 @@ class Paint {
       if (this.pen === "line") {
         this.undo();
         processingData.prototype.areaDetect(processingData.allLine);
-        console.log(processingData.allLine);
         this.addNode();
       }
     }
@@ -500,6 +499,7 @@ class Paint {
     //DELETE
     if (event.keyCode === 46) {
       this.deleteCurObj();
+      processingData.prototype.areaDetect(processingData.allLine);
     }
     //ENTER
     if (event.keyCode === 13) {
@@ -896,10 +896,11 @@ class Paint {
       ) {
         //reset arrCurObj
         this.arrCurObj = [];
+        this.isMovingObj = false;
         this.arrMultiCurObj = [];
 
         //create select box
-        if (bottomPoint[0] > topPoint[0] && bottomPoint[1] > topPoint[1]) {
+        if (bottomPoint != undefined && (bottomPoint[0] > topPoint[0] && bottomPoint[1] > topPoint[1])) {
           switch (this.multiSelectType) {
             case "Point": {
               processingData.allPoint.forEach((obj) => {
@@ -991,6 +992,7 @@ class Paint {
             this.arrMultiCurObj.push(this.arrCurObj[0]);
           //turn off single mode
           this.arrCurObj = [];
+          this.isMovingObj = false;
           //trace obj
           let selectedObj = processingData.allObject.find((obj) =>
             obj.isIn([this.currentMouseDownPos.x, this.currentMouseDownPos.y])
@@ -1036,6 +1038,7 @@ class Paint {
             this.arrCurObj = [];
           } else {
             this.arrCurObj[0] = selectedObj;
+            this.isMovingObj = true;
           }
         }
       }
@@ -1049,6 +1052,19 @@ class Paint {
       if (Obj.className === "Point") {
         processingData.allPoint.splice(processingData.allPoint.indexOf(Obj), 1); //delete in allPoint
       } else if (Obj.className === "Line") {
+        //if line in multi area
+        let areaDels = [];
+        processingData.allArea.forEach((area) => {
+          for (let line of area.Line) {
+            if (JSON.stringify(line) === JSON.stringify(Obj)) {
+              areaDels.push(area);
+            }
+          }
+        });
+        //delete multi area
+        for(let area of areaDels){
+          processingData.allArea.splice(processingData.allArea.indexOf(area), 1); //delete in allArea
+        }
         processingData.allLine.splice(processingData.allLine.indexOf(Obj), 1); //delete in allLine
       } else if (Obj.className === "Area") {
         processingData.allArea.splice(processingData.allArea.indexOf(Obj), 1); //delete in allArea
@@ -1701,8 +1717,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -1884,7 +1900,7 @@ class Paint {
     }
   }
 
-  drawPoint(point, color = "red", colorStroke = "back", R = 3) {
+  drawPoint(point, color = "red", colorStroke = "back", R = 0.9 * this.currentWidth) {
     this.ctx.beginPath();
     this.ctx.arc(point.x, point.y, R, 0, 2 * Math.PI);
     this.ctx.fillStyle = color;
@@ -2435,7 +2451,6 @@ class Paint {
     document.getElementById("property").style.display = "flex";
     switch (mode) {
       case "point": {
-        this.isMovingObj = true;
         //classify load
         let forces = [];
         let moments = [];
@@ -2519,7 +2534,6 @@ class Paint {
         break;
       }
       case "line": {
-        this.isMovingObj = true;
         //create list force
         let selectNormalPress = "";
         let firstValue = null;
@@ -2538,19 +2552,19 @@ class Paint {
         }
 
         document.getElementById("property").innerHTML = `
-          <p id="property_label">Properties</p>
-          <div>
-              <p>Point 1</p>
-              <div>
-                <div class="coordinate">
-                  <input type="text" name="format" value="[${math.round(
-                    Obj.Point[0].x,
-                    2
-                  )},${math.round(Obj.Point[0].y, 2)}]"
-                  onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
-                </div>
-              </div>
-          </div>
+                  <p id="property_label">Properties</p>
+                  <div>
+                      <p>Point 1</p>
+                      <div>
+                        <div class="coordinate">
+                          <input type="text" name="format" value="[${math.round(
+                            Obj.Point[0].x,
+                            2
+                          )},${math.round(Obj.Point[0].y, 2)}]"
+                          onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
+                        </div>
+                      </div>
+                  </div>
 
           <div>
               <p>Point 2</p>
@@ -2595,7 +2609,6 @@ class Paint {
         break;
       }
       case "off": {
-        this.isMovingObj = false;
         document.getElementById("property").style.display = "none";
         document.getElementById("property").innerHTML = `
                   <p id="property_label"></p>
@@ -2603,7 +2616,6 @@ class Paint {
         break;
       }
       case "multi": {
-        this.isMovingObj = false;
         let allObjInBox = [];
         if (this.curSelectBox.length !== 0) {
           processingData.allObject.forEach((obj) => {
@@ -2649,7 +2661,6 @@ class Paint {
         break;
       }
       case "area": {
-        this.isMovingObj = false;
         document.getElementById("property").innerHTML = `
           <div class="property_label">
           <div>
