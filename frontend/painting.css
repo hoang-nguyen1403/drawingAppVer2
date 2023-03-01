@@ -120,65 +120,6 @@ body {
 
 }
 
-
-#property {
-    position: absolute;
-    right: 50%;
-    bottom: 1%;
-    width: 150px;
-    display: none;
-    flex-direction: column;
-    font-size: 13px;
-    /* background-color: #ffffff; */
-}
-
-.property_label {
-    display: flex;
-    width: 100%;
-    /* height: 30px; */
-    padding: 0%;
-    font-size: 22px;
-    border: 2px solid black;
-    background-color: rgb(162 202 212 / 97%);
-    font-family: UVF Bariol Regular;
-}
-
-.property_label .property-icon {
-    height: 26px;
-    background-image: url(img/arrow.png);
-    background-size: 26px 26px;
-    /* background-color: rgb(162 202 212 / 97%); */
-    border: 0px;
-}
-
-#property>div {
-    width: 100%;
-    height: 35px;
-    display: flex;
-    border-bottom: 2px solid black;
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    /* background-color: #ffffff; */
-}
-
-#property>div>p {
-    width: 40%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-}
-
-#property>div>div {
-    height: 100%;
-    flex: 1;
-    border-left: 2px solid black;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
 #command {
     position: absolute;
     left: 25%;
@@ -243,6 +184,68 @@ button {
 .active {
     color: #ffffff;
     background-color: rgb(137, 219, 252);
+}
+
+#property {
+    position: absolute;
+    right: 50%;
+    bottom: 1%;
+    width: 150px;
+    display: none;
+    flex-direction: column;
+    font-size: 13px;
+    /* background-color: #ffffff; */
+}
+
+.property_label {
+    display: flex;
+    width: 100%;
+    /* height: 30px; */
+    padding: 0%;
+    font-size: 22px;
+    border: 2px solid black;
+    background-color: rgb(162 202 212 / 97%);
+    font-family: UVF Bariol Regular;
+}
+
+.property_label>div {
+    height: 26px;
+    background-image: url(img/arrow.png);
+    background-size: 10px 10px;
+    background-color: rgb(162 202 212 / 97%);;
+    border: 0px;
+    position: absolute;
+    right: -3%;
+    border-radius: 5px;
+
+}
+
+.boderProperties>div {
+    width: 100%;
+    height: 35px;
+    display: flex;
+    border-bottom: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    /* background-color: #ffffff; */
+}
+
+.boderProperties>div>p {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.boderProperties>div>div {
+    height: 100%;
+    flex: 1;
+    border-left: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
 #grid {

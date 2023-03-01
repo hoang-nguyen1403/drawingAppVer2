@@ -399,7 +399,7 @@ class Paint {
         }
       }
 
-      if(PaintIn.isMovingObj){
+      if (PaintIn.isMovingObj) {
         processingData.prototype.areaDetect(processingData.allLine);
         PaintIn.isMovingObj = false;
       }
@@ -2503,9 +2503,9 @@ class Paint {
               <div>
                 <div class="coordinate">
                   <input type="text" name="format" value="[${math.round(
-                    Obj.x,
-                    2
-                  )}, ${math.round(Obj.y, 2)}]"
+          Obj.x,
+          2
+        )}, ${math.round(Obj.y, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                 </div>
               </div>
@@ -2558,59 +2558,68 @@ class Paint {
         }
 
         document.getElementById("property").innerHTML = `
-                  <p id="property_label">Properties</p>
-                  <div>
-                      <p>Point 1</p>
-                      <div>
-                        <div class="coordinate">
-                          <input type="text" name="format" value="[${math.round(
-                            Obj.Point[0].x,
-                            2
-                          )},${math.round(Obj.Point[0].y, 2)}]"
-                          onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
-                        </div>
-                      </div>
-                  </div>
-
+        <div class="property_label">
+          <p>Properties</p>
           <div>
-              <p>Point 2</p>
-              <div>
-                <div class="coordinate">
-                  <input type="text" name="format" 
-                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(
-          Obj.Point[1].y,
-          2
-        )}]"
+            <button class="property-icon" onclick="PaintIn.toggleProperty()" value="Off"></button>
+          </div>
+        </div>
+        <div>
+          <div class=boderProperties>
+            <p>Point 1</p>
+            <div>
+              <div class="coordinate">
+                <input type="text" name="format"
+                  value="[${math.round(Obj.Point[0].x,2)},${math.round(Obj.Point[0].y, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
-                </div>
               </div>
+            </div>
           </div>
-
+        
           <div>
-              <p>Length</p>
-              <div>${math.round(Obj.length, 2)}</div>
-          </div>
-          <div>
-              <p>Line</p>
-              <div>1</div>
-          </div>
-          <div>
-              <p>Name</p>
-              <div>${Obj.name}</div>
-          </div>
-          <div>
-              <p>Normal Press</p>
-              <div>
-                  <div class="select-editable">
-                      <select id="normalPressesDropdown" onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
-                          ${selectNormalPress}
-                      </select>
-                      <input type="text" name="format" value="${firstValue}" onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'normalPress')"/>
-                  </div>
-                  <button class="delLoadButton" onclick="PaintIn.delLoad('normalPressesDropdown')">
-                  </button>
+            <p>Point 2</p>
+            <div>
+              <div class="coordinate">
+                <input type="text" name="format"
+                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(Obj.Point[1].y,2)}]"
+                  onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
               </div>
+            </div>
           </div>
+        
+          <div>
+            <p>Length</p>
+            <div>
+              ${math.round(Obj.length, 2)}
+            </div>
+          </div>
+          <div>
+            <p>Line</p>
+            <div>
+              1
+            </div>
+          </div>
+          <div>
+            <p>Name</p>
+            <div>
+              ${Obj.name}
+            </div>
+          </div>
+          <div>
+            <p>Normal Press</p>
+            <div>
+              <div class="select-editable">
+                <select id="normalPressesDropdown"
+                  onchange="this.nextElementSibling.value=this.options[this.selectedIndex].text">
+                  ${selectNormalPress}
+                </select>
+                <input type="text" name="format" value="${firstValue}"
+                  onchange="PaintIn.changeLoad(this.previousElementSibling.value, this.value, 'normalPress')" />
+              </div>
+              <button class="delLoadButton" onclick="PaintIn.delLoad('normalPressesDropdown')"></button>
+            </div>
+          </div>
+        </div>
         `;
         break;
       }
@@ -2668,40 +2677,44 @@ class Paint {
       }
       case "area": {
         document.getElementById("property").innerHTML = `
-          <div class="property_label">
+        <div class="property_label">
+          <p>Properties</p>
           <div>
-            <p>Properties</p>
             <button class="property-icon" onclick="PaintIn.toggleProperty()" value="Off"></button>
           </div>
+        </div>
+        <div class=boderProperties>
+          <div>
+            <p>Area</p>
+            <div>
+              ${math.round(Obj.area, 2)}
+            </div>
           </div>
           <div>
-              <p>Area
-              </p>
-              <div>${math.round(Obj.area, 2)}
-              </div>
+            <p>Center</p>
+            <div>
+              [${math.round(Obj.center, 2)}]
+            </div>
           </div>
           <div>
-              <p>Center
-              </p>
-              <div>[${math.round(Obj.center, 2)}]
-              </div>
+            <p>Perimeter</p>
+            <div>
+              ${math.round(Obj.perimeter, 2)}
+            </div>
           </div>
           <div>
-              <p>Perimeter
-              </p>
-              <div>${math.round(Obj.perimeter, 2)}
-              </div>
+            <p>Sides</p>
+            <div>
+              ${Obj.Line.length}
+            </div>
           </div>
           <div>
-              <p>Sides
-              </p>
-              <div>${Obj.Line.length}
-              </div>
+            <p>Name</p>
+            <div>
+              ${Obj.name}
+            </div>
           </div>
-          <div>
-              <p>Name</p>
-              <div>${Obj.name}
-          </div>
+        </div>
         `;
         break;
       }
@@ -2709,10 +2722,11 @@ class Paint {
   }
 
   toggleProperty() {
-    if (document.getElementById("property").style.display === "none") {
-      document.getElementById("property").style.display = "flex";
+    document.getElementsByClassName("property_label")[0].style.display = "flex";
+    if (document.getElementsByClassName("boderProperties")[0].style.display === "none") {
+      document.getElementsByClassName("boderProperties")[0].style.display = "block";
     } else {
-      document.getElementById("property").style.display = "none";
+      document.getElementsByClassName("boderProperties")[0].style.display = "none";
     }
   }
 
