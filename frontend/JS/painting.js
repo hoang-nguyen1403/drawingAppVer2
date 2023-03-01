@@ -2677,11 +2677,12 @@ class Paint {
         }
         document.getElementById("property").innerHTML = `
         <div class="property_label">
-        <p>Properties</p>
-        <div class=boderProperties>
-          <button class="property-icon" onclick="PaintIn.toggleProperty()" value="Off"></button>
+          <p>Properties</p>
+          <div>
+            <button class="property-icon" onclick="PaintIn.toggleProperty()" value="Off"></button>
+          </div>
         </div>
-      </div>
+        <div class=boderProperties>
           <div>
               <div style="border-left:0px">
                   <select id="selectTypeObj" onchange="((e) =>
@@ -2697,6 +2698,7 @@ class Paint {
               <div>${Obj.length}
               </div>
                   </div>
+        </div>
         `;
         //set first value of selectTag is current className
         let selectTypeObj = document.getElementById("selectTypeObj");
