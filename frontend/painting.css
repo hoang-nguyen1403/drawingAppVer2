@@ -425,10 +425,13 @@ button {
 
 .property_label .property-icon {
     height: 26px;
+    width: 26px;
     background-image: url(img/arrow.png);
-    background-size: 26px 26px;
+    background-size: 20px 20px;
     background-color: rgb(162 202 212 / 97%);
     border: 0px;
+    position: absolute;
+    right: 3px;
 }
 
 

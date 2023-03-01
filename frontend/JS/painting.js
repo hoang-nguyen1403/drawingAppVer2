@@ -905,7 +905,11 @@ class Paint {
         this.arrMultiCurObj = [];
 
         //create select box
-        if (bottomPoint != undefined && (bottomPoint[0] > topPoint[0] && bottomPoint[1] > topPoint[1])) {
+        if (
+          bottomPoint != undefined &&
+          bottomPoint[0] > topPoint[0] &&
+          bottomPoint[1] > topPoint[1]
+        ) {
           switch (this.multiSelectType) {
             case "Point": {
               processingData.allPoint.forEach((obj) => {
@@ -1068,7 +1072,10 @@ class Paint {
         });
         //delete multi area
         for (let area of areaDels) {
-          processingData.allArea.splice(processingData.allArea.indexOf(area), 1); //delete in allArea
+          processingData.allArea.splice(
+            processingData.allArea.indexOf(area),
+            1
+          ); //delete in allArea
         }
         processingData.allLine.splice(processingData.allLine.indexOf(Obj), 1); //delete in allLine
       } else if (Obj.className === "Area") {
@@ -1723,8 +1730,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -1906,7 +1913,12 @@ class Paint {
     }
   }
 
-  drawPoint(point, color = "red", colorStroke = "back", R = 0.9 * this.currentWidth) {
+  drawPoint(
+    point,
+    color = "red",
+    colorStroke = "back",
+    R = 0.9 * this.currentWidth
+  ) {
     this.ctx.beginPath();
     this.ctx.arc(point.x, point.y, R, 0, 2 * Math.PI);
     this.ctx.fillStyle = color;
@@ -2493,7 +2505,13 @@ class Paint {
         }
         //
         document.getElementById("property").innerHTML = `
-          <p id="property_label">Properties</p>
+        <div class="property_label">
+        <p>Properties</p>
+        <div>
+          <button class="property-icon" onclick="PaintIn.toggleProperty()" value="Off"></button>
+        </div>
+      </div>
+      <div class=boderProperties>
           <div>
               <p>Name</p>
               <div>${Obj.name}</div>
@@ -2503,9 +2521,9 @@ class Paint {
               <div>
                 <div class="coordinate">
                   <input type="text" name="format" value="[${math.round(
-          Obj.x,
-          2
-        )}, ${math.round(Obj.y, 2)}]"
+                    Obj.x,
+                    2
+                  )}, ${math.round(Obj.y, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                 </div>
               </div>
@@ -2536,6 +2554,7 @@ class Paint {
                   </button>
               </div>
           </div>
+        </div>
         `;
         break;
       }
@@ -2564,13 +2583,16 @@ class Paint {
             <button class="property-icon" onclick="PaintIn.toggleProperty()" value="Off"></button>
           </div>
         </div>
-        <div>
-          <div class=boderProperties>
+        <div class=boderProperties>
+          <div>
             <p>Point 1</p>
             <div>
               <div class="coordinate">
                 <input type="text" name="format"
-                  value="[${math.round(Obj.Point[0].x,2)},${math.round(Obj.Point[0].y, 2)}]"
+                  value="[${math.round(Obj.Point[0].x, 2)},${math.round(
+          Obj.Point[0].y,
+          2
+        )}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
               </div>
             </div>
@@ -2581,7 +2603,10 @@ class Paint {
             <div>
               <div class="coordinate">
                 <input type="text" name="format"
-                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(Obj.Point[1].y,2)}]"
+                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(
+          Obj.Point[1].y,
+          2
+        )}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
               </div>
             </div>
@@ -2651,7 +2676,12 @@ class Paint {
           options += `<option value = "${type}">${type}</option>`;
         }
         document.getElementById("property").innerHTML = `
-          <p id="property_label">Properties</p>
+        <div class="property_label">
+        <p>Properties</p>
+        <div class=boderProperties>
+          <button class="property-icon" onclick="PaintIn.toggleProperty()" value="Off"></button>
+        </div>
+      </div>
           <div>
               <div style="border-left:0px">
                   <select id="selectTypeObj" onchange="((e) =>
@@ -2723,10 +2753,15 @@ class Paint {
 
   toggleProperty() {
     document.getElementsByClassName("property_label")[0].style.display = "flex";
-    if (document.getElementsByClassName("boderProperties")[0].style.display === "none") {
-      document.getElementsByClassName("boderProperties")[0].style.display = "block";
+    if (
+      document.getElementsByClassName("boderProperties")[0].style.display ===
+      "none"
+    ) {
+      document.getElementsByClassName("boderProperties")[0].style.display =
+        "block";
     } else {
-      document.getElementsByClassName("boderProperties")[0].style.display = "none";
+      document.getElementsByClassName("boderProperties")[0].style.display =
+        "none";
     }
   }
 
