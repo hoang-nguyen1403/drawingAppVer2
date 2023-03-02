@@ -46,6 +46,7 @@ function addNameArea(Obj) {
 }
 
 function addName() {
+    PaintIn.isMovingObj = false;
     //check before input
     if (PaintIn.arrMultiCurObj[0] !== undefined) {
         if (valueLoads !== undefined && PaintIn.curValPressLoad.value === "Off") {
@@ -130,6 +131,7 @@ function addName() {
 }
 
 function addForce() {
+    PaintIn.isMovingObj = false;
     //check and destroy before input
     if (PaintIn.arrMultiCurObj[0] !== undefined) {
         if (nameIDs !== undefined && PaintIn.curValName.value === "Off") {
@@ -267,47 +269,3 @@ function addForce() {
         }
     }
 }
-
-// function addValueNameArea(Obj) {
-//     //    choose position to display box input
-//     if (PaintIn.arrMultiCurObj[0] !== undefined) {
-//         let pos = getPosElement("valueName");
-//         inputNames(pos[0] + 15, pos[1]);
-//         return;
-//     } else {
-//         let xC = Obj.center[0];
-//         let yC = Obj.center[1];
-//         inputName(xC, yC, Obj);
-//         return;
-//     }
-// }
-
-// function addValueArea() {
-//     //check before input
-//     if (PaintIn.arrCurObj[0] !== undefined) {
-//         //name on=> press & moment off
-//         if(valueNameArea !== undefined&& PaintIn.curValNamingArea.value === "Off"){
-//             valueNameArea.destroy();
-//             valueNameArea = undefined;
-//         }
-//     }
-//     //input
-//     if (
-//         (valueNameArea === undefined) &&
-//         (PaintIn.pen === undefined || PaintIn.pen === "line")
-//     ) {
-//         let selectedObj;
-//         if (PaintIn.arrCurObj[0] !== undefined) {
-//             selectedObj = PaintIn.arrCurObj[0];
-//             if(selectedObj.className === "Point" && valueNameArea === undefined){
-//                 addNameArea(selectedObj);
-//             }
-//         }
-//         if (selectedObj === undefined) {
-//             PaintIn.renderProperty("off", selectedObj);
-//             PaintIn.arrCurObj = [];
-//             return;
-//         }
-//     }
-//     return;
-// }

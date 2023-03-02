@@ -1047,7 +1047,7 @@ class Paint {
             this.arrCurObj = [];
           } else {
             this.arrCurObj[0] = selectedObj;
-            this.isMovingObj = true;
+            PaintIn.isMovingObj = true;
           }
         }
       }
