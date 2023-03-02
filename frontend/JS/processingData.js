@@ -991,9 +991,9 @@ class processingData {
               JSON.stringify(line.Point[0]) == JSON.stringify(point1) ||
               JSON.stringify(line.Point[0]) == JSON.stringify(point2) ||
               JSON.stringify(line.Point[1]) == JSON.stringify(point1) ||
-              JSON.stringify(line.Point[1]) == JSON.stringify(point2) 
+              JSON.stringify(line.Point[1]) == JSON.stringify(point2)
             ) {
-              processingData.prototype.addObject(area,areaChanges);
+              processingData.prototype.addObject(area, areaChanges);
             }
           }
         });
@@ -1084,7 +1084,7 @@ class Point {
   }
   //Method
   isIn(mouse) {
-    return (mouse[0] - this.x) ** 2 + (mouse[1] - this.y) ** 2 < 3 ** 2
+    return (mouse[0] - this.x) ** 2 + (mouse[1] - this.y) ** 2 < 0.9 * PaintIn.currentWidth ** 2
       ? true
       : false;
   }
@@ -1164,7 +1164,7 @@ class Line {
   isIn(Mouse) {
     let A_to_mouse = math.norm(math.subtract(this.Point[0].point, Mouse));
     let mouse_to_B = math.norm(math.subtract(Mouse, this.Point[1].point));
-    return A_to_mouse + mouse_to_B - this.length <= 0.1 ? true : false;
+    return A_to_mouse + mouse_to_B - this.length <= PaintIn.currentWidth/20 ? true : false;
   }
   isInBox(topLeftPoint, bottomRigthPoint) {
     for (let pointObj of this.Point) {
