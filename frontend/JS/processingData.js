@@ -999,39 +999,59 @@ class processingData {
         });
 
         processingData.allLine.forEach((line) => {
-          for (let point of pointLinks1) {
-            if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
-              line.Point[0] = newPointObj1;
-            }
-            if (JSON.stringify(line.Point[1]) === JSON.stringify(point)) {
-              line.Point[1] = newPointObj1;
-            }
-          }
-          for (let point of pointLinks2) {
-            if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
-              line.Point[0] = newPointObj2;
-            }
-            if (JSON.stringify(line.Point[1]) === JSON.stringify(point)) {
-              line.Point[1] = newPointObj2;
+          console.log(pointLinks1);
+          console.log(pointLinks2);
+          if (pointLinks1.length > 0) {
+            for (let point of pointLinks1) {
+              if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
+                line.Point[0] = newPointObj1;
+              }
+              if (JSON.stringify(line.Point[1]) === JSON.stringify(point)) {
+                line.Point[1] = newPointObj1;
+              }
             }
           }
+          else {
+            obj.Point[0] = newPointObj1;
+          }
+
+          if (pointLinks2.length > 0) {
+            for (let point of pointLinks2) {
+              if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
+                line.Point[0] = newPointObj2;
+              }
+              if (JSON.stringify(line.Point[1]) === JSON.stringify(point)) {
+                line.Point[1] = newPointObj2;
+              }
+            }
+          }
+          else {
+            obj.Point[1] = newPointObj2;
+          }
+
           line.getLength();
         });
 
-        processingData.allArea.forEach((area) => {
-          for (let areaChanged of areaChanges) {
-            if (
-              JSON.stringify(area) == JSON.stringify(areaChanged)
-            ) {
-              area.getPointFlow();
-              area.getArea();
-              area.getCenter();
-              area.getPerimeter();
-              area.name = "undefined";
-              area.coordNaming = [];
+        if (areaChanges.length > 0) {
+          processingData.allArea.forEach((area) => {
+            for (let areaChanged of areaChanges) {
+              if (
+                JSON.stringify(area) == JSON.stringify(areaChanged)
+              ) {
+                area.getPointFlow();
+                area.getArea();
+                area.getCenter();
+                area.getPerimeter();
+                area.name = "undefined";
+                area.coordNaming = [];
+              }
             }
-          }
-        });
+          });
+        } else {
+          break;
+        }
+
+
         break;
       }
       // case "Area":
@@ -1164,7 +1184,7 @@ class Line {
   isIn(Mouse) {
     let A_to_mouse = math.norm(math.subtract(this.Point[0].point, Mouse));
     let mouse_to_B = math.norm(math.subtract(Mouse, this.Point[1].point));
-    return A_to_mouse + mouse_to_B - this.length <= PaintIn.currentWidth/20 ? true : false;
+    return A_to_mouse + mouse_to_B - this.length <= PaintIn.currentWidth / 20 ? true : false;
   }
   isInBox(topLeftPoint, bottomRigthPoint) {
     for (let pointObj of this.Point) {
