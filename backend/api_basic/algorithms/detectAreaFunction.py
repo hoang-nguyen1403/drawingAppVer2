@@ -9,14 +9,17 @@ def detectArea(data):
     segments = data['segments']
     old_surfaces = data['surfaces']
     old_surface_names = data['surface_names']
+    old_surface_name_coords = data['surface_coords']
 
     # =============== GET NAMED SURFACES ============================
     named_surfaces = []
     named_surface_names = []
+    named_surface_name_coords = []
     for idx, name in enumerate(old_surface_names):
         if name is not None:
             named_surfaces.append(old_surfaces[idx])
             named_surface_names.append(name)
+            named_surface_name_coords.append(old_surface_name_coords[idx])
     
     # =============== SCALE AND ROUND NODE COORDINATES =========================
     scale = 4
@@ -47,6 +50,7 @@ def detectArea(data):
     # surface_segments = [] # list of segments that make a surface
     surfaces = []
     surface_names = []
+    surface_name_coords = []
 
     # =============== FIND WHICH NODES THAT MAKE A SURFACE =============================
     for contour in contours:
@@ -78,14 +82,19 @@ def detectArea(data):
         if len(surface_nodes) >= 3 and sorted(surface_nodes) not in sort_surfaces:
             surfaces.append(surface_nodes)
             surface_name = None
+            surface_name_coord = None
             for idx, named_surface in enumerate(named_surfaces):
                 if sorted(surface_nodes) == sorted(named_surface):
                     surface_name = named_surface_names[idx]
+                    surface_name_coord = named_surface_name_coords[idx]
             surface_names.append(surface_name)
+            surface_name_coords.append(surface_name_coord)
         surface_nodes = []
         # surface_segments = []
         # surface_nodes_copy = []
     
     data['surfaces'] = surfaces
     data['surface_names'] = surface_names
+    data['surface_coords'] = surface_name_coords
     return data
+
