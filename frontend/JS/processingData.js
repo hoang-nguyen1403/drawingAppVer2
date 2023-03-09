@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() { }
+  constructor() {}
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -361,7 +361,7 @@ class processingData {
       // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
       // url: "http://127.0.0.1:8000/v1/detectArea/",
 
-      url: "http://34.125.158.207:8000/v1/detectArea/",
+      url: "http://34.125.80.153:8000/v1/detectArea/",
       data: dataRequest,
     });
 
@@ -410,8 +410,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-        ((arrY[row + 1] - arrY[row]) / h[row] -
-          (arrY[row] - arrY[row - 1]) / h[row - 1])
+          ((arrY[row + 1] - arrY[row]) / h[row] -
+            (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -423,7 +423,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-        3;
+          3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -967,16 +967,19 @@ class processingData {
           if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[0])) {
             line.Point[0] = obj.Point[0];
             pointLinks1.push(line.Point[0]);
-          }
-          else if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[0])) {
+          } else if (
+            JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[0])
+          ) {
             line.Point[1] = obj.Point[0];
             pointLinks1.push(line.Point[1]);
-          }
-          else if (JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[1])) {
+          } else if (
+            JSON.stringify(line.Point[0]) === JSON.stringify(obj.Point[1])
+          ) {
             line.Point[0] = obj.Point[1];
             pointLinks2.push(line.Point[0]);
-          }
-          else if (JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[1])) {
+          } else if (
+            JSON.stringify(line.Point[1]) === JSON.stringify(obj.Point[1])
+          ) {
             line.Point[1] = obj.Point[1];
             pointLinks2.push(line.Point[1]);
           }
@@ -1010,8 +1013,7 @@ class processingData {
                 line.Point[1] = newPointObj1;
               }
             }
-          }
-          else {
+          } else {
             obj.Point[0] = newPointObj1;
           }
 
@@ -1024,8 +1026,7 @@ class processingData {
                 line.Point[1] = newPointObj2;
               }
             }
-          }
-          else {
+          } else {
             obj.Point[1] = newPointObj2;
           }
 
@@ -1035,9 +1036,7 @@ class processingData {
         if (areaChanges.length > 0) {
           processingData.allArea.forEach((area) => {
             for (let areaChanged of areaChanges) {
-              if (
-                JSON.stringify(area) == JSON.stringify(areaChanged)
-              ) {
+              if (JSON.stringify(area) == JSON.stringify(areaChanged)) {
                 area.getPointFlow();
                 area.getArea();
                 area.getCenter();
@@ -1050,7 +1049,6 @@ class processingData {
         } else {
           break;
         }
-
 
         break;
       }
@@ -1104,7 +1102,8 @@ class Point {
   }
   //Method
   isIn(mouse) {
-    return (mouse[0] - this.x) ** 2 + (mouse[1] - this.y) ** 2 < 0.9 * PaintIn.currentWidth ** 2
+    return (mouse[0] - this.x) ** 2 + (mouse[1] - this.y) ** 2 <
+      0.9 * PaintIn.currentWidth ** 2
       ? true
       : false;
   }
@@ -1121,7 +1120,8 @@ class Point {
   }
   isTouchBox(topRightPoint, bottomLeftPoint) {
     let point = this.point;
-    if (topRightPoint != undefined &&
+    if (
+      topRightPoint != undefined &&
       topRightPoint[0] > point[0] &&
       topRightPoint[1] < point[1] &&
       point[0] > bottomLeftPoint[0] &&
@@ -1184,7 +1184,9 @@ class Line {
   isIn(Mouse) {
     let A_to_mouse = math.norm(math.subtract(this.Point[0].point, Mouse));
     let mouse_to_B = math.norm(math.subtract(Mouse, this.Point[1].point));
-    return A_to_mouse + mouse_to_B - this.length <= PaintIn.currentWidth / 20 ? true : false;
+    return A_to_mouse + mouse_to_B - this.length <= PaintIn.currentWidth / 20
+      ? true
+      : false;
   }
   isInBox(topLeftPoint, bottomRigthPoint) {
     for (let pointObj of this.Point) {
