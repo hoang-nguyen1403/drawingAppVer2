@@ -23,7 +23,7 @@ function inputName(x, y, obj) {
         obj.coordNaming = coorName;
       }
       this.destroy();
-      nameID = undefined;
+      nameID = null;
       PaintIn.renderObject(processingData.allObject);
       PaintIn.isCancled = false;
     },
