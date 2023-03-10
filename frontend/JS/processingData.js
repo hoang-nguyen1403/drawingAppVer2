@@ -945,7 +945,7 @@ class processingData {
         }
         break;
       case "Line": {
-        //move point
+        //move line
         let point1 = obj.Point[0].point;
         let point2 = obj.Point[1].point;
 

@@ -43,16 +43,16 @@
 		</div>
 
 		<div id="center_div">
-			<div id="BDCondition">
-				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
-					style="background-image: url(frontend/img/apply_name.svg)"></button>
-				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
-					style="background-image: url(frontend/img/apply_force.svg)"></button>
-				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
-					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
-				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
-					style="background-image: url(frontend/img/apply_moment.svg)"></button></button>
-			</div>
+<!--			<div id="BDCondition">-->
+<!--				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"-->
+<!--					style="background-image: url(frontend/img/apply_name.svg)"></button>-->
+<!--				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"-->
+<!--					style="background-image: url(frontend/img/apply_force.svg)"></button>-->
+<!--				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"-->
+<!--					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>-->
+<!--				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"-->
+<!--					style="background-image: url(frontend/img/apply_moment.svg)"></button></button>-->
+<!--			</div>-->
 
 			<div id="modeSoln">
 				<button id="fillColor" class="btn" type="button" onclick="Mesh.prototype.addValFillColor()"
@@ -83,13 +83,24 @@
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
 						style="display: none">
 				</label>
+
+				<div id="BDCondition">
+				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
+					style="background-image: url(frontend/img/apply_force.svg)"></button>
+				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
+					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
+				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
+					style="background-image: url(frontend/img/apply_moment.svg)"></button>
+				</button><button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
+				style="background-image: url(frontend/img/apply_name.svg)"></button>
+				</div>
 				<div class="request">
 					<label class="url">
 						<p>url</p>
 						<input type="text" id="urlInputted" value="">
 					</label>
 					<label class="functionName">
-						<p>Function name</p>
+						<p>Function</p>
 						<input type="text" id="functionNameInputted" value="">
 					</label>
 					<button id="sendRequest" title="Request" type="button" onclick="PaintIn.testAPI()"></button>

@@ -397,16 +397,14 @@ button {
 
 
 #BDCondition {
-    position: absolute;
-    top: 20%;
-    left: 45%;
-    /* flex-flow: row; */
-    justify-content: space-around;
-    border: 2px solid black;
-    border-radius: 20px;
-    padding: 5px;
-    display: none;
     background-color: #e6f5ff;
+    background-position: left;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    position: fixed;
+    margin: 5px;
+    right: 700px;
+    display: none;
 }
 
 .delLoadButton {
@@ -635,7 +633,7 @@ button {
 
 .request .functionName p{
     display: inline-grid;
-    width: 100px;
+    width: 60px;
 }
 
 #urlInputted {
@@ -648,7 +646,7 @@ button {
 }
 
 #functionNameInputted {
-    width: 300px;
+    width: 150px;
     background-color: #ffffff;
     background-position: center;
     background-size: 300px;
