@@ -1600,8 +1600,8 @@ class Paint {
         method: "POST",
         url: urlSendRequest,
         data: bodyData,
-        withCredentials: true,
-        crossDomain: true
+//        withCredentials: true,
+//        crossDomain: true
       });
 
       promise.then((result) => {
@@ -2362,7 +2362,7 @@ class Paint {
       this.renderCommand("Off");
     }
 
-    // render properties and button
+    // render API and button
     if (this.arrMultiCurObj[0] !== undefined) {
       document.getElementById("BDCondition").style.display = "flex";
       this.renderProperty("multi", this.arrMultiCurObj);
