@@ -1600,8 +1600,8 @@ class Paint {
         method: "POST",
         url: urlSendRequest,
         data: bodyData,
-//        withCredentials: true,
-//        crossDomain: true
+        withCredentials: true,
+        crossDomain: true
       });
 
       promise.then((result) => {
