@@ -71,7 +71,7 @@ function addName() {
     }
     //input
     if (
-        (nameIDs === undefined || nameID === undefined) &&
+        (nameIDs === undefined || nameID === null) &&
         (PaintIn.pen === undefined || PaintIn.pen === "line")
     ) {
         let selectedObj;
