@@ -784,6 +784,7 @@ class processingData {
       );
       allLine.push(line);
     }
+    console.log("line" + allLine)
     let allArea = [];
     for (let i = 0; i <= inputData["surfaces"].length - 1; i++) {
       let allLineOfArea = [];
@@ -937,8 +938,8 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = null;
-                area.coordNaming = null;
+                area.name = '';
+                area.coordNaming = [];
               }
             }
           });

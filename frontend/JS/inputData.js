@@ -141,7 +141,7 @@ function inputForce(x, y, obj, loadKey) {
       }
       this.destroy();
       valueLoad = undefined;
-      PaintIn.renderObject(processingData.allObject);
+      PaintIn.renderObject(processingnul.allObject);
       PaintIn.isCancled = false;
     },
   });

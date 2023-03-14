@@ -104,6 +104,7 @@ class Paint {
 
     //requestAPI
     this.APIurl = document.getElementById("urlInputted");
+    this.urlFunc = document.getElementById("functionNameInputted");
 
     //move Obj
     this.isMovingObj = false;
@@ -1583,9 +1584,11 @@ class Paint {
   }
 
   testAPI() {
+      // show spinner
     if (PaintIn.APIurl.value !== "") {
+      document.getElementById("spinner").style.display = "flex";
       urlSendRequest = PaintIn.APIurl.value;
-      let pname = "data";
+      let pname = PaintIn.urlFunc.value;
       let params = processingData.prototype.saveObj();
       let bodyData = {
         rhs: [pname, params], //rhs: reading - used when send data
@@ -1600,11 +1603,10 @@ class Paint {
         method: "POST",
         url: urlSendRequest,
         data: bodyData
-//        withCredentials: true,
-//        crossDomain: true
       });
 
       promise.then((result) => {
+        document.getElementById("spinner").style.display = "none";
         let receiveData;
         try {
           receiveData = result.data["lhs"][0];
@@ -1620,10 +1622,12 @@ class Paint {
       });
 
       promise.catch(function (err) {
+        document.getElementById("spinner").style.display = "none";
         console.log("err", err);
         dataLogFile.push(JSON.stringify(err));
         PaintIn.renderCommand("textCommands");
       });
+//      spinner.style.display = "none";
     }
   }
 
@@ -2286,7 +2290,7 @@ class Paint {
         this.fillArea(arrObj[i]);
         if (
           arrObj[i].name !== undefined &&
-          arrObj[i].name !== "undefined" &&
+          arrObj[i].name !== '' &&
           arrObj[i].name !== null
         ) {
           this.drawText(arrObj[i], arrObj[i].name);
@@ -2300,7 +2304,7 @@ class Paint {
         );
         if (
           arrObj[i].name !== undefined &&
-          arrObj[i].name !== "undefined" &&
+          arrObj[i].name !== '' &&
           arrObj[i].name !== null
         ) {
           this.drawText(arrObj[i], arrObj[i].name);
