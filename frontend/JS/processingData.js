@@ -938,8 +938,8 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = '';
-                area.coordNaming = [];
+                area.name = null;
+                area.coordNaming = null;
               }
             }
           });
@@ -1042,8 +1042,8 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = '';
-                area.coordNaming = [];
+                area.name = null;
+                area.coordNaming = null;
               }
             }
           });
