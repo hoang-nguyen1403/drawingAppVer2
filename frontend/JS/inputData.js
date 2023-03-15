@@ -1,5 +1,9 @@
 var nameID;
 
+function deselectAll() {
+      var event = new KeyboardEvent('keydown', { keyCode: 27 });
+      document.dispatchEvent(event);
+  }
 function inputName(x, y, obj) {
   nameID = new CanvasInput({
     canvas: document.getElementById("myCanvas"),
@@ -29,6 +33,7 @@ function inputName(x, y, obj) {
     },
   });
   nameID.focus();
+//  deselectAll;
 }
 
 var nameIDs;

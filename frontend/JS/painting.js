@@ -509,6 +509,27 @@ class Paint {
     }
     //ENTER
     if (event.keyCode === 13) {
+//      if (this.valueComment.value === "l" && this.pen === "select") {
+//        //shortcut for draw line
+//        // press l
+//        //change cursor
+//        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
+//        this.canvas.style.cursor = this.currentCursor;
+//        let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
+//        this.keyDown(spaceKey);
+//        this.onButtonDraw(this.currentValueLine, "line");
+//        this.renderObject(processingData.allObject);
+//      }
+//
+//      if (this.valueComment.value !== "") {
+//        dataLogFile.push(this.valueComment.value);
+//        this.valueComment.value = "";
+//      }
+//
+//      PaintIn.renderCommand("textCommands");
+    deselectAll();
+    }
+    if (event.keyCode === 17) {
       if (this.valueComment.value === "l" && this.pen === "select") {
         //shortcut for draw line
         // press l
@@ -525,10 +546,7 @@ class Paint {
         dataLogFile.push(this.valueComment.value);
         this.valueComment.value = "";
       }
-
-      PaintIn.renderCommand("textCommands");
-    }
-
+     }
     //F2 input length Line
     if (event.keyCode === 113 && lengthLine === undefined) {
       let currentLine;
@@ -733,6 +751,7 @@ class Paint {
     return arr1.concat(arr2);
   }
 
+
   //press button Name, Fore, Moment
   addValueName() {
     //change cursor
@@ -751,7 +770,6 @@ class Paint {
     this.offButton(this.curValPointLoad, "pointLoad");
     this.offButton(this.curValPressLoad, "pressLoad");
     // this.offButton(this.curValAxialForce, "axialForce");
-
     this.onOffButton(this.curValName, "valueName");
 
     if (this.curValName.value === "On") {
