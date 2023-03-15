@@ -401,9 +401,9 @@ button {
     background-position: left;
     background-size: 30px;
     background-repeat: no-repeat;
-    position: fixed;
+    position: absolute;
     margin: 5px;
-    right: 700px;
+    left: 30%;
     display: none;
 }
 
