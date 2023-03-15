@@ -1042,8 +1042,8 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = null;
-                area.coordNaming = null;
+                area.name = '';
+                area.coordNaming = [];
               }
             }
           });
