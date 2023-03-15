@@ -85,14 +85,14 @@
 				</label>
 
 				<div id="BDCondition">
+					</button><button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
+				style="background-image: url(frontend/img/apply_name.svg)"></button>
 				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
 					style="background-image: url(frontend/img/apply_force.svg)"></button>
 				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
 					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
 				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
 					style="background-image: url(frontend/img/apply_moment.svg)"></button>
-				</button><button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"
-				style="background-image: url(frontend/img/apply_name.svg)"></button>
 				</div>
 				<div class="request">
 					<label class="url">
@@ -103,9 +103,10 @@
 						<p>Function</p>
 						<input type="text" id="functionNameInputted" value="">
 					</label>
-					<button id="sendRequest" title="Request" type="button" onclick="PaintIn.testAPI()"></button>
+
 				</div>
 				<button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button>
+				<button id="sendRequest" title="Request" type="button" onclick="PaintIn.testAPI()"></button>
 
 			</div>
 			<div id="wrap_canvas_div">
