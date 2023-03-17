@@ -503,11 +503,28 @@ class processingData {
     //   allLine[i].Point[1].x = endNode[0];
     //   allLine[i].Point[1].x = endNode[1];
     // }
-
     for (let point of processingData.allPoint) {
       nodes.push(point.point);
-      node_names.push(point.name);
+//      node_names.push(point.name);
+      if (point.name != null) {
+        node_names.push(point.name);
+      } else {
+        node_names.push("");
+      }
+//      if(point.pointLoads != null) {
+//        nodal_loads.push(point.pointLoads);
+//      } else {
+//        nodal_loads.push([{
+//          type: "force",
+//          parameters: { force_x: 0, force_y: 0 },
+//        }]);
+//      }
+    if(point.pointLoads != null) {
       nodal_loads.push(point.pointLoads);
+    } else {
+      nodal_loads.push([]);
+      }
+
     }
     for (let line of processingData.allLine) {
       let index1 = nodes.findIndex(
@@ -518,8 +535,19 @@ class processingData {
       );
       let segment = [index1, index2];
       segments.push(segment);
-      segment_names.push(line.name);
-      segment_loads.push(line.lineLoads);
+//      segment_names.push(line.name);
+      if(line.name != null) {
+        segment_names.push(line.name);
+      } else {
+        segment_names.push("");
+      }
+//      segment_loads.push(line.lineLoads);
+      if(line.lineLoads != null) {
+        segment_loads.push(line.lineLoads);
+      } else {
+        segment_loads.push([]);
+      }
+
     }
     for (let area of processingData.allArea) {
       let surface = [];
@@ -532,8 +560,17 @@ class processingData {
         surface.push(index);
       }
       surfaces.push(surface);
-      surface_names.push(area.name);
-      surface_coords.push(area.coordNaming);
+//      surface_names.push(area.name);
+//      surface_coords.push(area.coordNaming);
+      if(area.name != null) {
+        surface_names.push(area.name);
+      } else {
+        surface_names.push("");}
+      if(area.coordNaming != null) {
+        surface_coords.push(area.coordNaming);
+      } else {
+      surface_coords.push([]);
+      }
     }
     let jsonObject = {
       num_nodes: num_nodes,
@@ -773,7 +810,7 @@ class processingData {
       let lineName = inputData["segment_names"][i];
       let lineWidth = PaintIn.currentWidth;
       let lineColor = PaintIn.currentColor;
-      let lineLoads = inputData["segment_loads"][i];
+      let lineLoads = inputData["segment_loads"][i]
       let line = new Line(
         point1,
         point2,
@@ -810,13 +847,16 @@ class processingData {
       //create area
       let pointInArea = [];
       let rawArea = inputData["surfaces"][i];
-      let coordName = inputData["surface_coords"][i];
+      let coordName = inputData["surface_coords"][i]
+      let sur_name = inputData["surface_names"][i]
+//      let coordName = inputData["surface_coords"][i] != null ? inputData["surface_coords"][i] : [];
+//      let sur_name = inputData["surface_names"][i] != null ? inputData["surface_names"][i] : "";
       for (let ii = 0; ii < rawArea.length; ii++) {
         pointInArea.push(allPoint[rawArea[ii]].point);
       }
       let area = new Area(
         allLineOfArea,
-        inputData["surface_names"][i],
+        sur_name,
         coordName
       );
       allArea.push(area);
@@ -938,8 +978,8 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = null;
-                area.coordNaming = null;
+                area.name = "";
+                area.coordNaming = [];
               }
             }
           });
@@ -1042,8 +1082,8 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = null;
-                area.coordNaming = null;
+                area.name = "";
+                area.coordNaming = [];
               }
             }
           });
