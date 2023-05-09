@@ -572,6 +572,9 @@ class processingData {
       surface_coords.push([]);
       }
     }
+
+    PaintIn.saveCommentText()
+
     let jsonObject = {
       num_nodes: num_nodes,
       num_segments: num_segments,
@@ -586,6 +589,8 @@ class processingData {
       segment_loads: segment_loads,
       text_data: dataLogFile,
     };
+    
+
     dataSaved = JSON.stringify(jsonObject);
     return dataSaved;
   }
@@ -596,6 +601,14 @@ class processingData {
     let blob = new Blob([jsonData], { type: "text/plain;charset=utf-8" });
     saveAs(blob, "data.json");
   }
+
+  // save comment text into .txt
+  saveTextFile() {
+    let textToSave = document.getElementById("textBox").value;
+    let textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
+    saveAs(textToSaveAsBlob,"myFile.txt");
+  }
+   
 
   //point - line -area
   // updateStorage() {

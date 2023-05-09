@@ -343,6 +343,28 @@ button {
     background-size: 29px 29px;
 }
 
+#uploadFile_label {
+    display: inline-block;
+    color: rgb(3, 93, 209);
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 60px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+#cmtSaveText {
+    padding: 5px;
+    width: 70px;
+    height: 30px;
+    background-color: lightblue;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
 #openFile_Solu {
     background: url(img/post_mode.png);
     width: 40px;
@@ -560,7 +582,7 @@ button {
 #tab-comments>input {
     margin: 15px;
     width: 80%;
-    height: 17px;
+    height: 25%;
 }
 
 /* difference text in tab */
@@ -576,10 +598,11 @@ button {
 #valueInputed {
     margin: 10px 10px 10px 25px;
     width: 80%;
-    height: 77%;
+    height: 80%;
 }
 
 #valueInputed>div {
+    /* vertical-align: top; */
     display: block;
     align-items: center;
     text-align: justify;

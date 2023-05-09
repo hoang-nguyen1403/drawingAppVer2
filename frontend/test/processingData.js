@@ -480,6 +480,9 @@ class processingData {
             surfaces.push(surface);
             surface_names.push(area.name)
         }
+      
+        
+        
         let jsonObject = {
             "num_nodes": num_nodes,
             "num_segments": num_segments,
@@ -493,6 +496,8 @@ class processingData {
             "segment_loads": segment_loads,
             "text_data": dataLogFile,
         }
+       
+
         dataSaved = JSON.stringify(jsonObject)
         return dataSaved;
         //save to file

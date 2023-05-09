@@ -83,7 +83,7 @@ class Mesh {
         arrNodeColor.push(colors[indexValueColor[i]]);
       }
       this.nodesColor = arrNodeColor;
-
+      
       //edge && each eleme constain 6 edges
       let point1;
       let point2;

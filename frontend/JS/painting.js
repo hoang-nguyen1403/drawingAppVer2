@@ -182,7 +182,7 @@ class Paint {
     PaintIn.ctx.fillStyle = "red";
     PaintIn.ctx.fillText(text, x, y);
   }
-  //
+  
 
   //Press button new/clear all Canvas
   clearAll() {
@@ -221,6 +221,24 @@ class Paint {
     this.renderObject(processingData.allObject);
     PaintIn.clearCommands("textCommands");
   }
+
+  // save comment text
+  saveCommentText() {
+    if (this.valueComment.value == []) {
+      dataLogFile.push(this.valueComment.value); 
+    }
+    if (this.valueComment.value !== []) {
+      dataLogFile[0] = this.valueComment.value;
+    }
+  }
+
+  // Upload file
+  // uploadFile() {
+    // const input = document.getElementById("fileUpload");
+    // const file = input.files[0];
+    // }
+ 
+
 
   //set up color, size for pen
   choiceEvent() {
@@ -274,6 +292,17 @@ class Paint {
         }
       };
       fr.readAsText(this.files[0]);
+    });
+
+    //input text comment file
+    document.getElementById("uploadFile").addEventListener("change", function() {
+      var textInput = document.getElementById('textBox');
+      var reader = new FileReader();
+      reader.onload = function() {
+        let text = reader.result;
+        textInput.value = text;
+      };
+      reader.readAsText(this.files[0]);
     });
 
     //input img
@@ -521,10 +550,10 @@ class Paint {
 //        this.renderObject(processingData.allObject);
 //      }
 //
-//      if (this.valueComment.value !== "") {
-//        dataLogFile.push(this.valueComment.value);
-//        this.valueComment.value = "";
-//      }
+    //  if (this.valueComment.value !== "") {
+    //    dataLogFile.push(this.valueComment.value);
+    //    this.valueComment.value = "";
+    //  }
 //
 //      PaintIn.renderCommand("textCommands");
     deselectAll();
@@ -541,11 +570,10 @@ class Paint {
         this.onButtonDraw(this.currentValueLine, "line");
         this.renderObject(processingData.allObject);
       }
-
-      if (this.valueComment.value !== "") {
-        dataLogFile.push(this.valueComment.value);
-        this.valueComment.value = "";
-      }
+      // if (this.valueComment.value !== "") {
+      //   dataLogFile.push(this.valueComment.value);
+      //   // this.valueComment.value = "";
+      // }
      }
     //F2 input length Line
     if (event.keyCode === 113 && lengthLine === undefined) {

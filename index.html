@@ -24,7 +24,7 @@
 			</div>
 
 			<div>
-				<button id="grid" title="Grid" type="button" class="option-btn btn-off btn" onclick="PaintIn.buttonGrid()"
+				<button id="grid" title="Grid" type="button"  onclick="PaintIn.buttonGrid()"
 					style="background-image: url(frontend/img/grid.png)" value="Off"></button>
 				<!-- <input type="range" name="sizeGrid" min="10" max="100" id="sizeGrid" class="rangeSlider"> -->
 			</div>
@@ -133,10 +133,20 @@
 
 			<div id="tab-comments">
 				<p id="lableTab">Text comments</p>
-				<input type="text" id="textBox" value="">
+				<textarea id="textBox" name="" rows="17" cols="32" style="padding: 2px;">
+				</textarea>
+				<div id="btn_tab_cmt">
+					<label id="uploadFile_label" title="Upload file" >Choose a file
+						<input type="file" name="uploadFile" id="uploadFile" style="display: none">
+					</label>
+
+					<button id="cmtSaveText" title="Save into a .txt" type="button" class="btn" onclick="processingData.prototype.saveTextFile()" value="Off"
+					>Save text</button>
+
+				</div>
 				<div id="spinner"></div>
 				<div id="valueInputed">
-					<p style="background-color: #ffffff; height: 100%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
+					<p style="background-color: #ffffff; height: 40%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
 					</p>
 				</div>
 
