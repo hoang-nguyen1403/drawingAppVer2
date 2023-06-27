@@ -41,6 +41,15 @@ class processingData {
     }
     return AllPointObj;
   }
+  //
+  createSegment(segment_1,segment_2){
+    let AllSeg=[];
+    for (let i = 0; i< segment_1.length; i++){
+      let segment =[segment_1[i],segment_2[i]];
+      AllSeg.push(segment);
+    }
+    return AllSeg;
+  }
   //Line
   createLine(PointList, nameList, colorList, widthList, lineLoadsList) {
     let AllLineObj = [];
@@ -815,6 +824,7 @@ class processingData {
 
     //create line
     let allLine = [];
+    let AllSeg=[];
     // console.log("input data->>>>>>>>>>>>");
     // console.log(inputData["segments"]);
     for (let i = 0; i <= inputData["segments"].length - 1; i++) {
@@ -833,8 +843,8 @@ class processingData {
         lineLoads
       );
       allLine.push(line);
+      AllSeg.push(inputData["segments"][i]);
     }
-    console.log("line" + allLine)
     let allArea = [];
     for (let i = 0; i <= inputData["surfaces"].length - 1; i++) {
       let allLineOfArea = [];
@@ -878,6 +888,7 @@ class processingData {
     processingData.allPoint = allPoint;
     processingData.allLine = allLine;
     processingData.allArea = allArea;
+    processingData.allSeg = AllSeg;
     //update storage
     this.updateStorage();
   }
@@ -902,6 +913,7 @@ class processingData {
       let edge = [point1, point2];
       edges.push(edge);
     }
+    
     //dx, dy (pixel)
     let dx = 0.3;
     let dy = 0.3;
@@ -1440,6 +1452,8 @@ processingData.allAreaCenter = [];
 processingData.newObjects = [];
 processingData.oldObjects = [];
 processingData.Lines = [];
+processingData.allSeg = [];
+
 //----------------------------//
 
 function getNearest(listPoints, currentPoint) {

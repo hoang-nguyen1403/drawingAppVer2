@@ -15,8 +15,8 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    overscroll-behavior-x: none;
+    overflow: scroll;
+    /* overscroll-behavior-x: none; */
 }
 
 #header {
@@ -86,7 +86,7 @@ body {
 
 #myCanvas {
     background-color: white;
-    height: 100%;
+    height: 80vh;
     width: 100%;
 }
 
@@ -543,6 +543,21 @@ button {
     background-size: 30px 30px;
 }
 
+#modeGL {
+    /* background: url(./img/3D\ mode.png);
+     */
+    background: url(./img/post_mode.png);
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#modeGL:hover {
+    background-size: 30px 30px;
+}
+
 /* ----------Tab comment */
 
 #tab-icon {
@@ -706,4 +721,16 @@ button {
   to {
     transform: rotate(360deg);
   }
+}
+#WebGL_area {
+    display: none;
+    flex: 1;
+    border: 1px solid #0784d1;
+    width: 100%;
+}
+#canvasGL{
+    background-color: #fff;
+}
+#canvas_colorbar{
+    background-color: #fff;
 }

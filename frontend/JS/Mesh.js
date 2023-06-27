@@ -12,10 +12,16 @@ class Mesh {
       document.getElementById("fillColor").classList.add("active");
       Mesh.curValFillColor.value = "On";
       this.fillElements();
+      Draw.prototype.makeCameraMatrix();
+      Draw.prototype.updateViewProjection();         
+      Draw.prototype.draw();
     } else {
       Mesh.curValFillColor.value = "Off";
       document.getElementById("fillColor").classList.remove("active");
       this.drawMesh();
+      Draw.prototype.makeCameraMatrix();
+      Draw.prototype.updateViewProjection();         
+      Draw.prototype.draw();
     }
   }
 
@@ -153,6 +159,7 @@ class Mesh {
         let elem = new Area(arrElem, null);
         Mesh.elements.push(elem);
       }
+      this.fillElementsGL();
     }
     else {
       jsmat = Mesh.inputData["jsmat"][0];
@@ -204,6 +211,7 @@ class Mesh {
         Mesh.elements.push(elem);
       }
     }
+    this.fillElementsGL();
     this.drawMesh();
     return;
   }
@@ -298,8 +306,70 @@ class Mesh {
         let color = colors[colorIndex];
         nodeColors.push(color);
       }
+
       processingData.prototype.polygonFill(coordXs, coordYs, nodeColors);
     }
+  }
+
+  fillElementsGL() {
+    const FEcoordElem = JSON.parse(JSON.stringify(FEcoord));
+    let rotMatrix = [
+      [math.cos(math.PI / 2), -math.sin(math.PI / 2)],
+      [math.sin(math.PI / 2), math.cos(math.PI / 2)],
+    ];
+    let maxValue = math.max(FEsoln);
+    let minValue = math.min(FEsoln);
+    let delta = math.abs(minValue);
+    delta = math.ceil(delta, 1);
+    let nshades = math.ceil((maxValue + delta) * 100);
+    let colors = colormap({
+      colormap: "jet",
+      nshades: nshades,
+      format: "rgba",
+      alpha: 1,
+    });
+    Draw.fillcolor=[];
+    Draw.colorvec4=[];
+    Draw.point_x=[];
+    Draw.point_y=[];
+    for (let surface of FEtri) {
+      let coordXs = [];
+      let coordYs = [];
+      let nodeColors = [];
+      for (let i = 0; i < surface.length - 3; i++) {
+        let nodeIndex = surface[i];
+        let nodeCoord = [...FEcoordElem[nodeIndex - 1]];
+        //scale
+        nodeCoord[0] *= scale;
+        nodeCoord[1] *= scale;
+        //move system
+        nodeCoord[0] -= 100;
+        nodeCoord[1] -= 100;
+        //rot
+        nodeCoord = math.multiply(nodeCoord, rotMatrix);
+        nodeCoord = nodeCoord.flat();
+        //move system
+        nodeCoord[0] += baseCoord[0] + 100;
+        nodeCoord[1] += baseCoord[1] + 100;
+        coordXs.push(nodeCoord[0]);
+        coordYs.push(nodeCoord[1]);
+        Draw.point_x.push(nodeCoord[0]);
+        Draw.point_y.push(nodeCoord[1]);
+
+        //color
+        let colorIndex = math.round((FEsoln[nodeIndex - 1] + delta) * nshades);
+        let color = colors[colorIndex];
+        nodeColors.push(color);
+        Draw.fillcolor.push(color);
+      }
+    }
+    for (let element of Draw.fillcolor){
+      for (let i=0;i<element.length-1;i++){
+          let r = math.round(math.round(element[i]/255*10,1)/10,2)
+          Draw.colorvec4.push(r);
+      }
+      Draw.colorvec4.push(element[3]);
+  }
   }
 
   drawColorBar() {
@@ -310,11 +380,11 @@ class Mesh {
     let delta = math.abs(minValue);
     delta = math.ceil(delta, 1);
 
-    let xMin = 200;
-    let xMax = 600;
-    let yMin = 100;
-    let yMax = 500;
-    let xCBSpace = 70;
+    let xMin = 1000;
+    let xMax = 1444-50;
+    let yMin = 0;
+    let yMax = 400;
+    let xCBSpace = 0;
 
     let n = 20;
     let base = [xMax + xCBSpace, yMin];
@@ -328,23 +398,71 @@ class Mesh {
       format: "hex",
       alpha: 1,
     });
+    let barcolors1 = colormap({
+      colormap: "jet",
+      nshades: n,
+      format: "rgba",
+      alpha: 1,
+    });
     barcolors.reverse();
+    barcolors1.reverse();
     //
     let dValue = (maxValue - minValue) / (n - 1);
     let value = math.range(minValue, maxValue + dValue, dValue);
     value._data.reverse();
+    console.log(rangeY._data.length)
+      Draw.colorbar_size=[];
     for (let i = 0; i <= rangeY._data.length - 1; i++) {
       //fill block
+      let vec4color=[];
+      Draw.colorbar_indices=[];
       PaintIn.ctx.fillStyle = barcolors[i];
+      for (let j=0;j<barcolors1[i].length-1;j++){
+        let r = math.round(math.round(barcolors1[i][j]/255*10,1)/10,2)
+        vec4color.push(r)
+      }
+      vec4color.push(barcolors1[i][3]);
+      console.log(vec4color);
       PaintIn.ctx.fillRect(base[0], rangeY._data[i], width, dy);
+      Draw.colorbar_size.push(0);
+      Draw.colorbar_size.push(rangeY._data[i]);
+      Draw.colorbar_size.push(0+width);
+      Draw.colorbar_size.push(rangeY._data[i]);
+      Draw.colorbar_size.push(0+width);
+      Draw.colorbar_size.push((rangeY._data[i]+dy));
+      Draw.colorbar_size.push(0);
+      Draw.colorbar_size.push((rangeY._data[i]+dy));
+      
+      Draw.colorbar_indices.push(4*i);
+      Draw.colorbar_indices.push(4*i+1);
+      Draw.colorbar_indices.push(4*i+2);
+      Draw.colorbar_indices.push(4*i);
+      Draw.colorbar_indices.push(4*i+2);
+      Draw.colorbar_indices.push(4*i+3);
+      // console.log(Draw.colorbar_indices)
       //render value of block
-      let xTextSpace = 15;
-      let xPos = base[0] + width + xTextSpace;
-      let yPos = rangeY._data[i] + dy / 2;
-      PaintIn.ctx.strokeText(math.round(value._data[i], 2), xPos, yPos);
+      // let xTextSpace = 15;
+      // let xPos = base[0] + width + xTextSpace;
+      // let yPos = rangeY._data[i] + dy / 2;
+      // PaintIn.ctx.strokeText(math.round(value._data[i], 2), xPos, yPos);
+      var bufferInfo_fill = twgl.createBufferInfoFromArrays(g_l, {
+        a_position: {
+          numComponents: 2,
+          data: Draw.colorbar_size,
+        },
+        indices: Draw.colorbar_indices,
+      });
+      Draw.scene_color.push({
+        x:0,y:0,rotation:0,scale:1,color:vec4color,bufferInfo:bufferInfo_fill
+      })
+
     }
+    console.log(Draw.colorbar_indices);
+    console.log(Draw.colorbar_size);
+    Draw.prototype.colorBar();
     //draw box
     PaintIn.ctx.rect(base[0], base[1], width, yMax - base[1]);
+    // Draw.colorbar_size.push(base[0],base[1],base[0]+width,base[1],base[0]+width,yMax,base[0],yMax)
     // PaintIn.ctx.lineWidth = 2;
     PaintIn.ctx.stroke();
   }

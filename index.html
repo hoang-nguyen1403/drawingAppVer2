@@ -8,6 +8,24 @@
 	<link rel="stylesheet" href="frontend/painting.css">
 	<link rel="icon" type="image/x-icon" href="frontend/img/favicon.ico">
 	<title>Drawing App</title>
+
+		<!-- WEBGL -->
+		<script type="text/javascript"
+			
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	</script>
+	<script type="text/x-mathjax-config"></script>
+	<script src="js/jquery-1.9.1.js"></script>
+	<script src="js/glMatrix-0.9.5.min.js"></script>
+	<script src="js/numeric-1.2.6.min.js"></script>
+	<script src="js/jszip.min.js"></script>
+	<script src="js/jdataview.js"></script>
+	<script src="js/flotr2.min.js"></script>
+	<script src="js/math.min.js"></script>
+	<script src="js/gunzip.min.js"></script>
+	<script src="js/jstree.min.js"></script>
+	<script src="js/kdTree-min.js"></script>
+	
 </head>
 
 <body>
@@ -75,9 +93,13 @@
 
 				<!-- request -->
 				<button id="meshing" title="Mesh" onclick="PaintIn.mps_PALc('phi',processingData.prototype.saveObj());"></button>
-				<button id="openFile_Solu" title="Solve" onclick="PaintIn.getAPI()"></button>
+				<!-- <button id="openFile_Solu" title="Solve" onclick="PaintIn.getAPI()"></button> -->
 				<label id="ChangeMode">
-					<button id="modeDrawing" title="Drawing mode" type="button" onclick="PaintIn.changeMode()" value="On"></button>
+					<button id="modeDrawing" title="Drawing mode" type="button" ></button>
+				</label>
+				<!-- GLMode -->
+				<label id="ChangeModeGL">
+					<button id="modeGL" title="Solution mode" type="button"></button>
 				</label>
 				<label class="inputImage" title="Open image">
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
@@ -115,6 +137,12 @@
 				</canvas>
 			</div>
 
+			<div id="WebGL_area"  >
+				<div id="aks_visualizer">
+						<canvas id = "canvasGL"></canvas>
+						<canvas id = "canvas_colorbar"></canvas>
+				</div>
+			</div>
 			<div id="coord_div">
 				<div id="icon_coord">
 				</div>
@@ -161,52 +189,32 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/kd-tree-javascript@1.0.3/kdTree-min.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
-
 	<script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.min.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 	<script src="frontend/libs/math.js"></script>
 
+
+
 	<!-- SPL library -->
-	<!-- <script src="frontend/JS/p5.min.js"></script>
-	<script src="frontend/JS/p5.dom.min.js"></script>
-	<script src="frontend/JS/p5.sound.min.js"></script>
-	<script src="frontend/JS/jsspline.js"></script> -->
 	<script src="frontend/libs/CanvasInput.js"></script>
 	<script src="frontend/JS/fileSaver/src/FileSaver.js"></script>
 	<script src="frontend/libs/colormapfix.js"></script>
 	<script src="frontend/JS/inputData.js"></script>
 	<script src="frontend/JS/addValue.js"></script>
-
 	<script src="frontend/JS/processingData.js"></script>
 	<script src="frontend/JS/Mesh.js"></script>
 	<script src="frontend/JS/painting.js"></script>
-
-	<!-- <script>
-		let cv = new ConvexHull();
-		console.log(cv)
-	</script>
-	<script type="text/javascript">
-		let imgElement = document.getElementById("imageSrc")
-		let inputElement = document.getElementById("fileInput");
-		inputElement.addEventListener("change", (e) => {
-			imgElement.src = URL.createObjectURL(e.target.files[0]);
-		}, false);
-		imgElement.onload = function () {
-			let mat = cv.imread(imgElement);
-		}
-	</script> -->
-
-	<!-- <script type="text/javascript">
-		const form = document.getElementById('inputImg');
-		form.addEventListener('change', function(e) {
-			e.defaultPrevented();
-			const formData = new FormData();
-			console.log(formData)
-
-		});  
-	</script> -->
+	<script src="./frontend/JS/newFunction.js"></script>
+	<script src="./frontend/libs/m3.js"></script>
+	<!-- <script src="js/webgl-utils-2021.js"></script> -->
+	<!-- <script src="./frontend/libs/twgl-full.min.js"></script> -->
+	<script src="./frontend/libs/twgl.js"></script>
+	<script src="./frontend/libs/twgl-full.js"></script>
+	<!-- <script src="./frontend/libs/twgl-full.module.js"></script> -->
+	<script src="./frontend/JS/paintingWebGL.js"></script>
+	<script type="module" src="./frontend/JS/rgbToVec4.js"></script>
 
 </body>
 
