@@ -188,13 +188,13 @@ button {
 
 #property {
     position: absolute;
-    right: 17.1%;
-    bottom: 1%;
+    right: 10px;
+    top: 558px;
     width: 150px;
     display: none;
     flex-direction: column;
     font-size: 13px;
-    /* background-color: #ffffff; */
+    background-color: #ffffff;
 }
 
 .property_label {
@@ -204,7 +204,7 @@ button {
     padding: 0%;
     font-size: 22px;
     border: 1px solid black;
-    background-color: rgb(162 202 212 / 80%);
+    background-color: rgb(230, 245, 255);
     font-family: UVF Bariol Regular;
 }
 
@@ -212,7 +212,7 @@ button {
     height: 15px;
     background-image: url(img/arrow.png);
     background-size: 10px 10px;
-    background-color: rgb(162 202 212 / 98%);;
+    background-color: rgb(230, 245, 255);;
     border: 1px;
     position: absolute;
     right: -3%;
@@ -448,10 +448,11 @@ button {
     width: 26px;
     background-image: url(img/arrow.png);
     background-size: 20px 20px;
-    background-color: rgb(162 202 212 / 97%);
+    background-color: rgb(230, 245, 255);
     border: 0px;
+    transform: rotate(-90deg);
     position: absolute;
-    right: 3px;
+    right: 4px;
 }
 
 
@@ -519,17 +520,25 @@ button {
 } */
 
 #fillColor {
-    background: url(img/fill-color.png);
-    /* background-color: white; */
+    background: url(img/mesh.png);
+    width: 40px;
+    height: 40px;
     position: absolute;
     top: 480px;
     left: 25px;
     display: none;
-    background-position: center;
-    background-size: 25px 25px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
     background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
 }
 
+#fillColor:hover {
+    background-size: 35px 35px;
+}
 #modeDrawing {
     background: url(img/switch.png);
     background-size: 25px 25px;
@@ -724,13 +733,37 @@ button {
 }
 #WebGL_area {
     display: none;
-    flex: 1;
+    /* flex: 1; */
     border: 1px solid #0784d1;
     width: 100%;
 }
+#text_colorbar{
+    background-color: #fff;
+    width: 65px;
+    height: 400px;
+    right: 8px;
+    top: 156px;
+    position: absolute;
+}
 #canvasGL{
     background-color: #fff;
+    /* height: 100%;
+    width: 100%; */
+    /* position: absolute; */
 }
 #canvas_colorbar{
-    background-color: #fff;
+    right: 73px;
+    top: 156px;
+    position: absolute;
 }
+#form {
+    position: absolute;
+    top: 126px;
+    right: 10px;
+    display: flex;
+    height: 30px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+

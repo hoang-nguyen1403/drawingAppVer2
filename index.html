@@ -8,10 +8,7 @@
 	<link rel="stylesheet" href="frontend/painting.css">
 	<link rel="icon" type="image/x-icon" href="frontend/img/favicon.ico">
 	<title>Drawing App</title>
-
-		<!-- WEBGL -->
-		<script type="text/javascript"
-			
+	<script type="text/javascript"
 		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 	</script>
 	<script type="text/x-mathjax-config"></script>
@@ -140,7 +137,16 @@
 			<div id="WebGL_area"  >
 				<div id="aks_visualizer">
 						<canvas id = "canvasGL"></canvas>
+						<canvas id = "text_colorbar"></canvas>
 						<canvas id = "canvas_colorbar"></canvas>
+						<form id="form">
+							<!-- <label for="filter">Select layer:</label> -->
+							<select name="filter" id="filter" onchange="filter_change()" style="display: none;">
+							  <option value="Mode 1">Mode 1</option>
+							  <option value="Mode 2">Mode 2</option>
+							  <option value="Mode 3">Mode 3</option>
+							</select>
+						</form>
 				</div>
 			</div>
 			<div id="coord_div">
@@ -208,14 +214,10 @@
 	<script src="frontend/JS/painting.js"></script>
 	<script src="./frontend/JS/newFunction.js"></script>
 	<script src="./frontend/libs/m3.js"></script>
-	<!-- <script src="js/webgl-utils-2021.js"></script> -->
-	<!-- <script src="./frontend/libs/twgl-full.min.js"></script> -->
 	<script src="./frontend/libs/twgl.js"></script>
 	<script src="./frontend/libs/twgl-full.js"></script>
-	<!-- <script src="./frontend/libs/twgl-full.module.js"></script> -->
 	<script src="./frontend/JS/paintingWebGL.js"></script>
-	<script type="module" src="./frontend/JS/rgbToVec4.js"></script>
-
+	<script src="frontend/JS/event.js"></script>
 </body>
 
 </html>

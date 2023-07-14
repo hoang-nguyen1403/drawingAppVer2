@@ -224,15 +224,45 @@ class Paint {
       this.drawGrid();
     }
     //---// clear saved data
-    Draw.lineVertex=[];
-    Draw.point_x=[];
-    Draw.point_y=[];
-  
-    Draw.takePoint=[];
-    Draw.segment=[];
-    Draw.scene=[];
+    this.camera = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      zoom: 1,
+    };
 
-    Draw.prototype.draw();
+    // Declare scene view and set up mouse position
+    Mesh.elements=[];
+    Mesh.edges=[];
+    Mesh.nodes=[];
+    DrawGL.camera = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      zoom: 1,
+    }
+    DrawGL.nearPointGL=[];
+    DrawGL.lineVertex = [];
+    DrawGL.point_x = [];
+    DrawGL.point_y = [];
+    DrawGL.segment_mesh = [];
+    DrawGL.segment_fill = [];
+    DrawGL.segment = [];
+    DrawGL.takePoint = [];
+    DrawGL.fillcolor = [];
+    DrawGL.colorbar_size = [];
+    DrawGL.colorbar_indices = [];
+    DrawGL.pointcheck = [];
+    DrawGL.takevalueRange = [];
+    DrawGL.scene = [];
+    DrawGL.scene_fill = [];
+    DrawGL.scene_color = [];
+    DrawGL.scene_load = [];
+    DrawGL.colorvec4 = [];
+    DrawGL.ctx_gl.clearRect(0,0,65,400);
+    DrawGL.draw();
+    DrawGL.gl_colorbar.clear(DrawGL.gl_colorbar.COLOR_BUFFER_BIT)
+    document.getElementById("filter").style.display="none";
     processingData.allLine = [];
     processingData.allPoint = [];
     processingData.allArea = [];
@@ -300,13 +330,20 @@ class Paint {
     // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
+      PaintIn.clearAll();
       ChangeModeGL();
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
         if (inputData["jsmat"] !== undefined) {
-          PaintIn.clearAll();
+          document.getElementById("filter").style.display="block";
           Mesh.prototype.createDataMesh(inputData);
+          for (let i=0;i<FEsoln.length;i++){
+            DrawGL.takevalueRange.push(
+              {coord:[Mesh.nodes[i].x,Mesh.nodes[i].y],FEsoln_value:FEsoln[i],FEsoln_value_1:FEsoln1[i],FEsoln_value_2:FEsoln2[i]},
+            );
+          }
+
           // Max element for Uint16array is 10921 elements;
           var max_element = 10921;
           var count_element = Mesh.elements.length/max_element;
@@ -314,101 +351,102 @@ class Paint {
             count_element=Math.round(count_element)+1;
           }
           for (let i=0;i<count_element;i++){
-            Draw.segment=[];
-            Draw.lineVertex=[];
+            DrawGL.segment_mesh=[];
+            DrawGL.lineVertex=[];
             let count=0;
             let test=Mesh.elements.length-max_element*i;
             let max = max_element*i;
             for (let z=max; z<Mesh.elements.length;z++){
-              Draw.lineVertex.push(Mesh.elements[z].pointFlow)
+              DrawGL.lineVertex.push(Mesh.elements[z].pointFlow)
             }
             for (let j=0; j<= test;j++){
               if (count==max_element+1) break;
               // put indices for lines
-              Draw.segment_mesh.push(6*j);
-              Draw.segment_mesh.push(6*j+1);
-              Draw.segment_mesh.push(6*j+1);
-              Draw.segment_mesh.push(6*j+2);
-              Draw.segment_mesh.push(6*j+2);
-              Draw.segment_mesh.push(6*j+3);
-              Draw.segment_mesh.push(6*j+3);
-              Draw.segment_mesh.push(6*j+4);
-              Draw.segment_mesh.push(6*j+4);
-              Draw.segment_mesh.push(6*j+5);
-              Draw.segment_mesh.push(6*j+5);
-              Draw.segment_mesh.push(6*j);
+              DrawGL.segment_mesh.push(6*j);
+              DrawGL.segment_mesh.push(6*j+1);
+              DrawGL.segment_mesh.push(6*j+1);
+              DrawGL.segment_mesh.push(6*j+2);
+              DrawGL.segment_mesh.push(6*j+2);
+              DrawGL.segment_mesh.push(6*j+3);
+              DrawGL.segment_mesh.push(6*j+3);
+              DrawGL.segment_mesh.push(6*j+4);
+              DrawGL.segment_mesh.push(6*j+4);
+              DrawGL.segment_mesh.push(6*j+5);
+              DrawGL.segment_mesh.push(6*j+5);
+              DrawGL.segment_mesh.push(6*j);
               count=count+1;
             }
-            Draw.lineVertex=Draw.lineVertex.flat();
-            Draw.lineVertex=Draw.lineVertex.flat();
+            DrawGL.lineVertex=DrawGL.lineVertex.flat();
+            for (let hay=0;hay<DrawGL.lineVertex.length;hay++){
+              DrawGL.pointcheck.push(DrawGL.lineVertex[hay])
+            }
+            DrawGL.lineVertex=DrawGL.lineVertex.flat();
             let colors=[];
-            for (let i=0;i<Draw.lineVertex.length/2;i++){
+            for (let i=0;i<DrawGL.lineVertex.length/2;i++){
                 colors.push(0,0,0,1)
             }
-            var bufferInfo_mesh = twgl.createBufferInfoFromArrays(gl, {
+            var bufferInfo_mesh = twgl.createBufferInfoFromArrays(DrawGL.gl, {
               a_position: {
                 numComponents: 2,
-                data: Draw.lineVertex,
+                data: DrawGL.lineVertex,
               },
               color:colors,
-              indices:Draw.segment_mesh,
+              indices:DrawGL.segment_mesh,
             });
-            Draw.scene.push(
+            DrawGL.scene.push(
               {
                 x:  0, y:  0, rotation: 0,scale: 1, bufferInfo : bufferInfo_mesh
               },
-            )         
+            )        
           }
-          for (let i=0;i<Draw.point_x.length;i++){
-            Draw.takePoint.push(Draw.point_x[i]);
-            Draw.takePoint.push(Draw.point_y[i]);
+          for (let i=0;i<DrawGL.point_x.length;i++){
+            DrawGL.takePoint.push(DrawGL.point_x[i]);
+            DrawGL.takePoint.push(DrawGL.point_y[i]);
           }
-          var bufferInfo_fill = twgl.createBufferInfoFromArrays(gl, {
+          var bufferInfo_fill = twgl.createBufferInfoFromArrays(DrawGL.gl, {
             a_position: {
               numComponents: 2,
-              data: Draw.takePoint,
+              data: DrawGL.takePoint,
             },
-            color:Draw.colorvec4,
+            color:DrawGL.colorvec4,
           });
-          Draw.scene_fill.push({
+          DrawGL.scene_fill.push({
             x:0,y:0,rotation:0,scale:1,bufferInfo:bufferInfo_fill
           })
-          Draw.prototype.draw();
+          DrawGL.draw();
         } else {
+          document.getElementById("filter").style.display="none";
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
           for (let i=0;i<processingData.allPoint.length;i++){
-            Draw.takePoint.push(processingData.allPoint[i].point);
+            DrawGL.takePoint.push(processingData.allPoint[i].point);
           }
           
           for (let i=0;i<processingData.allSeg.length;i++){
-            Draw.segment.push(processingData.allSeg[i]);
+            DrawGL.segment.push(processingData.allSeg[i]);
           }
           
-          Draw.takePoint=Draw.takePoint.flat();
-          Draw.segment=Draw.segment.flat();
-          Draw.lineVertex=Draw.takePoint;
+          DrawGL.takePoint=DrawGL.takePoint.flat();
+          DrawGL.segment=DrawGL.segment.flat();
+          DrawGL.lineVertex=DrawGL.takePoint;
 
-          for (let i = 0; i < Draw.lineVertex.length; i++){
+          for (let i = 0; i < DrawGL.lineVertex.length; i++){
             if (i % 2 == 0) {
-              Draw.point_x.push(Draw.lineVertex[i]);
+              DrawGL.point_x.push(DrawGL.lineVertex[i]);
             }
-            else Draw.point_y.push(Draw.lineVertex[i]);
+            else DrawGL.point_y.push(DrawGL.lineVertex[i]);
           }
           
           // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
-          var bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+          var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
             a_position: {
               numComponents: 2,
-              data: Draw.lineVertex,
+              data: DrawGL.lineVertex,
             },
-            indices:Draw.segment,
+            indices:DrawGL.segment,
           });
-          
-          
-          
-          Draw.scene=[{ x:  0, y:  0, rotation: 0,scale: 1,   color: [0,0,0,1], bufferInfo},];  
-          Draw.prototype.drawPoint();
+          DrawGL.scene_load=[{ x:  0, y:  0, rotation: 0,scale: 1,   color: [0,0,0,1], bufferInfo},];  
+          DrawGL.draw();
 
           //update screen
           PaintIn.renderObject(processingData.allObject);
@@ -2927,12 +2965,16 @@ class Paint {
     if (
       document.getElementsByClassName("boderProperties")[0].style.display ===
       "none"
-    ) {
-      document.getElementsByClassName("boderProperties")[0].style.display =
+      ) {
+        document.getElementsByClassName("boderProperties")[0].style.display =
         "block";
-    } else {
-      document.getElementsByClassName("boderProperties")[0].style.display =
+        document.getElementsByClassName("property-icon")[0].style.transform="rotate(-90deg)"
+        document.getElementsByClassName("property-icon")[0].title = "Close"
+      } else {
+        document.getElementsByClassName("boderProperties")[0].style.display =
         "none";
+        document.getElementsByClassName("property-icon")[0].style.transform="rotate(90deg)"
+        document.getElementsByClassName("property-icon")[0].title = "Open"
     }
   }
 
