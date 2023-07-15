@@ -18,7 +18,7 @@ function ChangeModeDrawing (){
 		document.getElementById("coord_div").style.display = "block";
 		document.getElementById("grid").style.display = "block";
 		document.getElementById("line").style.display = "block";
-		document.getElementById("command").style.display = "block";
+		document.getElementById("command").style.display = "none";
 		document.getElementById("fillColor").style.display = "none";
 }
 

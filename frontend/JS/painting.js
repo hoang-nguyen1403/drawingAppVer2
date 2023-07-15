@@ -241,6 +241,7 @@ class Paint {
       rotation: 0,
       zoom: 1,
     }
+    document.getElementById("fillColor").value="Off";
     DrawGL.nearPointGL=[];
     DrawGL.lineVertex = [];
     DrawGL.point_x = [];

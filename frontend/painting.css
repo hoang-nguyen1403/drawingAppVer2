@@ -324,6 +324,9 @@ button {
     font-family: UVF Bariol Regular;
     width: 100%;
     text-align: center;
+    top : 28%;
+    left: 30px;
+    position: absolute;
 }
 
 #openFile_label {
@@ -524,7 +527,7 @@ button {
     width: 40px;
     height: 40px;
     position: absolute;
-    top: 480px;
+    top: 55%;
     left: 25px;
     display: none;
     border: 2px solid black;

@@ -11,7 +11,6 @@ function getClipSpaceMousePosition(event) {
   // convert to clip space
   const clipX = normalizedX * 2 - 1;
   const clipY = normalizedY * -2 + 1;
-
   return [clipX, clipY];
 }
 
@@ -129,10 +128,9 @@ function checkSolution(event) {
 function showproperties(event) {
   if (event.buttons == 1) {
     if (DrawGL.nearPointGL !== undefined) {
-      for (let i = 0; i < DrawGL.takevalueRange.length; i++) {
-        if (DrawGL.nearPointGL[0].x == DrawGL.takevalueRange[i].coord[0] && DrawGL.nearPointGL[0].y == DrawGL.takevalueRange[i].coord[1]) {
-          document.getElementById("property").style.display = "inline-block"
-          document.getElementById("property").innerHTML = `
+      let Detail = DrawGL.takevalueRange.find(({ coord }) => coord[0] == DrawGL.nearPointGL[0].x && coord[1] == DrawGL.nearPointGL[0].y)
+      document.getElementById("property").style.display = "inline-block"
+      document.getElementById("property").innerHTML = `
           <div class="property_label">
           <p style="display: flex; justify-content: center; align-items: center; width: 100%">DETAIL</p>
           <div>
@@ -152,14 +150,14 @@ function showproperties(event) {
             <div>
                 <p style="display: flex; justify-content: center; align-items: center">FEsoln</p>
                 <div style="text-align: center; display: flex; justify-content: center; align-items: center">
-                  ${math.round(DrawGL.takevalueRange[i].FEsoln_value, 4)}
+                  ${math.round(Detail.FEsoln_value, 4)}
                 </div>
             </div>
             <div>
                 <p style="display: flex; justify-content: center; align-items: center">FEsol1</p>
                 <div>
                     <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                        ${math.round(DrawGL.takevalueRange[i].FEsoln_value_1, 4)}
+                        ${math.round(Detail.FEsoln_value_1, 4)}
                     </div>
                 </div>
             </div>
@@ -167,14 +165,12 @@ function showproperties(event) {
                 <p style="display: flex; justify-content: center; align-items: center">FEsoln2</p>
                 <div>
                     <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                        ${math.round(DrawGL.takevalueRange[i].FEsoln_value_2, 4)}
+                        ${math.round(Detail.FEsoln_value_2, 4)}
                     </div>
                 </div>
             </div>
           </div>
           `;
-        }
-      }
     }
   }
 }
