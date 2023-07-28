@@ -50,7 +50,7 @@ class Draw {
     };
 
     // Declare scene view and set up mouse position
-    this.viewProjectionMat;
+    this.viewProjectionMat = new Float32Array([0.0013840830652043223, 0, 0, 0, -0.004566209856420755, 0, -1, 1, 1]);
     this.viewProjectionMat_colorbar;
     this.startInvViewProjMat;
     this.startCamera;
@@ -68,6 +68,7 @@ class Draw {
 
     // Declare nearpointGL to interesction check point near mouse
     this.nearPointGL;
+    this.nearPointGL_storage;
 
     // Declare array to storage the data for drawing
     this.lineVertex = [];
@@ -89,7 +90,7 @@ class Draw {
     this.colorvec4 = [];
     this.color_black = [0, 0, 0, 1];
     this.color_red = [1, 0, 0, 1];
-  
+    this.color = [1,1,1,1];
   }
   
   // Load vertex and fragment shader
@@ -123,7 +124,7 @@ class Draw {
   // Draw check point
   drawCheckpoint(thing) {
     this.gl.useProgram(this.programInfo_edges.program);
-    const { x, y, bufferInfo } = thing;
+    const { x, y,color, bufferInfo } = thing;
     twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
     let mat = m3.identity();
     mat = m3.translate(mat, x, y);
@@ -134,7 +135,7 @@ class Draw {
     // calls gl.uniformXXX
     twgl.setUniforms(this.programInfo_edges, {
       u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
-      u_color: DrawGL.color_red,
+      u_color: color,
     });
     // calls gl.drawArrays or gl.drawElements
     twgl.drawBufferInfo(this.gl, bufferInfo);
@@ -247,6 +248,12 @@ class Draw {
       this.fillColor();
     }
     this.drawLoad();
+    DrawGL.drawCheckpoint({
+      x: DrawGL.nearPointGL_storage[0].x,
+      y: DrawGL.nearPointGL_storage[0].y,
+      color : DrawGL.color,
+      bufferInfo: DrawGL.sphereBufferInfo,
+    });
   }
 }
 

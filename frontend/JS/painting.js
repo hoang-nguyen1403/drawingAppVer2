@@ -242,7 +242,8 @@ class Paint {
       zoom: 1,
     }
     document.getElementById("fillColor").value="Off";
-    DrawGL.nearPointGL=[];
+    DrawGL.nearPointGL = [];
+    DrawGL.nearPointGL_storage= [{x:0,y:0},0];
     DrawGL.lineVertex = [];
     DrawGL.point_x = [];
     DrawGL.point_y = [];
@@ -378,8 +379,8 @@ class Paint {
               count=count+1;
             }
             DrawGL.lineVertex=DrawGL.lineVertex.flat();
-            for (let hay=0;hay<DrawGL.lineVertex.length;hay++){
-              DrawGL.pointcheck.push(DrawGL.lineVertex[hay])
+            for (let k=0;k<DrawGL.lineVertex.length;k++){
+              DrawGL.pointcheck.push(DrawGL.lineVertex[k])
             }
             DrawGL.lineVertex=DrawGL.lineVertex.flat();
             let colors=[];

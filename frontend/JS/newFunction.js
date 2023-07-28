@@ -20,6 +20,8 @@ function ChangeModeDrawing (){
 		document.getElementById("line").style.display = "block";
 		document.getElementById("command").style.display = "none";
 		document.getElementById("fillColor").style.display = "none";
+		document.getElementById("property_solution").style.display = "none";
+		document.getElementById("property").style.display = "block";
 }
 
 function ChangeModeGL (){
@@ -31,7 +33,9 @@ function ChangeModeGL (){
 		document.getElementById("canvasGL").style.display = "block";
 		document.getElementById("colorpicker_label").style.display = "none";
 		document.getElementById("line_size").style.display = "none";
-		document.getElementById("coord_div").style.display = "none";
+		document.getElementById("property").style.display = "none";
+		document.getElementById("property_solution").style.display = "block";
+		// document.getElementById("coord_div").style.display = "none";
 		document.getElementById("grid").style.display = "none";
 		document.getElementById("line").style.display = "none";
 		document.getElementById("command").style.display = "none";

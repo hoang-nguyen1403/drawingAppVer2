@@ -11,6 +11,7 @@ function getClipSpaceMousePosition(event) {
   // convert to clip space
   const clipX = normalizedX * 2 - 1;
   const clipY = normalizedY * -2 + 1;
+
   return [clipX, clipY];
 }
 
@@ -89,7 +90,7 @@ function filter_change() {
       Mesh.prototype.fillElementsGL2();
       break;
   }
-
+  DrawGL3D.draw();
   DrawGL.draw();
 }
 
@@ -110,12 +111,13 @@ function checkSolution(event) {
   for (let i = 0; i < a.length; i++) {
     arrPoints1.push({ x: a[i][0], y: a[i][1] })
   }
-  DrawGL.nearPointGL = processingData.prototype.getNearest(arrPoints1, currentPointGL, 5);
+  DrawGL.nearPointGL = processingData.prototype.getNearest(arrPoints1, currentPointGL, 10);
   if (DrawGL.nearPointGL !== undefined) {
     DrawGL.draw();
     DrawGL.drawCheckpoint({
       x: DrawGL.nearPointGL[0].x,
       y: DrawGL.nearPointGL[0].y,
+      color : [1,0,0,1],
       bufferInfo: DrawGL.sphereBufferInfo,
     });
     DrawGL.canvas.addEventListener('mousedown', showproperties);
@@ -129,15 +131,23 @@ function showproperties(event) {
   if (event.buttons == 1) {
     if (DrawGL.nearPointGL !== undefined) {
       let Detail = DrawGL.takevalueRange.find(({ coord }) => coord[0] == DrawGL.nearPointGL[0].x && coord[1] == DrawGL.nearPointGL[0].y)
-      document.getElementById("property").style.display = "inline-block"
-      document.getElementById("property").innerHTML = `
-          <div class="property_label">
+      DrawGL.color = [0,0,1,1];
+      DrawGL.nearPointGL_storage = [{x:DrawGL.nearPointGL[0].x,y:DrawGL.nearPointGL[0].y},0];
+      DrawGL.drawCheckpoint({
+        x: DrawGL.nearPointGL_storage[0].x,
+        y: DrawGL.nearPointGL_storage[0].y,
+        color : DrawGL.color,
+        bufferInfo: DrawGL.sphereBufferInfo,
+      });
+      document.getElementById("property_solution").style.display = "inline-block"
+      document.getElementById("property_solution").innerHTML = `
+          <div class="property_solution_label">
           <p style="display: flex; justify-content: center; align-items: center; width: 100%">DETAIL</p>
           <div>
-            <button class="property-icon" title = "Close" onclick="PaintIn.toggleProperty()" value="Off"></button>
+            <button class="property_solution-icon" title = "Close" onclick="toggleProperty()" value="Off"></button>
           </div>
         </div>
-        <div class=boderProperties>
+        <div class=boderProperties_solution>
             
             <div>
               <p style="display: flex; justify-content: center; align-items: center">Coordinate</p>
@@ -171,6 +181,9 @@ function showproperties(event) {
             </div>
           </div>
           `;
+    }
+    else {
+      document.getElementById("property_solution").style.display = "none";
     }
   }
 }
@@ -207,3 +220,37 @@ DrawGL.canvas.addEventListener('wheel', (event) => {
 DrawGL.canvas.addEventListener('pointermove', (e) => {
   DrawGL.canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
 })
+  
+DrawGL.canvas.addEventListener("mousemove", function(event){
+  event.preventDefault();
+  DrawGL.startInvViewProjMat_check = m3.inverse(DrawGL.viewProjectionMat);
+  DrawGL.startCamera_check = Object.assign({}, DrawGL.camera);
+  DrawGL.startClipPos_check = getClipSpaceMousePosition(event);
+  DrawGL.startPos_check = m3.transformPoint(
+    DrawGL.startInvViewProjMat_check,
+    DrawGL.startClipPos_check);
+  document.getElementById("display_coord").innerHTML =
+      "[" +
+      math.round(DrawGL.startPos_check[0]) +
+      " ; " +
+      math.round(DrawGL.startPos_check[1]) +
+      "]";
+});
+
+function toggleProperty() {
+  document.getElementsByClassName("property_solution_label")[0].style.display = "flex";
+  if (
+    document.getElementsByClassName("boderProperties_solution")[0].style.display ===
+    "none"
+    ) {
+      document.getElementsByClassName("boderProperties_solution")[0].style.display =
+      "block";
+      document.getElementsByClassName("property_solution-icon")[0].style.transform="rotate(-90deg)"
+      document.getElementsByClassName("property_solution-icon")[0].title = "Close"
+    } else {
+      document.getElementsByClassName("boderProperties_solution")[0].style.display =
+      "none";
+      document.getElementsByClassName("property_solution-icon")[0].style.transform="rotate(90deg)"
+      document.getElementsByClassName("property_solution-icon")[0].title = "Open"
+  }
+}
