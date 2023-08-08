@@ -244,6 +244,7 @@ class Paint {
     document.getElementById("fillColor").value="Off";
     DrawGL.nearPointGL = [];
     DrawGL.nearPointGL_storage= [{x:0,y:0},0];
+    DrawGL.color = [1,1,1,1];
     DrawGL.lineVertex = [];
     DrawGL.point_x = [];
     DrawGL.point_y = [];
@@ -383,16 +384,11 @@ class Paint {
               DrawGL.pointcheck.push(DrawGL.lineVertex[k])
             }
             DrawGL.lineVertex=DrawGL.lineVertex.flat();
-            let colors=[];
-            for (let i=0;i<DrawGL.lineVertex.length/2;i++){
-                colors.push(0,0,0,1)
-            }
             var bufferInfo_mesh = twgl.createBufferInfoFromArrays(DrawGL.gl, {
               a_position: {
                 numComponents: 2,
                 data: DrawGL.lineVertex,
               },
-              color:colors,
               indices:DrawGL.segment_mesh,
             });
             DrawGL.scene.push(
@@ -2967,16 +2963,16 @@ class Paint {
     if (
       document.getElementsByClassName("boderProperties")[0].style.display ===
       "none"
-      ) {
-        document.getElementsByClassName("boderProperties")[0].style.display =
+    ) {
+      document.getElementsByClassName("boderProperties")[0].style.display =
         "block";
-        document.getElementsByClassName("property-icon")[0].style.transform="rotate(-90deg)"
-        document.getElementsByClassName("property-icon")[0].title = "Close"
-      } else {
-        document.getElementsByClassName("boderProperties")[0].style.display =
+      document.getElementsByClassName("property-icon")[0].style.transform = "rotate(-90deg)"
+      document.getElementsByClassName("property-icon")[0].title = "Close"
+    } else {
+      document.getElementsByClassName("boderProperties")[0].style.display =
         "none";
-        document.getElementsByClassName("property-icon")[0].style.transform="rotate(90deg)"
-        document.getElementsByClassName("property-icon")[0].title = "Open"
+      document.getElementsByClassName("property-icon")[0].style.transform = "rotate(90deg)"
+      document.getElementsByClassName("property-icon")[0].title = "Open"
     }
   }
 

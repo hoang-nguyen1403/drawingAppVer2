@@ -251,7 +251,7 @@ button {
 #property {
     position: absolute;
     right: 17.631%;
-    bottom: 1%;
+    bottom: 1.1%;
     width: 150px;
     display: none;
     flex-direction: column;

@@ -90,7 +90,6 @@ function filter_change() {
       Mesh.prototype.fillElementsGL2();
       break;
   }
-  DrawGL3D.draw();
   DrawGL.draw();
 }
 
@@ -184,6 +183,8 @@ function showproperties(event) {
     }
     else {
       document.getElementById("property_solution").style.display = "none";
+      DrawGL.nearPointGL_storage = [{x:0,y:0},0];
+      DrawGL.color = [1,1,1,1];
     }
   }
 }
