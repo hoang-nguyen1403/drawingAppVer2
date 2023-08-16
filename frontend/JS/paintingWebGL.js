@@ -1,35 +1,34 @@
 // Class Draw
 class Draw {
   constructor() {
-    // Declare the canvasGl tag - main draw
+    // Declare the card canvasGl - main draw
     this.canvas = document.querySelector('#canvasGL');
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
     this.gl = this.canvas.getContext('experimental-webgl');
 
-    // Declare the canvas2D tag - text value of color bar
+    // Declare the card canvas2D - text value of color bar
     this.canvas_text = document.querySelector('#text_colorbar');
     this.canvas_text.width = 65;
     this.canvas_text.height = 400;
     this.ctx_gl = this.canvas_text.getContext('2d');
 
-    // Declare the canavasG tagL - color bar
+    // Declare the card canavasGL - color bar
     this.canvas_colorbar = document.querySelector('#canvas_colorbar');
     this.canvas_colorbar.width = 50;
     this.canvas_colorbar.height = 400;
     this.gl_colorbar = this.canvas_colorbar.getContext('webgl2');
 
     // Declare the vertex and fragment shader
-    this.vertex_fill = this.loadVSFG('../frontend/shader/shader_fill.vs');
-    this.fragment_fill = this.loadVSFG('../frontend/shader/shader_fill.fs');
-    this.vertex_black = this.loadVSFG('../frontend/shader/shader_black.vs');
-    this.fragment_black = this.loadVSFG('../frontend/shader/shader_black.fs');
+    this.vertex_fill = this.loadVSFG('./frontend/shader/shader_fill.vs');
+    this.fragment_fill = this.loadVSFG('./frontend/shader/shader_fill.fs');
+    this.vertex_black = this.loadVSFG('./frontend/shader/shader_black.vs');
+    this.fragment_black = this.loadVSFG('./frontend/shader/shader_black.fs');
 
     // Compiles shaders, links program
     this.programInfo = twgl.createProgramInfo(this.gl, [this.vertex_fill, this.fragment_fill]);
     this.programInfo_colorbar = twgl.createProgramInfo(this.gl_colorbar, [this.vertex_black, this.fragment_black]);
     this.programInfo_edges = twgl.createProgramInfo(this.gl, [this.vertex_black, this.fragment_black]);
-    
     // Declare the geometry sphere imformation from library twgl
     this.sphereVerts = twgl.primitives.createSphereVertices(1, 24, 12);
 
@@ -39,7 +38,7 @@ class Draw {
       indices: this.sphereVerts.indices,
     });
 
-    // Declare filler t tago take the value to load the fillter model
+    // Declare card filler to take the value to load the fillter model
     this.filter_value = document.getElementById("filter");
 
     // Create camera
@@ -229,7 +228,7 @@ class Draw {
       twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
     }
   }
-  draw() {
+  drawMain() {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
     this.updateViewProjection();
     if (document.getElementById("fillColor").value === "On") {
@@ -246,9 +245,7 @@ class Draw {
         // canvas.style.cursor = "pointer;
       })
       this.canvas.removeEventListener('pointermove', checkSolution)
-      document.getElementById("property_solution").style.display="none";
-      DrawGL.nearPointGL_storage= [{x:0,y:0},0];
-      DrawGL.color = [1,1,1,1];
+      document.getElementById("property").style.display="none";
       this.fillColor();
     }
     this.drawLoad();

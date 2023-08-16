@@ -11,11 +11,13 @@ class Mesh {
       Mesh.curValFillColor.value === "On";
       document.getElementById("fillColor").classList.add("active");
       Mesh.curValFillColor.value = "On";
-      DrawGL.draw();
+      DrawGL.drawMain();
+      DrawGL3D.drawMain();
     } else {
       Mesh.curValFillColor.value = "Off";
       document.getElementById("fillColor").classList.remove("active");
-      DrawGL.draw();
+      DrawGL.drawMain();
+      DrawGL3D.drawMain();
     }
   }
 
@@ -440,16 +442,102 @@ class Mesh {
       format: "rgba",
       alpha: 1,
     });
+    let colors1 = colormap({
+      colormap: "phase",
+      nshades: nshades,
+      format: "rgba",
+      alpha: 1,
+    });
+    let colors2 = colormap({
+      colormap: "cubehelix",
+      nshades: nshades,
+      format: "rgba",
+      alpha: 1,
+    });
     DrawGL.fillcolor = [];
     DrawGL.colorvec4 = [];
     DrawGL.point_x = [];
     DrawGL.point_y = [];
     DrawGL.scene_fill = [];
+    DrawGL3D.sceneFill = [];
+    DrawGL3D.colorNode = [];
+    DrawGL3D.point_color = [];    
+    DrawGL3D.point_color1 = [];    
+    DrawGL3D.point_color_vec4 = [];  
     if (maxValue_coord == 1 && minValue_coord == 0) {
       for (let surface of FEtri) {
         let coordXs = [];
         let coordYs = [];
         let nodeColors = [];
+        let nodeIndex = surface[0];
+        let nodeCoord = [...FEcoordElem[nodeIndex - 1]];
+        //scale
+        nodeCoord[0] *= scale;
+        nodeCoord[1] *= scale;
+        //move system
+        nodeCoord[0] -= 100;
+        nodeCoord[1] -= 100;
+        //rot
+        nodeCoord = math.multiply(nodeCoord, rotMatrix);
+        nodeCoord = nodeCoord.flat();
+        //move system
+        nodeCoord[0] += baseCoord[0] + 100;
+        nodeCoord[1] += baseCoord[1] + 100;
+        coordXs.push(nodeCoord[0]);
+        coordYs.push(nodeCoord[1]);
+        DrawGL.point_x.push(nodeCoord[0]);
+        DrawGL.point_y.push(nodeCoord[1]);
+        //color
+        let colorIndex = math.round((FEsoln[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color = colors[colorIndex];
+        nodeColors.push(color);
+        DrawGL.fillcolor.push(color);
+        let nodeIndex1 = surface[2];
+        let nodeCoord1 = [...FEcoordElem[nodeIndex1 - 1]];
+        //scale
+        nodeCoord1[0] *= scale;
+        nodeCoord1[1] *= scale;
+        //move system
+        nodeCoord1[0] -= 100;
+        nodeCoord1[1] -= 100;
+        //rot
+        nodeCoord1 = math.multiply(nodeCoord1, rotMatrix);
+        nodeCoord1 = nodeCoord1.flat();
+        //move system
+        nodeCoord1[0] += baseCoord[0] + 100;
+        nodeCoord1[1] += baseCoord[1] + 100;
+        coordXs.push(nodeCoord1[0]);
+        coordYs.push(nodeCoord1[1]);
+        DrawGL.point_x.push(nodeCoord1[0]);
+        DrawGL.point_y.push(nodeCoord1[1]);
+        //color
+        let colorIndex1 = math.round((FEsoln[nodeIndex1 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color1 = colors[colorIndex1];
+        nodeColors.push(color1);
+        DrawGL.fillcolor.push(color1);
+        let nodeIndex2 = surface[1];
+        let nodeCoord2 = [...FEcoordElem[nodeIndex2 - 1]];
+        //scale
+        nodeCoord2[0] *= scale;
+        nodeCoord2[1] *= scale;
+        //move system
+        nodeCoord2[0] -= 100;
+        nodeCoord2[1] -= 100;
+        //rot
+        nodeCoord2 = math.multiply(nodeCoord2, rotMatrix);
+        nodeCoord2 = nodeCoord2.flat();
+        //move system
+        nodeCoord2[0] += baseCoord[0] + 100;
+        nodeCoord2[1] += baseCoord[1] + 100;
+        coordXs.push(nodeCoord2[0]);
+        coordYs.push(nodeCoord2[1]);
+        DrawGL.point_x.push(nodeCoord2[0]);
+        DrawGL.point_y.push(nodeCoord2[1]);
+        //color
+        let colorIndex2 = math.round((FEsoln[nodeIndex2 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color2 = colors[colorIndex2];
+        nodeColors.push(color2);
+        DrawGL.fillcolor.push(color2);
         for (let i = 0; i < surface.length - 3; i++) {
           let nodeIndex = surface[i];
           let nodeCoord = [...FEcoordElem[nodeIndex - 1]];
@@ -475,36 +563,109 @@ class Mesh {
           nodeColors.push(color);
           DrawGL.fillcolor.push(color);
         }
+        for (let i = 0; i < surface.length; i++) {
+          let nodeIndex = surface[i];
+          let nodeCoord = [...FEcoordElem[nodeIndex - 1]];
+          //scale
+          nodeCoord[0] *= scale;
+          nodeCoord[1] *= scale;
+          //move system
+          nodeCoord[0] -= 100;
+          nodeCoord[1] -= 100;
+          //rot
+          nodeCoord = math.multiply(nodeCoord, rotMatrix);
+          nodeCoord = nodeCoord.flat();
+          //move system
+          nodeCoord[0] += baseCoord[0] + 100;
+          nodeCoord[1] += baseCoord[1] + 100;
+          coordXs.push(nodeCoord[0]);
+          coordYs.push(nodeCoord[1]);
+          DrawGL3D.point_x.push(nodeCoord[0]);
+          DrawGL3D.point_y.push(nodeCoord[1]);
+          //color
+          let colorIndex = math.round((FEsoln[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+          let color = colors1[colorIndex];
+          nodeColors.push(color);
+          DrawGL3D.point_color.push(color);
+        }
+        for (let i = 0; i < surface.length; i++) {
+          let nodeIndex = surface[i];
+          //color
+          let colorIndex = math.round((FEsoln[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+          let color1 = colors2[colorIndex];
+          DrawGL3D.point_color.push(color1);
+        }
       }
     } else {
       for (let surface of FEtri) {
         let coordXs = [];
         let coordYs = [];
         let nodeColors = [];
+        let nodeIndex = surface[0];
+        let nodeCoord = [...FEcoordElem[nodeIndex - 1]];
+        coordXs.push(nodeCoord[0]);
+        coordYs.push(nodeCoord[1]);
+        DrawGL.point_x.push(nodeCoord[0]);
+        DrawGL.point_y.push(nodeCoord[1]);
+        //color
+        let colorIndex = math.round((FEsoln[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color = colors[colorIndex];
+        nodeColors.push(color);
+        DrawGL.fillcolor.push(color);
+        let nodeIndex1 = surface[2];
+        let nodeCoord1 = [...FEcoordElem[nodeIndex1 - 1]];
+        coordXs.push(nodeCoord1[0]);
+        coordYs.push(nodeCoord1[1]);
+        DrawGL.point_x.push(nodeCoord1[0]);
+        DrawGL.point_y.push(nodeCoord1[1]);
+        //color
+        let colorIndex1 = math.round((FEsoln[nodeIndex1 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color1 = colors[colorIndex1];
+        nodeColors.push(color1);
+        DrawGL.fillcolor.push(color1);
+        let nodeIndex2 = surface[1];
+        let nodeCoord2 = [...FEcoordElem[nodeIndex2 - 1]];
+        coordXs.push(nodeCoord2[0]);
+        coordYs.push(nodeCoord2[1]);
+        DrawGL.point_x.push(nodeCoord2[0]);
+        DrawGL.point_y.push(nodeCoord2[1]);
+        //color
+        let colorIndex2 = math.round((FEsoln[nodeIndex2 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color2 = colors[colorIndex2];
+        nodeColors.push(color2);
+        DrawGL.fillcolor.push(color2);
         for (let i = 0; i < surface.length - 3; i++) {
+          let nodeIndex3 = surface[i];
+          let nodeCoord3 = [...FEcoordElem[nodeIndex3 - 1]];
+          coordXs.push(nodeCoord3[0]);
+          coordYs.push(nodeCoord3[1]);
+          DrawGL.point_x.push(nodeCoord3[0]);
+          DrawGL.point_y.push(nodeCoord3[1]);
+          //color
+          let colorIndex3 = math.round((FEsoln[nodeIndex3 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+          let color3 = colors[colorIndex3];
+          nodeColors.push(color3);
+          DrawGL.fillcolor.push(color3);
+        }
+        for (let i = 0; i < surface.length; i++) {
           let nodeIndex = surface[i];
           let nodeCoord = [...FEcoordElem[nodeIndex - 1]];
-          // //scale
-          // nodeCoord[0] *= scale;
-          // nodeCoord[1] *= scale;
-          // //move system
-          // nodeCoord[0] -= 100;
-          // nodeCoord[1] -= 100;
-          // //rot
-          // nodeCoord = math.multiply(nodeCoord, rotMatrix);
-          // nodeCoord = nodeCoord.flat();
-          // //move system
-          // nodeCoord[0] += baseCoord[0] + 100;
-          // nodeCoord[1] += baseCoord[1] + 100;
           coordXs.push(nodeCoord[0]);
           coordYs.push(nodeCoord[1]);
-          DrawGL.point_x.push(nodeCoord[0]);
-          DrawGL.point_y.push(nodeCoord[1]);
+          DrawGL3D.point_x.push(nodeCoord[0]);
+          DrawGL3D.point_y.push(nodeCoord[1]);
           //color
           let colorIndex = math.round((FEsoln[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
-          let color = colors[colorIndex];
+          let color = colors1[colorIndex];
           nodeColors.push(color);
-          DrawGL.fillcolor.push(color);
+          DrawGL3D.point_color.push(color);
+        }
+        for (let i = 0; i < surface.length; i++) {
+          let nodeIndex = surface[i];
+          //color
+          let colorIndex = math.round((FEsoln[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+          let color1 = colors2[colorIndex];
+          DrawGL3D.point_color1.push(color1);
         }
       }
     }
@@ -516,6 +677,20 @@ class Mesh {
       }
       DrawGL.colorvec4.push(element[3]);
     }
+    // for (let element of DrawGL3D.point_color) {
+    //   for (let i = 0; i < element.length - 1; i++) {
+    //     let r = math.round(math.round(element[i] / 255 * 10, 1) / 10, 2)
+    //     DrawGL3D.point_color_vec4.push(r);
+    //   }
+    //   DrawGL3D.point_color_vec4.push(element[3]);
+    // }
+    // for (let element of DrawGL3D.point_color1) {
+    //   for (let i = 0; i < element.length - 1; i++) {
+    //     let r = math.round(math.round(element[i] / 255 * 10, 1) / 10, 2)
+    //     DrawGL3D.point_color_vec4.push(r);
+    //   }
+    //   DrawGL3D.point_color_vec4.push(element[3]);
+    // }
     var bufferInfo_fill = twgl.createBufferInfoFromArrays(DrawGL.gl, {
       a_position: {
         numComponents: 2,
@@ -526,6 +701,18 @@ class Mesh {
     DrawGL.scene_fill.push({
       x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
     })
+    for (let i = 0; i < 2; i++) {
+      DrawGL3D.colorNode.push(DrawGL.colorvec4);
+    }
+    DrawGL3D.colorNode = DrawGL3D.colorNode.flat();
+    var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+      a_position:{
+        numComponents : 3, 
+        data :DrawGL3D.nodeCoord
+      },
+      a_color: DrawGL3D.colorNode,
+    })
+    DrawGL3D.sceneFill.push(bufferInfo);
   }
   fillElementsGL1() {
     const FEcoordElem = JSON.parse(JSON.stringify(FEcoord));
@@ -549,17 +736,35 @@ class Mesh {
     DrawGL.point_x = [];
     DrawGL.point_y = [];
     DrawGL.scene_fill = [];
+    DrawGL3D.sceneFill = [];
+    DrawGL3D.colorNode = []; 
     for (let surface of FEtri) {
-      let coordXs = [];
-      let coordYs = [];
       let nodeColors = [];
+      let nodeIndex = surface[0];
+      //color
+      let colorIndex = math.round((FEsoln1[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+      let color = colors[colorIndex];
+      nodeColors.push(color);
+      DrawGL.fillcolor.push(color);
+      let nodeIndex1 = surface[2];
+      //color
+      let colorIndex1 = math.round((FEsoln1[nodeIndex1 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+      let color1 = colors[colorIndex1];
+      nodeColors.push(color1);
+      DrawGL.fillcolor.push(color1);
+      let nodeIndex2 = surface[1];
+      //color
+      let colorIndex2 = math.round((FEsoln1[nodeIndex2 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+      let color2 = colors[colorIndex2];
+      nodeColors.push(color2);
+      DrawGL.fillcolor.push(color2);
       for (let i = 0; i < surface.length - 3; i++) {
-        let nodeIndex = surface[i];
+        let nodeIndex3 = surface[i];
         //color
-        let colorIndex = math.round((FEsoln1[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
-        let color = colors[colorIndex];
-        nodeColors.push(color);
-        DrawGL.fillcolor.push(color);
+        let colorIndex3 = math.round((FEsoln1[nodeIndex3 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color3 = colors[colorIndex3];
+        nodeColors.push(color3);
+        DrawGL.fillcolor.push(color3);
       }
     }
     for (let element of DrawGL.fillcolor) {
@@ -579,6 +784,15 @@ class Mesh {
     DrawGL.scene_fill.push({
       x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
     })
+    for (let i = 0; i < 2; i++) {
+      DrawGL3D.colorNode.push(DrawGL.colorvec4);
+    }
+    DrawGL3D.colorNode = DrawGL3D.colorNode.flat();
+    var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+      a_position: DrawGL3D.nodeCoord,
+      a_color: DrawGL3D.colorNode,
+    })
+    DrawGL3D.sceneFill.push(bufferInfo);
   }
   fillElementsGL2() {
     const FEcoordElem = JSON.parse(JSON.stringify(FEcoord));
@@ -602,17 +816,44 @@ class Mesh {
     DrawGL.point_x = [];
     DrawGL.point_y = [];
     DrawGL.scene_fill = [];
+    DrawGL3D.sceneFill = [];
+    DrawGL3D.colorNode = [];
     for (let surface of FEtri) {
-      let coordXs = [];
-      let coordYs = [];
       let nodeColors = [];
+      let nodeIndex = surface[0];
+      //color
+      let colorIndex = math.round((FEsoln2[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+      let color = colors[colorIndex];
+      nodeColors.push(color);
+      DrawGL.fillcolor.push(color);
+      let nodeIndex1 = surface[2];
+      //color
+      let colorIndex1 = math.round((FEsoln2[nodeIndex1 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+      let color1 = colors[colorIndex1];
+      nodeColors.push(color1);
+      DrawGL.fillcolor.push(color1);
+      let nodeIndex2 = surface[1];
+      //color
+      let colorIndex2 = math.round((FEsoln2[nodeIndex2 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+      let color2 = colors[colorIndex2];
+      nodeColors.push(color2);
+      DrawGL.fillcolor.push(color2);
       for (let i = 0; i < surface.length - 3; i++) {
+        let nodeIndex3 = surface[i];
+        //color
+        let colorIndex3 = math.round((FEsoln2[nodeIndex3 - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
+        let color3 = colors[colorIndex3];
+        nodeColors.push(color3);
+        DrawGL.fillcolor.push(color3);
+      }
+      for (let i = 0; i < surface.length; i++) {
         let nodeIndex = surface[i];
+        let nodeCoord = [...FEcoordElem[nodeIndex - 1]];
         //color
         let colorIndex = math.round((FEsoln2[nodeIndex - 1] - minValue) / (maxValue - minValue) * (nshades - 1));
         let color = colors[colorIndex];
         nodeColors.push(color);
-        DrawGL.fillcolor.push(color);
+        DrawGL3D.point_color.push(color);
       }
     }
     for (let element of DrawGL.fillcolor) {
@@ -632,6 +873,15 @@ class Mesh {
     DrawGL.scene_fill.push({
       x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
     })
+    for (let i = 0; i < 2; i++) {
+      DrawGL3D.colorNode.push(DrawGL.colorvec4);
+    }
+    DrawGL3D.colorNode = DrawGL3D.colorNode.flat();
+    var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+      a_position: DrawGL3D.nodeCoord,
+      a_color: DrawGL3D.colorNode,
+    })
+    DrawGL3D.sceneFill.push(bufferInfo);
   }
 
   drawColorBar() {

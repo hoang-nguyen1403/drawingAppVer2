@@ -128,6 +128,7 @@
     shaders.forEach(function(shader) {
       gl.attachShader(program, shader);
     });
+
     if (opt_attribs) {
       opt_attribs.forEach(function(attrib, ndx) {
         gl.bindAttribLocation(

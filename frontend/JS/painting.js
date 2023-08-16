@@ -19,7 +19,7 @@ class Paint {
     this.curValPressLoad = document.getElementById("pressLoad");
     this.curValMoment = document.getElementById("moment");
     this.curValDeleteForce = document.getElementById("deleteForce");
-    
+
     //addMode
     this.curValDrawing = document.getElementById("modeDrawing");
     //set default mode is drawing
@@ -104,7 +104,7 @@ class Paint {
     this.isMovingObj = false;
     this.lastMouseMove = [0, 0];
   }
-  
+
   // Press button change mode
   // changeMode() {
   //   if (this.curValDrawing.value === "Off") {
@@ -121,7 +121,7 @@ class Paint {
   //     // this.curValSelect = "On";
 
   //     // test
-      
+
   //   } else {
   //     //mode soln
   //     //this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
@@ -147,23 +147,23 @@ class Paint {
   //     // } else {
   //     //   this.renderCommand("soln");
   //     // }
-      
+
 
   //     this.view = new GLCanvas(this.canvas);
   //     this.view.setup();
-      
+
   //     this.setup_control();
-      
+
   //     this.setup_solution_tabs();
   //     this.setup_colorbar();
 
   //   }
   // }
-  setup_control(){
-    this.container.control_menu = $('<div style = \"margin-left: 0px; width: 70px; height: 30px; left: ' + (this.width-100) + 'px; top: ' + (20-this.height) + 'px; position: relative;\"></div>').appendTo(this.container.canvas_container);
-	$('<div class="toggleButton" id="showMeshgroup'+ this.name + '"><input id="showMesh' + this.name + '"type="checkbox" onchange="edit_meshoption()"><label>MESH</label></div>').appendTo(this.container.control_menu);
-	$('<div class="toggleButton" id="showVolumegroup'+ this.name + '"><input id="showVolume' + this.name + '"type="checkbox" value = "SOLID" onchange="edit_volumeoption()"><label>SOLID</label></div>').appendTo(this.container.control_menu);
-	$('#showVolumegroup'+ this.name).hide();		
+  setup_control() {
+    this.container.control_menu = $('<div style = \"margin-left: 0px; width: 70px; height: 30px; left: ' + (this.width - 100) + 'px; top: ' + (20 - this.height) + 'px; position: relative;\"></div>').appendTo(this.container.canvas_container);
+    $('<div class="toggleButton" id="showMeshgroup' + this.name + '"><input id="showMesh' + this.name + '"type="checkbox" onchange="edit_meshoption()"><label>MESH</label></div>').appendTo(this.container.control_menu);
+    $('<div class="toggleButton" id="showVolumegroup' + this.name + '"><input id="showVolume' + this.name + '"type="checkbox" value = "SOLID" onchange="edit_volumeoption()"><label>SOLID</label></div>').appendTo(this.container.control_menu);
+    $('#showVolumegroup' + this.name).hide();
   }
 
 
@@ -218,33 +218,54 @@ class Paint {
     this.arrRectY = [];
     this.arrLineColor = [];
     this.arrLineWidth = [];
-    
+
     if (this.currentValueGrid.value == "On") {
       //this.ctx.strokeStyle = "red";
       this.drawGrid();
     }
     //---// clear saved data
-    this.camera = {
-      x: 0,
-      y: 0,
-      rotation: 0,
-      zoom: 1,
+    // Declare scene view and set up mouse position
+    Mesh.elements = [];
+    Mesh.edges = [];
+    Mesh.nodes = [];
+    DrawGL.nearPointGL_storage = [{ x: 0, y: 0 }, 0];
+    DrawGL3D.pointStorage = { x: 0, y: 0, z: 0 };
+    DrawGL.color = [1, 1, 1, 1];
+    DrawGL3D.ui = {
+      dragging: false,
+      mouse: {
+        lastX: -1,
+        lastY: -1,
+      },
     };
 
-    // Declare scene view and set up mouse position
-    Mesh.elements=[];
-    Mesh.edges=[];
-    Mesh.nodes=[];
+    DrawGL3D.mouse = {
+      prevMouseX: 0,
+      prevMouseY: 0
+    };
+    DrawGL3D.mouseX = -1;
+    DrawGL3D.mouseY = -1;
+    DrawGL3D.point_x = [];
+    DrawGL3D.point_y = [];
+    DrawGL3D.target = [0, 0, 0];
+    DrawGL3D.up = [0, 1, 0];
+    DrawGL3D.takeValueRange = [];
+    DrawGL3D.nodeCoord = [];
+    DrawGL3D.colorNode = [];
+    DrawGL3D.lineBase = [];
+    DrawGL3D.lineMeshExtrude = [];
+    DrawGL3D.takePoint = [];
+    DrawGL3D.takePoint_Extrude = [];
+    DrawGL3D.sceneFill = [];
+    DrawGL3D.sceneMesh = [];
     DrawGL.camera = {
       x: 0,
       y: 0,
       rotation: 0,
       zoom: 1,
     }
-    document.getElementById("fillColor").value="Off";
+    document.getElementById("fillColor").value = "Off";
     DrawGL.nearPointGL = [];
-    DrawGL.nearPointGL_storage= [{x:0,y:0},0];
-    DrawGL.color = [1,1,1,1];
     DrawGL.lineVertex = [];
     DrawGL.point_x = [];
     DrawGL.point_y = [];
@@ -262,15 +283,16 @@ class Paint {
     DrawGL.scene_color = [];
     DrawGL.scene_load = [];
     DrawGL.colorvec4 = [];
-    DrawGL.ctx_gl.clearRect(0,0,65,400);
-    DrawGL.draw();
+    DrawGL.ctx_gl.clearRect(0, 0, 65, 400);
+    DrawGL.drawMain();
+    DrawGL3D.drawMain();
     DrawGL.gl_colorbar.clear(DrawGL.gl_colorbar.COLOR_BUFFER_BIT)
-    document.getElementById("filter").style.display="none";
+    document.getElementById("filter").style.display = "none";
     processingData.allLine = [];
     processingData.allPoint = [];
     processingData.allArea = [];
     processingData.allObject = [];
-    processingData.allSeg=[];
+    processingData.allSeg = [];
     this.arrCurObj = [];
     this.arrMultiCurObj = [];
     this.renderProperty("off", "");
@@ -322,7 +344,7 @@ class Paint {
       }
     });
   }
-  
+
   //set up event of Mouse
   listenEvent() {
     this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
@@ -334,117 +356,193 @@ class Paint {
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
       PaintIn.clearAll();
-      ChangeModeGL();
+      ChangeModeGL3D();
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
         if (inputData["jsmat"] !== undefined) {
-          document.getElementById("filter").style.display="block";
+          document.getElementById("filter").style.display = "block";
           Mesh.prototype.createDataMesh(inputData);
-          for (let i=0;i<FEsoln.length;i++){
+          for (let i = 0; i < FEsoln.length; i++) {
             DrawGL.takevalueRange.push(
-              {coord:[Mesh.nodes[i].x,Mesh.nodes[i].y],FEsoln_value:FEsoln[i],FEsoln_value_1:FEsoln1[i],FEsoln_value_2:FEsoln2[i]},
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y], FEsoln_value: FEsoln[i], FEsoln_value_1: FEsoln1[i], FEsoln_value_2: FEsoln2[i] },
             );
+            DrawGL3D.takeValueRange.push(
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 0], FEsoln_value: FEsoln[i], FEsoln_value_1: FEsoln1[i], FEsoln_value_2: FEsoln2[i] },
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 100], FEsoln_value: FEsoln[i], FEsoln_value_1: FEsoln1[i], FEsoln_value_2: FEsoln2[i] },
+            )
           }
-
           // Max element for Uint16array is 10921 elements;
           var max_element = 10921;
-          var count_element = Mesh.elements.length/max_element;
-          if (count_element % 1 !== 0){
-            count_element=Math.round(count_element)+1;
+          var count_element = Mesh.elements.length / max_element;
+          if (count_element % 1 !== 0) {
+            count_element = Math.round(count_element) + 1;
           }
-          for (let i=0;i<count_element;i++){
-            DrawGL.segment_mesh=[];
-            DrawGL.lineVertex=[];
-            let count=0;
-            let test=Mesh.elements.length-max_element*i;
-            let max = max_element*i;
-            for (let z=max; z<Mesh.elements.length;z++){
+          for (let i = 0; i < count_element; i++) {
+            DrawGL.segment_mesh = [];
+            DrawGL.lineVertex = [];
+            DrawGL3D.lineBase = [];
+            DrawGL3D.lineMeshExtrude = [];
+            let count = 0;
+            let test = Mesh.elements.length - max_element * i;
+            let max = max_element * i;
+            for (let z = max; z < Mesh.elements.length; z++) {
               DrawGL.lineVertex.push(Mesh.elements[z].pointFlow)
             }
-            for (let j=0; j<= test;j++){
-              if (count==max_element+1) break;
+            for (let j = 0; j <= test; j++) {
+              if (count == max_element + 1) break;
               // put indices for lines
-              DrawGL.segment_mesh.push(6*j);
-              DrawGL.segment_mesh.push(6*j+1);
-              DrawGL.segment_mesh.push(6*j+1);
-              DrawGL.segment_mesh.push(6*j+2);
-              DrawGL.segment_mesh.push(6*j+2);
-              DrawGL.segment_mesh.push(6*j+3);
-              DrawGL.segment_mesh.push(6*j+3);
-              DrawGL.segment_mesh.push(6*j+4);
-              DrawGL.segment_mesh.push(6*j+4);
-              DrawGL.segment_mesh.push(6*j+5);
-              DrawGL.segment_mesh.push(6*j+5);
-              DrawGL.segment_mesh.push(6*j);
-              count=count+1;
+              DrawGL.segment_mesh.push(6 * j);
+              DrawGL.segment_mesh.push(6 * j + 1);
+              DrawGL.segment_mesh.push(6 * j + 1);
+              DrawGL.segment_mesh.push(6 * j + 2);
+              DrawGL.segment_mesh.push(6 * j + 2);
+              DrawGL.segment_mesh.push(6 * j + 3);
+              DrawGL.segment_mesh.push(6 * j + 3);
+              DrawGL.segment_mesh.push(6 * j + 4);
+              DrawGL.segment_mesh.push(6 * j + 4);
+              DrawGL.segment_mesh.push(6 * j + 5);
+              DrawGL.segment_mesh.push(6 * j + 5);
+              DrawGL.segment_mesh.push(6 * j);
+              count = count + 1;
             }
-            DrawGL.lineVertex=DrawGL.lineVertex.flat();
-            for (let k=0;k<DrawGL.lineVertex.length;k++){
+            DrawGL.lineVertex = DrawGL.lineVertex.flat();
+            for (let k = 0; k < DrawGL.lineVertex.length; k++) {
               DrawGL.pointcheck.push(DrawGL.lineVertex[k])
             }
-            DrawGL.lineVertex=DrawGL.lineVertex.flat();
+            var color = [];
+
+            for (let l = 0; l < DrawGL.pointcheck.length; l++) {
+              DrawGL3D.lineBase.push(DrawGL.pointcheck[l][0]);
+              DrawGL3D.lineBase.push(DrawGL.pointcheck[l][1]);
+              DrawGL3D.lineBase.push(0);
+            }
+
+            for (let m = 0; m < DrawGL.pointcheck.length; m++) {
+              DrawGL3D.lineMeshExtrude.push(DrawGL.pointcheck[m][0]);
+              DrawGL3D.lineMeshExtrude.push(DrawGL.pointcheck[m][1]);
+              DrawGL3D.lineMeshExtrude.push(100);
+            }
+            DrawGL.lineVertex = DrawGL.lineVertex.flat();
             var bufferInfo_mesh = twgl.createBufferInfoFromArrays(DrawGL.gl, {
               a_position: {
                 numComponents: 2,
                 data: DrawGL.lineVertex,
               },
-              indices:DrawGL.segment_mesh,
+              indices: DrawGL.segment_mesh,
             });
+            var bufferInfo_mesh_base = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+              a_position: DrawGL3D.lineBase,
+              indices: DrawGL.segment_mesh,
+            });
+            var bufferInfo_mesh_second = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+              a_position: DrawGL3D.lineMeshExtrude,
+              indices: DrawGL.segment_mesh,
+            });
+            DrawGL3D.sceneMesh.push(bufferInfo_mesh_base);
+            DrawGL3D.sceneMesh.push(bufferInfo_mesh_second);
             DrawGL.scene.push(
               {
-                x:  0, y:  0, rotation: 0,scale: 1, bufferInfo : bufferInfo_mesh
+                x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_mesh
               },
-            )        
+            )
           }
-          for (let i=0;i<DrawGL.point_x.length;i++){
+
+          for (let i = 0; i < DrawGL.point_x.length; i++) {
             DrawGL.takePoint.push(DrawGL.point_x[i]);
             DrawGL.takePoint.push(DrawGL.point_y[i]);
           }
+          for (let i = 0; i < 2; i++) {
+            if (i % 2 == 0) {
+              for (let i = 0; i < DrawGL.point_x.length; i++) {
+                DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
+                DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
+                DrawGL3D.nodeCoord.push(0);
+              }
+            } else {
+              for (let i = 0; i < DrawGL.point_x.length; i++) {
+                DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
+                DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
+                DrawGL3D.nodeCoord.push(100);
+              }
+            }
+          }
+          for (let i = 0; i < 2; i++) {
+            if (i % 2 == 0) {
+              for (let i = 0; i < DrawGL3D.point_x.length; i++) {
+                DrawGL3D.takePoint.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 0 });
+              }
+            } else {
+              for (let i = 0; i < DrawGL3D.point_x.length; i++) {
+                DrawGL3D.takePoint_Extrude.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 100 });
+              }
+            }
+          }
+
+          DrawGL3D.colorNode = DrawGL3D.colorNode.flat();
           var bufferInfo_fill = twgl.createBufferInfoFromArrays(DrawGL.gl, {
             a_position: {
               numComponents: 2,
               data: DrawGL.takePoint,
             },
-            color:DrawGL.colorvec4,
+            color: DrawGL.colorvec4,
           });
-          DrawGL.scene_fill.push({
-            x:0,y:0,rotation:0,scale:1,bufferInfo:bufferInfo_fill
+
+          DrawGL3D.camera = {
+            rotation_X: 0, // degrees
+            rotation_Y: 0, // degrees
+            rotation_Z: 0, // degrees
+            Deep: 400000,
+            Zoom: 1,
+            translation_x: 0,
+            translation_y: 0,
+            translation_z: math.max(math.abs(DrawGL.pointcheck)),
+          }
+          // render();
+          var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+            a_position: DrawGL3D.nodeCoord,
+            a_color: DrawGL3D.colorNode,
           })
-          DrawGL.draw();
+          DrawGL3D.sceneFill.push(bufferInfo);
+          DrawGL3D.drawMain();
+          ChangeModeGL();
+          DrawGL.scene_fill.push({
+            x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
+          })
+          DrawGL.drawMain();
         } else {
-          document.getElementById("filter").style.display="none";
+          document.getElementById("filter").style.display = "none";
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
-          for (let i=0;i<processingData.allPoint.length;i++){
+          for (let i = 0; i < processingData.allPoint.length; i++) {
             DrawGL.takePoint.push(processingData.allPoint[i].point);
           }
-          
-          for (let i=0;i<processingData.allSeg.length;i++){
+
+          for (let i = 0; i < processingData.allSeg.length; i++) {
             DrawGL.segment.push(processingData.allSeg[i]);
           }
-          
-          DrawGL.takePoint=DrawGL.takePoint.flat();
-          DrawGL.segment=DrawGL.segment.flat();
-          DrawGL.lineVertex=DrawGL.takePoint;
 
-          for (let i = 0; i < DrawGL.lineVertex.length; i++){
+          DrawGL.takePoint = DrawGL.takePoint.flat();
+          DrawGL.segment = DrawGL.segment.flat();
+          DrawGL.lineVertex = DrawGL.takePoint;
+
+          for (let i = 0; i < DrawGL.lineVertex.length; i++) {
             if (i % 2 == 0) {
               DrawGL.point_x.push(DrawGL.lineVertex[i]);
             }
             else DrawGL.point_y.push(DrawGL.lineVertex[i]);
           }
-          
+
           // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
           var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
             a_position: {
               numComponents: 2,
               data: DrawGL.lineVertex,
             },
-            indices:DrawGL.segment,
+            indices: DrawGL.segment,
           });
-          DrawGL.scene_load=[{ x:  0, y:  0, rotation: 0,scale: 1,   color: [0,0,0,1], bufferInfo},];  
-          DrawGL.draw();
+          DrawGL.scene_load = [{ x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },];
+          DrawGL.drawMain();
 
           //update screen
           PaintIn.renderObject(processingData.allObject);
@@ -1935,8 +2033,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -2455,7 +2553,7 @@ class Paint {
       this.ctx.moveTo(0, j);
       this.ctx.lineTo(this.canvas.width, j);
     }
-    this.ctx.strokeStyle = "red";
+    this.ctx.strokeStyle = "grey";
     this.ctx.lineWidth = 0.2;
     this.ctx.stroke();
     this.ctx.closePath();
@@ -2726,9 +2824,9 @@ class Paint {
               <div>
                 <div class="coordinate">
                   <input type="text" name="format" value="[${math.round(
-                    Obj.x,
-                    2
-                  )}, ${math.round(Obj.y, 2)}]"
+          Obj.x,
+          2
+        )}, ${math.round(Obj.y, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                 </div>
               </div>

@@ -22,7 +22,7 @@ function moveCamera(event) {
 
   DrawGL.camera.x = DrawGL.startCamera.x + DrawGL.startPos[0] - pos[0];
   DrawGL.camera.y = DrawGL.startCamera.y + DrawGL.startPos[1] - pos[1];
-  DrawGL.draw();
+  DrawGL.drawMain();
 }
 
 function rotateCamera(event) {
@@ -41,7 +41,7 @@ function rotateCamera(event) {
   DrawGL.camera.rotation = DrawGL.startCamera.rotation + delta;
   DrawGL.camera.x = camMat[6];
   DrawGL.camera.y = camMat[7];
-  DrawGL.draw();
+  DrawGL.drawMain();
 }
 
 function handleMouseMove(event) {
@@ -55,7 +55,7 @@ function handleMouseMove(event) {
 
 function handleMouseUp() {
   DrawGL.rotate = false;
-  DrawGL.draw();
+  DrawGL.drawMain();
   DrawGL.canvas.removeEventListener('mousemove', handleMouseMove);
   DrawGL.canvas.removeEventListener('mouseup', handleMouseUp);
 }
@@ -75,7 +75,7 @@ DrawGL.canvas.addEventListener('mousedown', (event) => {
     DrawGL.startClipPos
   );
   DrawGL.startMousePos = [event.clientX, event.clientY];
-  DrawGL.draw();
+  DrawGL.drawMain();
 });
 
 function filter_change() {
@@ -90,7 +90,8 @@ function filter_change() {
       Mesh.prototype.fillElementsGL2();
       break;
   }
-  DrawGL.draw();
+  DrawGL.drawMain();
+  DrawGL3D.drawMain();
 }
 
 function checkSolution(event) {
@@ -112,7 +113,7 @@ function checkSolution(event) {
   }
   DrawGL.nearPointGL = processingData.prototype.getNearest(arrPoints1, currentPointGL, 10);
   if (DrawGL.nearPointGL !== undefined) {
-    DrawGL.draw();
+    DrawGL.drawMain();
     DrawGL.drawCheckpoint({
       x: DrawGL.nearPointGL[0].x,
       y: DrawGL.nearPointGL[0].y,
@@ -122,12 +123,12 @@ function checkSolution(event) {
     DrawGL.canvas.addEventListener('mousedown', showproperties);
   }
   else {
-    DrawGL.draw();
+    DrawGL.drawMain();
   }
 }
 
 function showproperties(event) {
-  if (event.buttons == 1) {
+  if (event.buttons == 1 && !event.shiftKey) {
     if (DrawGL.nearPointGL !== undefined) {
       let Detail = DrawGL.takevalueRange.find(({ coord }) => coord[0] == DrawGL.nearPointGL[0].x && coord[1] == DrawGL.nearPointGL[0].y)
       DrawGL.color = [0,0,1,1];
@@ -214,7 +215,7 @@ DrawGL.canvas.addEventListener('wheel', (event) => {
   DrawGL.camera.x += preZoomX - postZoomX;
   DrawGL.camera.y += preZoomY - postZoomY;
 
-  DrawGL.draw();
+  DrawGL.drawMain();
 });
 
 //Change cursor
