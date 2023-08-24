@@ -1,4 +1,7 @@
 
+var domId = function (id){
+	return document.getElementById(id);
+}
 var myCanVas = document.getElementById("myCanvas");
 var Gl = document.getElementById("WebGL_area");
 var canVas = document.getElementById("wrap_canvas_div");
@@ -22,6 +25,9 @@ function ChangeModeDrawing() {
 	document.getElementById("fillColor").style.display = "none";
 	document.getElementById("property_solution").style.display = "none";
 	document.getElementById("property").style.display = "block";
+	document.getElementById("meshing").style.backgroundColor = "white";
+	document.getElementById("modeDrawing").style.backgroundColor = "#57fa6d";
+
 }
 
 function ChangeModeGL() {
@@ -43,6 +49,8 @@ function ChangeModeGL() {
 	document.getElementById("tab-comments").style.display = "none";
 	document.getElementById("property").style.display = "none";
 	document.getElementById("property_solution").style.display = "block";
+	document.getElementById("meshing").style.backgroundColor = "#57fa6d";
+	document.getElementById("modeDrawing").style.backgroundColor = "white";
 };
 
 function ChangeModeGL3D() {
@@ -65,4 +73,6 @@ function ChangeModeGL3D() {
 	document.getElementById("line").style.display = "none";
 	document.getElementById("command").style.display = "none";
 	document.getElementById("tab-comments").style.display = "none";
+	document.getElementById("meshing").style.backgroundColor = "#57fa6d";
+	document.getElementById("modeDrawing").style.backgroundColor = "white";
 };
