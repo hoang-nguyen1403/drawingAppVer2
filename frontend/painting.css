@@ -727,7 +727,7 @@ button {
 }
 
 #meshing {
-    background: url(img/cube-svgrepo-com.svg);
+    background: url(img/solution_mode.png);
     width: 40px;
     height: 40px;
     border: 2px solid black;
@@ -838,7 +838,10 @@ button {
     height: 30px;
     justify-content: space-between;
     align-items: center;
+    width: 114px;
 }
+
+
 #Mode3D{
     display: none;
     border: 1px solid #0784d1;

@@ -6,8 +6,8 @@ function getClipSpaceMousePosition3D(event) {
   const clipX = x / rect.width * 2 - 1;
   const clipY = y / rect.height * -2 + 1;
   const invViewProjectionMatrix = m4.inverse(DrawGL3D.viewProjectionMat)
-  const clipSpace = [clipX, clipY, -1, 0];
-  const clipSpaceEnd = [clipX, clipY, 0, 0];
+  const clipSpace = [clipX, clipY, -1];
+  const clipSpaceEnd = [clipX, clipY, 0];
   const worldSpace = m4.transformPoint(invViewProjectionMatrix, clipSpace);
   const worldSpaceEnd = m4.transformPoint(invViewProjectionMatrix, clipSpaceEnd);
   return {
@@ -119,12 +119,11 @@ function handleMouseDownSelect(event) {
 
 function performRaycasting(ray) {
   let closestPoint = null;
-  let closestDistance = 5 * DrawGL3D.camera.Zoom;
-  console.log(closestDistance);
+  let closestDistance = Infinity;
   for (const point of DrawGL3D.takeValueRange) {
     const intersectionDistance = calculateDistance(ray, point.coord);
     if (intersectionDistance < closestDistance) {
-      closestDistance = intersectionDistance;
+      closestDistance = intersectionDistance* DrawGL3D.camera.Zoom;
       closestPoint = point;
     }
   }
@@ -186,30 +185,18 @@ function showproperties3D(event) {
                   </div>
                 </div>
             </div>
-            <div>
-                <p style="display: flex; justify-content: center; align-items: center">FEsoln</p>
-                <div style="text-align: center; display: flex; justify-content: center; align-items: center">
-                  ${math.round(Detail.FEsoln_value, 4)}
-                </div>
-            </div>
-            <div>
-                <p style="display: flex; justify-content: center; align-items: center">FEsol1</p>
-                <div>
-                    <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                        ${math.round(Detail.FEsoln_value_1, 4)}
-                    </div>
-                </div>
-            </div>
-            <div>
-                <p style="display: flex; justify-content: center; align-items: center">FEsoln2</p>
-                <div>
-                    <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                        ${math.round(Detail.FEsoln_value_2, 4)}
-                    </div>
-                </div>
-            </div>
-          </div>
           `;
+          for (let i =0;i<FEsoln.length;i++){
+            var a = FEsoln[i].name;
+            document.getElementsByClassName("boderProperties_solution")[0].innerHTML+=`
+            <div>
+            <p style="display: flex; justify-content: center; align-items: center">${a}</p>
+            <div style="text-align: center; display: flex; justify-content: center; align-items: center">
+              ${math.round(Detail[a], 4)}
+            </div>
+        </div>
+            `
+          }
     }
     else {
       document.getElementById("property_solution").style.display = "none";

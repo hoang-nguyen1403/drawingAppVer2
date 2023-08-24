@@ -96,10 +96,10 @@
 					<button id="modeDrawing" title="Drawing mode" type="button"></button>
 				</label>
 				<!-- GLMode -->
-				<label id="ChangeModeGL">
+				<label id="ChangeModeGL" style="display: none;">
 					<button id="modeGL" title="Solution mode" type="button"></button>
 				</label>
-				<button id="meshing" title="Solution mode 3D" onclick="ChangeModeGL3D()"></button>
+				<button id="meshing" title="Solution mode 3D" onclick="mode_change()"></button>
 				<label class="inputImage" title="Open image">
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
 						style="display: none">
@@ -138,12 +138,13 @@
 					<canvas id="canvasGL"></canvas>
 					<canvas id="text_colorbar"></canvas>
 					<canvas id="canvas_colorbar"></canvas>
-					<!-- <canvas id="model_load"></canvas> -->
+					</form>
 					<form id="form">
+						<select name="modeSolution" id="modeSolution_value" onchange="mode_change()" style="display: none;">
+							<option value="3D">3D</option>
+							<option value="2D">2D</option>
+						</select>
 						<select name="filter" id="filter" onchange="filter_change()" style="display: none;">
-							<option value="Mode 1">Mode 1</option>
-							<option value="Mode 2">Mode 2</option>
-							<option value="Mode 3">Mode 3</option>
 						</select>
 					</form>
 				</div>
@@ -225,7 +226,6 @@
 	<script src="./frontend/libs/twgl.js"></script>
 	<script src="./frontend/libs/twgl-full.js"></script>
 	<script src="./js/webgl-utils-2021.js"></script>
-	<!-- <script src="frontend/libs/three.js"></script> -->
 	<script src="./frontend/JS/paintingWebGL.js"></script>
 	<script src="frontend/JS/event.js"></script>
 	<script src="./frontend/JS/Draw3D.js"></script>

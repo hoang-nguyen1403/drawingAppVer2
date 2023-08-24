@@ -370,7 +370,7 @@ class processingData {
       // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
       // url: "http://127.0.0.1:8000/v1/detectArea/",
 
-      url: "http://34.171.12.236:8000/v1/detectArea/",
+      url: "http://34.71.49.142:8000/v1/detectArea/",
       data: dataRequest,
     });
 
@@ -754,7 +754,7 @@ class processingData {
           break;
       }
       switch (b.className) {
-        case "Point":
+        case "Point": 
           b_ = 3;
           break;
         case "Line":

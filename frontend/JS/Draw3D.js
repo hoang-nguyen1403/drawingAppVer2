@@ -70,6 +70,7 @@ class Draw3D {
         this.sceneMesh = [];
         this.pointStorage = [];
         this.nearestPointGL3D = [];
+        this.valueFilter = [];
     }
     loadVSFG(path) {
         var request = new XMLHttpRequest();

@@ -79,19 +79,21 @@ DrawGL.canvas.addEventListener('mousedown', (event) => {
 });
 
 function filter_change() {
-  switch (DrawGL.filter_value.value) {
-    case "Mode 1":
-      Mesh.prototype.fillElementsGL();
-      break;
-    case "Mode 2":
-      Mesh.prototype.fillElementsGL1();
-      break;
-    case "Mode 3":
-      Mesh.prototype.fillElementsGL2();
-      break;
-  }
+  let data = FEsoln.find(({name})=> name == DrawGL.filter_value.value);
+  Mesh.prototype.fillElementsGL(data.data);
   DrawGL.drawMain();
   DrawGL3D.drawMain();
+}
+
+function mode_change() {
+  let value = document.getElementById("modeSolution_value").value;
+  switch(value){
+    case "3D" :
+      ChangeModeGL3D();
+      break;
+    case "2D" :
+      ChangeModeGL();
+  }
 }
 
 function checkSolution(event) {
@@ -147,8 +149,7 @@ function showproperties(event) {
             <button class="property_solution-icon" title = "Close" onclick="toggleProperty()" value="Off"></button>
           </div>
         </div>
-        <div class=boderProperties_solution>
-            
+        <div class=boderProperties_solution>   
             <div>
               <p style="display: flex; justify-content: center; align-items: center">Coordinate</p>
                 <div>
@@ -157,30 +158,19 @@ function showproperties(event) {
                   </div>
                 </div>
             </div>
-            <div>
-                <p style="display: flex; justify-content: center; align-items: center">FEsoln</p>
-                <div style="text-align: center; display: flex; justify-content: center; align-items: center">
-                  ${math.round(Detail.FEsoln_value, 4)}
-                </div>
-            </div>
-            <div>
-                <p style="display: flex; justify-content: center; align-items: center">FEsol1</p>
-                <div>
-                    <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                        ${math.round(Detail.FEsoln_value_1, 4)}
-                    </div>
-                </div>
-            </div>
-            <div>
-                <p style="display: flex; justify-content: center; align-items: center">FEsoln2</p>
-                <div>
-                    <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                        ${math.round(Detail.FEsoln_value_2, 4)}
-                    </div>
-                </div>
-            </div>
           </div>
           `;
+          for (let i =0;i<FEsoln.length;i++){
+            var a = FEsoln[i].name;
+            document.getElementsByClassName("boderProperties_solution")[0].innerHTML+=`
+            <div>
+            <p style="display: flex; justify-content: center; align-items: center">${a}</p>
+            <div style="text-align: center; display: flex; justify-content: center; align-items: center">
+              ${math.round(Detail[a], 4)}
+            </div>
+        </div>
+            `
+          }
     }
     else {
       document.getElementById("property_solution").style.display = "none";

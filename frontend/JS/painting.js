@@ -287,7 +287,12 @@ class Paint {
     DrawGL.drawMain();
     DrawGL3D.drawMain();
     DrawGL.gl_colorbar.clear(DrawGL.gl_colorbar.COLOR_BUFFER_BIT)
+    FEsoln = [];
+    document.getElementById("filter").innerHTML = ``;
     document.getElementById("filter").style.display = "none";
+    document.getElementById("modeSolution_value").style.display = "none";
+    document.getElementById("modeSolution_value").value = "3D";
+    document.getElementById("property_solution").style.display = "none";
     processingData.allLine = [];
     processingData.allPoint = [];
     processingData.allArea = [];
@@ -356,22 +361,33 @@ class Paint {
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
       PaintIn.clearAll();
-      ChangeModeGL3D();
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
         if (inputData["jsmat"] !== undefined) {
           document.getElementById("filter").style.display = "block";
+          document.getElementById("modeSolution_value").style.display = "block";
           Mesh.prototype.createDataMesh(inputData);
-          for (let i = 0; i < FEsoln.length; i++) {
+          for (let i = 0; i < Mesh.nodes.length; i++) {
             DrawGL.takevalueRange.push(
-              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y], FEsoln_value: FEsoln[i], FEsoln_value_1: FEsoln1[i], FEsoln_value_2: FEsoln2[i] },
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y] }
             );
             DrawGL3D.takeValueRange.push(
-              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 0], FEsoln_value: FEsoln[i], FEsoln_value_1: FEsoln1[i], FEsoln_value_2: FEsoln2[i] },
-              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 100], FEsoln_value: FEsoln[i], FEsoln_value_1: FEsoln1[i], FEsoln_value_2: FEsoln2[i] },
-            )
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 0] },
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 100] }
+            );
           }
+          var count = 0;
+          for (let j = 0; j < DrawGL.takevalueRange.length; j++) {
+            for (let i = 0; i < FEsoln.length; i++) {
+              const value1 = FEsoln[i].name;
+              DrawGL.takevalueRange[j] = { ...DrawGL.takevalueRange[j], [value1]: FEsoln[i].data[j] };
+              DrawGL3D.takeValueRange[count] = { ...DrawGL3D.takeValueRange[count], [value1]: FEsoln[i].data[j] };
+              DrawGL3D.takeValueRange[count + 1] = { ...DrawGL3D.takeValueRange[count + 1], [value1]: FEsoln[i].data[j] };
+            }
+            count += 2;
+          }
+
           // Max element for Uint16array is 10921 elements;
           var max_element = 10921;
           var count_element = Mesh.elements.length / max_element;
@@ -506,6 +522,7 @@ class Paint {
           DrawGL3D.sceneFill.push(bufferInfo);
           DrawGL3D.drawMain();
           ChangeModeGL();
+          ChangeModeGL3D();
           DrawGL.scene_fill.push({
             x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
           })

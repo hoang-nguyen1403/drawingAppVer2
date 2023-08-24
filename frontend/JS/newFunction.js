@@ -52,6 +52,7 @@ function ChangeModeGL3D() {
 	// Gl.style.display = "none";
 	Gl.style.border = "none";
 	mode3D.style.display = "block";
+	document.getElementById("WebGL_area").style.display = "block"
 	document.getElementById("fillColor").style.display = "block";
 	document.getElementById("canvasGL").style.display = "none";
 	document.getElementById("mode").style.display = "block";
