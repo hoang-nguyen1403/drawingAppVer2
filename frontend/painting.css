@@ -3,6 +3,7 @@
     margin: 0;
     font-family: Calibri;
     user-select: none;
+    /* box-sizing: border-box; */
 }
 
 html {
@@ -15,8 +16,8 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    overscroll-behavior-x: none;
+    overflow: scroll;
+    /* overscroll-behavior-x: none; */
 }
 
 #header {
@@ -82,11 +83,12 @@ body {
     flex: 1;
     border: 1px solid #0784d1;
     width: 100%;
+    /* height: 1117px; */
 }
 
 #myCanvas {
     background-color: white;
-    height: 100%;
+    height: 80vh;
     width: 100%;
 }
 
@@ -188,20 +190,22 @@ button {
 
 #property {
     position: absolute;
-    right: 17.1%;
-    bottom: 1%;
+    right: 2%;
+    /* bottom: 1%; */
     width: 150px;
     display: none;
     flex-direction: column;
     font-size: 13px;
-    /* background-color: #ffffff; */
+    background-color: #ffffff;
+    top: 20%;
+    z-index: 20;
 }
 
 .property_label {
     display: flex;
     width: 100%;
     /* height: 30px; */
-    padding: 0%;
+    padding: 0;
     font-size: 22px;
     border: 1px solid black;
     background-color: rgb(162 202 212 / 80%);
@@ -249,9 +253,19 @@ button {
 }
 
 #grid {
-    position: absolute;
-    top: 350px;
-    left: 25px;
+    /* position: absolute; */
+    /* top: 350px; */
+    /* left: 25px; */
+    /* z-index: 20; */
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#grid:hover {
+    background-size: 30px 30px;
 }
 
 #line {
@@ -543,6 +557,21 @@ button {
     background-size: 30px 30px;
 }
 
+#modeGL {
+    /* background: url(./img/3D\ mode.png);
+     */
+    background: url(./img/post_mode.png);
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#modeGL:hover {
+    background-size: 30px 30px;
+}
+
 /* ----------Tab comment */
 
 #tab-icon {
@@ -706,4 +735,50 @@ button {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* #canvas_test{
+    background-color: #fff;
+    border: 1px solid black;
+    width: 100%;
+    height: 80vh;
+} */
+#my_canvasTest{
+    background-color: transparent;
+    position: absolute;
+    /* z-index: 13; */
+    border: 1px solid black;
+    height: 80vh;
+    width: 100%;
+    z-index: 20;
+    
+}
+#WebGL_area{
+    display: none;
+    width: 100%;
+}
+/* #aks_visualizer{
+    position: relative;
+} */
+/* #showMeshgrouptest{
+    height: 100px;
+    width: 100px;
+    position: relative;
+    top: 0;
+    right: 0;
+} */
+/* #drawGL_area{
+    width: 1200px;
+    height: 600px;
+} */
+#text {
+    background-color: #fff;
+      /* needed because webgl-tutoraisl.css sets canvas bg color to white */
+    position: absolute;
+    /* left: 0px;
+    top: 120px; */
+    width: 100%;
+    height: 80vh;
+    z-index: 10;
+    
 }

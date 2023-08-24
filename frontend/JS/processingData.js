@@ -41,6 +41,16 @@ class processingData {
     }
     return AllPointObj;
   }
+
+  //
+  createSegment(segment_1,segment_2){
+    let AllSeg=[];
+    for (let i = 0; i< segment_1.length; i++){
+      let segment =[segment_1[i],segment_2[i]];
+      AllSeg.push(segment);
+    }
+    return AllSeg;
+  }
   //Line
   createLine(PointList, nameList, colorList, widthList, lineLoadsList) {
     let AllLineObj = [];
@@ -185,10 +195,10 @@ class processingData {
       };
     }
     if (
-      math.round(T[0][0], 10) <= 1 &&
-      math.round(T[0][0], 10) >= 0 &&
-      math.round(T[1][0], 10) >= 0 &&
-      math.round(T[1][0], 10) <= 1
+      math.round(T[0][0], 15) <= 1 &&
+      math.round(T[0][0], 15) >= 0 &&
+      math.round(T[1][0], 15) >= 0 &&
+      math.round(T[1][0], 15) <= 1
     ) {
       var Point1x = x1 + (x2 - x1) * T[0][0];
       var Point1y = y1 + (y2 - y1) * T[0][0];
@@ -355,6 +365,7 @@ class processingData {
     jsonData.surface_coords = surface_coords;
     jsonData.surface_names = surface_names;
 
+    
     let dataRequest = JSON.stringify(jsonData);
     let promise = axios({
       method: "POST",
@@ -371,7 +382,7 @@ class processingData {
     });
 
     promise.catch(function (err) {
-      console.log("err", err);
+      // console.log("err", err);
     });
   }
 
@@ -457,7 +468,9 @@ class processingData {
   saveObj(dataSaved) {
     let data = JSON.stringify(processingData.allObject);
     let num_nodes;
+    // let num_nodes1;
     let num_segments;
+    // let num_segments1;
     let nodes = [];
     let node_names = [];
     let segments = [];
@@ -469,72 +482,55 @@ class processingData {
     let segment_loads = [];
     num_nodes = processingData.allPoint.length;
     num_segments = processingData.allLine.length;
-    // //change coordinate Oxy origin
-    // let rotMatrix = [
-    //   [math.cos(math.PI / 2), -math.sin(math.PI / 2)],
-    //   [math.sin(math.PI / 2), math.cos(math.PI / 2)]
-    // ]
-    // let allPoint = [...processingData.allPoint];
-    // for (let i = 0; i <= allPoint.length - 1; i++) {
-    //   let nodeCoord = [allPoint[i].x,allPoint[i].y];
-    //   //rot
-    //   nodeCoord = math.multiply(nodeCoord, rotMatrix);
-    //   nodeCoord = nodeCoord.flat()
-    //   allPoint[i].x = nodeCoord[0];
-    //   allPoint[i].x = nodeCoord[1];
-    // }
-
-    // let allLine = [...processingData.allLine];
-    // for (let i = 0; i <= allLine.length - 1; i++) {
-    //   let startcoordX = allLine[i].Point[0].x
-    //   let startcoordY = allLine[i].Point[0].y
-    //   let endcoordX = allLine[i].Point[1].x
-    //   let endcoordY = allLine[i].Point[1].y
-    //   let startNode = [startcoordX,startcoordY];
-    //   let endNode = [endcoordX,endcoordY];
-    //   //rot
-    //   startNode = math.multiply(startNode, rotMatrix);
-    //   startNode = startNode.flat()
-    //   endNode = math.multiply(endNode, rotMatrix);
-    //   endNode = endNode.flat()
-
-    //   allLine[i].Point[0].x = startNode[0];
-    //   allLine[i].Point[0].y = startNode[1];
-    //   allLine[i].Point[1].x = endNode[0];
-    //   allLine[i].Point[1].x = endNode[1];
-    // }
+    
     for (let point of processingData.allPoint) {
       nodes.push(point.point);
+      // console.log(nodes);
 //      node_names.push(point.name);
       if (point.name != null) {
         node_names.push(point.name);
       } else {
         node_names.push("");
       }
-//      if(point.pointLoads != null) {
-//        nodal_loads.push(point.pointLoads);
-//      } else {
-//        nodal_loads.push([{
-//          type: "force",
-//          parameters: { force_x: 0, force_y: 0 },
-//        }]);
-//      }
     if(point.pointLoads != null) {
       nodal_loads.push(point.pointLoads);
     } else {
       nodal_loads.push([]);
       }
-
     }
+
+//     for (let point of Draw.pointGL) {
+//       nodes.push(point);
+// //      node_names.push(point.name);
+//       if (point.name != null) {
+//         node_names.push(point.name);
+//       } else {
+//         node_names.push("");
+//       }
+//     if(point.pointLoads != null) {
+//       nodal_loads.push(point.pointLoads);
+//     } else {
+//       nodal_loads.push([]);
+//       }
+//     }
+
+    // for (let i = 0; i < Draw.pointGL.length; i++) {
+    //   Draw.segment.push([i, i+1]);
+    //   // Draw.pointGL = [];
+    // }
+
     for (let line of processingData.allLine) {
       let index1 = nodes.findIndex(
         (value) => JSON.stringify(value) === JSON.stringify(line.Point[0].point)
       );
+      // console.log(line.Point[0].point)
       let index2 = nodes.findIndex(
         (value) => JSON.stringify(value) === JSON.stringify(line.Point[1].point)
       );
+      // console.log(line.Point[1].point)
       let segment = [index1, index2];
       segments.push(segment);
+
 //      segment_names.push(line.name);
       if(line.name != null) {
         segment_names.push(line.name);
@@ -549,6 +545,48 @@ class processingData {
       }
 
     }
+//     for (let line of Draw.pointGL) {
+//       let index1 = nodes.findIndex(
+//         (value) => JSON.stringify(value) === JSON.stringify(line[0])
+//       );
+//       let index2 = nodes.findIndex(
+//         (value) => JSON.stringify(value) === JSON.stringify(line[1])
+//       );
+//       let segment = [index1, index2];
+//       segments.push(segment);
+
+// //      segment_names.push(line.name);
+//       if(line.name != null) {
+//         segment_names.push(line.name);
+//       } else {
+//         segment_names.push("");
+//       }
+// //      segment_loads.push(line.lineLoads);
+//       if(line.lineLoads != null) {
+//         segment_loads.push(line.lineLoads);
+//       } else {
+//         segment_loads.push([]);
+//       }
+
+//     }
+
+//     for (let i = 0; i < Draw.segment.length; i++) {
+//       segments.push(Draw.segment[i]);
+
+// //      segment_names.push(line.name);
+//       if(line.name != null) {
+//         segment_names.push(Draw.segment[i].name);
+//       } else {
+//         segment_names.push("");
+//       }
+// //      segment_loads.push(line.lineLoads);
+//       if(line.lineLoads != null) {
+//         segment_loads.push(Draw.segment[i].lineLoads);
+//       } else {
+//         segment_loads.push([]);
+//       }
+//       num_segments = Draw.segment.length - 1;
+//     }
     for (let area of processingData.allArea) {
       let surface = [];
       for (let i = 0; i <= area.pointFlow.length - 1; i++) {
@@ -608,7 +646,6 @@ class processingData {
     let textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
     saveAs(textToSaveAsBlob,"myFile.txt");
   }
-   
 
   //point - line -area
   // updateStorage() {
@@ -708,11 +745,12 @@ class processingData {
     }
     for (let line of processingData.allLine) {
       processingData.allObject.push(line);
-      // console.log('line1',line)
+      // console.log(line)
       let point1 = line.Point[0];
       let point2 = line.Point[1];
       let sameObj1 = this.addObject(point1, processingData.allPoint);
       let sameObj2 = this.addObject(point2, processingData.allPoint);
+      // console.log(processingData.allPoint);
       //link to 1 point
       if (sameObj1 !== undefined) {
         line.Point[0] = sameObj1;
@@ -720,6 +758,7 @@ class processingData {
       if (sameObj2 !== undefined) {
         line.Point[1] = sameObj2;
       }
+      // console.log(line);
     }
 
     //add point not in line
@@ -790,7 +829,14 @@ class processingData {
       }
     }
   }
-
+  getNearest(listPoints, currentPoint, maxDistance) {
+    let distance = function (a, b) {
+      return math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    };
+    let tree = new kdTree(listPoints, distance, ["x", "y"]);
+    return tree.nearest(currentPoint, 1, maxDistance)[0];
+  }
+  
   createData(inputData) {
     //delete old data
     // PaintIn.clearAll();
@@ -815,6 +861,7 @@ class processingData {
 
     //create line
     let allLine = [];
+    let AllSeg=[];
     // console.log("input data->>>>>>>>>>>>");
     // console.log(inputData["segments"]);
     for (let i = 0; i <= inputData["segments"].length - 1; i++) {
@@ -833,8 +880,8 @@ class processingData {
         lineLoads
       );
       allLine.push(line);
+      AllSeg.push(inputData["segments"][i]);
     }
-    console.log("line" + allLine)
     let allArea = [];
     for (let i = 0; i <= inputData["surfaces"].length - 1; i++) {
       let allLineOfArea = [];
@@ -878,6 +925,7 @@ class processingData {
     processingData.allPoint = allPoint;
     processingData.allLine = allLine;
     processingData.allArea = allArea;
+    processingData.allSeg = AllSeg;
     //update storage
     this.updateStorage();
   }
@@ -960,23 +1008,22 @@ class processingData {
     }
   }
 
-  getNearest(listPoints, currentPoint, maxDistance) {
-    let distance = function (a, b) {
-      return math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-    };
-    let tree = new kdTree(listPoints, distance, ["x", "y"]);
-    return tree.nearest(currentPoint, 1, maxDistance)[0];
-  }
-
   moveObject(obj) {
     //SINGLE
     switch (obj.className) {
       case "Point":
         {
-          let newLocation = [
-            PaintIn.currentMouseDownPos.x,
-            PaintIn.currentMouseDownPos.y,
-          ];
+          let newLocation =  [DrawGL.startPos1[0], DrawGL.startPos1[1]];
+          
+          // Use this to open moveObject's function of canvas 2D
+          // [
+          //   PaintIn.currentMouseDownPos.x,
+          //   PaintIn.currentMouseDownPos.y,
+            
+          //   // Draw.pointGLObj[0].x,
+          //   // Draw.pointGLObj[0].y,
+          // ];
+
           obj.point = newLocation;
           obj.x = newLocation[0];
           obj.y = newLocation[1];
@@ -1003,10 +1050,12 @@ class processingData {
         let point1 = obj.Point[0].point;
         let point2 = obj.Point[1].point;
 
-        let newLocation = [
-          PaintIn.currentMouseDownPos.x,
-          PaintIn.currentMouseDownPos.y,
-        ];
+        let newLocation = [DrawGL.startPos1[0], DrawGL.startPos1[1]];
+        // console.log(newLocation);
+        // [
+        //   PaintIn.currentMouseDownPos.x,
+        //   PaintIn.currentMouseDownPos.y,
+        // ];
         let centerPoint = math.divide(math.add(point1, point2), 2);
         let translateVect = math.subtract(newLocation, centerPoint);
         let newPoint1 = math.add(point1, translateVect);
@@ -1056,8 +1105,8 @@ class processingData {
         });
 
         processingData.allLine.forEach((line) => {
-          console.log(pointLinks1);
-          console.log(pointLinks2);
+          // console.log(pointLinks1);
+          // console.log(pointLinks2);
           if (pointLinks1.length > 0) {
             for (let point of pointLinks1) {
               if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
@@ -1139,8 +1188,12 @@ class processingData {
     this.updateStorage();
     //refresh screen
     PaintIn.renderObject(processingData.allObject);
+
+    // console.log(processingData.allObject);
   }
 }
+
+
 // Point class
 class Point {
   constructor(Arr, pointName, pointLoads = null, soln = null) {
@@ -1440,14 +1493,8 @@ processingData.allAreaCenter = [];
 processingData.newObjects = [];
 processingData.oldObjects = [];
 processingData.Lines = [];
+processingData.allSeg = [];
+
 //----------------------------//
 
-function getNearest(listPoints, currentPoint) {
-  var distance = function (a, b) {
-    return math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-  };
-  var tree = new kdTree(listPoints, distance, ["x", "y"]);
-  return (nearest = tree.nearest(currentPoint, 1));
-}
 
-var mat1;

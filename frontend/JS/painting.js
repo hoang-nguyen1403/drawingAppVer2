@@ -1,42 +1,39 @@
+// var textCanvas = document.querySelector("#text");
+// var ctx = textCanvas.getContext("2d");
+
 class Paint {
   constructor() {
-    this.canvas = document.getElementById("myCanvas");
+    // Call the ID from index.html element
+    this.canvas = document.querySelector("#text");
+    // this.canvas = document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
 
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height =
       document.getElementById("wrap_canvas_div").clientHeight;
 
+    // Call the ID in the tool left position
     this.toolbar = document.getElementById("tool_left");
     this.currentValueGrid = document.getElementById("grid");
-
-    this.currentValueBrush = document.getElementById("brush");
     this.currentValueLine = document.getElementById("line");
-    this.currentValueCircle = document.getElementById("circle");
-    this.currentValueRect = document.getElementById("rect");
-    this.currentValueSpl = document.getElementById("spl");
-    this.curValSelect = "On";
-
+    this.inputImage = document.getElementById("inputImg");
+    // Call the ID for the load in all models
     this.curValName = document.getElementById("valueName");
     this.curValPointLoad = document.getElementById("pointLoad");
     this.curValPressLoad = document.getElementById("pressLoad");
-    // this.curValAxialForce = document.getElementById('axialForce');
     this.curValMoment = document.getElementById("moment");
     this.curValDeleteForce = document.getElementById("deleteForce");
 
-    // //namigArea mode
-    // this.curValNamingArea = document.getElementById("areaNaming");
-
     //addMode
     this.curValDrawing = document.getElementById("modeDrawing");
-    //set defaul mode is drawing
-    document.getElementById("modeDrawing").classList.add("active");
+    //set default mode is drawing
+    //this.curValDrawing.classList.add("active");
 
     //tab
     this.tabStatus = document.getElementById("tab-icon");
     this.valueComment = document.getElementById("textBox");
 
-    //attLine
+    //set default
     this.currentColor = "black";
     this.currentWidth = 5;
     this.deltaGrid = 40;
@@ -63,10 +60,10 @@ class Paint {
     };
     this.curSelectBox = [];
     this.isPainting = false;
-    this.listenEvent();
+    //this.listenEvent();
 
     this.image = null; //can go back
-    this.choiceEvent();
+    //this.choiceEvent();
     this.mouseDownPos = {
       x: 0,
       y: 0,
@@ -86,12 +83,13 @@ class Paint {
     this.arrSPLX = [];
     this.arrSPLY = [];
 
-    this.getNodePos();
+    //this.getNodePos();
     this.arrRecordNode = [];
     //hidden div
+    this.BDcondition = document.getElementById("BDcondition");
     document.getElementById("BDCondition").style.display = "none";
 
-    this.drawBackground();
+    //this.drawBackground();
     //----//
     this.arrCurObj = [];
     this.arrMultiCurObj = [];
@@ -100,7 +98,7 @@ class Paint {
     this.curPoint = [];
     this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
     this.canvas.style.cursor = this.currentCursor;
-    this.controlCanvas();
+    //this.controlCanvas();
 
     //requestAPI
     this.APIurl = document.getElementById("urlInputted");
@@ -111,47 +109,13 @@ class Paint {
     this.lastMouseMove = [0, 0];
   }
 
-  // Press button change mode
-  changeMode() {
-    if (this.curValDrawing.value === "Off") {
-      // mode drawing
-      this.renderObject(processingData.allObject);
-      this.curValDrawing.value = "On";
-      document.getElementById("modeDrawing").classList.add("active");
-
-      Mesh.curValFillColor.value = "Off";
-      document.getElementById("fillColor").style.display = "none";
-
-      this.mouseMoveStatus = true;
-      this.pen = "select";
-      this.curValSelect = "On";
-    } else {
-      //mode soln
-      this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
-      this.canvas.style.cursor = this.currentCursor;
-
-      this.ctx.fillStyle = "white";
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-      this.curValDrawing.value = "Off";
-      document.getElementById("modeDrawing").classList.remove("active");
-
-      Mesh.curValFillColor.value = "Off";
-      document.getElementById("fillColor").classList.remove("active");
-
-      this.mouseMoveStatus = false;
-      this.pen = undefined;
-      this.curValSelect = "Off";
-
-      //display soln
-      if (Mesh.inputData !== undefined) {
-        document.getElementById("command").style.display = "none";
-        Mesh.prototype.drawMesh();
-      } else {
-        this.renderCommand("soln");
-      }
-    }
+  setup_control() {
+    this.container.control_menu = $('<div style = \"margin-left: 0px; width: 70px; height: 30px; left: ' + (this.width - 100) + 'px; top: ' + (20 - this.height) + 'px; position: relative;\"></div>').appendTo(this.container.canvas_container);
+    $('<div class="toggleButton" id="showMeshgroup' + this.name + '"><input id="showMesh' + this.name + '"type="checkbox" onchange="edit_meshoption()"><label>MESH</label></div>').appendTo(this.container.control_menu);
+    $('<div class="toggleButton" id="showVolumegroup' + this.name + '"><input id="showVolume' + this.name + '"type="checkbox" value = "SOLID" onchange="edit_volumeoption()"><label>SOLID</label></div>').appendTo(this.container.control_menu);
+    $('#showVolumegroup' + this.name).hide();
   }
+
 
   controlCanvas() {
     if ((this.curValDrawing.value = "Off")) {
@@ -182,7 +146,6 @@ class Paint {
     PaintIn.ctx.fillStyle = "red";
     PaintIn.ctx.fillText(text, x, y);
   }
-  
 
   //Press button new/clear all Canvas
   clearAll() {
@@ -207,14 +170,57 @@ class Paint {
     this.arrLineWidth = [];
 
     if (this.currentValueGrid.value == "On") {
-      this.ctx.strokeStyle = "grey";
+      //this.ctx.strokeStyle = "red";
       this.drawGrid();
     }
     //---// clear saved data
+    Draw.lineVertex = [];
+    Draw.point_x = [];
+    Draw.point_y = [];
+
+    Draw.takePoint = [];
+    Draw.segment = [];
+    DrawGL.scene = [];
+    DrawGL.sceneCheck = [];
+    DrawGL.storageSelectedLine = [];
+    DrawGL.selectedLine = [];
+    DrawGL.hoverLine = [];
+    DrawGL.sceneSelectedLine = [];
+
+    Draw.pointGLObj = [];
+
+    //Draw.newPointGL: là mảng để lưu trữ Object là điểm nhưng có thể bị trùng tọa độ điểm (nếu là hình khép kín)
+    Draw.newPointGL = [];
+
+    Draw.scenePoint = [];
+    Draw.arrMultiCurObj = [];
+    Draw.newLines = [];
+    Draw.newIntersPoints = [];
+    Draw.lineVertex = [];
+    Draw.segment_mesh = [];
+    Draw.point_x = [];
+    Draw.point_y = [];
+    Draw.segment = [];
+    Draw.sceneOpen = [];
+    Draw.scene_fill = [];
+    Draw.takePoint = [];
+    Draw.pointGL = [];
+    Draw.pointName = "";
+    Draw.listloadPoints = [];
+
+    Draw.lineSelect = [];
+    Draw.segmentSelect = [];
+    DrawGL.drawFill();
+    DrawGL.draw();
+    DrawGL.drawOpen();
+    DrawGL.drawLineSelected();
+    DrawGL.drawPoint()
+    DrawGL.gl.clear(DrawGL.gl.COLOR_BUFFER_BIT)
     processingData.allLine = [];
     processingData.allPoint = [];
     processingData.allArea = [];
     processingData.allObject = [];
+    processingData.allSeg = [];
     this.arrCurObj = [];
     this.arrMultiCurObj = [];
     this.renderProperty("off", "");
@@ -225,7 +231,7 @@ class Paint {
   // save comment text
   saveCommentText() {
     if (this.valueComment.value == []) {
-      dataLogFile.push(this.valueComment.value); 
+      dataLogFile.push(this.valueComment.value);
     }
     if (this.valueComment.value !== []) {
       dataLogFile[0] = this.valueComment.value;
@@ -234,11 +240,9 @@ class Paint {
 
   // Upload file
   // uploadFile() {
-    // const input = document.getElementById("fileUpload");
-    // const file = input.files[0];
-    // }
- 
-
+  // const input = document.getElementById("fileUpload");
+  // const file = input.files[0];
+  // }
 
   //set up color, size for pen
   choiceEvent() {
@@ -261,7 +265,7 @@ class Paint {
           //redraw object
           this.renderObject(processingData.allLine);
 
-          this.ctx.strokeStyle = "grey";
+          //this.ctx.strokeStyle = "red";
           this.drawGrid();
         }
         // console.log(this.currentValueGrid.value)
@@ -276,6 +280,7 @@ class Paint {
     this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
     document.addEventListener("keydown", (event) => this.keyDown(event));
     this.canvas.addEventListener("click", (event) => this.selectObj(event));
+
     // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
@@ -283,10 +288,53 @@ class Paint {
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
         if (inputData["jsmat"] !== undefined) {
-          processingData.prototype.createMeshData(inputData);
+          Mesh.prototype.createDataMesh(inputData);
         } else {
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
+          for (let i = 0; i < processingData.allPoint.length; i++) {
+            Draw.takePoint.push(processingData.allPoint[i].point);
+          }
+
+          for (let i = 0; i < processingData.allSeg.length; i++) {
+            Draw.segment.push(processingData.allSeg[i]);
+          }
+          Draw.pointGL = Draw.takePoint;
+          Draw.takePoint = Draw.takePoint.flat();
+          Draw.segment = Draw.segment.flat();
+          Draw.lineVertex = Draw.takePoint;
+
+          for (let i = 0; i < Draw.lineVertex.length; i++) {
+            if (i % 2 == 0) {
+              Draw.point_x.push(Draw.lineVertex[i]);
+            }
+            else Draw.point_y.push(Draw.lineVertex[i]);
+          }
+
+          // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
+          var bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+            a_position: {
+              numComponents: 2,
+              data: Draw.lineVertex,
+            },
+            indices: Draw.segment,
+          });
+
+
+          var sphereBufferInfo = twgl.createBufferInfoFromArrays(gl, {
+            a_position: sphereVerts.position,
+            indices: sphereVerts.indices,
+          });
+
+          // console.log(sphereVerts.indices)
+
+
+          Draw.sceneOpen = [{ x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },];
+          Draw.prototype.makeCameraMatrix();
+          Draw.prototype.updateViewProjection();
+          Draw.prototype.drawOpen(sphereBufferInfo);
+
+
           //update screen
           PaintIn.renderObject(processingData.allObject);
         }
@@ -295,18 +343,20 @@ class Paint {
     });
 
     //input text comment file
-    document.getElementById("uploadFile").addEventListener("change", function() {
-      var textInput = document.getElementById('textBox');
-      var reader = new FileReader();
-      reader.onload = function() {
-        let text = reader.result;
-        textInput.value = text;
-      };
-      reader.readAsText(this.files[0]);
-    });
+    document
+      .getElementById("uploadFile")
+      .addEventListener("change", function () {
+        var textInput = this.valueComment;
+        var reader = new FileReader();
+        reader.onload = function () {
+          var text = reader.result;
+          document.getElementById("textBox").value = text;
+        };
+        reader.readAsText(this.files[0]);
+      });
 
     //input img
-    let form = document.getElementById("inputImg");
+    let form = this.inputImage;
     form.addEventListener("change", function (event) {
       event.preventDefault();
       const formData = new FormData(form[0]);
@@ -327,7 +377,7 @@ class Paint {
       });
 
       promise.catch(function (err) {
-        console.log("err", err);
+        // console.log("err", err);
       });
     });
 
@@ -383,6 +433,9 @@ class Paint {
       this.arrRectY = [];
       this.arrMouseDownPosition = [];
       this.arrSPL = [];
+      // console.log(index);
+
+      // index = 0;
 
       //destroy box input
       if (this.curValName.value === "On") {
@@ -475,25 +528,22 @@ class Paint {
         this.getNodePos();
         this.arrRecordNode = this.removeDuplicates(this.arrRecordNode);
         this.arrGrid = this.concatArr(this.arrGrid, this.arrRecordNode);
-        this.ctx.strokeStyle = "grey";
+        //this.ctx.strokeStyle = "grey";
         this.drawGrid();
       } else if (dataLogFile.length > 1) {
-        console.log("up");
-        console.log(dataLogFileIndex);
+        // console.log("up");
+        // console.log(dataLogFileIndex);
         if (dataLogFileIndex === 0) {
           dataLogFileIndex += 1;
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         } else if (dataLogFileIndex === dataLogFile.length - 1) {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         } else {
           dataLogFileIndex += 1;
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         }
       } else if (dataLogFile.length === 1) {
-        document.getElementById("textBox").value = dataLogFile.at(0);
+        this.valueComment.value = dataLogFile.at(0);
       }
     }
     //KEYDOWN
@@ -510,24 +560,21 @@ class Paint {
         this.arrRecordNode = this.removeDuplicates(this.arrRecordNode);
         this.arrGrid = this.concatArr(this.arrGrid, this.arrRecordNode);
 
-        this.ctx.strokeStyle = "grey";
+        //this.ctx.strokeStyle = "grey";
         this.drawGrid();
       } else if (dataLogFile.length > 1) {
-        console.log("down");
+        // console.log("down");
         if (dataLogFileIndex === 0) {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         } else if (dataLogFileIndex === dataLogFile.length - 1) {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
           dataLogFileIndex -= 1;
         } else {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
           dataLogFileIndex -= 1;
         }
       } else if (dataLogFile.length === 1) {
-        document.getElementById("textBox").value = dataLogFile.at(0);
+        this.valueComment.value = dataLogFile.at(0);
       }
     }
 
@@ -538,25 +585,25 @@ class Paint {
     }
     //ENTER
     if (event.keyCode === 13) {
-//      if (this.valueComment.value === "l" && this.pen === "select") {
-//        //shortcut for draw line
-//        // press l
-//        //change cursor
-//        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
-//        this.canvas.style.cursor = this.currentCursor;
-//        let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
-//        this.keyDown(spaceKey);
-//        this.onButtonDraw(this.currentValueLine, "line");
-//        this.renderObject(processingData.allObject);
-//      }
-//
-    //  if (this.valueComment.value !== "") {
-    //    dataLogFile.push(this.valueComment.value);
-    //    this.valueComment.value = "";
-    //  }
-//
-//      PaintIn.renderCommand("textCommands");
-    deselectAll();
+      //      if (this.valueComment.value === "l" && this.pen === "select") {
+      //        //shortcut for draw line
+      //        // press l
+      //        //change cursor
+      //        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
+      //        this.canvas.style.cursor = this.currentCursor;
+      //        let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
+      //        this.keyDown(spaceKey);
+      //        this.onButtonDraw(this.currentValueLine, "line");
+      //        this.renderObject(processingData.allObject);
+      //      }
+      //
+      //  if (this.valueComment.value !== "") {
+      //    dataLogFile.push(this.valueComment.value);
+      //    this.valueComment.value = "";
+      //  }
+      //
+
+      deselectAll();
     }
     if (event.keyCode === 17) {
       if (this.valueComment.value === "l" && this.pen === "select") {
@@ -574,7 +621,7 @@ class Paint {
       //   dataLogFile.push(this.valueComment.value);
       //   // this.valueComment.value = "";
       // }
-     }
+    }
     //F2 input length Line
     if (event.keyCode === 113 && lengthLine === undefined) {
       let currentLine;
@@ -596,11 +643,11 @@ class Paint {
 
     if (this.currentValueGrid.value == "Off") {
       this.currentValueGrid.value = "On";
-      this.ctx.strokeStyle = "grey";
+      //this.ctx.strokeStyle = "red";
       this.drawGrid();
     } else {
       this.currentValueGrid.value = "Off";
-      // this.ctx.strokeStyle = 'white';
+      this.ctx.strokeStyle = 'white';
       this.ctx.fillStyle = "white";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -728,57 +775,9 @@ class Paint {
     }
   }
 
-  // chooseCircle() {
-  //     this.offButtonDraw(this.currentValueBrush, "brush");
-  //     this.offButtonDraw(this.currentValueSelect, "select");
-  //     this.offButtonDraw(this.currentValueSpl, "spl");
-  //     this.offButtonDraw(this.currentValueLine, "line");
-  //     this.offButtonDraw(this.currentValueRect, "rect");
-
-  //     this.offButton(this.curValNamePoint, "valueNamePoint");
-  //     this.offButton(this.curValNameLine, "valueNameLine");
-  //     this.offButton(this.curValNameArea, "valueNameArea");
-  //     this.offButton(this.curValPointLoad, "pointLoad");
-  //     this.offButton(this.curValPressLoad, "pressLoad");
-
-  //     this.onOffButtonDraw(this.currentValueCircle, "circle");
-  // }
-
-  // chooseRect() {
-  //     this.offButtonDraw(this.currentValueBrush, "brush");
-  //     this.offButtonDraw(this.currentValueSelect, "select");
-  //     this.offButtonDraw(this.currentValueSpl, "spl");
-  //     this.offButtonDraw(this.currentValueLine, "line");
-  //     this.offButtonDraw(this.currentValueCircle, "circle");
-
-  //     this.offButton(this.curValNamePoint, "valueNamePoint");
-  //     this.offButton(this.curValNameLine, "valueNameLine");
-  //     this.offButton(this.curValNameArea, "valueNameArea");
-  //     this.offButton(this.curValPointLoad, "pointLoad");
-  //     this.offButton(this.curValPressLoad, "pressLoad");
-
-  //     this.onOffButtonDraw(this.currentValueRect, "rect");
-  // }
-
-  // chooseSpl() {
-  //     this.offButtonDraw(this.currentValueBrush, "brush");
-  //     this.offButtonDraw(this.currentValueSelect, "select");
-  //     this.offButtonDraw(this.currentValueRect, "rect");
-  //     this.offButtonDraw(this.currentValueLine, "line");
-  //     this.offButtonDraw(this.currentValueCircle, "circle");
-
-  //     this.offButton(this.curValNamePoint, "valueNamePoint");
-  //     this.offButton(this.curValNameLine, "valueNameLine");
-  //     this.offButton(this.curValNameArea, "valueNameArea");
-  //     this.offButton(this.curValPointLoad, "pointLoad");
-  //     this.offButton(this.curValPressLoad, "pressLoad");
-  //     this.onOffButtonDraw(this.currentValueSpl, "spl");
-  // }
-
   concatArr(arr1, arr2) {
     return arr1.concat(arr2);
   }
-
 
   //press button Name, Fore, Moment
   addValueName() {
@@ -788,16 +787,10 @@ class Paint {
 
     this.renderObject(processingData.allObject);
 
-    // if (this.currentValueSelect.value === "On") {
-    // this.offButtonDraw(this.currentValueBrush, "brush");
-    // this.offButtonDraw(this.currentValueSpl, "spl");
-    // this.offButtonDraw(this.currentValueRect, "rect");
     this.offButtonDraw(this.currentValueLine, "line");
-    // this.offButtonDraw(this.currentValueCircle, "circle");
     this.offButton(this.curValMoment, "moment");
     this.offButton(this.curValPointLoad, "pointLoad");
     this.offButton(this.curValPressLoad, "pressLoad");
-    // this.offButton(this.curValAxialForce, "axialForce");
     this.onOffButton(this.curValName, "valueName");
 
     if (this.curValName.value === "On") {
@@ -867,24 +860,6 @@ class Paint {
       valueLoads = undefined;
     }
   }
-
-  // addValAxialForce() {
-  //     this.pen = undefined;
-  //     // this.offButtonDraw(this.currentValueBrush, "brush");
-  //     // this.offButtonDraw(this.currentValueSpl, "spl");
-  //     // this.offButtonDraw(this.currentValueRect, "rect");
-  //     this.offButtonDraw(this.currentValueLine, "line");
-  //     // this.offButtonDraw(this.currentValueCircle, "circle");
-  //     // this.offButton(this.currentValueSelect, "select")
-  //     this.offButton(this.curValName, "valueName");
-  //     this.offButton(this.curValPointLoad, "pointLoad");
-  //     this.offButton(this.curValMoment, "moment");
-  //     this.offButton(this.curValPressLoad, "pressLoad");
-
-  //     this.onOffButton(this.curValAxialForce, "axialForce");
-
-  //     this.renderObject(processingData.allObject);
-  // }
 
   addValMoment() {
     //change cursor
@@ -961,6 +936,8 @@ class Paint {
             case "Point": {
               processingData.allPoint.forEach((obj) => {
                 if (obj.isInBox(topPoint, bottomPoint)) {
+
+                  //note
                   this.arrMultiCurObj.push(obj);
                 }
               });
@@ -1011,8 +988,9 @@ class Paint {
             }
           }
         }
-        //set defaul obj type
+        //set default obj type
         this.multiSelectType = this.multiSelectTypeDefault;
+        console.log(this.arrCurObj);
         // } else {
         //     //reset arrMultiCurObj
         //     this.arrMultiCurObj = [];
@@ -1032,7 +1010,7 @@ class Paint {
         return;
       }
       //click select
-      //delete last selectbox
+      //delete last select box
       this.curSelectBox = [];
       if (
         this.curValName.value === "Off" &&
@@ -1075,7 +1053,7 @@ class Paint {
             }
           }
         } else {
-          //normal last multicurrent obj
+          //normal last multi current obj
           this.renderObject(processingData.allObject);
           //turn off multi mode
           this.arrMultiCurObj = [];
@@ -1183,7 +1161,10 @@ class Paint {
     this.isPainting = true;
     this.image = new Image();
     this.image.src = this.canvas.toDataURL("image/png ", 1.0);
+
+
     // var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
     this.mouseDownPos = this.getMousePosition(event); //start
     this.arrMouseDownPosition.push(this.mouseDownPos);
     this.currentMouseDownPos = this.getMousePosition(event);
@@ -1204,34 +1185,7 @@ class Paint {
         this.mouseDownPos = nearPoint[0];
         this.arrLineX.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].x);
         this.arrLineY.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].y);
-        // this.arrLineColor.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0]);
-        // this.arrLineWidth.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0]);
-        // console.log('arrLine', this.arrLineX)
       }
-      // if (this.pen === 'circle') {
-      //     this.arrCircleX.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].x);
-      //     this.arrCircleY.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].y);
-      //     for (let i = 1; i < this.arr.length; i += 2) {
-      //         this.mouseDownPos = this.arr[i + 1];
-      //     }
-      //     // console.log('arrCircle', this.arrCircleX)
-      // };
-
-      // if (this.pen === 'rect') {
-      //     this.arrRectX.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].x);
-      //     this.arrRectY.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].y);
-      //     for (let i = 1; i < this.arr.length; i += 2) {
-      //         this.mouseDownPos = this.arr[i + 1];
-      //     }
-      //     this.arrRectColor = this.arrRect;
-      //     // console.log('arrRect', this.arrRectX)
-      // };
-
-      // if (this.pen === 'spl') {
-      //     this.arrSPLX.push(this.mouseDownPos.x);
-      //     this.arrSPLY.push(this.mouseDownPos.y);
-      //     this.drawSPLine();
-      // };
     } else {
       let arrPoints = [];
       processingData.allPoint.forEach((value) =>
@@ -1242,6 +1196,7 @@ class Paint {
         this.mouseDownPos,
         10
       );
+      // console.log(nearPoint);
       if (this.pen === "line") {
         if (nearPoint !== undefined) {
           this.mouseDownPos = nearPoint[0];
@@ -1252,29 +1207,6 @@ class Paint {
         this.arrLineWidth.push(this.lineWidth);
         // console.log('arrLine', this.arrLineX)
       }
-
-      // if (this.pen === 'circle') {
-      //     this.arrCircleX.push(this.mouseDownPos.x);
-      //     this.arrCircleY.push(this.mouseDownPos.y);
-      //     for (let i = 1; i < this.arrMouseDownPosition.length; i += 2) {
-      //         this.mouseDownPos = this.arrMouseDownPosition[i + 1];
-      //     }
-      //     // console.log('arrCircle', this.arrCircleX)
-
-      // };
-
-      // if (this.pen === 'rect') {
-      //     this.arrRectX.push(this.mouseDownPos.x);
-      //     this.arrRectY.push(this.mouseDownPos.y);
-      //     for (let i = 1; i < this.arrMouseDownPosition.length; i += 2) {
-      //         this.mouseDownPos = this.arrMouseDownPosition[i + 1];
-      //     }
-      // }
-
-      // if (this.pen === 'spl') {
-      //     this.arrSPLX.push(this.mouseDownPos.x);
-      //     this.arrSPLY.push(this.mouseDownPos.y);
-      // }
     }
 
     //get data (need optimize)
@@ -1287,7 +1219,6 @@ class Paint {
       );
     }
     // Rect
-    // console.log(this.arrRectX);
     if (this.arrRectX.length % 2 === 0 && this.arrRectX.length !== 0) {
       var lastTwoPointX = [
         this.arrRectX[this.arrRectX.length - 2],
@@ -1307,46 +1238,6 @@ class Paint {
       this.arrRectY = [];
     }
     //----------------------------//
-    // if (this.pen === 'circle' || this.pen === 'rect'|| this.pen === 'spl') {
-    //     this.undo();
-    // }
-
-    // //END Linh config---------------------------------------------------
-    //---------------------------------------------------
-
-    // -----------------------------------------
-    //        //get data (need optimize)
-    //        // Line
-    //        if (this.arrLineX.length >= 2) {
-    //            processingData.prototype.inputRawData(this.pen, this.arrLineX, this.arrLineY);
-    //        };
-    //        // Rect
-    //        // console.log(this.arrRectX);
-    //        if (this.arrRectX.length % 2 === 0 && this.arrRectX.length !== 0) {
-    //            var lastTwoPointX = [this.arrRectX[this.arrRectX.length - 2],
-    //            this.arrRectX[this.arrRectX.length - 1]];
-    //            var lastTwoPointY = [this.arrRectY[this.arrRectY.length - 2],
-    //            this.arrRectY[this.arrRectY.length - 1]];
-    //            processingData.prototype.inputRawData(this.pen, lastTwoPointX, lastTwoPointY);
-    //        }
-    //----------------------------//
-
-    //find inters point => add to grid
-    // let lineList = [...processingData.allLine];
-    // for (let i = 0; i < lineList.length - 1; i++) {
-    //     var IntersPoint = processingData.prototype.intersectionCheck(lineList[i], lineList[lineList.length - 1]);
-    //     if (IntersPoint.Exist) {
-    //         // console.log("IntersPoint");
-    //         //create Point
-    //         let newPoint = new Point(IntersPoint.Coord);
-    //         //add
-    //         processingData.prototype.addObject(newPoint, processingData.allPoint);
-    //     }
-    // };
-    // if (this.isMovingObj && this.arrCurObj.length === 0) {
-    //   processingData.prototype.areaDetect(processingData.allLine);
-    //   PaintIn.renderObject(processingData.allObject);
-    // }
     processingData.prototype.updateStorage();
   }
 
@@ -1360,8 +1251,6 @@ class Paint {
     if (!this.mouseMoveStatus) {
       return;
     }
-    // this.image = new Image;
-    // this.image.src = this.canvas.toDataURL("frontend/image/bmp ", 1.0);
     let mouseMovePos = this.getMousePosition(event);
     this.currentMouseMovePos = this.getMousePosition(event);
     // let mouseMoveCoordination = this.changeOrigin(event);
@@ -1374,9 +1263,7 @@ class Paint {
       " ; " +
       this.currentMouseMovePos.y +
       "]";
-    // document.getElementById("display_coord").innerHTML =
-    //   "[" + mouseMoveCoordination.x + " ; " + mouseMoveCoordination.y + "]";
-    //
+
     if (
       this.currentValueGrid.value == "On" &&
       this.arrGrid.length != 0 &&
@@ -1404,25 +1291,6 @@ class Paint {
         this.currentMouseDownPos = mouseMovePos;
       }
     }
-    // } else if (this.currentValueGrid.value == "Off" && this.currentMouseDownPos != undefined && processingData.allPoint.length !== 0) {
-    //     let arrAllPoint = [];
-    //     processingData.allPoint.forEach((value) => arrAllPoint.push({ x: value.x, y: value.y }));
-
-    //     let nearPoint = getNearest(arrAllPoint, this.currentMouseDownPos, 10)
-    //     console.log(nearPoint)
-
-    // }
-
-    // not link position of start and end point
-    // if (this.isPainting) {
-    //   // brush
-    //   // if (this.pen === 'brush') {
-    //   //     this.drawBrush(
-    //   //         this.currentMouseDownPos,
-    //   //         this.currentMouseMovePos
-    //   //     );
-    //   // };
-    // }
 
     //line link start and end node
     if (this.pen === "line") {
@@ -1432,60 +1300,6 @@ class Paint {
       this.undo();
       this.drawLine(this.mouseDownPos, this.currentMouseDownPos);
     }
-
-    // if (this.pen === 'rect') {
-    //     if (!this.isCancled) {
-    //         return
-    //     };
-    //     this.undo();
-    //     this.drawRect
-    //         (
-    //             this.mouseDownPos,
-    //             this.currentMouseDownPos
-    //         );
-
-    // };
-    // if (this.pen === 'circle') {
-    //     if (!this.isCancled) {
-    //         return
-    //     };
-    //     this.undo();
-    //     this.drawCicle
-    //         (
-    //             this.mouseDownPos,
-    //             this.currentMouseDownPos
-    //         );
-    // };
-
-    // if (this.pen === 'spl') {
-    //     if (!this.isCancled) {
-    //         return
-    //     };
-    //     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
-    //     let arrXs = [...this.arrSPLX]
-    //     arrXs.push(this.currentMouseDownPos.x)
-    //     let arrYs = [...this.arrSPLY]
-    //     arrYs.push(this.currentMouseDownPos.y)
-    //     console.log("X", arrXs)
-    //     console.log("Y", arrYs)
-    //     this.drawSPLine(arrXs, arrYs);
-    // }
-
-    // if (this.pen === 'select') {
-    // //trace area
-    // //need optimize
-    // for (let area of processingData.allArea) {
-    //     if (area.areaTouch([this.currentMouseMovePos.x,this.currentMouseMovePos.y])) {
-    //         this.renderProperty("area",area);
-    //         this.fillArea(area,"#b6d8e7");
-    //         return;
-    //     } else {
-    //         this.fillArea(area);
-    //         this.renderProperty("off",area);
-    //     };
-    // };
-
-    // }
 
     // drag
     if (
@@ -1500,26 +1314,6 @@ class Paint {
       // processingData.prototype.areaDetect(processingData.allLine);
     }
 
-    // //change mouse (test)
-    // let lineButton = document.getElementById("line").value;
-    // let valueName = document.getElementById("valueName").value;
-    // let pointLoad = document.getElementById("pointLoad").value;
-    // let pressLoad = document.getElementById("pressLoad").value;
-    // let moment = document.getElementById("moment").value;
-
-    // if (lineButton === "On") {
-    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
-    // } else if (valueName === "On") {
-    //     this.canvas.style.cursor = "url(frontend/img/edit_text.png) 0 32, default";
-    // } else if (pointLoad === "On") {
-    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
-    // } else if (pressLoad === "On") {
-    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
-    // } else if (moment === "On") {
-    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
-    // } else {
-    //     this.canvas.style.cursor = "default";
-    // }
     //bounding box
     if (
       this.isPainting &&
@@ -1527,10 +1321,13 @@ class Paint {
       (this.pen === undefined || this.pen === "select") &&
       this.curValSelect === "On"
     ) {
+
       //draw bounding box
       this.undo();
       this.ctx.beginPath();
       this.ctx.fillStyle = "rgb(0 234 255 / 26%)";
+
+
       let topLeftPoint = [this.mouseDownPos.x, this.mouseDownPos.y];
       let bottomRigthPoint = [mouseMovePos.x, mouseMovePos.y];
       //save select box size
@@ -1623,14 +1420,14 @@ class Paint {
     });
 
     promise.catch(function (err) {
-      console.log("err", err);
+      // console.log("err", err);
       dataLogFile.push(JSON.stringify(err));
       PaintIn.renderCommand("textCommands");
     });
   }
 
   testAPI() {
-      // show spinner
+    // show spinner
     if (PaintIn.APIurl.value !== "") {
       document.getElementById("spinner").style.display = "flex";
       urlSendRequest = PaintIn.APIurl.value;
@@ -1648,7 +1445,7 @@ class Paint {
         },
         method: "POST",
         url: urlSendRequest,
-        data: bodyData
+        data: bodyData,
       });
 
       promise.then((result) => {
@@ -1661,7 +1458,7 @@ class Paint {
             PaintIn.renderCommand("textCommands");
           }
         } catch (err) {
-          console.log(result);
+          // console.log(result);
           dataLogFile.push(JSON.stringify(result.data));
           PaintIn.renderCommand("textCommands");
         }
@@ -1669,11 +1466,11 @@ class Paint {
 
       promise.catch(function (err) {
         document.getElementById("spinner").style.display = "none";
-        console.log("err", err);
+        // console.log("err", err);
         dataLogFile.push(JSON.stringify(err));
         PaintIn.renderCommand("textCommands");
       });
-//      spinner.style.display = "none";
+      //      spinner.style.display = "none";
     }
   }
 
@@ -1709,7 +1506,7 @@ class Paint {
     });
 
     promise.catch(function (err) {
-      console.log("err", err);
+      // console.log("err", err);
       dataLogFile.push(JSON.stringify(err));
       PaintIn.renderCommand("textCommands");
     });
@@ -1717,12 +1514,17 @@ class Paint {
 
   renderCommand(mode) {
     switch (mode) {
+      case "drawmode":
+        document.getElementById("command").style.display = "flex";
+        document.getElementById("command").innerHTML = `
+                  <p> Press "L" to start drawing! </p>
+              </div>
+                  `;
+        break;
       case "line":
         document.getElementById("command").style.display = "flex";
         document.getElementById("command").innerHTML = `
-                  <p> Press ESC to exit draw! <br>
-                      Press SPACE to break line! 
-                  </p>
+                  <p> Press "E" to exit draw! </p>
               </div>
                   `;
         break;
@@ -1782,8 +1584,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -1791,7 +1593,7 @@ class Paint {
     this.ctx.save();
     this.ctx.font = "13px Arial";
 
-    // this.ctx.textAlign = "center";
+    // ctx.textAlign = "center";
     try {
       //Line
       this.ctx.fillStyle = "red";
@@ -1923,7 +1725,7 @@ class Paint {
       }
     }
   }
-
+  ;
   getPointInLineAxial(point1, point2, lenghtLine, obj) {
     //neu co luc doc, point 1 => use get point2 offet = 5
     let listPointAxial = [];
@@ -2004,27 +1806,27 @@ class Paint {
     }
   }
 
-  drawRect(start, end, color = this.currentColor, width = this.currentWidth) {
-    if (start != undefined) {
-      this.ctx.strokeStyle = color;
-      this.ctx.lineWidth = width;
-      this.ctx.beginPath();
-      this.ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
-      this.ctx.stroke();
-      this.ctx.closePath();
-    }
-  }
+  // drawRect(start, end, color = this.currentColor, width = this.currentWidth) {
+  //   if (start != undefined) {
+  //     this.ctx.strokeStyle = color;
+  //     this.ctx.lineWidth = width;
+  //     this.ctx.beginPath();
+  //     this.ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
+  //     this.ctx.stroke();
+  //     this.ctx.closePath();
+  //   }
+  // }
 
-  drawCicle(start, end, width = this.currentWidth) {
-    if (start != undefined) {
-      this.ctx.strokeStyle = this.currentColor;
-      this.ctx.lineWidth = width;
-      this.ctx.beginPath();
-      let r = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
-      this.ctx.arc(start.x, start.y, r, 0, 2 * Math.PI);
-      this.ctx.stroke();
-    }
-  }
+  // drawCicle(start, end, width = this.currentWidth) {
+  //   if (start != undefined) {
+  //     this.ctx.strokeStyle = this.currentColor;
+  //     this.ctx.lineWidth = width;
+  //     this.ctx.beginPath();
+  //     let r = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
+  //     this.ctx.arc(start.x, start.y, r, 0, 2 * Math.PI);
+  //     this.ctx.stroke();
+  //   }
+  // }
 
   gradient(a, b) {
     return (b.y - a.y) / (b.x - a.x);
@@ -2036,7 +1838,7 @@ class Paint {
     color = this.currentColor,
     width = this.currentWidth
   ) {
-    console.log(arrXs, arrYs);
+    // console.log(arrXs, arrYs);
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = width;
     let [arrX, arrY] = processingData.prototype.InterPolationFunction(
@@ -2059,7 +1861,7 @@ class Paint {
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = lineWidth;
     this.ctx.beginPath();
-    //vecto n
+    //vector n
     this.ctx.moveTo(fromx, fromy);
     this.ctx.lineTo(tox, toy);
     // arrow
@@ -2078,7 +1880,7 @@ class Paint {
 
   drawForceInPoint(Obj, x, y, color = "#063970", lineWidth = 2) {
     //alpha = input;
-    //get vecto u of Line
+    //get vector u of Line
     let endPointX;
     let endPointY;
 
@@ -2302,7 +2104,7 @@ class Paint {
       this.ctx.moveTo(0, j);
       this.ctx.lineTo(this.canvas.width, j);
     }
-    // this.ctx.strokeStyle = 'grey';
+    this.ctx.strokeStyle = "blue";
     this.ctx.lineWidth = 0.2;
     this.ctx.stroke();
     this.ctx.closePath();
@@ -2328,7 +2130,7 @@ class Paint {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     //
     if (this.currentValueGrid.value === "On") {
-      this.ctx.strokeStyle = "grey";
+      //this.ctx.strokeStyle = "red";
       this.drawGrid();
     }
     for (let i = arrObj.length - 1; i >= 0; i--) {
@@ -2336,24 +2138,24 @@ class Paint {
         this.fillArea(arrObj[i]);
         if (
           arrObj[i].name !== undefined &&
-          arrObj[i].name !== '' &&
+          arrObj[i].name !== "" &&
           arrObj[i].name !== null
         ) {
           this.drawText(arrObj[i], arrObj[i].name);
         }
       } else if (arrObj[i] instanceof Line) {
-        this.drawLine(
-          arrObj[i].Point[0],
-          arrObj[i].Point[1],
-          arrObj[i].color,
-          arrObj[i].width
-        );
+        // this.drawLine(
+        //   arrObj[i].Point[0],
+        //   arrObj[i].Point[1],
+        //   arrObj[i].color,
+        //   arrObj[i].width
+        // );
         if (
           arrObj[i].name !== undefined &&
-          arrObj[i].name !== '' &&
+          arrObj[i].name !== "" &&
           arrObj[i].name !== null
         ) {
-          this.drawText(arrObj[i], arrObj[i].name);
+          drawText(arrObj[i], arrObj[i].name);
         }
 
         if (arrObj[i].lineLoads !== null) {
@@ -2375,7 +2177,7 @@ class Paint {
           }
         }
       } else if (arrObj[i] instanceof Point) {
-        this.drawPoint(arrObj[i]);
+        // this.drawPoint(arrObj[i]);
         if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
           this.drawText(arrObj[i], arrObj[i].name);
         }
@@ -2573,9 +2375,9 @@ class Paint {
               <div>
                 <div class="coordinate">
                   <input type="text" name="format" value="[${math.round(
-                    Obj.x,
-                    2
-                  )}, ${math.round(Obj.y, 2)}]"
+          Obj.x,
+          2
+        )}, ${math.round(Obj.y, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                 </div>
               </div>
@@ -2883,7 +2685,7 @@ class Paint {
         obj.point = newLocation;
         obj.x = newLocation[0];
         obj.y = newLocation[1];
-        console.log(obj);
+        // console.log(obj);
         processingData.allLine.forEach((line) => line.getLength());
         processingData.allArea.forEach((area) => {
           area.getPointFlow();
@@ -3223,6 +3025,7 @@ class Paint {
     PaintIn.renderCommand("textCommands");
   }
 
+
   // saveLogFile() {
   //   let blob = new Blob([dataLogFile],
   //     { type: "text/plain;charset=utf-8" });
@@ -3248,6 +3051,7 @@ function getPosElement(idElem) {
 
 const PaintIn = new Paint();
 PaintIn.curValDrawing.value = "On";
+PaintIn.listenEvent();
 var dataLogFile = [];
 let dataLogFileIndex = 0;
 var urlSendRequest = "";

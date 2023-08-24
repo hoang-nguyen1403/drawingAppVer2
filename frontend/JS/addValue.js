@@ -1,10 +1,10 @@
 function addNamePoint(Obj) {
     let pos = getPosElement("valueName");
-    if (PaintIn.arrMultiCurObj[0] !== undefined) {
+    if (DrawGL.storageSelectedLine[0] !== undefined) {
         inputNames(pos[0] + 15, pos[1]);
         return;
     } else {
-        let xC = Obj.x;
+        let xC = Obj.x; 
         let yC = Obj.y;
         inputName(xC, yC, Obj);
         return;
@@ -13,7 +13,7 @@ function addNamePoint(Obj) {
 
 function addNameLine(Obj) {
     let pos = getPosElement("valueName");
-    if (PaintIn.arrMultiCurObj[0] !== undefined) {
+    if (DrawGL.storageSelectedLine[0] !== undefined) {
         inputNames(pos[0] + 15, pos[1]);
         return;
     } else {
@@ -31,7 +31,7 @@ function addNameLine(Obj) {
 
 function addNameArea(Obj) {
     //    choose position to display box input
-    if (PaintIn.arrMultiCurObj[0] !== undefined) {
+    if (DrawGL.storageSelectedLine[0] !== undefined) {
         let pos = getPosElement("valueName");
         inputNames(pos[0] + 15, pos[1]);
         return;
@@ -47,8 +47,9 @@ function addNameArea(Obj) {
 
 function addName() {
     PaintIn.isMovingObj = false;
+    // is_dragging = false;
     //check before input
-    if (PaintIn.arrMultiCurObj[0] !== undefined) {
+    if (DrawGL.storageSelectedLine[0] !== undefined) {
         if (valueLoads !== undefined && PaintIn.curValPressLoad.value === "Off") {
             valueLoads.destroy();
             valueLoads = undefined;
@@ -58,7 +59,7 @@ function addName() {
             valueMoments = undefined;
         }
     }
-    if (PaintIn.arrCurObj[0] !== undefined) {
+    if (DrawGL.storageSelectedLine[0] !== undefined) {
         //name on=> press & moment off
         if (valueLoad !== undefined && PaintIn.curValPressLoad.value === "Off") {
             valueLoad.destroy();
@@ -71,14 +72,13 @@ function addName() {
     }
     //input
     if (
-        (nameIDs === undefined || nameID === null) &&
-        (PaintIn.pen === undefined || PaintIn.pen === "line")
+        (nameIDs === undefined || nameID === null) 
     ) {
         let selectedObj;
 
-        if (PaintIn.arrMultiCurObj[0] !== undefined) {
-            for (let i = 0; i < PaintIn.arrMultiCurObj.length; i++) {
-                selectedObj = PaintIn.arrMultiCurObj[i];
+        if (DrawGL.storageSelectedLine[0] !== undefined) {
+            for (let i = 0; i < DrawGL.storageSelectedLine[0].length; i++) {
+                selectedObj = DrawGL.storageSelectedLine[0][i];
                 switch (selectedObj.className) {
                     case "Point":
                         if (nameIDs === undefined) {
@@ -99,8 +99,8 @@ function addName() {
             }
         }
 
-        if (PaintIn.arrCurObj[0] !== undefined) {
-            selectedObj = PaintIn.arrCurObj[0];
+        if (DrawGL.storageSelectedLine[0] !== undefined) {
+            selectedObj = DrawGL.storageSelectedLine[0];
             //render Prop
             switch (selectedObj.className) {
                 case "Point":
@@ -123,7 +123,7 @@ function addName() {
 
         if (selectedObj === undefined) {
             PaintIn.renderProperty("off", selectedObj);
-            PaintIn.arrCurObj = [];
+            DrawGL.storageSelectedLine[0] = [];
             return;
         }
     }
@@ -133,7 +133,7 @@ function addName() {
 function addForce() {
     PaintIn.isMovingObj = false;
     //check and destroy before input
-    if (PaintIn.arrMultiCurObj[0] !== undefined) {
+    if (DrawGL.storageSelectedLine[0] !== undefined) {
         if (nameIDs !== undefined && PaintIn.curValName.value === "Off") {
             nameIDs.destroy();
             nameIDs = undefined;
@@ -147,7 +147,7 @@ function addForce() {
             valueLoads = undefined;
         }
     }
-    if (PaintIn.arrCurObj[0] !== undefined) {
+    if (DrawGL.storageSelectedLine[0] !== undefined) {
         if (nameID !== undefined && PaintIn.curValName.value === "Off") {
             nameID.destroy();
             nameID = undefined;
@@ -171,9 +171,9 @@ function addForce() {
         (PaintIn.pen === undefined || PaintIn.pen === "line")
     ) {
         let selectedObj;
-        if (PaintIn.arrMultiCurObj[0] !== undefined) {
+        if (DrawGL.storageSelectedLine[0] !== undefined) {
             //save value for selectedObj
-            selectedObj = PaintIn.arrMultiCurObj[0];
+            selectedObj = DrawGL.storageSelectedLine[0];
             switch (selectedObj.className) {
                 case "Point": {
                     if (PaintIn.curValPointLoad.value === "On") {
@@ -208,8 +208,8 @@ function addForce() {
             }
             return;
         }
-        if (PaintIn.arrCurObj[0] !== undefined) {
-            selectedObj = PaintIn.arrCurObj[0];
+        if (DrawGL.storageSelectedLine[0] !== undefined) {
+            selectedObj = DrawGL.storageSelectedLine[0];
             //render Prop
             switch (selectedObj.className) {
                 case "Point":
@@ -264,7 +264,7 @@ function addForce() {
 
         if (selectedObj === undefined) {
             PaintIn.renderProperty("off", selectedObj);
-            PaintIn.arrCurObj = [];
+            DrawGL.storageSelectedLine[0] = [];
             return;
         }
     }

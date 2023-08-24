@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing App</title>
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- BS4 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- img -->
+    <link rel="icon" type="image/x-icon" href="frontend/img/favicon.ico">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="./frontend/style.css">
+
+    	<!-- WEBGL -->
+		<script type="text/javascript"
+			
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	</script>
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	
+	<script src="js/jquery-1.9.1.js"></script>
+	<!-- <script src="js/jquery-ui-1.10.2.custom.js"></script> -->
+	<script src="js/webgl-utils.js"></script>
+	<script src="js/glMatrix-0.9.5.min.js"></script>
+	<script src="js/numeric-1.2.6.min.js"></script>
+	<script src="js/jszip.min.js"></script>
+	<script src="js/jdataview.js"></script>
+	<script src="js/flotr2.min.js"></script>
+	<script src="js/math.min.js"></script>
+	<script src="js/gunzip.min.js"></script>
+	
+	<script src="js/jstree.min.js"></script>
+	<script src="js/kdTree-min.js"></script>
+	<!-- <link rel="stylesheet" href="js/default/style.min.css" /> -->
+	
+	<script src="js/dat.gui.min.js"></script>
+	<script src="js/FileSaver.min.js"></script>
+	
+	<script src="src/exo_reader.js"></script>
+			
+	<script src="src/gl_utils.js"></script>	        
+	<script src="src/gl_canvas.js"></script>
+	<script src="src/gl_mesh.js"></script>
+	<script src="src/gl_model.js"></script>
+	<script src="src/gl_camera.js"></script>
+	<script src="src/events.js"></script>
+	<script src="src/gl_slice.js"></script>
+	<script src="src/gl_dataprobe.js"></script>
+	<script src="src/aks_library.js"></script>
+	<script src="src/aks_system.js"></script>
+	<script src="src/aks_component.js"></script>
+	<script src="src/scrbe_server.js"></script>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container d-flex justify-content-center align-items-center">
+            <div class="header__left">
+                <!-- logo -->
+                <img src="" alt="">
+            </div>
+            <div class="header__right">
+                <div class="header__contact">
+                    <a href="telto: 012345678">012345678</a>
+                    <a href="mailto: robinnhi125@gmail.com">HEADER</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="body_div">
+        <!-- NAVIGATION BAR -->
+        <section class="navigation__menu d-flex justify-content-between align-items-center">
+            <div class="container">
+                <nav class="navbar navbar-expand-sm d-flex align-items-center">
+                    <!-- navigation__menu--left -->
+                    <!-- Brand -->
+                    <a class="col-2 navbar-brand" href="#"><i class="fa-solid fa-brush"
+                            style="font-size: 36px; color: green;"></i> <span style="color: black">Drawing</span></a>
+
+                    <!-- Links -->
+
+                    <!-- File: open, save, image src -->
+
+                    <ul class="navbar-nav d-flex justify-content-between align-items-center">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                                File
+                            </a>
+                            <div class="dropdown-menu file__hover">
+                                <a class="dropdown-item d-flex justify-content-between align-items-center" href="#">
+                                    <button id="saveFile" title="Save" type="button"
+                                        onclick="processingData.prototype.saveAsData()"></button>
+                                    <span>Save File</span>
+                                </a>
+                                <a class="dropdown-item d-flex justify-content-between align-items-center" href="#">
+                                    <label id="openFile_label" title="Open">
+                                        <input type="file" name="openFile" id="openFile" style="display: none">
+                                    </label>
+                                    <span>Open File</span>
+                                </a>
+                                <a class="dropdown-item d-flex justify-content-between align-items-center" href="#">
+                                    <label id="inputImage" title="Open image">
+                                        <input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg"
+                                            ref="file" style="display: none">
+                                    </label>
+                                    <span> Open Img</span>
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <button id="Clear_all" title="Clear" type="button"
+                                    onclick="PaintIn.clearAll()"></button>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <button id="meshing" title="Mesh"
+                                    onclick="PaintIn.mps_PALc('phi',processingData.prototype.saveObj());"></button>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <button data-toggle="modal" data-target="#myModal" id="openFile_Solu" title="Solve" onclick="PaintIn.getAPI()"></button>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <label id="ChangeMode" style="margin-bottom: 0px;">
+                                    <button id="modeDrawing" title="Drawing mode" type="button"
+                                        onclick="PaintIn.changeMode()" value="On"></button>
+                                </label>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <button data-toggle="modal" data-target="#myModal1" id="sendRequest" title="Request" onclick="PaintIn.getAPI()" style="background-image: url(./frontend/img/request.png);"></button>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Dropdown -->
+                    <!-- <button id="line" class="btn__tool" title="Line" class="btn" type="button" onclick="PaintIn.chooseLine()"
+                        value="Off"></button> -->
+                    <ul class="navbar-nav d-flex flex-fill justify-content-end align-items-center">
+                        <div id="tool_left" class="d-flex justify-content-end flex-fill align-items-center">
+                            <li class="nav-item dropdown Line__button">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                                    <button id="line" class="btn__tool" title="Line" class="btn" type="button"
+                                        onclick="PaintIn.chooseLine()" value="Off"></button>
+                                </a>
+                                <div class="dropdown-menu file__hover">
+                                    <a class="dropdown-item d-flex justify-content-around align-items-center" href="#">
+                                        <label id="colorpicker_label">
+                                            <input type="color" id="line_color" name="color" style="display: none">
+                                        </label>
+                                        <span>Color</span>
+                                    </a>
+                                    <a class="dropdown-item d-flex justify-content-around align-items-center" href="#">
+                                        <input id="thickness" type="number" name="size" min="1" max="10" id="line_size"
+                                            value="5">
+                                        <span>Size</span>
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <button id="grid" class="btn__tool" title="Grid" type="button"
+                                        onclick="PaintIn.buttonGrid()" value="Off"></button>
+                                </a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <button id="hiddenSidebar" class="btn__tool" title="Sidebar" type="button" onclick="newFunction.toggleTab2()" value="Off">
+                                        <i class="fa-solid fa-chevron-left" id="hiddenSidebar_icon" value="On"></i>
+                                    </button>
+                                </a>
+                            </li> -->
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="#" id="navbardrop" data-toggle="dropdown">
+                                    <button id="hiddenSidebar" class="btn__tool" title="Sidebar" type="button" onclick="newFunction.TextCmt()"
+                                        value="Off">
+                                        <i class="fa-solid fa-comments" id="hiddenSidebarTextCmt" onclick="newFunction.TextCmt()" title="Text comments" value="Off"></i>
+                                    </button>
+                                </a>
+                                <!-- <div class="dropdown-menu file__hover">
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="#" id="hiddenSidebarTextCmt" onclick="newFunction.TextCmt()" value="On">
+                                        <span>Text comments</span>
+                                    </a> -->
+                                    <!-- <a id="hiddenSidebarResult" class="dropdown-item d-flex justify-content-between align-items-center" href="#">
+                                        <span>Result</span>
+                                    </a> -->
+                                <!-- </div> -->
+                        </div>    
+                </nav>
+            </div>
+
+            <!-- <button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button> -->
+        </section>
+
+        <!-- POPUP RESULT -->
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-left ml-3">Result</h4>
+                        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                    </div>
+                    <div class="modal-body d-flex justify-content-center align-items-center">
+                        <div id="valueInputed">
+                            <p style="background-color: #ffffff; height: 400px; overflow: hidden; border: 1px solid #0784d1; user-select: text; margin-bottom: 0px">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-default px-0 py-0 mx-3 w-25" data-dismiss="modal">Save file</button>
+                        <button type="button" class="btn btn-default px-0 py-0 mx-3 w-25" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+
+        <!-- POPUP SEND REQUEST -->
+        <div id="myModal1" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-left ml-3">Send Request</h4>
+                        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                    </div>
+                    <div class="modal-body d-flex justify-content-center align-items-center">
+                        <div class="request">
+                            <label class="url">
+                                <p>url</p>
+                                <input type="text" id="urlInputted" value="">
+                            </label>
+                            <label class="functionName">
+                                <p>Function</p>
+                                <input type="text" id="functionNameInputted" value="">
+                            </label>
+                            <div id="valueInputed">
+                                <h4 class="modal-title text-left ml-3">Result</h4>
+                                <p
+                                    style="background-color: #ffffff; height: 400px; overflow: hidden; border: 1px solid #0784d1; user-select: text; margin-bottom: 0px">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button id="sendRequest" onclick="PaintIn.testAPI()" type="button" class="btn btn-default px-0 py-0 mx-3 w-25" data-dismiss="modal">Send request</button>
+                        <button type="button" class="btn btn-default px-0 py-0 mx-3 w-25" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+
+        <!-- DRAWING AREA -->
+        <section class="content">
+            <div id="modeSoln">
+                <button id="fillColor" class="btn" type="button" onclick="Mesh.prototype.addValFillColor()"
+                    value="Off"></button>
+            </div>
+        </section>
+
+        <div id="BDCondition">
+            <p>PUT LOAD</p>
+            <button id="valueName" class="button--2 mr-2" type="button" onclick="PaintIn.addValueName()" value="Off"
+                style="background-image: url(frontend/img/apply_name.svg)"></button>
+            <button id="pointLoad" class="button--2 mr-2" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
+                style="background-image: url(frontend/img/apply_force.svg)"></button>
+            <button id="pressLoad" class="button--2 mr-2" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
+                style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
+            <button id="moment" class="button--2 mr-2" type="button" onclick="PaintIn.addValMoment()" value="Off"
+                style="background-image: url(frontend/img/apply_moment.svg)"></button>
+        </div>
+
+        <!-- CANVAS AREA -->
+        <div id="aks_visualizer">
+            <!-- <button class="toggleButton" id="showMeshtest" onchange="edit_meshoption()"></button> -->
+            <div style="margin-left: 0px; width: 70px;height: 30px;left: 0px; top: 0px;position: relative;">
+                <label for="">
+                            <input id="showMeshtest" type="checkbox" onchange="edit_meshoption()">
+                            Mesh
+                        </label>						
+            </div>
+            <div style = "margin-left: 0px; width: 1300px ; height: 750px ">
+                <canvas id = "canvas_test" width = "1250" height = "740" style="border:2px solid #505050; border-radius:0px;" >
+                    <div class="toggleButton" id = "showMeshgrouptest">
+                        
+                    </div>
+                </canvas>
+            </div>
+        </div>
+
+        <!-- coordinate axis -->
+        <div id="coord_div">
+            <div id="icon_coord">
+            </div>
+            <div id="display_coord">
+            </div>
+        </div>
+    </div>
+
+    <!-- PROPERTY -->
+    <div id="property"></div>
+    <div id="command"></div>
+
+    <!-- SIDEBAR: RESULT, COMMENT TEXTS -->
+    <section class="sidebar">
+        <!-- TEXT COMMENTS TAB -->
+        <div class="tab">
+            <div id="tab-comments" style="display: none;">
+                <p id="lableTab">Text comments</p>
+                <textarea id="textBox" name="" rows="17" cols="32" class="py-3 px-4"></textarea>
+                <div id="btn_tab_cmt" class="d-flex justify-content-around align-items-center">
+                    <label id="uploadFile_label" title="Upload file" class="d-flex align-items-center">Choose a file
+                        <input type="file" name="uploadFile" id="uploadFile" style="display: none">
+                    </label>
+                
+                    <button id="cmtSaveText" title="Save into a .txt" type="button" class="btn"
+                        onclick="processingData.prototype.saveTextFile()" value="Off">Save text</button>
+                </div>
+                <button id="closeButton" class="mx-auto my-3" onclick="newFunction.closeButton()" value="Off">Close</button>
+                <!-- ================================================= -->
+                <!-- <div id="spinner"></div>
+                                <div id="valueInputed">
+                                    <p style="background-color: #ffffff; height: 40%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
+                                    </p>
+                                </div>
+                                
+                                <div id="clearButton">
+                                    <button id="clearcommands" type="button" class="option-btn btn-off btn" onclick="PaintIn.clearCommands()"
+                                        value="Off"></button>
+                                </div> -->
+            </div>
+            </div>
+            <!-- <div class="tab">
+                <div id="tab-result" style="display: block;">
+                    <p id="lableTab--2">Result</p>
+                    <div id="valueInputed">
+                        <p style="background-color: #fff; height: 40%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
+                        </p>
+                    </div>
+                
+                    <button id="cmtSaveText" title="Save into a .txt" type="button" class="btn"
+                        onclick="processingData.prototype.saveTextFile()" value="Off">Save text</button>
+                </div>
+                <button id="closeButton" class="mx-auto my-3" onclick="newFunction.closeButton()" value="Off">Close</button>
+                <div id="valueInputed">
+                    <p style="background-color: #fff; height: 40%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
+                    </p>
+                </div>
+            </div> -->
+        </div>
+    </section>
+
+    <footer></footer>
+
+    <!-- BS4 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+        integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+        crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kd-tree-javascript@1.0.3/kdTree-min.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="./frontend/libs/math.js"></script>
+
+    <!-- SPL library -->
+    <!-- <script src="frontend/JS/p5.min.js"></script>
+    <script src="frontend/JS/p5.dom.min.js"></script>
+    <script src="frontend/JS/p5.sound.min.js"></script>
+    <script src="frontend/JS/jsspline.js"></script> -->
+    <script src="./frontend/libs/CanvasInput.js"></script>
+    <script src="./frontend/JS/fileSaver/src/FileSaver.js"></script>
+    <script src="./frontend/libs/colormapfix.js"></script>
+    <script src="./frontend/JS/inputData.js"></script>
+    <script src="./frontend/JS/addValue.js"></script>
+    <script src="./frontend/libs/opencv.js"></script>
+    <script src="./frontend/JS/processingData.js"></script>
+    <script src="./frontend/JS/Mesh.js"></script>
+    <script src="./frontend/JS/painting.js"></script>
+    <script src="./frontend/JS/newFunction.js"></script>
+    <!-- scroll -->
+    <script>
+        $(document).ready(function () {
+            $('sidebar').scrollspy({ target: "#tab-comments", offset: 50 });
+        });
+    </script>
+
+<script type="text/javascript" src="src/main.js"></script>
+</body>
+
+</html>
