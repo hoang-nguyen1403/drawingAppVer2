@@ -616,7 +616,7 @@ button {
     background-size: 35px 35px;
 }
 #modeDrawing {
-    background: url(img/switch.png);
+    background: url(img/brush.png);
     background-size: 25px 25px;
     background-repeat: no-repeat;
     background-position: center;
@@ -727,7 +727,7 @@ button {
 }
 
 #meshing {
-    background: url(img/cube-svgrepo-com.svg);
+    background: url(img/post_mode.png);
     width: 40px;
     height: 40px;
     border: 2px solid black;
