@@ -186,10 +186,72 @@ button {
     background-color: rgb(137, 219, 252);
 }
 
+#property_solution {
+    position: absolute;
+    right: 10px;
+    top: 558px;
+    width: 200px;
+    display: none;
+    flex-direction: column;
+    font-size: 13px;
+    background-color: #ffffff;
+}
+
+.property_solution_label {
+    display: flex;
+    width: 100%;
+    /* height: 30px; */
+    padding: 0%;
+    font-size: 22px;
+    border: 1px solid black;
+    background-color: rgb(230, 245, 255);
+    font-family: UVF Bariol Regular;
+}
+
+.property_solution_label>div {
+    height: 15px;
+    background-image: url(img/arrow.png);
+    background-size: 10px 10px;
+    background-color: rgb(230, 245, 255);;
+    border: 1px;
+    position: absolute;
+    right: -3%;
+    border-radius: 8px;
+
+}
+
+.boderProperties_solution>div {
+    width: 100%;
+    height: 35px;
+    display: flex;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    /* background-color: #ffffff; */
+}
+
+.boderProperties_solution>div>p {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    align-items: right;
+    text-align: left;
+    justify-content: left;
+}
+
+.boderProperties_solution>div>div {
+    height: 100%;
+    flex: 1;
+    border-left: 1px solid black;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+}
+
 #property {
     position: absolute;
-    right: 17.1%;
-    bottom: 1%;
+    right: 17.631%;
+    bottom: 1.1%;
     width: 150px;
     display: none;
     flex-direction: column;
@@ -324,6 +386,9 @@ button {
     font-family: UVF Bariol Regular;
     width: 100%;
     text-align: center;
+    top: 28%;
+    left: 30px;
+    position: absolute;
 }
 
 #openFile_label {
@@ -443,6 +508,18 @@ button {
     background-size: 17px 17px;
 }
 
+.property_solution_label .property_solution-icon {
+    height: 26px;
+    width: 26px;
+    background-image: url(img/arrow.png);
+    background-size: 20px 20px;
+    background-color: rgb(230, 245, 255);
+    border: 0px;
+    transform: rotate(-90deg);
+    position: absolute;
+    right: 6px;
+}
+
 .property_label .property-icon {
     height: 26px;
     width: 26px;
@@ -450,10 +527,10 @@ button {
     background-size: 20px 20px;
     background-color: rgb(162 202 212 / 97%);
     border: 0px;
+    transform: rotate(-90deg);
     position: absolute;
-    right: 3px;
+    right: 6px;
 }
-
 
 .select-editable {
     position: relative;
@@ -519,17 +596,25 @@ button {
 } */
 
 #fillColor {
-    background: url(img/fill-color.png);
-    /* background-color: white; */
+    background: url(img/mesh.png);
+    width: 40px;
+    height: 40px;
     position: absolute;
-    top: 480px;
+    top: 55%;
     left: 25px;
     display: none;
-    background-position: center;
-    background-size: 25px 25px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
     background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
 }
 
+#fillColor:hover {
+    background-size: 35px 35px;
+}
 #modeDrawing {
     background: url(img/switch.png);
     background-size: 25px 25px;
@@ -540,6 +625,21 @@ button {
 }
 
 #modeDrawing:hover {
+    background-size: 30px 30px;
+}
+
+#modeGL {
+    /* background: url(./img/3D\ mode.png);
+     */
+    background: url(./img/post_mode.png);
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#modeGL:hover {
     background-size: 30px 30px;
 }
 
@@ -627,7 +727,7 @@ button {
 }
 
 #meshing {
-    background: url(img/mesh.png);
+    background: url(img/cube-svgrepo-com.svg);
     width: 40px;
     height: 40px;
     border: 2px solid black;
@@ -707,3 +807,51 @@ button {
     transform: rotate(360deg);
   }
 }
+#WebGL_area {
+    display: none;
+    border: 1px solid #0784d1;
+    width: 100%;
+}
+#text_colorbar{
+    background-color: #fff;
+    width: 65px;
+    height: 400px;
+    right: 9px;
+    top: 156px;
+    position: absolute;
+}
+#canvasGL{
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+}
+#canvas_colorbar{
+    right: 74px;
+    top: 156px;
+    position: absolute;
+}
+#form {
+    position: absolute;
+    top: 126px;
+    right: 10px;
+    display: flex;
+    height: 30px;
+    justify-content: space-between;
+    align-items: center;
+    width: 114px;
+}
+
+
+#Mode3D{
+    display: none;
+    border: 1px solid #0784d1;
+    width: 100%;
+}
+#mode{
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+}
+
+
+

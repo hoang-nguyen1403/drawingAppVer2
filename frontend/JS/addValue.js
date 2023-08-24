@@ -4,7 +4,7 @@ function addNamePoint(Obj) {
         inputNames(pos[0] + 15, pos[1]);
         return;
     } else {
-        let xC = Obj.x;
+        let xC = Obj.x; 
         let yC = Obj.y;
         inputName(xC, yC, Obj);
         return;

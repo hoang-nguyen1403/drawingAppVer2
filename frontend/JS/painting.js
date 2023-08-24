@@ -1,5 +1,6 @@
 class Paint {
   constructor() {
+    // Call the ID from index.html element
     this.canvas = document.getElementById("myCanvas");
     this.ctx = this.canvas.getContext("2d");
 
@@ -7,36 +8,28 @@ class Paint {
     this.canvas.height =
       document.getElementById("wrap_canvas_div").clientHeight;
 
+    // Call the ID in the tool left position
     this.toolbar = document.getElementById("tool_left");
     this.currentValueGrid = document.getElementById("grid");
-
-    this.currentValueBrush = document.getElementById("brush");
     this.currentValueLine = document.getElementById("line");
-    this.currentValueCircle = document.getElementById("circle");
-    this.currentValueRect = document.getElementById("rect");
-    this.currentValueSpl = document.getElementById("spl");
-    this.curValSelect = "On";
-
+    this.inputImage = document.getElementById("inputImg");
+    // Call the ID for the load in all models
     this.curValName = document.getElementById("valueName");
     this.curValPointLoad = document.getElementById("pointLoad");
     this.curValPressLoad = document.getElementById("pressLoad");
-    // this.curValAxialForce = document.getElementById('axialForce');
     this.curValMoment = document.getElementById("moment");
     this.curValDeleteForce = document.getElementById("deleteForce");
 
-    // //namigArea mode
-    // this.curValNamingArea = document.getElementById("areaNaming");
-
     //addMode
     this.curValDrawing = document.getElementById("modeDrawing");
-    //set defaul mode is drawing
-    document.getElementById("modeDrawing").classList.add("active");
+    //set default mode is drawing
+    //this.curValDrawing.classList.add("active");
 
     //tab
     this.tabStatus = document.getElementById("tab-icon");
     this.valueComment = document.getElementById("textBox");
 
-    //attLine
+    //set default
     this.currentColor = "black";
     this.currentWidth = 5;
     this.deltaGrid = 40;
@@ -63,10 +56,10 @@ class Paint {
     };
     this.curSelectBox = [];
     this.isPainting = false;
-    this.listenEvent();
+    //this.listenEvent();
 
     this.image = null; //can go back
-    this.choiceEvent();
+    //this.choiceEvent();
     this.mouseDownPos = {
       x: 0,
       y: 0,
@@ -86,12 +79,13 @@ class Paint {
     this.arrSPLX = [];
     this.arrSPLY = [];
 
-    this.getNodePos();
+    //this.getNodePos();
     this.arrRecordNode = [];
     //hidden div
+    this.BDcondition = document.getElementById("BDcondition");
     document.getElementById("BDCondition").style.display = "none";
 
-    this.drawBackground();
+    //this.drawBackground();
     //----//
     this.arrCurObj = [];
     this.arrMultiCurObj = [];
@@ -100,7 +94,7 @@ class Paint {
     this.curPoint = [];
     this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
     this.canvas.style.cursor = this.currentCursor;
-    this.controlCanvas();
+    //this.controlCanvas();
 
     //requestAPI
     this.APIurl = document.getElementById("urlInputted");
@@ -112,46 +106,66 @@ class Paint {
   }
 
   // Press button change mode
-  changeMode() {
-    if (this.curValDrawing.value === "Off") {
-      // mode drawing
-      this.renderObject(processingData.allObject);
-      this.curValDrawing.value = "On";
-      document.getElementById("modeDrawing").classList.add("active");
+  // changeMode() {
+  //   if (this.curValDrawing.value === "Off") {
+  //     // mode drawing
+  //     // this.renderObject(processingData.allObject);
+  //     // this.curValDrawing.value = "On";
+  //     // document.getElementById("modeDrawing").classList.add("active");
 
-      Mesh.curValFillColor.value = "Off";
-      document.getElementById("fillColor").style.display = "none";
+  //     // Mesh.curValFillColor.value = "Off";
+  //     // document.getElementById("fillColor").style.display = "none";
 
-      this.mouseMoveStatus = true;
-      this.pen = "select";
-      this.curValSelect = "On";
-    } else {
-      //mode soln
-      this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
-      this.canvas.style.cursor = this.currentCursor;
+  //     // this.mouseMoveStatus = true;
+  //     // this.pen = "select";
+  //     // this.curValSelect = "On";
 
-      this.ctx.fillStyle = "white";
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  //     // test
 
-      this.curValDrawing.value = "Off";
-      document.getElementById("modeDrawing").classList.remove("active");
+  //   } else {
+  //     //mode soln
+  //     //this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
+  //     //this.canvas.style.cursor = this.currentCursor;
 
-      Mesh.curValFillColor.value = "Off";
-      document.getElementById("fillColor").classList.remove("active");
+  //     // this.ctx.fillStyle = "white";
+  //     // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      this.mouseMoveStatus = false;
-      this.pen = undefined;
-      this.curValSelect = "Off";
+  //     // this.curValDrawing.value = "Off";
+  //     // document.getElementById("modeDrawing").classList.remove("active");
 
-      //display soln
-      if (Mesh.inputData !== undefined) {
-        document.getElementById("command").style.display = "none";
-        Mesh.prototype.drawMesh();
-      } else {
-        this.renderCommand("soln");
-      }
-    }
+  //     // Mesh.curValFillColor.value = "Off";
+  //     // document.getElementById("fillColor").classList.remove("active");
+
+  //     // this.mouseMoveStatus = false;
+  //     // this.pen = undefined;
+  //     // this.curValSelect = "Off";
+
+  //     // //display soln
+  //     // if (Mesh.inputData !== undefined) {
+  //     //   document.getElementById("command").style.display = "none";
+  //     //   Mesh.prototype.drawMesh();
+  //     // } else {
+  //     //   this.renderCommand("soln");
+  //     // }
+
+
+  //     this.view = new GLCanvas(this.canvas);
+  //     this.view.setup();
+
+  //     this.setup_control();
+
+  //     this.setup_solution_tabs();
+  //     this.setup_colorbar();
+
+  //   }
+  // }
+  setup_control() {
+    this.container.control_menu = $('<div style = \"margin-left: 0px; width: 70px; height: 30px; left: ' + (this.width - 100) + 'px; top: ' + (20 - this.height) + 'px; position: relative;\"></div>').appendTo(this.container.canvas_container);
+    $('<div class="toggleButton" id="showMeshgroup' + this.name + '"><input id="showMesh' + this.name + '"type="checkbox" onchange="edit_meshoption()"><label>MESH</label></div>').appendTo(this.container.control_menu);
+    $('<div class="toggleButton" id="showVolumegroup' + this.name + '"><input id="showVolume' + this.name + '"type="checkbox" value = "SOLID" onchange="edit_volumeoption()"><label>SOLID</label></div>').appendTo(this.container.control_menu);
+    $('#showVolumegroup' + this.name).hide();
   }
+
 
   controlCanvas() {
     if ((this.curValDrawing.value = "Off")) {
@@ -182,7 +196,6 @@ class Paint {
     PaintIn.ctx.fillStyle = "red";
     PaintIn.ctx.fillText(text, x, y);
   }
-  
 
   //Press button new/clear all Canvas
   clearAll() {
@@ -207,14 +220,84 @@ class Paint {
     this.arrLineWidth = [];
 
     if (this.currentValueGrid.value == "On") {
-      this.ctx.strokeStyle = "grey";
+      //this.ctx.strokeStyle = "red";
       this.drawGrid();
     }
     //---// clear saved data
+    // Declare scene view and set up mouse position
+    Mesh.elements = [];
+    Mesh.edges = [];
+    Mesh.nodes = [];
+    DrawGL.nearPointGL_storage = [{ x: 0, y: 0 }, 0];
+    DrawGL3D.pointStorage = { x: 0, y: 0, z: 0 };
+    DrawGL.color = [1, 1, 1, 1];
+    DrawGL3D.ui = {
+      dragging: false,
+      mouse: {
+        lastX: -1,
+        lastY: -1,
+      },
+    };
+
+    DrawGL3D.mouse = {
+      prevMouseX: 0,
+      prevMouseY: 0
+    };
+    DrawGL3D.mouseX = -1;
+    DrawGL3D.mouseY = -1;
+    DrawGL3D.point_x = [];
+    DrawGL3D.point_y = [];
+    DrawGL3D.target = [0, 0, 0];
+    DrawGL3D.up = [0, 1, 0];
+    DrawGL3D.takeValueRange = [];
+    DrawGL3D.nodeCoord = [];
+    DrawGL3D.colorNode = [];
+    DrawGL3D.lineBase = [];
+    DrawGL3D.lineMeshExtrude = [];
+    DrawGL3D.takePoint = [];
+    DrawGL3D.takePoint_Extrude = [];
+    DrawGL3D.sceneFill = [];
+    DrawGL3D.sceneMesh = [];
+    DrawGL.camera = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      zoom: 1,
+    }
+    document.getElementById("fillColor").value = "Off";
+    DrawGL.nearPointGL = [];
+    DrawGL.lineVertex = [];
+    DrawGL.point_x = [];
+    DrawGL.point_y = [];
+    DrawGL.segment_mesh = [];
+    DrawGL.segment_fill = [];
+    DrawGL.segment = [];
+    DrawGL.takePoint = [];
+    DrawGL.fillcolor = [];
+    DrawGL.colorbar_size = [];
+    DrawGL.colorbar_indices = [];
+    DrawGL.pointcheck = [];
+    DrawGL.takevalueRange = [];
+    DrawGL.scene = [];
+    DrawGL.scene_fill = [];
+    DrawGL.scene_color = [];
+    DrawGL.scene_load = [];
+    DrawGL.colorvec4 = [];
+    DrawGL.ctx_gl.clearRect(0, 0, 65, 400);
+    DrawGL.drawMain();
+    DrawGL3D.drawMain();
+    DrawGL.gl_colorbar.clear(DrawGL.gl_colorbar.COLOR_BUFFER_BIT)
+    FEsoln = [];
+    document.getElementById("filter").innerHTML = ``;
+    document.getElementById("filter").style.display = "none";
+    document.getElementById("modeSolution_value").style.display = "none";
+    document.getElementById("modeSolution_value").value = "3D";
+    document.getElementById("property_solution").style.display = "none";
     processingData.allLine = [];
     processingData.allPoint = [];
     processingData.allArea = [];
     processingData.allObject = [];
+    processingData.allSeg = [];
     this.arrCurObj = [];
     this.arrMultiCurObj = [];
     this.renderProperty("off", "");
@@ -225,7 +308,7 @@ class Paint {
   // save comment text
   saveCommentText() {
     if (this.valueComment.value == []) {
-      dataLogFile.push(this.valueComment.value); 
+      dataLogFile.push(this.valueComment.value);
     }
     if (this.valueComment.value !== []) {
       dataLogFile[0] = this.valueComment.value;
@@ -234,11 +317,9 @@ class Paint {
 
   // Upload file
   // uploadFile() {
-    // const input = document.getElementById("fileUpload");
-    // const file = input.files[0];
-    // }
- 
-
+  // const input = document.getElementById("fileUpload");
+  // const file = input.files[0];
+  // }
 
   //set up color, size for pen
   choiceEvent() {
@@ -261,7 +342,7 @@ class Paint {
           //redraw object
           this.renderObject(processingData.allLine);
 
-          this.ctx.strokeStyle = "grey";
+          //this.ctx.strokeStyle = "red";
           this.drawGrid();
         }
         // console.log(this.currentValueGrid.value)
@@ -279,14 +360,207 @@ class Paint {
     // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
+      PaintIn.clearAll();
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
         if (inputData["jsmat"] !== undefined) {
-          processingData.prototype.createMeshData(inputData);
+          document.getElementById("filter").style.display = "block";
+          document.getElementById("modeSolution_value").style.display = "block";
+          Mesh.prototype.createDataMesh(inputData);
+          for (let i = 0; i < Mesh.nodes.length; i++) {
+            DrawGL.takevalueRange.push(
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y] }
+            );
+            DrawGL3D.takeValueRange.push(
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 0] },
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 100] }
+            );
+          }
+          var count = 0;
+          for (let j = 0; j < DrawGL.takevalueRange.length; j++) {
+            for (let i = 0; i < FEsoln.length; i++) {
+              const value1 = FEsoln[i].name;
+              DrawGL.takevalueRange[j] = { ...DrawGL.takevalueRange[j], [value1]: FEsoln[i].data[j] };
+              DrawGL3D.takeValueRange[count] = { ...DrawGL3D.takeValueRange[count], [value1]: FEsoln[i].data[j] };
+              DrawGL3D.takeValueRange[count + 1] = { ...DrawGL3D.takeValueRange[count + 1], [value1]: FEsoln[i].data[j] };
+            }
+            count += 2;
+          }
+
+          // Max element for Uint16array is 10921 elements;
+          var max_element = 10921;
+          var count_element = Mesh.elements.length / max_element;
+          if (count_element % 1 !== 0) {
+            count_element = Math.round(count_element) + 1;
+          }
+          for (let i = 0; i < count_element; i++) {
+            DrawGL.segment_mesh = [];
+            DrawGL.lineVertex = [];
+            DrawGL3D.lineBase = [];
+            DrawGL3D.lineMeshExtrude = [];
+            let count = 0;
+            let test = Mesh.elements.length - max_element * i;
+            let max = max_element * i;
+            for (let z = max; z < Mesh.elements.length; z++) {
+              DrawGL.lineVertex.push(Mesh.elements[z].pointFlow)
+            }
+            for (let j = 0; j <= test; j++) {
+              if (count == max_element + 1) break;
+              // put indices for lines
+              DrawGL.segment_mesh.push(6 * j);
+              DrawGL.segment_mesh.push(6 * j + 1);
+              DrawGL.segment_mesh.push(6 * j + 1);
+              DrawGL.segment_mesh.push(6 * j + 2);
+              DrawGL.segment_mesh.push(6 * j + 2);
+              DrawGL.segment_mesh.push(6 * j + 3);
+              DrawGL.segment_mesh.push(6 * j + 3);
+              DrawGL.segment_mesh.push(6 * j + 4);
+              DrawGL.segment_mesh.push(6 * j + 4);
+              DrawGL.segment_mesh.push(6 * j + 5);
+              DrawGL.segment_mesh.push(6 * j + 5);
+              DrawGL.segment_mesh.push(6 * j);
+              count = count + 1;
+            }
+            DrawGL.lineVertex = DrawGL.lineVertex.flat();
+            for (let k = 0; k < DrawGL.lineVertex.length; k++) {
+              DrawGL.pointcheck.push(DrawGL.lineVertex[k])
+            }
+            var color = [];
+
+            for (let l = 0; l < DrawGL.pointcheck.length; l++) {
+              DrawGL3D.lineBase.push(DrawGL.pointcheck[l][0]);
+              DrawGL3D.lineBase.push(DrawGL.pointcheck[l][1]);
+              DrawGL3D.lineBase.push(0);
+            }
+
+            for (let m = 0; m < DrawGL.pointcheck.length; m++) {
+              DrawGL3D.lineMeshExtrude.push(DrawGL.pointcheck[m][0]);
+              DrawGL3D.lineMeshExtrude.push(DrawGL.pointcheck[m][1]);
+              DrawGL3D.lineMeshExtrude.push(100);
+            }
+            DrawGL.lineVertex = DrawGL.lineVertex.flat();
+            var bufferInfo_mesh = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+              a_position: {
+                numComponents: 2,
+                data: DrawGL.lineVertex,
+              },
+              indices: DrawGL.segment_mesh,
+            });
+            var bufferInfo_mesh_base = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+              a_position: DrawGL3D.lineBase,
+              indices: DrawGL.segment_mesh,
+            });
+            var bufferInfo_mesh_second = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+              a_position: DrawGL3D.lineMeshExtrude,
+              indices: DrawGL.segment_mesh,
+            });
+            DrawGL3D.sceneMesh.push(bufferInfo_mesh_base);
+            DrawGL3D.sceneMesh.push(bufferInfo_mesh_second);
+            DrawGL.scene.push(
+              {
+                x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_mesh
+              },
+            )
+          }
+
+          for (let i = 0; i < DrawGL.point_x.length; i++) {
+            DrawGL.takePoint.push(DrawGL.point_x[i]);
+            DrawGL.takePoint.push(DrawGL.point_y[i]);
+          }
+          for (let i = 0; i < 2; i++) {
+            if (i % 2 == 0) {
+              for (let i = 0; i < DrawGL.point_x.length; i++) {
+                DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
+                DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
+                DrawGL3D.nodeCoord.push(0);
+              }
+            } else {
+              for (let i = 0; i < DrawGL.point_x.length; i++) {
+                DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
+                DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
+                DrawGL3D.nodeCoord.push(100);
+              }
+            }
+          }
+          for (let i = 0; i < 2; i++) {
+            if (i % 2 == 0) {
+              for (let i = 0; i < DrawGL3D.point_x.length; i++) {
+                DrawGL3D.takePoint.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 0 });
+              }
+            } else {
+              for (let i = 0; i < DrawGL3D.point_x.length; i++) {
+                DrawGL3D.takePoint_Extrude.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 100 });
+              }
+            }
+          }
+
+          DrawGL3D.colorNode = DrawGL3D.colorNode.flat();
+          var bufferInfo_fill = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+            a_position: {
+              numComponents: 2,
+              data: DrawGL.takePoint,
+            },
+            color: DrawGL.colorvec4,
+          });
+
+          DrawGL3D.camera = {
+            rotation_X: 0, // degrees
+            rotation_Y: 0, // degrees
+            rotation_Z: 0, // degrees
+            Deep: 400000,
+            Zoom: 1,
+            translation_x: 0,
+            translation_y: 0,
+            translation_z: math.max(math.abs(DrawGL.pointcheck)),
+          }
+          // render();
+          var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+            a_position: DrawGL3D.nodeCoord,
+            a_color: DrawGL3D.colorNode,
+          })
+          DrawGL3D.sceneFill.push(bufferInfo);
+          DrawGL3D.drawMain();
+          ChangeModeGL();
+          ChangeModeGL3D();
+          DrawGL.scene_fill.push({
+            x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
+          })
+          DrawGL.drawMain();
         } else {
+          document.getElementById("filter").style.display = "none";
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
+          for (let i = 0; i < processingData.allPoint.length; i++) {
+            DrawGL.takePoint.push(processingData.allPoint[i].point);
+          }
+
+          for (let i = 0; i < processingData.allSeg.length; i++) {
+            DrawGL.segment.push(processingData.allSeg[i]);
+          }
+
+          DrawGL.takePoint = DrawGL.takePoint.flat();
+          DrawGL.segment = DrawGL.segment.flat();
+          DrawGL.lineVertex = DrawGL.takePoint;
+
+          for (let i = 0; i < DrawGL.lineVertex.length; i++) {
+            if (i % 2 == 0) {
+              DrawGL.point_x.push(DrawGL.lineVertex[i]);
+            }
+            else DrawGL.point_y.push(DrawGL.lineVertex[i]);
+          }
+
+          // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
+          var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+            a_position: {
+              numComponents: 2,
+              data: DrawGL.lineVertex,
+            },
+            indices: DrawGL.segment,
+          });
+          DrawGL.scene_load = [{ x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },];
+          DrawGL.drawMain();
+
           //update screen
           PaintIn.renderObject(processingData.allObject);
         }
@@ -295,18 +569,20 @@ class Paint {
     });
 
     //input text comment file
-    document.getElementById("uploadFile").addEventListener("change", function() {
-      var textInput = document.getElementById('textBox');
-      var reader = new FileReader();
-      reader.onload = function() {
-        let text = reader.result;
-        textInput.value = text;
-      };
-      reader.readAsText(this.files[0]);
-    });
+    document
+      .getElementById("uploadFile")
+      .addEventListener("change", function () {
+        var textInput = this.valueComment;
+        var reader = new FileReader();
+        reader.onload = function () {
+          var text = reader.result;
+          document.getElementById("textBox").value = text;
+        };
+        reader.readAsText(this.files[0]);
+      });
 
     //input img
-    let form = document.getElementById("inputImg");
+    let form = this.inputImage;
     form.addEventListener("change", function (event) {
       event.preventDefault();
       const formData = new FormData(form[0]);
@@ -475,25 +751,22 @@ class Paint {
         this.getNodePos();
         this.arrRecordNode = this.removeDuplicates(this.arrRecordNode);
         this.arrGrid = this.concatArr(this.arrGrid, this.arrRecordNode);
-        this.ctx.strokeStyle = "grey";
+        //this.ctx.strokeStyle = "grey";
         this.drawGrid();
       } else if (dataLogFile.length > 1) {
         console.log("up");
         console.log(dataLogFileIndex);
         if (dataLogFileIndex === 0) {
           dataLogFileIndex += 1;
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         } else if (dataLogFileIndex === dataLogFile.length - 1) {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         } else {
           dataLogFileIndex += 1;
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         }
       } else if (dataLogFile.length === 1) {
-        document.getElementById("textBox").value = dataLogFile.at(0);
+        this.valueComment.value = dataLogFile.at(0);
       }
     }
     //KEYDOWN
@@ -510,24 +783,21 @@ class Paint {
         this.arrRecordNode = this.removeDuplicates(this.arrRecordNode);
         this.arrGrid = this.concatArr(this.arrGrid, this.arrRecordNode);
 
-        this.ctx.strokeStyle = "grey";
+        //this.ctx.strokeStyle = "grey";
         this.drawGrid();
       } else if (dataLogFile.length > 1) {
         console.log("down");
         if (dataLogFileIndex === 0) {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         } else if (dataLogFileIndex === dataLogFile.length - 1) {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
           dataLogFileIndex -= 1;
         } else {
-          document.getElementById("textBox").value =
-            dataLogFile.at(dataLogFileIndex);
+          this.valueComment.value = dataLogFile.at(dataLogFileIndex);
           dataLogFileIndex -= 1;
         }
       } else if (dataLogFile.length === 1) {
-        document.getElementById("textBox").value = dataLogFile.at(0);
+        this.valueComment.value = dataLogFile.at(0);
       }
     }
 
@@ -538,25 +808,25 @@ class Paint {
     }
     //ENTER
     if (event.keyCode === 13) {
-//      if (this.valueComment.value === "l" && this.pen === "select") {
-//        //shortcut for draw line
-//        // press l
-//        //change cursor
-//        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
-//        this.canvas.style.cursor = this.currentCursor;
-//        let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
-//        this.keyDown(spaceKey);
-//        this.onButtonDraw(this.currentValueLine, "line");
-//        this.renderObject(processingData.allObject);
-//      }
-//
-    //  if (this.valueComment.value !== "") {
-    //    dataLogFile.push(this.valueComment.value);
-    //    this.valueComment.value = "";
-    //  }
-//
-//      PaintIn.renderCommand("textCommands");
-    deselectAll();
+      //      if (this.valueComment.value === "l" && this.pen === "select") {
+      //        //shortcut for draw line
+      //        // press l
+      //        //change cursor
+      //        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
+      //        this.canvas.style.cursor = this.currentCursor;
+      //        let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
+      //        this.keyDown(spaceKey);
+      //        this.onButtonDraw(this.currentValueLine, "line");
+      //        this.renderObject(processingData.allObject);
+      //      }
+      //
+      //  if (this.valueComment.value !== "") {
+      //    dataLogFile.push(this.valueComment.value);
+      //    this.valueComment.value = "";
+      //  }
+      //
+      //      PaintIn.renderCommand("textCommands");
+      deselectAll();
     }
     if (event.keyCode === 17) {
       if (this.valueComment.value === "l" && this.pen === "select") {
@@ -574,7 +844,7 @@ class Paint {
       //   dataLogFile.push(this.valueComment.value);
       //   // this.valueComment.value = "";
       // }
-     }
+    }
     //F2 input length Line
     if (event.keyCode === 113 && lengthLine === undefined) {
       let currentLine;
@@ -596,11 +866,11 @@ class Paint {
 
     if (this.currentValueGrid.value == "Off") {
       this.currentValueGrid.value = "On";
-      this.ctx.strokeStyle = "grey";
+      //this.ctx.strokeStyle = "red";
       this.drawGrid();
     } else {
       this.currentValueGrid.value = "Off";
-      // this.ctx.strokeStyle = 'white';
+      this.ctx.strokeStyle = 'white';
       this.ctx.fillStyle = "white";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -778,7 +1048,6 @@ class Paint {
   concatArr(arr1, arr2) {
     return arr1.concat(arr2);
   }
-
 
   //press button Name, Fore, Moment
   addValueName() {
@@ -1011,7 +1280,7 @@ class Paint {
             }
           }
         }
-        //set defaul obj type
+        //set default obj type
         this.multiSelectType = this.multiSelectTypeDefault;
         // } else {
         //     //reset arrMultiCurObj
@@ -1032,7 +1301,7 @@ class Paint {
         return;
       }
       //click select
-      //delete last selectbox
+      //delete last select box
       this.curSelectBox = [];
       if (
         this.curValName.value === "Off" &&
@@ -1075,7 +1344,7 @@ class Paint {
             }
           }
         } else {
-          //normal last multicurrent obj
+          //normal last multi current obj
           this.renderObject(processingData.allObject);
           //turn off multi mode
           this.arrMultiCurObj = [];
@@ -1287,7 +1556,6 @@ class Paint {
       );
     }
     // Rect
-    // console.log(this.arrRectX);
     if (this.arrRectX.length % 2 === 0 && this.arrRectX.length !== 0) {
       var lastTwoPointX = [
         this.arrRectX[this.arrRectX.length - 2],
@@ -1630,7 +1898,7 @@ class Paint {
   }
 
   testAPI() {
-      // show spinner
+    // show spinner
     if (PaintIn.APIurl.value !== "") {
       document.getElementById("spinner").style.display = "flex";
       urlSendRequest = PaintIn.APIurl.value;
@@ -1648,7 +1916,7 @@ class Paint {
         },
         method: "POST",
         url: urlSendRequest,
-        data: bodyData
+        data: bodyData,
       });
 
       promise.then((result) => {
@@ -1673,7 +1941,7 @@ class Paint {
         dataLogFile.push(JSON.stringify(err));
         PaintIn.renderCommand("textCommands");
       });
-//      spinner.style.display = "none";
+      //      spinner.style.display = "none";
     }
   }
 
@@ -1782,8 +2050,8 @@ class Paint {
     };
     return Math.acos(
       (u1.x * u2.x + u1.y * u2.y) /
-        (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
-          Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
+      (Math.sqrt(Math.pow(u1.x, 2) + Math.pow(u1.y, 2)) *
+        Math.sqrt(Math.pow(u2.x, 2) + Math.pow(u2.y, 2)))
     );
   }
 
@@ -1923,7 +2191,7 @@ class Paint {
       }
     }
   }
-
+  ;
   getPointInLineAxial(point1, point2, lenghtLine, obj) {
     //neu co luc doc, point 1 => use get point2 offet = 5
     let listPointAxial = [];
@@ -2059,7 +2327,7 @@ class Paint {
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = lineWidth;
     this.ctx.beginPath();
-    //vecto n
+    //vector n
     this.ctx.moveTo(fromx, fromy);
     this.ctx.lineTo(tox, toy);
     // arrow
@@ -2078,7 +2346,7 @@ class Paint {
 
   drawForceInPoint(Obj, x, y, color = "#063970", lineWidth = 2) {
     //alpha = input;
-    //get vecto u of Line
+    //get vector u of Line
     let endPointX;
     let endPointY;
 
@@ -2302,7 +2570,7 @@ class Paint {
       this.ctx.moveTo(0, j);
       this.ctx.lineTo(this.canvas.width, j);
     }
-    // this.ctx.strokeStyle = 'grey';
+    this.ctx.strokeStyle = "grey";
     this.ctx.lineWidth = 0.2;
     this.ctx.stroke();
     this.ctx.closePath();
@@ -2328,7 +2596,7 @@ class Paint {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     //
     if (this.currentValueGrid.value === "On") {
-      this.ctx.strokeStyle = "grey";
+      //this.ctx.strokeStyle = "red";
       this.drawGrid();
     }
     for (let i = arrObj.length - 1; i >= 0; i--) {
@@ -2336,7 +2604,7 @@ class Paint {
         this.fillArea(arrObj[i]);
         if (
           arrObj[i].name !== undefined &&
-          arrObj[i].name !== '' &&
+          arrObj[i].name !== "" &&
           arrObj[i].name !== null
         ) {
           this.drawText(arrObj[i], arrObj[i].name);
@@ -2350,7 +2618,7 @@ class Paint {
         );
         if (
           arrObj[i].name !== undefined &&
-          arrObj[i].name !== '' &&
+          arrObj[i].name !== "" &&
           arrObj[i].name !== null
         ) {
           this.drawText(arrObj[i], arrObj[i].name);
@@ -2573,9 +2841,9 @@ class Paint {
               <div>
                 <div class="coordinate">
                   <input type="text" name="format" value="[${math.round(
-                    Obj.x,
-                    2
-                  )}, ${math.round(Obj.y, 2)}]"
+          Obj.x,
+          2
+        )}, ${math.round(Obj.y, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                 </div>
               </div>
@@ -2813,9 +3081,13 @@ class Paint {
     ) {
       document.getElementsByClassName("boderProperties")[0].style.display =
         "block";
+      document.getElementsByClassName("property-icon")[0].style.transform = "rotate(-90deg)"
+      document.getElementsByClassName("property-icon")[0].title = "Close"
     } else {
       document.getElementsByClassName("boderProperties")[0].style.display =
         "none";
+      document.getElementsByClassName("property-icon")[0].style.transform = "rotate(90deg)"
+      document.getElementsByClassName("property-icon")[0].title = "Open"
     }
   }
 
@@ -3223,6 +3495,7 @@ class Paint {
     PaintIn.renderCommand("textCommands");
   }
 
+
   // saveLogFile() {
   //   let blob = new Blob([dataLogFile],
   //     { type: "text/plain;charset=utf-8" });
@@ -3248,6 +3521,7 @@ function getPosElement(idElem) {
 
 const PaintIn = new Paint();
 PaintIn.curValDrawing.value = "On";
+PaintIn.listenEvent();
 var dataLogFile = [];
 let dataLogFileIndex = 0;
 var urlSendRequest = "";

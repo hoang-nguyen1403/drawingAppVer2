@@ -1,0 +1,602 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+/* Reset CSS */
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    list-style: none;
+    max-width: 100%;
+}
+
+/* GLOBAL */
+body {
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+}
+
+.btn__tool {
+    border: 3px solid black;
+    border-radius: 50%;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #bbe8ec;
+    margin: 5px;
+    transition: all 0.5s;
+}
+
+button {
+    width: 40px;
+    height: 40px;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #bbe8ec;
+}
+
+.button--2 {
+    width: 40px;
+    height: 40px;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #f0f0f0;
+}
+
+li.Line__button a.nav-link.dropdown-toggle::after {
+    vertical-align: 0.9rem !important;
+}
+
+/* HEADER */
+header {
+    background-color: #0784d1;
+    height: 20px;
+}
+
+.header__contact a {
+    /* color: white; */
+}
+
+/* navigation__menu */
+.navigation__menu {
+    text-align: center;
+    background-color: #e6f5ff;
+    border-top: 1px solid #0784d1;
+    padding: 2px 0 2px;
+}
+
+.navigation__menu .container {
+    color: blue;
+}
+
+.navbar-brand {
+    color: blue !important;
+}
+
+li.nav-item.dropdown a.nav-link {
+    color: black;
+    transition: all 0.5s;
+}
+
+li.nav-item.dropdown a.nav-link:hover {
+    color: #7CFC00;
+}
+
+ul.navbar-nav li.nav-item.clearAll a.nav-link {
+    background-image: url(./img/clear_screen.gif);
+}
+
+#openFile_label {
+    width: 30px;
+    height: 30px;
+    background: url(img/open_file.gif);
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+.dropdown-item:hover #openFile_label{
+    border-color: #7CFC00;
+    background-size: 25px 25px;
+}
+
+.dropdown-menu.file__hover a {
+    transition: all 0.5s;
+}
+
+.dropdown-menu.file__hover a:hover {
+    background-color: blue;
+}
+
+.dropdown-menu.file__hover a:hover label#openFile_label button {
+    border-color: #7CFC00;
+    background-size: 25px 25px;
+}
+
+#saveFile {
+    background-image: url(./img/save_file.gif);
+    width: 30px;
+    height: 30px;
+    border: 3px solid black;
+    border-radius: 50%;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+.dropdown-menu.file__hover a {
+    transition: all 0.5s;
+}
+
+.dropdown-menu.file__hover a:hover {
+    background-color: blue;
+}
+
+.dropdown-menu.file__hover a:hover button#saveFile {
+    border-color: #7CFC00;
+    background-size: 25px 25px;
+}
+
+.dropdown-menu.file__hover a:hover span {
+    color: #7CFC00;
+}
+
+#inputImage {
+    background: url(./img/image.png);
+    width: 30px;
+    height: 30px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.dropdown-item:hover #inputImage {
+    background-size: 30px 30px;
+    border-color: #7CFC00;
+}
+
+#Clear_all {
+    background: url(./img/clear_screen.gif);
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    border: 3px solid black;
+    transition: all 0.5s;
+}
+
+#Clear_all:hover {
+    border-color: #7CFC00;
+    background-size: 30px 30px;
+}
+
+#meshing {
+    background: url(./img/mesh.png);
+    border: 3px solid black;
+    border-radius: 50%;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    transition: all 0.5s;
+}
+
+#meshing:hover {
+    border-color: #7CFC00;
+    background-size: 30px 30px;
+}
+
+#openFile_Solu {
+    background: url(./img/post_mode.png);
+    border: 3px solid black;
+    border-radius: 50%;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    transition: all 0.5s;
+}
+
+#openFile_Solu:hover {
+    background-size: 30px 30px;
+    border-color: #7CFC00;
+}
+
+#modeDrawing {
+    background: url(./img/switch.png);
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    border: 3px solid black;
+    transition: all 0.5s;
+}
+
+#modeDrawing:hover {
+    border-color: #7CFC00;
+    background-size: 30px 30px;
+}
+
+#line {
+    background-image: url(./img/line.png);
+}
+
+#line:hover {
+    border-color: #7CFC00;
+    background-size: 30px 30px;
+}
+
+.dropdown-menu.line__hover a:hover {
+    background-color: #fff;
+}
+
+#colorpicker_label {
+    width: 40px;
+    height: 40px;
+    background: url(./img/paint.png);
+    border: 3px solid black;
+    border-radius: 50%;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    cursor: pointer;
+    margin: 5px;
+}
+
+#colorpicker_label:hover {
+    background-color: #59cbd5;
+    background-size: 30px 30px;
+}
+
+#thickness {
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    border: 3px solid black;
+    border-radius: 50%;
+    margin: 5px;
+}
+
+#grid {
+    background-image: url(./img/grid.png);
+}
+
+#grid:hover {
+    border-color: #7CFC00;
+    background-size: 30px 30px;
+}
+#sendRequest {
+    /* background: url(./img/request.png); */
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    border: 3px solid black;
+    transition: all 0.5s;
+}
+
+#sendRequest:hover {
+    border-color: #7CFC00;
+    background-size: 30px 30px;
+}
+
+/* CONTENT */
+#fillColor {
+    background: url(./img/fill-color.png);
+    position: absolute;
+    top: 480px;
+    left: 25px;
+    display: none;
+    background-position: center;
+    background-size: 25px 25px;
+    background-repeat: no-repeat;
+}
+
+#BDCondition {
+    /* background-color: #e6f5ff; */
+    /* background-position: left;
+    background-size: 30px;
+    background-repeat: no-repeat; */
+    position: absolute;
+    margin: 5px;
+    left: 30%;
+    display: none;
+    background-color: #e6f5ff;
+    padding: 9px;
+    border-radius: 8px;
+    border: 1px solid #0784d1;
+}
+#BDCondition button:hover {
+    background-color: #59cbd5;
+    background-size: 30px 30px;
+    color: white;
+}
+#BDCondition p {
+    vertical-align: middle;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* CANVAS */
+#wrap_canvas_div {
+    flex: 1;
+    border-top: 1px solid #000;
+    width: 100%;
+    height: 85vh;
+    overflow: hidden;
+}
+
+#myCanvas {
+    background-color: white;
+    height: 100%;
+    width: 100%;
+}
+
+#style {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    text-align: center;
+    background-color: #e6f5ff;
+}
+
+/* COORDINATE AXIS */
+#coord_div {
+    position: absolute;
+    /* position: fixed; */
+    bottom: 2%;
+    left: 25px;
+    height: 50px;
+    width: 150px;
+    display: flex;
+    align-items: center;
+    border: 2px solid #0784d1;
+    background: #fff;
+}
+
+#icon_coord {
+    height: 100%;
+    width: 78px;
+    background-image: url(./img/coord.png);
+    background-size: 45px 90%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#display_coord {
+    font-family: "Roboto", sans-serif;
+    color: red;
+    width: 100%;
+    text-align: center;
+}
+
+/* PROPERTY */
+#property {
+    position: absolute;
+    right: 17.1%;
+    bottom: 1%;
+    width: 150px;
+    display: none;
+    flex-direction: column;
+    font-size: 13px;
+    /* background-color: #ffffff; */
+}
+
+.property_label {
+    display: flex;
+    width: 100%;
+    /* height: 30px; */
+    padding: 0%;
+    font-size: 22px;
+    border: 1px solid black;
+    background-color: rgb(162 202 212 / 80%);
+    font-family: UVF Bariol Regular;
+}
+
+.property_label>div {
+    height: 15px;
+    background-image: url(img/arrow.png);
+    background-size: 10px 10px;
+    background-color: rgb(162 202 212 / 98%);
+    border: 1px;
+    position: absolute;
+    right: -3%;
+    border-radius: 8px;
+}
+
+.boderProperties>div {
+    width: 100%;
+    height: 35px;
+    display: flex;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    /* background-color: #ffffff; */
+}
+
+.boderProperties>div>p {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    align-items: right;
+    text-align: left;
+    justify-content: left;
+}
+
+.boderProperties>div>div {
+    height: 100%;
+    flex: 1;
+    border-left: 1px solid black;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+}
+
+#tab-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 0;
+    background-size: 20px 20px;
+    border: none;
+    background: url(img/arrow.png);
+    position: absolute;
+    right: 0%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 5px;
+}
+
+#tab-comments {
+    position: absolute;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    right: 9px;
+    top: 110px;
+    width: 290px;
+    height: 83vh;
+    background-color: #e6f5ff;
+    border: 1px solid #0784d1;
+    overflow-y: scroll;
+    word-wrap: break-word;
+    /* overflow: hidden; */
+}
+
+#textBox {
+    width: 250px;
+    border-radius: 8px;
+}
+
+#tab-comments p#lableTab {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 1rem;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #59cbd5;
+    text-transform: uppercase;
+}
+
+#tab-comments>input {
+    margin: 15px;
+    width: 80%;
+    height: 25%;
+    overflow: hidden;
+}
+
+/* difference text in tab */
+#comments>p {
+    width: 100%;
+    height: 100%;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+#valueInputed {
+    margin: 0px;
+    width: 100%;
+    height: 80%;
+}
+
+#valueInputed>div {
+    /* vertical-align: top; */
+    display: block;
+    align-items: center;
+    text-align: justify;
+    justify-content: center;
+}
+
+#cmtSaveText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    width: 100px;
+    height: 30px;
+    background-color: lightblue;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+#cmtSaveText:hover{
+    background: #7CFC00;
+    color: #fff;
+}
+
+#closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    width: 100px;
+    height: 30px;
+    color: black;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+    background-color: #fff;
+}
+#closeButton:hover{
+    background-color: red;
+    border-color: red;
+}
+#uploadFile_label {
+    display: inline-block;
+    color: rgb(3, 93, 209);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 0px;
+    transition: all 0.2s;
+}
+#uploadFile_label:hover {
+    color: #7CFC00;
+}
+#hiddenSidebar {
+    transition: all 0.5s;
+}
+#hiddenSidebar:hover {
+    border-color: #7CFC00;
+    font-size: 24px;
+}
