@@ -617,7 +617,7 @@ button {
 }
 
 
-#setPosition {
+/* #setPosition {
     background: url(img/targeting.png);
     width: 40px;
     height: 40px;
@@ -636,7 +636,7 @@ button {
 
 #setPosition:hover {
     background-size: 35px 35px;
-}
+} */
 
 
 #modeDrawing {
