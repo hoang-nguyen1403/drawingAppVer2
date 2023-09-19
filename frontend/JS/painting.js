@@ -310,7 +310,7 @@ class Paint {
     if (this.valueComment.value == []) {
       dataLogFile.push(this.valueComment.value);
     }
-    if (this.valueComment.value !== []) {
+    if (this.valueComment.value !== null) {
       dataLogFile[0] = this.valueComment.value;
     }
   }
@@ -1926,6 +1926,8 @@ class Paint {
           receiveData = result.data["lhs"][0];
           if (receiveData !== undefined) {
             dataLogFile.push(JSON.stringify(receiveData));
+            visualizeData = new dataGL(receiveData);
+            visualizeData.proccesingData();
             PaintIn.renderCommand("textCommands");
           }
         } catch (err) {

@@ -23,6 +23,7 @@ function ChangeModeDrawing() {
 	document.getElementById("grid").style.display = "block";
 	document.getElementById("line").style.display = "block";
 	document.getElementById("fillColor").style.display = "none";
+	document.getElementById("setPosition").style.display = "none";
 	document.getElementById("property_solution").style.display = "none";
 	document.getElementById("property").style.display = "block";
 	document.getElementById("meshing").style.backgroundColor = "white";
@@ -38,6 +39,7 @@ function ChangeModeGL() {
 	Gl.style.display = "block";
 	Gl.style.border = "1px solid #0784d1";
 	document.getElementById("fillColor").style.display = "block";
+	document.getElementById("setPosition").style.display = "block";
 	document.getElementById("canvasGL").style.display = "block";
 	// document.getElementById("mode").style.display = "none";
 	document.getElementById("colorpicker_label").style.display = "none";
@@ -62,6 +64,7 @@ function ChangeModeGL3D() {
 	mode3D.style.display = "block";
 	document.getElementById("WebGL_area").style.display = "block"
 	document.getElementById("fillColor").style.display = "block";
+	document.getElementById("setPosition").style.display = "block";
 	document.getElementById("canvasGL").style.display = "none";
 	document.getElementById("mode").style.display = "block";
 	document.getElementById("text_colorbar").style.display = "block";

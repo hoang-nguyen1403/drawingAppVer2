@@ -17,6 +17,10 @@ class Mesh {
     } else {
       Mesh.curValFillColor.value = "Off";
       document.getElementById("fillColor").classList.remove("active");
+      DrawGL.color = [1, 1, 1, 1];
+      DrawGL3D.pointStorage = { x: 100000, y: 1000000, z: 1000000 };
+      DrawGL.nearPointGL_storage = [{ x: 100000000, y: 10000000000 }, 0];
+      DrawGL.color = [1, 1, 1, 1];
       DrawGL.drawMain();
       DrawGL3D.drawMain();
     }

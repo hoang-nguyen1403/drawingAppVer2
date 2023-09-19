@@ -79,7 +79,7 @@ DrawGL.canvas.addEventListener('mousedown', (event) => {
 });
 
 function filter_change() {
-  let data = FEsoln.find(({name})=> name == DrawGL.filter_value.value);
+  let data = FEsoln.find(({ name }) => name == DrawGL.filter_value.value);
   Mesh.prototype.fillElementsGL(data.data);
   DrawGL.drawMain();
   DrawGL3D.drawMain();
@@ -87,11 +87,11 @@ function filter_change() {
 
 function mode_change() {
   let value = document.getElementById("modeSolution_value").value;
-  switch(value){
-    case "3D" :
+  switch (value) {
+    case "3D":
       ChangeModeGL3D();
       break;
-    case "2D" :
+    case "2D":
       ChangeModeGL();
   }
 }
@@ -119,7 +119,7 @@ function checkSolution(event) {
     DrawGL.drawCheckpoint({
       x: DrawGL.nearPointGL[0].x,
       y: DrawGL.nearPointGL[0].y,
-      color : [1,0,0,1],
+      color: [1, 0, 0, 1],
       bufferInfo: DrawGL.sphereBufferInfo,
     });
     DrawGL.canvas.addEventListener('mousedown', showproperties);
@@ -133,16 +133,17 @@ function showproperties(event) {
   if (event.buttons == 1 && !event.shiftKey) {
     if (DrawGL.nearPointGL !== undefined) {
       let Detail = DrawGL.takevalueRange.find(({ coord }) => coord[0] == DrawGL.nearPointGL[0].x && coord[1] == DrawGL.nearPointGL[0].y)
-      DrawGL.color = [0,0,1,1];
-      DrawGL.nearPointGL_storage = [{x:DrawGL.nearPointGL[0].x,y:DrawGL.nearPointGL[0].y},0];
-      DrawGL.drawCheckpoint({
-        x: DrawGL.nearPointGL_storage[0].x,
-        y: DrawGL.nearPointGL_storage[0].y,
-        color : DrawGL.color,
-        bufferInfo: DrawGL.sphereBufferInfo,
-      });
-      document.getElementById("property_solution").style.display = "inline-block"
-      document.getElementById("property_solution").innerHTML = `
+      if (Detail !== undefined) {
+        DrawGL.color = [0, 0, 1, 1];
+        DrawGL.nearPointGL_storage = [{ x: DrawGL.nearPointGL[0].x, y: DrawGL.nearPointGL[0].y }, 0];
+        DrawGL.drawCheckpoint({
+          x: DrawGL.nearPointGL_storage[0].x,
+          y: DrawGL.nearPointGL_storage[0].y,
+          color: DrawGL.color,
+          bufferInfo: DrawGL.sphereBufferInfo,
+        });
+        document.getElementById("property_solution").style.display = "inline-block"
+        document.getElementById("property_solution").innerHTML = `
           <div class="property_solution_label">
           <p style="display: flex; justify-content: center; align-items: center; width: 100%">DETAIL</p>
           <div>
@@ -160,9 +161,9 @@ function showproperties(event) {
             </div>
           </div>
           `;
-          for (let i =0;i<FEsoln.length;i++){
-            var a = FEsoln[i].name;
-            document.getElementsByClassName("boderProperties_solution")[0].innerHTML+=`
+        for (let i = 0; i < FEsoln.length; i++) {
+          var a = FEsoln[i].name;
+          document.getElementsByClassName("boderProperties_solution")[0].innerHTML += `
             <div>
             <p style="display: flex; justify-content: center; align-items: center">${a}</p>
             <div style="text-align: center; display: flex; justify-content: center; align-items: center">
@@ -170,12 +171,13 @@ function showproperties(event) {
             </div>
         </div>
             `
-          }
+        }
+      }
     }
     else {
       document.getElementById("property_solution").style.display = "none";
-      DrawGL.nearPointGL_storage = [{x:0,y:0},0];
-      DrawGL.color = [1,1,1,1];
+      DrawGL.nearPointGL_storage = [{ x: 100000000, y: 10000000000 }, 0];
+      DrawGL.color = [1, 1, 1, 1];
     }
   }
 }
@@ -212,8 +214,8 @@ DrawGL.canvas.addEventListener('wheel', (event) => {
 DrawGL.canvas.addEventListener('pointermove', (e) => {
   DrawGL.canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
 })
-  
-DrawGL.canvas.addEventListener("mousemove", function(event){
+
+DrawGL.canvas.addEventListener("mousemove", function (event) {
   event.preventDefault();
   DrawGL.startInvViewProjMat_check = m3.inverse(DrawGL.viewProjectionMat);
   DrawGL.startCamera_check = Object.assign({}, DrawGL.camera);
@@ -222,11 +224,11 @@ DrawGL.canvas.addEventListener("mousemove", function(event){
     DrawGL.startInvViewProjMat_check,
     DrawGL.startClipPos_check);
   document.getElementById("display_coord").innerHTML =
-      "[" +
-      math.round(DrawGL.startPos_check[0]) +
-      " ; " +
-      math.round(DrawGL.startPos_check[1]) +
-      "]";
+    "[" +
+    math.round(DrawGL.startPos_check[0]) +
+    " ; " +
+    math.round(DrawGL.startPos_check[1]) +
+    "]";
 });
 
 function toggleProperty() {
@@ -234,15 +236,40 @@ function toggleProperty() {
   if (
     document.getElementsByClassName("boderProperties_solution")[0].style.display ===
     "none"
-    ) {
-      document.getElementsByClassName("boderProperties_solution")[0].style.display =
+  ) {
+    document.getElementsByClassName("boderProperties_solution")[0].style.display =
       "block";
-      document.getElementsByClassName("property_solution-icon")[0].style.transform="rotate(-90deg)"
-      document.getElementsByClassName("property_solution-icon")[0].title = "Close"
-    } else {
-      document.getElementsByClassName("boderProperties_solution")[0].style.display =
+    document.getElementsByClassName("property_solution-icon")[0].style.transform = "rotate(-90deg)"
+    document.getElementsByClassName("property_solution-icon")[0].title = "Close"
+  } else {
+    document.getElementsByClassName("boderProperties_solution")[0].style.display =
       "none";
-      document.getElementsByClassName("property_solution-icon")[0].style.transform="rotate(90deg)"
-      document.getElementsByClassName("property_solution-icon")[0].title = "Open"
+    document.getElementsByClassName("property_solution-icon")[0].style.transform = "rotate(90deg)"
+    document.getElementsByClassName("property_solution-icon")[0].title = "Open"
+  }
+}
+
+function resetCameraView(){
+  if (document.getElementById("modeSolution_value").value === "2D") {
+    DrawGL.camera = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      zoom: 1,
+    }
+    DrawGL.drawMain();
+  }
+  else {
+    DrawGL3D.camera = {
+      rotation_X: 0, // degrees
+      rotation_Y: 0, // degrees
+      rotation_Z: 0, // degrees
+      Deep: 400000,
+      Zoom: 1,
+      translation_x: 0,
+      translation_y: 0,
+      translation_z: math.max(math.abs(DrawGL.pointcheck)),
+    }
+    DrawGL3D.drawMain();
   }
 }

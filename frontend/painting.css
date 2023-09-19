@@ -615,6 +615,30 @@ button {
 #fillColor:hover {
     background-size: 35px 35px;
 }
+
+
+#setPosition {
+    background: url(img/targeting.png);
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 45%;
+    left: 25px;
+    display: none;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+}
+
+#setPosition:hover {
+    background-size: 35px 35px;
+}
+
+
 #modeDrawing {
     background: url(img/brush.png);
     background-size: 25px 25px;

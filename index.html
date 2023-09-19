@@ -74,6 +74,10 @@
 				<button id="fillColor" class="btn" type="button" onclick="Mesh.prototype.addValFillColor()"
 					value="Off"></button>
 			</div>
+			<div id="position">
+				<button id="setPosition" class="btn" type="button" onclick="resetCameraView()"
+					value="Off"></button>
+			</div>
 
 			<!-- <div id="constraint">
 				<button id="fixConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
@@ -141,8 +145,8 @@
 					</form>
 					<form id="form">
 						<select name="modeSolution" id="modeSolution_value" onchange="mode_change()" style="display: none;">
-							<option value="3D">3D</option>
 							<option value="2D">2D</option>
+							<option value="3D">3D</option>
 						</select>
 						<select name="filter" id="filter" onchange="filter_change()" style="display: none;">
 						</select>
@@ -231,6 +235,7 @@
 	<script src="./frontend/JS/Draw3D.js"></script>
 	<script src="./frontend/JS/uiUtils.js"></script>
 	<script src="./frontend/JS/event3D.js"></script>
+	<script src="./frontend/JS/processingData_GL.js"></script>
 </body>
 
 </html>

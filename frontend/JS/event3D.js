@@ -119,11 +119,11 @@ function handleMouseDownSelect(event) {
 
 function performRaycasting(ray) {
   let closestPoint = null;
-  let closestDistance = Infinity;
+  let closestDistance = 10;
   for (const point of DrawGL3D.takeValueRange) {
     const intersectionDistance = calculateDistance(ray, point.coord);
     if (intersectionDistance < closestDistance) {
-      closestDistance = intersectionDistance* DrawGL3D.camera.Zoom;
+      closestDistance = intersectionDistance * DrawGL3D.camera.Zoom;
       closestPoint = point;
     }
   }
@@ -158,17 +158,18 @@ function showproperties3D(event) {
   if (event.buttons == 1 && DrawGL3D.ui.dragging == false) {
     if (DrawGL3D.nearestPointGL3D !== null) {
       let Detail = DrawGL3D.takeValueRange.find(({ coord }) => coord[0] == DrawGL3D.nearestPointGL3D.coord[0] && coord[1] == DrawGL3D.nearestPointGL3D.coord[1] && coord[2] == DrawGL3D.nearestPointGL3D.coord[2])
-      DrawGL.color = [0, 0, 1, 1];
-      DrawGL3D.pointStorage = { x: Detail.coord[0], y: Detail.coord[1], z: Detail.coord[2] };
-      DrawGL3D.drawPointProperty({
-        x: Detail.coord[0],
-        y: Detail.coord[1],
-        x: Detail.coord[2],
-        color: DrawGL.color,
-        bufferInfo: DrawGL3D.sphereBufferInfo,
-      });
-      document.getElementById("property_solution").style.display = "inline-block"
-      document.getElementById("property_solution").innerHTML = `
+      if (Detail !== undefined) {
+        DrawGL.color = [0, 0, 1, 1];
+        DrawGL3D.pointStorage = { x: Detail.coord[0], y: Detail.coord[1], z: Detail.coord[2] };
+        DrawGL3D.drawPointProperty({
+          x: Detail.coord[0],
+          y: Detail.coord[1],
+          x: Detail.coord[2],
+          color: DrawGL.color,
+          bufferInfo: DrawGL3D.sphereBufferInfo,
+        });
+        document.getElementById("property_solution").style.display = "inline-block"
+        document.getElementById("property_solution").innerHTML = `
           <div class="property_solution_label">
           <p style="display: flex; justify-content: center; align-items: center; width: 100%">DETAIL</p>
           <div>
@@ -186,9 +187,9 @@ function showproperties3D(event) {
                 </div>
             </div>
           `;
-          for (let i =0;i<FEsoln.length;i++){
-            var a = FEsoln[i].name;
-            document.getElementsByClassName("boderProperties_solution")[0].innerHTML+=`
+        for (let i = 0; i < FEsoln.length; i++) {
+          var a = FEsoln[i].name;
+          document.getElementsByClassName("boderProperties_solution")[0].innerHTML += `
             <div>
             <p style="display: flex; justify-content: center; align-items: center">${a}</p>
             <div style="text-align: center; display: flex; justify-content: center; align-items: center">
@@ -196,12 +197,13 @@ function showproperties3D(event) {
             </div>
         </div>
             `
-          }
+        }
+      }
     }
     else {
       document.getElementById("property_solution").style.display = "none";
       DrawGL.color = [1, 1, 1, 1];
-      DrawGL3D.pointStorage = { x: 0, y: 0, z: 0 };
+      DrawGL3D.pointStorage = { x: 100000, y: 1000000, z: 1000000 };
     }
   }
 }
