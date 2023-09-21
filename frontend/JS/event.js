@@ -249,27 +249,27 @@ function toggleProperty() {
   }
 }
 
-function resetCameraView(){
-  if (document.getElementById("modeSolution_value").value === "2D") {
-    DrawGL.camera = {
-      x: 0,
-      y: 0,
-      rotation: 0,
-      zoom: 1,
-    }
-    DrawGL.drawMain();
-  }
-  else {
-    DrawGL3D.camera = {
-      rotation_X: 0, // degrees
-      rotation_Y: 0, // degrees
-      rotation_Z: 0, // degrees
-      Deep: 400000,
-      Zoom: 1,
-      translation_x: 0,
-      translation_y: 0,
-      translation_z: math.max(math.abs(DrawGL.pointcheck)),
-    }
-    DrawGL3D.drawMain();
-  }
-}
+// function resetCameraView(){
+//   if (document.getElementById("modeSolution_value").value === "2D") {
+//     DrawGL.camera = {
+//       x: 0,
+//       y: 0,
+//       rotation: 0,
+//       zoom: 1,
+//     }
+//     DrawGL.drawMain();
+//   }
+//   else {
+//     DrawGL3D.camera = {
+//       rotation_X: 0, // degrees
+//       rotation_Y: 0, // degrees
+//       rotation_Z: 0, // degrees
+//       Deep: 400000,
+//       Zoom: 1,
+//       translation_x: 0,
+//       translation_y: 0,
+//       translation_z: math.max(math.abs(DrawGL.pointcheck)),
+//     }
+//     DrawGL3D.drawMain();
+//   }
+// }
