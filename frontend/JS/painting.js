@@ -258,6 +258,9 @@ class Paint {
     DrawGL3D.takePoint_Extrude = [];
     DrawGL3D.sceneFill = [];
     DrawGL3D.sceneMesh = [];
+    DrawGL3D.valueFilter = [];
+    DrawGL3D.node = [];
+    DrawGL3D.u_id = [];
     DrawGL.camera = {
       x: 0,
       y: 0,
@@ -369,12 +372,18 @@ class Paint {
           document.getElementById("modeSolution_value").style.display = "block";
           Mesh.prototype.createDataMesh(inputData);
           for (let i = 0; i < Mesh.nodes.length; i++) {
+            const id = i + 1;
+            DrawGL3D.u_id.push([((id >> 0) & 0xFF) / 0xFF,
+            ((id >> 8) & 0xFF) / 0xFF,
+            ((id >> 16) & 0xFF) / 0xFF,
+            ((id >> 24) & 0xFF) / 0xFF],)
+          }
+          for (let i = 0; i < Mesh.nodes.length; i++) {
             DrawGL.takevalueRange.push(
-              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y] }
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y], color: DrawGL3D.u_id[i] }
             );
             DrawGL3D.takeValueRange.push(
-              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 0] },
-              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 100] }
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 0], color: DrawGL3D.u_id[i] }
             );
           }
           var count = 0;
@@ -383,11 +392,10 @@ class Paint {
               const value1 = FEsoln[i].name;
               DrawGL.takevalueRange[j] = { ...DrawGL.takevalueRange[j], [value1]: FEsoln[i].data[j] };
               DrawGL3D.takeValueRange[count] = { ...DrawGL3D.takeValueRange[count], [value1]: FEsoln[i].data[j] };
-              DrawGL3D.takeValueRange[count + 1] = { ...DrawGL3D.takeValueRange[count + 1], [value1]: FEsoln[i].data[j] };
             }
-            count += 2;
+            count += 1;
           }
-
+          DrawGL3D.u_id = DrawGL3D.u_id.flat();
           // Max element for Uint16array is 10921 elements;
           var max_element = 10921;
           var count_element = Mesh.elements.length / max_element;
@@ -434,11 +442,6 @@ class Paint {
               DrawGL3D.lineBase.push(0);
             }
 
-            for (let m = 0; m < DrawGL.pointcheck.length; m++) {
-              DrawGL3D.lineMeshExtrude.push(DrawGL.pointcheck[m][0]);
-              DrawGL3D.lineMeshExtrude.push(DrawGL.pointcheck[m][1]);
-              DrawGL3D.lineMeshExtrude.push(100);
-            }
             DrawGL.lineVertex = DrawGL.lineVertex.flat();
             var bufferInfo_mesh = twgl.createBufferInfoFromArrays(DrawGL.gl, {
               a_position: {
@@ -451,12 +454,8 @@ class Paint {
               a_position: DrawGL3D.lineBase,
               indices: DrawGL.segment_mesh,
             });
-            var bufferInfo_mesh_second = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
-              a_position: DrawGL3D.lineMeshExtrude,
-              indices: DrawGL.segment_mesh,
-            });
+
             DrawGL3D.sceneMesh.push(bufferInfo_mesh_base);
-            DrawGL3D.sceneMesh.push(bufferInfo_mesh_second);
             DrawGL.scene.push(
               {
                 x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_mesh
@@ -464,35 +463,41 @@ class Paint {
             )
           }
 
+          var point_2D = []
+          var point_3D = []
+          for (let i = 0; i < DrawGL3D.takeValueRange.length; i++) {
+            point_3D.push(DrawGL3D.takeValueRange[i].coord)
+            point_2D.push(DrawGL.takevalueRange[i].coord)
+          }
+          point_3D = point_3D.flat();
+          point_2D = point_2D.flat();
+          var bufferNode = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+            a_position: point_3D,
+            a_color: DrawGL3D.u_id
+          })
+          var bufferNode2D = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+            a_position: {
+              numComponents: 2,
+              data: point_2D
+            },
+            a_color: DrawGL3D.u_id
+          })
+          DrawGL3D.node.push(bufferNode)
+          DrawGL.node.push(bufferNode2D)
           for (let i = 0; i < DrawGL.point_x.length; i++) {
             DrawGL.takePoint.push(DrawGL.point_x[i]);
             DrawGL.takePoint.push(DrawGL.point_y[i]);
           }
-          for (let i = 0; i < 2; i++) {
-            if (i % 2 == 0) {
-              for (let i = 0; i < DrawGL.point_x.length; i++) {
-                DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
-                DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
-                DrawGL3D.nodeCoord.push(0);
-              }
-            } else {
-              for (let i = 0; i < DrawGL.point_x.length; i++) {
-                DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
-                DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
-                DrawGL3D.nodeCoord.push(100);
-              }
-            }
+
+          for (let i = 0; i < DrawGL.point_x.length; i++) {
+            DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
+            DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
+            DrawGL3D.nodeCoord.push(0);
           }
-          for (let i = 0; i < 2; i++) {
-            if (i % 2 == 0) {
-              for (let i = 0; i < DrawGL3D.point_x.length; i++) {
-                DrawGL3D.takePoint.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 0 });
-              }
-            } else {
-              for (let i = 0; i < DrawGL3D.point_x.length; i++) {
-                DrawGL3D.takePoint_Extrude.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 100 });
-              }
-            }
+
+
+          for (let i = 0; i < DrawGL3D.point_x.length; i++) {
+            DrawGL3D.takePoint.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 0 });
           }
 
           DrawGL3D.colorNode = DrawGL3D.colorNode.flat();

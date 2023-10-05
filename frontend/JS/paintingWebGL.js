@@ -5,7 +5,7 @@ class Draw {
     this.canvas = document.querySelector('#canvasGL');
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
-    this.gl = this.canvas.getContext('experimental-webgl');
+    this.gl = this.canvas.getContext('webgl');
 
     // Declare the card canvas2D - text value of color bar
     this.canvas_text = document.querySelector('#text_colorbar');
@@ -24,11 +24,13 @@ class Draw {
     this.fragment_fill = this.loadVSFG('./frontend/shader/shader_fill.fs');
     this.vertex_black = this.loadVSFG('./frontend/shader/shader_black.vs');
     this.fragment_black = this.loadVSFG('./frontend/shader/shader_black.fs');
-
+    this.vertex_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.vs');
+    this.fragment_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.fs');
     // Compiles shaders, links program
     this.programInfo = twgl.createProgramInfo(this.gl, [this.vertex_fill, this.fragment_fill]);
     this.programInfo_colorbar = twgl.createProgramInfo(this.gl_colorbar, [this.vertex_black, this.fragment_black]);
     this.programInfo_edges = twgl.createProgramInfo(this.gl, [this.vertex_black, this.fragment_black]);
+    this.program_pick_node = twgl.createProgramInfo(this.gl, [this.vertex_pick_node, this.fragment_pick_node]);
     // Declare the geometry sphere imformation from library twgl
     this.sphereVerts = twgl.primitives.createSphereVertices(1, 24, 12);
 
@@ -90,9 +92,22 @@ class Draw {
     this.colorvec4 = [];
     this.color_black = [0, 0, 0, 1];
     this.color_red = [1, 0, 0, 1];
-    this.color = [1,1,1,1];
+    this.color = [1, 1, 1, 1];
+
+    this.node = []
+    this.id;
+    this.targetTexture;
+    this.depthBuffer;
+    this.fb;
+    this.attachmentPoint;
+    this.level;
+    this.internalFormat;
+    this.border;
+    this.format;
+    this.type;
+    this.data;
   }
-  
+
   // Load vertex and fragment shader
   loadVSFG(path) {
     var request = new XMLHttpRequest();
@@ -124,7 +139,7 @@ class Draw {
   // Draw check point
   drawCheckpoint(thing) {
     this.gl.useProgram(this.programInfo_edges.program);
-    const { x, y,color, bufferInfo } = thing;
+    const { x, y, color, bufferInfo } = thing;
     twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
     let mat = m3.identity();
     mat = m3.translate(mat, x, y);
@@ -174,7 +189,7 @@ class Draw {
       mat = m3.rotate(mat, rotation);
       mat = m3.scale(mat, scale, scale);
       this.gl_colorbar.getParameter(this.gl_colorbar.LINE_WIDTH);
-      this. gl_colorbar.getParameter(this.gl_colorbar.ALIASED_LINE_WIDTH_RANGE);
+      this.gl_colorbar.getParameter(this.gl_colorbar.ALIASED_LINE_WIDTH_RANGE);
       // calls gl.uniformXXX
       twgl.setUniforms(this.programInfo_colorbar, {
         u_matrix: new Float32Array([0.03999999910593033, 0, 0, 0, -0.004999999888241291, 0, -1, 1, 1]),
@@ -228,15 +243,91 @@ class Draw {
       twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
     }
   }
+  setFramebufferAttachmentSizes(width, height) {
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.targetTexture);
+    // define size and format of level 0
+    this.level = 0;
+    this.internalFormat = this.gl.RGBA;
+    this.border = 0;
+    this.format = this.gl.RGBA;
+    this.type = this.gl.UNSIGNED_BYTE;
+    this.data = null;
+    this.gl.texImage2D(this.gl.TEXTURE_2D, this.level, this.internalFormat,
+      width, height, this.border,
+      this.format, this.type, this.data);
+
+    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, this.depthBuffer);
+    this.gl.renderbufferStorage(this.gl.RENDERBUFFER, this.gl.DEPTH_COMPONENT16, width, height);
+  }
+  drawFrameBuffer() {
+    this.targetTexture = this.gl.createTexture();
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.targetTexture);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+
+    // create a depth renderbuffer
+    this.depthBuffer = this.gl.createRenderbuffer();
+    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, this.depthBuffer);
+    // Create and bind the framebuffer
+    this.fb = this.gl.createFramebuffer();
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
+
+    // attach the texture as the first color attachment
+    this.attachmentPoint = this.gl.COLOR_ATTACHMENT0;
+    this.level = 0;
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.attachmentPoint, this.gl.TEXTURE_2D, this.targetTexture, this.level);
+
+    // make a depth buffer and the same size as the targetTexture
+    this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.RENDERBUFFER, this.depthBuffer);
+
+  }
+  drawPointInvisible() {
+    this.gl.useProgram(this.program_pick_node.program);
+    for (let i = 0; i < DrawGL.node.length; i++) {
+      const bufferInfo = DrawGL.node[i];
+      // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
+      twgl.setBuffersAndAttributes(this.gl, this.program_pick_node, bufferInfo);
+      twgl.setUniforms(this.program_pick_node, {
+        u_matrix: DrawGL.viewProjectionMat,
+      })
+      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
+    }
+  }
   drawMain() {
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    // set up screen draw
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    this.drawFrameBuffer();
+    this.setFramebufferAttachmentSizes(this.gl.canvas.width, this.gl.canvas.height);
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
+    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+    this.gl.enable(this.gl.CULL_FACE);
+    this.gl.enable(this.gl.DEPTH_TEST);
+    DrawGL.gl.depthFunc(DrawGL.gl.LEQUAL);
     this.updateViewProjection();
+    // Invisible in canvas
+    this.drawPointInvisible();
+    // Pick node invisible in canvas
+    let id2D = takeIDPoint2DInvisible(event);
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     if (document.getElementById("fillColor").value === "On") {
+      if (oldPickNdx2D >= 0) {
+        oldPickNdx2D = -1;
+      }
+      if (id2D > 0) {
+        DrawGL.nearPointGL = [];
+        const pickNdx = id2D - 1;
+        oldPickNdx2D = pickNdx;
+        const object = DrawGL.takevalueRange[pickNdx]
+        DrawGL.nearPointGL.push(object)
+      } else DrawGL.nearPointGL = [];
       this.canvas.addEventListener('pointermove', (e) => {
         // canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
         this.canvas.style.cursor = "pointer";
       })
-      this.canvas.addEventListener('pointermove', checkSolution)
+
+      this.canvas.addEventListener('mousemove', checkSolution)
+      this.canvas.addEventListener('mousedown', showproperties);
       this.fillColor();
       this.drawMesh();
     } else if (document.getElementById("fillColor").value === "Off") {
@@ -244,15 +335,16 @@ class Draw {
         this.canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
         // canvas.style.cursor = "pointer;
       })
-      this.canvas.removeEventListener('pointermove', checkSolution)
-      document.getElementById("property").style.display="none";
+      this.canvas.removeEventListener('mousemove', checkSolution)
+      this.canvas.removeEventListener('mousedown', showproperties)
+      document.getElementById("property").style.display = "none";
       this.fillColor();
     }
     this.drawLoad();
     DrawGL.drawCheckpoint({
       x: DrawGL.nearPointGL_storage[0].x,
       y: DrawGL.nearPointGL_storage[0].y,
-      color : DrawGL.color,
+      color: DrawGL.color,
       bufferInfo: DrawGL.sphereBufferInfo,
     });
   }

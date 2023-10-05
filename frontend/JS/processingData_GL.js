@@ -6,6 +6,22 @@ class dataGL {
     this.u = []
     this.node = []
     this.element = []
+
+    this.red_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.RED_BITS);
+    this.green_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.GREEN_BITS);
+    this.blue_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.BLUE_BITS);
+    this.alpha_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.ALPHA_BITS);
+    this.total_bits = this.alpha_bits + this.blue_bits + this.green_bits + this.alpha_bits;
+
+    this.red_scale = Math.pow(2, this.red_bits);
+    this.green_scale = Math.pow(2, this.green_bits);
+    this.blue_scale = Math.pow(2, this.blue_bits);
+    this.total_scale = Math.pow(2, this.total_bits);
+
+    this.red_shift = Math.pow(2, this.green_bits + this.blue_bits + this.alpha_bits);
+    this.green_shift = Math.pow(2, this.blue_bits + this.alpha_bits);
+    this.blue_bits = Math.pow(2, this.alpha_bits);
+
     FEsoln = []
   }
   clearData() {
@@ -42,6 +58,9 @@ class dataGL {
     DrawGL3D.takePoint_Extrude = [];
     DrawGL3D.sceneFill = [];
     DrawGL3D.sceneMesh = [];
+    DrawGL3D.valueFilter = [];
+    DrawGL3D.node = [];
+    DrawGL3D.u_id = [];
     DrawGL.camera = {
       x: 0,
       y: 0,
@@ -150,6 +169,13 @@ class dataGL {
     this.createElement();
     this.visualizeData();
     for (let i = 0; i < this.node.length; i++) {
+      const id = i + 1;
+      DrawGL3D.u_id.push(((id >> 0) & 0xFF) / 0xFF,
+        ((id >> 8) & 0xFF) / 0xFF,
+        ((id >> 16) & 0xFF) / 0xFF,
+        ((id >> 24) & 0xFF) / 0xFF,)
+    }
+    for (let i = 0; i < this.node.length; i++) {
       DrawGL.takevalueRange.push(
         { coord: [this.node[i].x, this.node[i].y] }
       );
@@ -245,6 +271,27 @@ class dataGL {
       )
     }
 
+    var point_2D = []
+    var point_3D = []
+    for (let i = 0; i < DrawGL3D.takeValueRange.length; i++) {
+      point_3D.push(DrawGL3D.takeValueRange[i].coord)
+      point_2D.push(DrawGL.takevalueRange[i].coord)
+    }
+    point_3D = point_3D.flat();
+    point_2D = point_2D.flat();
+    var bufferNode = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+      a_position: point_3D,
+      a_color: DrawGL3D.u_id
+    })
+    var bufferNode2D = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+      a_position: {
+        numComponents: 2,
+        data: point_2D
+      },
+      a_color: DrawGL3D.u_id
+    })
+    DrawGL3D.node.push(bufferNode)
+    DrawGL.node.push(bufferNode2D)
     for (let i = 0; i < DrawGL.point_x.length; i++) {
       DrawGL.takePoint.push(DrawGL.point_x[i]);
       DrawGL.takePoint.push(DrawGL.point_y[i]);
@@ -575,7 +622,7 @@ class dataGL {
     DrawGL.scene_fill.push({
       x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
     })
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 1; i++) {
       DrawGL3D.colorNode.push(DrawGL.colorvec4);
     }
     DrawGL3D.colorNode = DrawGL3D.colorNode.flat();
@@ -658,6 +705,9 @@ class dataGL {
       })
     }
     DrawGL.colorBar();
+  }
+  createID() {
+
   }
 }
 // var test

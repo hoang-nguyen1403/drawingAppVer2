@@ -1,20 +1,36 @@
-function getClipSpaceMousePosition3D(event) {
+function takeIDPoint3DInvisible(event) {
   const canvas = DrawGL3D.gl.canvas;
   const rect = canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
-  const clipX = x / rect.width * 2 - 1;
-  const clipY = y / rect.height * -2 + 1;
-  const invViewProjectionMatrix = m4.inverse(DrawGL3D.viewProjectionMat)
-  const clipSpace = [clipX, clipY, -1];
-  const clipSpaceEnd = [clipX, clipY, 0];
-  const worldSpace = m4.transformPoint(invViewProjectionMatrix, clipSpace);
-  const worldSpaceEnd = m4.transformPoint(invViewProjectionMatrix, clipSpaceEnd);
-  return {
-    origin: worldSpaceEnd,
-    direction: worldSpace
-  };
+  // const clipX = x / rect.width * 2 - 1;
+  // const clipY = y / rect.height * -2 + 1;
+  // const invViewProjectionMatrix = m4.inverse(DrawGL3D.viewProjectionMat)
+  // const clipSpace = [clipX, clipY, -1];
+  // const clipSpaceEnd = [clipX, clipY, 0];
+  // const worldSpace = m4.transformPoint(invViewProjectionMatrix, clipSpace);
+  // const worldSpaceEnd = m4.transformPoint(invViewProjectionMatrix, clipSpaceEnd);
+  // return {
+  //   origin: worldSpaceEnd,
+  //   direction: worldSpace
+  // };
+  const pixelX = x * canvas.width / canvas.clientWidth;
+  const pixelY = canvas.height - y * canvas.height / DrawGL3D.gl.canvas.clientHeight - 1;
+  const data = new Uint8Array(4);
+  DrawGL3D.gl.readPixels(
+    pixelX,            // x
+    pixelY,            // y
+    1,                 // width
+    1,                 // height
+    DrawGL3D.gl.RGBA,           // format
+    DrawGL3D.gl.UNSIGNED_BYTE,  // type
+    data);             // typed array to hold result
+  const id = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+  return id
 }
+
+let oldPickNdx3D = -1;
+let oldPickColor3D;
 
 DrawGL3D.gl.canvas.addEventListener("mousedown", handleMouseDown3D);
 DrawGL3D.gl.canvas.addEventListener("mouseup", handleMouseUp3D);
@@ -99,65 +115,10 @@ DrawGL3D.canvas.addEventListener("mousedown", mousedown);
 DrawGL3D.canvas.addEventListener("mouseup", mouseup);
 DrawGL3D.canvas.addEventListener("mousemove", mousemove);
 
-
-function handleMouseDownSelect(event) {
-
-  const rayDirection = getClipSpaceMousePosition3D(event);
-  const selectedPoint = performRaycasting(rayDirection);
-  DrawGL3D.nearestPointGL3D = [];
-  DrawGL3D.nearestPointGL3D = performRaycasting(rayDirection);
-  if (selectedPoint) {
-    // Perform actions on the selected point
-    DrawGL3D.drawCheckPoint({
-      x: selectedPoint.coord[0],
-      y: selectedPoint.coord[1],
-      z: selectedPoint.coord[2],
-      bufferInfo: DrawGL3D.sphereBufferInfo
-    });
-  }
-}
-
-function performRaycasting(ray) {
-  let closestPoint = null;
-  let closestDistance = 10;
-  for (const point of DrawGL3D.takeValueRange) {
-    const intersectionDistance = calculateDistance(ray, point.coord);
-    if (intersectionDistance < closestDistance) {
-      closestDistance = intersectionDistance * DrawGL3D.camera.Zoom;
-      closestPoint = point;
-    }
-  }
-  return closestPoint;
-}
-
-function calculateDistance(ray, point) {
-  const [originX, originY, originZ] = ray.origin;
-  const [dirX, dirY, dirZ] = ray.direction;
-  const [pointX, pointY, pointZ] = point;
-
-  const dx = pointX - originX;
-  const dy = pointY - originY;
-  const dz = pointZ - originZ;
-
-  const t = (dx * dirX + dy * dirY + dz * dirZ) /
-    (dirX * dirX + dirY * dirY + dirZ * dirZ);
-
-  const intersectionX = originX + t * dirX;
-  const intersectionY = originY + t * dirY;
-  const intersectionZ = originZ + t * dirZ;
-
-  const distX = intersectionX - pointX;
-  const distY = intersectionY - pointY;
-  const distZ = intersectionZ - pointZ;
-
-  return Math.sqrt(distX * distX + distY * distY + distZ * distZ);
-}
-
-
 function showproperties3D(event) {
   if (event.buttons == 1 && DrawGL3D.ui.dragging == false) {
-    if (DrawGL3D.nearestPointGL3D !== null) {
-      let Detail = DrawGL3D.takeValueRange.find(({ coord }) => coord[0] == DrawGL3D.nearestPointGL3D.coord[0] && coord[1] == DrawGL3D.nearestPointGL3D.coord[1] && coord[2] == DrawGL3D.nearestPointGL3D.coord[2])
+    if (DrawGL3D.nearestPointGL3D[0] !== undefined) {
+      let Detail = DrawGL3D.takeValueRange.find(({ coord }) => coord[0] == DrawGL3D.nearestPointGL3D[0].coord[0] && coord[1] == DrawGL3D.nearestPointGL3D[0].coord[1] && coord[2] == DrawGL3D.nearestPointGL3D[0].coord[2])
       if (Detail !== undefined) {
         DrawGL.color = [0, 0, 1, 1];
         DrawGL3D.pointStorage = { x: Detail.coord[0], y: Detail.coord[1], z: Detail.coord[2] };

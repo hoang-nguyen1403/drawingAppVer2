@@ -14,6 +14,28 @@ function getClipSpaceMousePosition(event) {
 
   return [clipX, clipY];
 }
+let oldPickNdx2D = -1;
+let oldPickColor2D;
+function takeIDPoint2DInvisible(event) {
+  const canvas = DrawGL.gl.canvas;
+  const rect = canvas.getBoundingClientRect();
+  const cssX = event.clientX - rect.left;
+  const cssY = event.clientY - rect.top;
+
+  const pixelX = cssX * canvas.width / canvas.clientWidth;
+  const pixelY = canvas.height - cssY * canvas.height / canvas.clientHeight - 1;
+  const data = new Uint8Array(4);
+  DrawGL.gl.readPixels(
+    pixelX,            // x
+    pixelY,            // y
+    1,                 // width
+    1,                 // height
+    DrawGL.gl.RGBA,           // format
+    DrawGL.gl.UNSIGNED_BYTE,  // type
+    data);             // typed array to hold result
+  const id = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+  return id
+}
 
 function moveCamera(event) {
   const pos = m3.transformPoint(
@@ -52,6 +74,12 @@ function handleMouseMove(event) {
     moveCamera(event);
   }
 }
+
+function mousemove(event) {
+  DrawGL.drawMain();
+}
+
+DrawGL.canvas.addEventListener("mousemove", mousemove);
 
 function handleMouseUp() {
   DrawGL.rotate = false;
@@ -97,45 +125,53 @@ function mode_change() {
 }
 
 function checkSolution(event) {
-  event.preventDefault();
-  DrawGL.startInvViewProjMat_check = m3.inverse(DrawGL.viewProjectionMat);
-  DrawGL.startCamera_check = Object.assign({}, DrawGL.camera);
-  DrawGL.startClipPos_check = getClipSpaceMousePosition(event);
-  DrawGL.startPos_check = m3.transformPoint(
-    DrawGL.startInvViewProjMat_check,
-    DrawGL.startClipPos_check);
-  var currentPointGL = {
-    x: DrawGL.startPos_check[0],
-    y: DrawGL.startPos_check[1],
-  };
-  let a = DrawGL.pointcheck;
-  let arrPoints1 = [];
-  for (let i = 0; i < a.length; i++) {
-    arrPoints1.push({ x: a[i][0], y: a[i][1] })
-  }
-  DrawGL.nearPointGL = processingData.prototype.getNearest(arrPoints1, currentPointGL, 10);
-  if (DrawGL.nearPointGL !== undefined) {
-    DrawGL.drawMain();
+  // event.preventDefault();
+  // DrawGL.startInvViewProjMat_check = m3.inverse(DrawGL.viewProjectionMat);
+  // DrawGL.startCamera_check = Object.assign({}, DrawGL.camera);
+  // DrawGL.startClipPos_check = getClipSpaceMousePosition(event);
+  // DrawGL.startPos_check = m3.transformPoint(
+  //   DrawGL.startInvViewProjMat_check,
+  //   DrawGL.startClipPos_check);
+  // var currentPointGL = {
+  //   x: DrawGL.startPos_check[0],
+  //   y: DrawGL.startPos_check[1],
+  // };
+  // let a = DrawGL.pointcheck;
+  // let arrPoints1 = [];
+  // for (let i = 0; i < a.length; i++) {
+  //   arrPoints1.push({ x: a[i][0], y: a[i][1] })
+  // }
+  // DrawGL.nearPointGL = processingData.prototype.getNearest(arrPoints1, currentPointGL, 10);
+  // if (DrawGL.nearPointGL !== undefined) {
+  //   DrawGL.drawMain();
+  //   DrawGL.drawCheckpoint({
+  //     x: DrawGL.nearPointGL[0].x,
+  //     y: DrawGL.nearPointGL[0].y,
+  //     color: [1, 0, 0, 1],
+  //     bufferInfo: DrawGL.sphereBufferInfo,
+  //   });
+  //   DrawGL.canvas.addEventListener('mousedown', showproperties);
+  // }
+  // else {
+  //   DrawGL.drawMain();
+  // }
+  if (DrawGL.nearPointGL[0] !== undefined) {
     DrawGL.drawCheckpoint({
-      x: DrawGL.nearPointGL[0].x,
-      y: DrawGL.nearPointGL[0].y,
+      x: DrawGL.nearPointGL[0].coord[0],
+      y: DrawGL.nearPointGL[0].coord[1],
       color: [1, 0, 0, 1],
       bufferInfo: DrawGL.sphereBufferInfo,
     });
-    DrawGL.canvas.addEventListener('mousedown', showproperties);
-  }
-  else {
-    DrawGL.drawMain();
   }
 }
 
 function showproperties(event) {
   if (event.buttons == 1 && !event.shiftKey) {
-    if (DrawGL.nearPointGL !== undefined) {
-      let Detail = DrawGL.takevalueRange.find(({ coord }) => coord[0] == DrawGL.nearPointGL[0].x && coord[1] == DrawGL.nearPointGL[0].y)
+    if (DrawGL.nearPointGL[0] !== undefined) {
+      let Detail = DrawGL.takevalueRange.find(({ coord }) => coord[0] == DrawGL.nearPointGL[0].coord[0] && coord[1] == DrawGL.nearPointGL[0].coord[1])
       if (Detail !== undefined) {
         DrawGL.color = [0, 0, 1, 1];
-        DrawGL.nearPointGL_storage = [{ x: DrawGL.nearPointGL[0].x, y: DrawGL.nearPointGL[0].y }, 0];
+        DrawGL.nearPointGL_storage = [{ x: DrawGL.nearPointGL[0].coord[0], y: DrawGL.nearPointGL[0].coord[1] }, 0];
         DrawGL.drawCheckpoint({
           x: DrawGL.nearPointGL_storage[0].x,
           y: DrawGL.nearPointGL_storage[0].y,
@@ -155,7 +191,7 @@ function showproperties(event) {
               <p style="display: flex; justify-content: center; align-items: center">Coordinate</p>
                 <div>
                   <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                    [${math.round(DrawGL.nearPointGL[0].x, 2)}, ${math.round(DrawGL.nearPointGL[0].y, 2)}]
+                    [${math.round(DrawGL.nearPointGL_storage[0].x, 2)}, ${math.round(DrawGL.nearPointGL_storage[0].y, 2)}]
                   </div>
                 </div>
             </div>
@@ -229,6 +265,7 @@ DrawGL.canvas.addEventListener("mousemove", function (event) {
     " ; " +
     math.round(DrawGL.startPos_check[1]) +
     "]";
+
 });
 
 function toggleProperty() {

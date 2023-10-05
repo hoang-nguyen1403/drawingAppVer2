@@ -11,9 +11,12 @@ class Draw3D {
         this.fragment_black = this.loadVSFG('../frontend/shader/shader_black_3D.fs');
         this.vertex_point = this.loadVSFG('../frontend/shader/shader_point.vs');
         this.fragment_point = this.loadVSFG('../frontend/shader/shader_point.fs');
+        this.vertex_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node3D.vs');
+        this.fragment_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node3D.fs');
         this.program = twgl.createProgramInfo(this.gl, [this.vertex, this.fragment]);
         this.program_point = twgl.createProgramInfo(this.gl, [this.vertex_point, this.fragment_point]);
         this.programInfo_edges = twgl.createProgramInfo(this.gl, [this.vertex_black, this.fragment_black]);
+        this.program_pick_node = twgl.createProgramInfo(this.gl, [this.vertex_pick_node, this.fragment_pick_node]);
         // Declare the geometry sphere imformation from library twgl
         this.sphereVerts = twgl.primitives.createSphereVertices(1, 24, 12);
 
@@ -71,6 +74,18 @@ class Draw3D {
         this.pointStorage = [];
         this.nearestPointGL3D = [];
         this.valueFilter = [];
+        this.node = [];
+        this.u_id = [];
+        this.targetTexture;
+        this.depthBuffer;
+        this.fb;
+        this.attachmentPoint;
+        this.level;
+        this.internalFormat;
+        this.border;
+        this.format;
+        this.type;
+        this.data;
     }
     loadVSFG(path) {
         var request = new XMLHttpRequest();
@@ -141,20 +156,95 @@ class Draw3D {
         })
         twgl.drawBufferInfo(this.gl, bufferInfo);
     }
+    setFramebufferAttachmentSizes(width, height) {
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.targetTexture);
+        // define size and format of level 0
+        this.level = 0;
+        this.internalFormat = this.gl.RGBA;
+        this.border = 0;
+        this.format = this.gl.RGBA;
+        this.type = this.gl.UNSIGNED_BYTE;
+        this.data = null;
+        this.gl.texImage2D(this.gl.TEXTURE_2D, this.level, this.internalFormat,
+            width, height, this.border,
+            this.format, this.type, this.data);
+
+        this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, this.depthBuffer);
+        this.gl.renderbufferStorage(this.gl.RENDERBUFFER, this.gl.DEPTH_COMPONENT16, width, height);
+    }
+    drawFrameBuffer() {
+        this.targetTexture = this.gl.createTexture();
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.targetTexture);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
+
+        // create a depth renderbuffer
+        this.depthBuffer = this.gl.createRenderbuffer();
+        this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, this.depthBuffer);
+        // Create and bind the framebuffer
+        this.fb = this.gl.createFramebuffer();
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
+
+        // attach the texture as the first color attachment
+        this.attachmentPoint = this.gl.COLOR_ATTACHMENT0;
+        this.level = 0;
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.attachmentPoint, this.gl.TEXTURE_2D, this.targetTexture, this.level);
+
+        // make a depth buffer and the same size as the targetTexture
+        this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.RENDERBUFFER, this.depthBuffer);
+
+    }
+    drawPointInvisible() {
+        this.gl.useProgram(this.program_pick_node.program);
+        for (let i = 0; i < DrawGL3D.node.length; i++) {
+            const bufferInfo = DrawGL3D.node[i];
+            twgl.setBuffersAndAttributes(this.gl, this.program_pick_node, bufferInfo);
+            twgl.setUniforms(this.program_pick_node, {
+                u_matrix: DrawGL3D.viewProjectionMat,
+            })
+            twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
+        }
+    }
     drawMain() {
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        this.gl.drawingBufferColorSpace = "srgb";
-        this.gl.drawingBufferHeight
-        // Enable the depth buffer
+
+        // set up screen draw
+        this.drawFrameBuffer();
+        this.setFramebufferAttachmentSizes(this.gl.canvas.width, this.gl.canvas.height);
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
+        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        this.gl.enable(this.gl.CULL_FACE);
         this.gl.enable(this.gl.DEPTH_TEST);
         DrawGL3D.gl.depthFunc(DrawGL3D.gl.LEQUAL);
         this.updateViewProjection();
-        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
+        // Invisible in canvas
+        this.drawPointInvisible();
+        // Pick node invisible in canvas
+        let id = takeIDPoint3DInvisible(event);
+        // Visible in canvas
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
         if (document.getElementById("fillColor").value === "On") {
+            if (oldPickNdx3D >= 0) {
+                oldPickNdx3D = -1;
+            }
+            if (id > 0) {
+                DrawGL3D.nearestPointGL3D = [];
+                const pickNdx = id - 1;
+                oldPickNdx3D = pickNdx;
+                const object = DrawGL3D.takeValueRange[pickNdx]
+                this.drawCheckPoint({
+                    x: object.coord[0],
+                    y: object.coord[1],
+                    z: object.coord[2],
+                    bufferInfo: this.sphereBufferInfo
+                });
+                DrawGL3D.nearestPointGL3D.push(object)
+            } else DrawGL3D.nearestPointGL3D = [];
             this.canvas.addEventListener('pointermove', (e) => {
                 this.canvas.style.cursor = "pointer";
             })
-            this.canvas.addEventListener("mousemove", handleMouseDownSelect);
             this.canvas.addEventListener("mousedown", showproperties3D);
             this.drawFill();
             this.drawMesh();
@@ -164,7 +254,6 @@ class Draw3D {
                 this.canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
             })
             document.getElementById("property").style.display = "none";
-            this.canvas.removeEventListener("mousemove", handleMouseDownSelect);
             this.canvas.removeEventListener("mousedown", showproperties3D);
             this.drawFill();
         }
@@ -175,7 +264,7 @@ class Draw3D {
             color: DrawGL.color,
             bufferInfo: DrawGL3D.sphereBufferInfo,
         });
-    } 1
+    }
 }
 
 const DrawGL3D = new Draw3D();
