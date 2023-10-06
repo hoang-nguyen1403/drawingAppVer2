@@ -203,7 +203,7 @@ function showproperties(event) {
             <div>
             <p style="display: flex; justify-content: center; align-items: center">${a}</p>
             <div style="text-align: center; display: flex; justify-content: center; align-items: center">
-              ${math.round(Detail[a], 4)}
+              ${math.round(Detail[a], 10)}
             </div>
         </div>
             `
