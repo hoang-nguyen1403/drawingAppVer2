@@ -144,22 +144,22 @@ DrawingGL.canvas.addEventListener('mousedown', (event) => {
 });
 
 function checkPoint() {
-    // let nearPoint = processingData.prototype.getNearest(
-    //     DrawingGL.arrMouseDownPosition,
-    //     DrawingGL.mouseDownPos,
-    //     10/ DrawingGL.camera.zoom
-    // );
-    // if (DrawGL.nearPointGL[0] !== undefined) {
-    //     DrawGL.drawCheckpoint({
-    //       x: DrawGL.nearPointGL[0].coord[0],
-    //       y: DrawGL.nearPointGL[0].coord[1],
-    //       color: [1, 0, 0, 1],
-    //       bufferInfo: DrawGL.sphereBufferInfo,
-    //     });
-    //   }
+    let nearPoint = processingData.prototype.getNearest(
+        DrawingGL.arrMouseDownPosition,
+        DrawingGL.mouseDownPos,
+        10/ DrawingGL.camera.zoom
+    );
+    if (DrawGL.nearPointGL[0] !== undefined) {
+        DrawGL.drawCheckpoint({
+          x: DrawGL.nearPointGL[0].coord[0],
+          y: DrawGL.nearPointGL[0].coord[1],
+          color: [1, 0, 0, 1],
+          bufferInfo: DrawGL.sphereBufferInfo,
+        });
+      }
 }
 DrawingGL.canvas.addEventListener("mousemove", mouseMove);
-DrawingGL.canvas.addEventListener("mousemove", checkPoint);
+// DrawingGL.canvas.addEventListener("mousemove", checkPoint);
 DrawingGL.canvas.addEventListener("mousedown", mousedownDrawing);
 DrawingGL.canvas.addEventListener('wheel', (event) => {
     event.preventDefault();
