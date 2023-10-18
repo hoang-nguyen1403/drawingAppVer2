@@ -1,44 +1,109 @@
-
-
-// USING CLASS DRAW FOR DRAWING ===============================================================================================================
-class Draw {
+// Class Draw
+class solutionMode {
   constructor() {
-    this.canvas = document.querySelector("#my_canvasTest");
+    // Declare the card canvasGl - main draw
+    this.canvas = document.querySelector('#canvasGL');
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
-    this.gl = this.canvas.getContext("experimental-webgl");
+    this.gl = this.canvas.getContext('webgl');
 
-    this.vertex = this.loadVSFG('./frontend/shader/shader_black.vs');
-    this.fragment = this.loadVSFG('./frontend/shader/shader_black.fs');
-    // compiles shaders, links program, looks up locations
-    this.programInfo = twgl.createProgramInfo(this.gl, [this.vertex, this.fragment]);
+    // Declare the card canvas2D - text value of color bar
+    this.canvas_text = document.querySelector('#text_colorbar');
+    this.canvas_text.width = 65;
+    this.canvas_text.height = 400;
+    this.ctx_gl = this.canvas_text.getContext('2d');
+
+    // Declare the card canavasGL - color bar
+    this.canvas_colorbar = document.querySelector('#canvas_colorbar');
+    this.canvas_colorbar.width = 50;
+    this.canvas_colorbar.height = 400;
+    this.gl_colorbar = this.canvas_colorbar.getContext('webgl2');
+
+    // Declare the vertex and fragment shader
+    this.vertex_fill = this.loadVSFG('./frontend/shader/shader_fill.vs');
+    this.fragment_fill = this.loadVSFG('./frontend/shader/shader_fill.fs');
+    this.vertex_black = this.loadVSFG('./frontend/shader/shader_black.vs');
+    this.fragment_black = this.loadVSFG('./frontend/shader/shader_black.fs');
+    this.vertex_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.vs');
+    this.fragment_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.fs');
+    // Compiles shaders, links program
+    this.programInfo = twgl.createProgramInfo(this.gl, [this.vertex_fill, this.fragment_fill]);
+    this.programInfo_colorbar = twgl.createProgramInfo(this.gl_colorbar, [this.vertex_black, this.fragment_black]);
+    this.programInfo_edges = twgl.createProgramInfo(this.gl, [this.vertex_black, this.fragment_black]);
+    this.program_pick_node = twgl.createProgramInfo(this.gl, [this.vertex_pick_node, this.fragment_pick_node]);
+    // Declare the geometry sphere imformation from library twgl
     this.sphereVerts = twgl.primitives.createSphereVertices(1, 24, 12);
+
+    // Create the buffer info from array for the sphere geometry
+    this.sphereBufferInfo = twgl.createBufferInfoFromArrays(this.gl, {
+      a_position: this.sphereVerts.position,
+      indices: this.sphereVerts.indices,
+    });
+
+    // Declare card filler to take the value to load the fillter model
+    this.filter_value = document.getElementById("filter");
+
+    // Create camera
     this.camera = {
       x: 0,
       y: 0,
       rotation: 0,
       zoom: 1,
     };
+
+    // Declare scene view and set up mouse position
     this.viewProjectionMat = new Float32Array([0.0013840830652043223, 0, 0, 0, -0.004566209856420755, 0, -1, 1, 1]);
+    this.viewProjectionMat_colorbar;
     this.startInvViewProjMat;
     this.startCamera;
     this.startPos;
     this.startClipPos;
     this.startMousePos;
+    this.startInvViewProjMat_check;
+    this.startCamera_check;
+    this.startPos_check;
+    this.startClipPos_check;
+    this.startMousePos_check;
+
+    //  Declare rotate
     this.rotate;
-    this.viewProjectionMat1;
-    this.startInvViewProjMat1;
-    this.startCamera1;
-    this.startPos1;
-    this.startClipPos1;
-    this.startMousePos1;
+
+    // Declare nearpointGL to interesction check point near mouse
     this.nearPointGL;
+    this.nearPointGL_storage = [{ x: 0, y: 0 }, 0];
+
+    // Declare array to storage the data for drawing
+    this.lineVertex = [];
+    this.point_x = [];
+    this.point_y = [];
+    this.segment_mesh = [];
+    this.segment_fill = [];
+    this.segment = [];
+    this.takePoint = [];
+    this.fillcolor = [];
+    this.colorbar_size = [];
+    this.colorbar_indices = [];
+    this.pointcheck = [];
+    this.takevalueRange = [];
     this.scene = [];
-    this.sceneCheck = [];
-    this.storageSelectedLine = [];
-    this.selectedLine = [];
-    this.hoverLine = [];
-    this.sceneSelectedLine = [];
+    this.scene_fill = [];
+    this.scene_color = [];
+    this.scene_load = [];
+    this.colorvec4 = [];
+    this.color = [1, 1, 1, 1];
+
+    this.node = []
+    this.id;
+    this.targetTexture;
+    this.depthBuffer;
+    this.fb;
+    this.attachmentPoint;
+    this.level;
+    this.internalFormat;
+    this.border;
+    this.format;
+    this.type;
+    this.data;
   }
 
   // Load vertex and fragment shader
@@ -50,890 +115,237 @@ class Draw {
     return ((request.status === 0) || (request.status === 200)) ? request.responseText : null;
   }
 
+  // processing data matrix when zoom, move and rotate
   makeCameraMatrix() {
-    const zoomScale = 1 / DrawGL.camera.zoom;
+    const zoomScale = 1 / this.camera.zoom;
     let cameraMat = m3.identity();
-    cameraMat = m3.translate(cameraMat, DrawGL.camera.x, DrawGL.camera.y);
-    cameraMat = m3.rotate(cameraMat, DrawGL.camera.rotation);
+    cameraMat = m3.translate(cameraMat, this.camera.x, this.camera.y);
+    cameraMat = m3.rotate(cameraMat, this.camera.rotation);
     cameraMat = m3.scale(cameraMat, zoomScale, zoomScale);
     return cameraMat;
   }
+
+  // update view scene when zoom, move and rotate
   updateViewProjection() {
     // same as ortho(0, width, height, 0, -1, 1)
     const projectionMat = m3.projection(this.gl.canvas.width, this.gl.canvas.height);
     const cameraMat = this.makeCameraMatrix();
     let viewMat = m3.inverse(cameraMat);
-    DrawGL.viewProjectionMat = m3.multiply(projectionMat, viewMat);
+    this.viewProjectionMat = m3.multiply(projectionMat, viewMat);
   }
 
-  drawLineSelected(thing) {
-    this.updateViewProjection();
-    this.gl.useProgram(this.programInfo.program);
-    for (let i = 0; i < DrawGL.sceneSelectedLine.length; i++) {
-      const { x, y, rotation, scale, color, bufferInfo } = DrawGL.sceneSelectedLine[i];
-
-      // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-      twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
-
-      let mat = m3.identity();
-      mat = m3.translate(mat, x, y);
-      mat = m3.rotate(mat, rotation);
-      mat = m3.scale(mat, scale, scale);
-      this.gl.lineWidth(100);
-      this.gl.getParameter(this.gl.LINE_WIDTH);
-      this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
-      // calls gl.uniformXXX
-      twgl.setUniforms(this.programInfo, {
-        u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
-        u_color: color,
-      });
-
-      // calls gl.drawArrays or gl.drawElements
-      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
-    }
-  }
-  drawThing1(thing) {
-    const { x, y, rotation, scale, color, bufferInfo } = thing;
-
-    // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-    twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
-
-    let mat = m3.identity();
-    mat = m3.translate(mat, x, y);
-    mat = m3.rotate(mat, rotation);
-    mat = m3.scale(mat, scale, scale);
-    this.gl.lineWidth(100);
-    this.gl.getParameter(this.gl.LINE_WIDTH);
-    this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
-    // calls gl.uniformXXX
-    twgl.setUniforms(this.programInfo, {
-      u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
-      u_color: color,
-    });
-
-    // calls gl.drawArrays or gl.drawElements
-    twgl.drawBufferInfo(this.gl, bufferInfo);
-  }
-
-  drawPoint() {
-    this.updateViewProjection();
-    for (let i = 0; i < Draw.scenePoint.length; i++) {
-      let bufferInfo = Draw.scenePoint[i];
-      twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
-      const color = [1, 0, 0, 1];
-
-      this.gl.lineWidth(100);
-      this.gl.getParameter(this.gl.LINE_WIDTH);
-      this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
-      // calls gl.uniformXXX
-      twgl.setUniforms(this.programInfo, {
-        u_matrix: DrawGL.viewProjectionMat,
-        u_color: color,
-      });
-
-      // calls gl.drawArrays or gl.drawElements
-      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
-    }
-  }
-
-  drawThingOpen(thing) {
-
-  }
+  // Draw check point
   drawCheckpoint(thing) {
-    const { x, y, rotation, scale, color, bufferInfo } = thing;
-
-    // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-    twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
-
+    this.gl.useProgram(this.programInfo_edges.program);
+    const { x, y, color, bufferInfo } = thing;
+    twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
     let mat = m3.identity();
     mat = m3.translate(mat, x, y);
-    mat = m3.rotate(mat, rotation);
-    mat = m3.scale(mat, scale, scale);
-    this.gl.lineWidth(100);
+    mat = m3.rotate(mat, 0);
+    mat = m3.scale(mat, 5 / this.camera.zoom, 5 / this.camera.zoom);
     this.gl.getParameter(this.gl.LINE_WIDTH);
     this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
     // calls gl.uniformXXX
-    twgl.setUniforms(this.programInfo, {
-      u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
+    twgl.setUniforms(this.programInfo_edges, {
+      u_matrix: m3.multiply(this.viewProjectionMat, mat),
       u_color: color,
     });
-
     // calls gl.drawArrays or gl.drawElements
     twgl.drawBufferInfo(this.gl, bufferInfo);
   }
-
-  createPointObjGL(point_x, point_y) {
-    let allPointGLObj = [];
-    for (let index = 0; index <= point_x.length - 1; index++) {
-      let point = [point_x[index], point_y[index]];
-      let PointObj = new Point(point);
-      allPointGLObj.push(PointObj);
-    }
-    return allPointGLObj;
-  }
-
-  drawFill() {
-    this.updateViewProjection();
-
-    this.gl.useProgram(this.programInfo.program);
-    Draw.scene_fill.forEach(this.drawThing1);
-  }
-
-  draw() {
-    // gl.clear(gl.COLOR_BUFFER_BIT);
-
-    this.updateViewProjection();
-
-    this.gl.useProgram(this.programInfo.program);
-    for (let i = 0; i < DrawGL.scene.length; i++) {
-      const { x, y, rotation, scale, color, bufferInfo } = DrawGL.scene[i];
-
+  drawLoad() {
+    this.gl.useProgram(this.programInfo_edges.program);
+    for (let i = 0; i < this.scene_load.length; i++) {
+      const { x, y, rotation, scale, bufferInfo } = this.scene_load[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-      twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
-
+      twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
       let mat = m3.identity();
       mat = m3.translate(mat, x, y);
       mat = m3.rotate(mat, rotation);
       mat = m3.scale(mat, scale, scale);
-      this.gl.lineWidth(100);
       this.gl.getParameter(this.gl.LINE_WIDTH);
       this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
       // calls gl.uniformXXX
-      twgl.setUniforms(DrawGL.programInfo, {
-        u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
-        u_color: color,
+      twgl.setUniforms(this.programInfo_edges, {
+        u_matrix: m3.multiply(this.viewProjectionMat, mat),
+        u_color: [0, 0, 0, 1],
       });
 
       // calls gl.drawArrays or gl.drawElements
-      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINE_STRIP);
-      // twgl.drawBufferInfo(gl, bufferInfo);
+      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
       twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
     }
   }
-  drawOpen() {
-    // gl.clear(gl.COLOR_BUFFER_BIT);
-
-    this.updateViewProjection();
-
-    this.gl.useProgram(this.programInfo.program);
-    for (let i = 0; i < Draw.sceneOpen.length; i++) {
-      const { x, y, rotation, scale, color, bufferInfo } = Draw.sceneOpen[i];
-
+  colorBar() {
+    this.gl_colorbar.useProgram(this.programInfo_colorbar.program);
+    for (let i = 0; i < this.scene_color.length; i++) {
+      const { x, y, rotation, scale, color, bufferInfo } = this.scene_color[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-      twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
-
+      twgl.setBuffersAndAttributes(this.gl_colorbar, this.programInfo_colorbar, bufferInfo);
       let mat = m3.identity();
       mat = m3.translate(mat, x, y);
       mat = m3.rotate(mat, rotation);
       mat = m3.scale(mat, scale, scale);
-      this.gl.lineWidth(100);
+      this.gl_colorbar.getParameter(this.gl_colorbar.LINE_WIDTH);
+      this.gl_colorbar.getParameter(this.gl_colorbar.ALIASED_LINE_WIDTH_RANGE);
+      // calls gl.uniformXXX
+      twgl.setUniforms(this.programInfo_colorbar, {
+        u_matrix: new Float32Array([0.03999999910593033, 0, 0, 0, -0.004999999888241291, 0, -1, 1, 1]),
+        u_color: color,
+      });
+      // calls gl.drawArrays or gl.drawElements
+      twgl.drawBufferInfo(this.gl_colorbar, bufferInfo);
+    }
+  }
+  fillColor() {
+    this.gl.useProgram(this.programInfo.program);
+    for (let i = 0; i < this.scene_fill.length; i++) {
+      const { x, y, rotation, scale, bufferInfo } = this.scene_fill[i];
+      // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
+      twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
+      let mat = m3.identity();
+      mat = m3.translate(mat, x, y);
+      mat = m3.rotate(mat, rotation);
+      mat = m3.scale(mat, scale, scale);
       this.gl.getParameter(this.gl.LINE_WIDTH);
       this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
       // calls gl.uniformXXX
       twgl.setUniforms(this.programInfo, {
-        u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
-        u_color: color,
+        u_matrix: m3.multiply(this.viewProjectionMat, mat),
       });
 
       // calls gl.drawArrays or gl.drawElements
-      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
-      // twgl.drawBufferInfo(gl, bufferInfo);
-      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
+      twgl.drawBufferInfo(this.gl, bufferInfo);
     }
   }
-  drawCheck() {
-    this.updateViewProjection();
-
-    this.gl.useProgram(this.programInfo.program);
-
-    for (let i = 0; i < DrawGL.sceneCheck.length; i++) {
-      const { bufferInfo, color } = DrawGL.sceneCheck[i];
+  drawMesh() {
+    this.gl.useProgram(this.programInfo_edges.program);
+    for (let i = 0; i < this.scene.length; i++) {
+      const { x, y, rotation, scale, bufferInfo } = this.scene[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-      twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
-
-
-      this.gl.lineWidth(100);
+      twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
+      var color_default = [0, 0, 0, 1];
+      let mat = m3.identity();
+      mat = m3.translate(mat, x, y);
+      mat = m3.rotate(mat, rotation);
+      mat = m3.scale(mat, scale, scale);
       this.gl.getParameter(this.gl.LINE_WIDTH);
       this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
       // calls gl.uniformXXX
-      twgl.setUniforms(this.programInfo, {
-        u_matrix: DrawGL.viewProjectionMat,
-        u_color: color,
+      twgl.setUniforms(this.programInfo_edges, {
+        u_matrix: m3.multiply(this.viewProjectionMat, mat),
+        u_color: color_default,
       });
 
-      // twgl.drawBufferInfo(gl, bufferInfo);
+      // calls gl.drawArrays or gl.drawElements
       twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
     }
   }
+  setFramebufferAttachmentSizes(width, height) {
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.targetTexture);
+    // define size and format of level 0
+    this.level = 0;
+    this.internalFormat = this.gl.RGBA;
+    this.border = 0;
+    this.format = this.gl.RGBA;
+    this.type = this.gl.UNSIGNED_BYTE;
+    this.data = null;
+    this.gl.texImage2D(this.gl.TEXTURE_2D, this.level, this.internalFormat,
+      width, height, this.border,
+      this.format, this.type, this.data);
 
-}
-const DrawGL = new Draw();
+    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, this.depthBuffer);
+    this.gl.renderbufferStorage(this.gl.RENDERBUFFER, this.gl.DEPTH_COMPONENT16, width, height);
+  }
+  drawFrameBuffer() {
+    this.targetTexture = this.gl.createTexture();
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.targetTexture);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
 
-// GLOBAL PARAMETERS===================================================================================================================
-//Draw.pointGLObj: là mảng để lưu trữ Object là điểm không bị trùng nhau
-Draw.pointGLObj = [];
+    // create a depth renderbuffer
+    this.depthBuffer = this.gl.createRenderbuffer();
+    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, this.depthBuffer);
+    // Create and bind the framebuffer
+    this.fb = this.gl.createFramebuffer();
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
 
-//Draw.newPointGL: là mảng để lưu trữ Object là điểm nhưng có thể bị trùng tọa độ điểm (nếu là hình khép kín)
-Draw.newPointGL = [];
+    // attach the texture as the first color attachment
+    this.attachmentPoint = this.gl.COLOR_ATTACHMENT0;
+    this.level = 0;
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.attachmentPoint, this.gl.TEXTURE_2D, this.targetTexture, this.level);
 
-Draw.scenePoint = [];
-Draw.arrMultiCurObj = [];
-Draw.newLines = [];
-Draw.newIntersPoints = [];
-Draw.lineVertex = [];
-Draw.segment_mesh = [];
-Draw.point_x = [];
-Draw.point_y = [];
-Draw.segment = [];
-Draw.sceneOpen = [];
-Draw.scene_fill = [];
-Draw.takePoint = [];
-Draw.pointGL = [];
-Draw.pointName = "";
-Draw.listloadPoints = [];
+    // make a depth buffer and the same size as the targetTexture
+    this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.RENDERBUFFER, this.depthBuffer);
 
-Draw.lineSelect = [];
-Draw.segmentSelect = [];
-
-// CLASS LINE ==================================================================================================================================
-var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-  a_position: {
-    numComponents: 2,
-    data: Draw.lineVertex,
-  },
-  indices: processingData.allSeg,
-});
-
-var sphereBufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-  a_position: DrawGL.sphereVerts.position,
-  indices: DrawGL.sphereVerts.indices,
-});
-
-DrawGL.scene = [
-  { x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },
-];
-
-function selectLine(event) {
-  if (event.buttons === 1) {
-    let selectedObj = processingData.allObject.find((obj) =>
-    obj.isIn([DrawGL.startPos1[0], DrawGL.startPos1[1]]));
-    if (selectedObj !== undefined && selectedObj.className !== 'Point' && selectedObj.className !== 'Area') {
-      DrawGL.sceneSelectedLine = [];
-      const buffer = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-        a_position: {
-          numComponents: 2,
-          data: [selectedObj.Point[0].x, selectedObj.Point[0].y, selectedObj.Point[1].x, selectedObj.Point[1].y]
-        }
+  }
+  drawPointInvisible() {
+    this.gl.useProgram(this.program_pick_node.program);
+    for (let i = 0; i < this.node.length; i++) {
+      const bufferInfo = this.node[i];
+      // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
+      twgl.setBuffersAndAttributes(this.gl, this.program_pick_node, bufferInfo);
+      twgl.setUniforms(this.program_pick_node, {
+        u_matrix: this.viewProjectionMat,
       })
-      DrawGL.sceneSelectedLine.push({ x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 1, 1], bufferInfo: buffer });
-      DrawGL.drawLineSelected();
-      document.getElementById("property").style.display = "inline-block";
-      document.getElementById("property").innerHTML = `
-          <div class="property_label">
-          <p style="display: flex; justify-content: center; align-items: center; width: 100%">PROPERTY</p>
-          <div>
-            <button class="property-icon" title = "Close" onclick="PaintIn.toggleProperty()" value="Off"></button>
-          </div>
-        </div>
-        <div class=boderProperties>
-            <div>
-              <p style="display: flex; justify-content: center; align-items: center">Object</p>
-              <div style="display: flex; justify-content: center; align-items: center">${selectedObj.className}</div>
-            </div>
-            <div>
-              <p style="display: flex; justify-content: center; align-items: center">Point 1</p>
-                <div>
-                  <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                    [${[Math.round(selectedObj.Point[0].x * 100) / 100, Math.round(selectedObj.Point[0].y * 100) / 100]}]
-                  </div>
-                </div>
-            </div>
-            <div>
-              <p style="display: flex; justify-content: center; align-items: center">Point 2</p>
-                <div>
-                  <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                    [${[Math.round(selectedObj.Point[1].x * 100) / 100, Math.round(selectedObj.Point[1].y * 100) / 100]}]
-                  </div>
-                </div>
-            </div>
-            <div>
-              <p style="display: flex; justify-content: center; align-items: center">Length</p>
-                <div>
-                  <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                    ${Math.round(selectedObj.length * 100) / 100}
-                  </div>
-                </div>
-            </div>
-          </div>
-          `;
-      is_dragging = true;
-    } else {
-      DrawGL.sceneSelectedLine = [];
-      DrawGL.drawLineSelected();  
+      twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
     }
   }
-}
-
-let mouse_up = function (event) {
-  if (!is_dragging) {
-    return;
-  }
-
-  event.preventDefault();
-
-  Draw.lineVertex = [];
-  Draw.point_x = [];
-  Draw.point_y = [];
-  Draw.pointGL = [];
-  DrawGL.scene = [];
-  Draw.scene_fill = [];
-  DrawGL.draw();
-  Draw.sceneOpen = [];
-  DrawGL.drawOpen();
-  var segments = [];
-  var segment = [];
-  var takePoints = [];
-  var lineVertex = [];
-  let nodes = [];
-
-  for (let point of processingData.allPoint) {
-    nodes.push(point.point);
-  }
-  for (let line of processingData.allLine) {
-    let index1 = nodes.findIndex(
-      (value) =>
-        JSON.stringify(value) === JSON.stringify(line.Point[0].point)
-    );
-    let index2 = nodes.findIndex(
-      (value) =>
-        JSON.stringify(value) === JSON.stringify(line.Point[1].point)
-    );
-    let segment = [index1, index2];
-    segments.push(segment);
-  }
-  for (let i = 0; i < processingData.allPoint.length; i++) {
-    takePoints.push(processingData.allPoint[i].point);
-  }
-
-  for (let i = 0; i < segments.length; i++) {
-    segment.push(segments[i]);
-  }
-  Draw.pointGL = takePoints;
-  takePoints = takePoints.flat();
-  segment = segment.flat();
-  lineVertex = takePoints;
-
-  // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
-  var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-    a_position: {
-      numComponents: 2,
-      data: lineVertex,
-    },
-    indices: segment,
-  });
-
-  var sphereBufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-    a_position: DrawGL.sphereVerts.position,
-    indices: DrawGL.sphereVerts.indices,
-  });
-
-  Draw.sceneOpen = [
-    { x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },
-  ];
-  DrawGL.drawOpen(sphereBufferInfo);
-
-  is_dragging = false;
-}
-
-let mouse_out = function (event) {
-  if (!is_dragging) {
-    return;
-  }
-
-  event.preventDefault();
-  is_dragging = false;
-}
-
-let mouse_move = function (event) {
-
-  if (!is_dragging) {
-    DrawGL.canvas.addEventListener("mousemove", hoverLine)
-    // DrawGL.canvas.addEventListener("pointermove",drawCheckOldPoint)
-    return;
-  }
-  else {
-    DrawGL.sceneSelectedLine=[];
-    DrawGL.drawLineSelected();
-    if (DrawGL.storageSelectedLine[0] !== undefined && DrawGL.storageSelectedLine[0].className !== 'Point' ) {
-      processingData.prototype.moveObject(DrawGL.storageSelectedLine[0]);
-    } else {
-      let selectedObj = processingData.allObject.find((obj) =>
-    obj.isIn([DrawGL.startPos1[0], DrawGL.startPos1[1]])
-  );
-  if (DrawGL.storageSelectedLine[0] !== undefined && DrawGL.storageSelectedLine[0].className !== 'Line' && DrawGL.storageSelectedLine[0].className !== 'Area'  ) {
-    processingData.prototype.moveObject(DrawGL.storageSelectedLine[0]);
-  }
-
-    }
-    DrawGL.canvas.removeEventListener("mousemove", hoverLine)
-    // DrawGL.canvas.removeEventListener("pointermove",drawCheckOldPoint)
-    DrawGL.sceneCheck = [];
-    var bufferData = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-      a_position: {
-        numComponents: 2,
-        data: [DrawGL.storageSelectedLine[0].Point[0].x, DrawGL.storageSelectedLine[0].Point[0].y, DrawGL.storageSelectedLine[0].Point[1].x, DrawGL.storageSelectedLine[0].Point[1].y]
+  drawMain() {
+    // set up screen draw
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    this.drawFrameBuffer();
+    this.setFramebufferAttachmentSizes(this.gl.canvas.width, this.gl.canvas.height);
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
+    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+    this.gl.enable(this.gl.CULL_FACE);
+    this.gl.enable(this.gl.DEPTH_TEST);
+    this.gl.depthFunc(this.gl.LEQUAL);
+    this.updateViewProjection();
+    // Invisible in canvas
+    this.drawPointInvisible();
+    // Pick node invisible in canvas
+    let id2D = takeIDPoint2DInvisible(event);
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+    if (document.getElementById("fillColor").value === "On") {
+      if (oldPickNdx2D >= 0) {
+        oldPickNdx2D = -1;
       }
+      if (id2D > 0) {
+        this.nearPointGL = [];
+        const pickNdx = id2D - 1;
+        oldPickNdx2D = pickNdx;
+        const object = this.takevalueRange[pickNdx]
+        this.nearPointGL.push(object)
+      } else this.nearPointGL = [];
+      this.canvas.addEventListener('pointermove', (e) => {
+        // canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
+        this.canvas.style.cursor = "pointer";
+      })
+
+      this.canvas.addEventListener('mousemove', checkSolution)
+      this.canvas.addEventListener('mousedown', showproperties);
+      this.fillColor();
+      this.drawMesh();
+    } else if (document.getElementById("fillColor").value === "Off") {
+      this.canvas.addEventListener('pointermove', (e) => {
+        this.canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
+        // canvas.style.cursor = "pointer;
+      })
+      this.canvas.removeEventListener('mousemove', checkSolution)
+      this.canvas.removeEventListener('mousedown', showproperties)
+      document.getElementById("property").style.display = "none";
+      this.fillColor();
+    }
+    this.drawLoad();
+    this.drawCheckpoint({
+      x: this.nearPointGL_storage[0].x,
+      y: this.nearPointGL_storage[0].y,
+      color: this.color,
+      bufferInfo: this.sphereBufferInfo,
     });
-    let color = [1, 0, 0, 1];
-    DrawGL.sceneCheck.push({ bufferInfo: bufferData, color: color });
-    DrawGL.drawCheck();
   }
 }
 
-// SELECT LINE
-// function getMousePosition1(event) {
-//   let mPosition = takePoints1(event);
-//   return {
-//     x: Math.round(mPosition[0]),
-//     y: Math.round(mPosition[1]),
-//   };
-// }
-
-function hoverLine() {
-  let selectedObj = processingData.allObject.find((obj) =>
-    obj.isIn([DrawGL.startPos1[0], DrawGL.startPos1[1]])
-  );
-  if (selectedObj !== undefined) {
-    // console.log(selectedObj);
-    DrawGL.selectedLine = [];
-    DrawGL.storageSelectedLine.splice(0, 1);
-    DrawGL.selectedLine.push(selectedObj);
-    DrawGL.storageSelectedLine.push(selectedObj);
-    // DrawGL.canvas.removeEventListener("mousemove", hoverLine);
-    // console.log(selectedObj);
-  } else DrawGL.selectedLine = [];
-  if (DrawGL.selectedLine[0] !== undefined && DrawGL.selectedLine[0].className !== 'Point' && selectedObj.className !== "Area") {
-    DrawGL.sceneCheck = [];
-    var bufferData = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-      a_position: {
-        numComponents: 2,
-        data: [DrawGL.selectedLine[0].Point[0].x, DrawGL.selectedLine[0].Point[0].y, DrawGL.selectedLine[0].Point[1].x, DrawGL.selectedLine[0].Point[1].y]
-      }
-    });
-    let color = [1, 0, 0, 1];
-    DrawGL.sceneCheck.push({ bufferInfo: bufferData, color: color });
-    DrawGL.drawCheck();
-  }
-
-}
-
-function drawText(Obj, text) {
-  ctx.save();
-  ctx.font = "13px Arial";
-
-  // this.ctx.textAlign = "center";
-  try {
-    //Line
-    ctx.fillStyle = "red";
-    let alpha1 = (PaintIn.getAngleLineAndOx(Obj) * 180) / Math.PI;
-
-    if (alpha1 > 90 && alpha1 <= 180) {
-      let l = Obj.Point[0];
-      Obj.Point[0] = Obj.Point[1];
-      Obj.Point[1] = l;
-    }
-
-    let dx = Obj.Point[1].x - Obj.Point[0].x;
-    let dy = Obj.Point[1].y - Obj.Point[0].y;
-    let alpha = Math.atan2(dy, dx); //radians
-
-    //move the center of canvas to  (line.Point[0].x + line.Point[1].x) / 2, (line.Point[0].y + line.Point[1].y) / 2
-    ctx.translate(
-      (Obj.Point[0].x + Obj.Point[1].x) / 2,
-      (Obj.Point[0].y + Obj.Point[1].y) / 2
-    );
-    //rotate text
-    ctx.rotate(alpha);
-    //after move, hold the position
-    ctx.fillText(text, 0, -10);
-    ctx.restore();
-    // console.log(alpha * 180 / Math.PI)
-  } catch (error) {
-    try {
-      //Area
-      ctx.fillStyle = "blue";
-      // let xC = Obj.center[0];
-      // let yC = Obj.center[1];
-      let xC = Obj.coordNaming[0];
-      let yC = Obj.coordNaming[1];
-      ctx.fillText(text, xC, yC);
-    } catch (error) {
-      // Point
-      ctx.fillStyle = "green";
-      let alpha = Math.PI / 4;
-      let xC = Obj.x - 5 * (1 + Math.cos(alpha));
-      let yC = Obj.y - 5 * (1 + Math.cos(alpha));
-      ctx.fillText(text, xC, yC);
-    }
-    ctx.restore();
-  }
-}
-
-//Render BDCondition
-function renderBDCondition() {
-  // console.log(selectedLine.className);
-  if (DrawGL.storageSelectedLine[0] !== undefined) {
-    switch (DrawGL.storageSelectedLine[0].className) {
-      case "Point":
-        document.getElementById("BDCondition").style.display = "flex";
-        document.getElementById("BDCondition").style.width = "200px";
-        //display 3 button
-        PaintIn.visibleButton("valueName");
-        PaintIn.visibleButton("pointLoad");
-        PaintIn.visibleButton("moment");
-        //hidden 1 button
-        PaintIn.hiddenButton("pressLoad");
-        break;
-      case "Line":
-        document.getElementById("BDCondition").style.width = "150px";
-        document.getElementById("BDCondition").style.display = "flex";
-        PaintIn.visibleButton("valueName");
-        PaintIn.visibleButton("pressLoad");
-        //hidden 2 button
-        PaintIn.hiddenButton("pointLoad");
-        PaintIn.hiddenButton("moment");
-
-        break;
-    }
-  }
-}
-
-function addValueName() {
-  //change cursor
-  DrawGL.canvas.addEventListener("pointermove", (event) => {
-    // DrawGL.canvas.style.cursor = "crosshair";
-    DrawGL.canvas.style.cursor = "url(frontend/img/text_cursor.svg) 0 0,  default";
-  });
-
-  // this.renderObject(processingData.allObject);
-
-  PaintIn.offButtonDraw(PaintIn.currentValueLine, "line");
-  // this.offButtonDraw(this.currentValueCircle, "circle");
-  PaintIn.offButton(PaintIn.curValMoment, "moment");
-  PaintIn.offButton(PaintIn.curValPointLoad, "pointLoad");
-  PaintIn.offButton(PaintIn.curValPressLoad, "pressLoad");
-  // PaintIn.offButton(PaintIn.curValAxialForce, "axialForce");
-  PaintIn.onOffButton(PaintIn.curValName, "valueName");
-
-  if (PaintIn.curValName.value === "On") {
-    PaintIn.renderCommand("valueOn");
-    addName();
-  } else {
-    nameID = undefined;
-    nameIDs = undefined;
-  }
-}
-
-function addValPointLoad() {
-  //change cursor
-  PaintIn.currentCursor = "url(frontend/img/force_cursor.svg) 0 0, default";
-  PaintIn.canvas.style.cursor = PaintIn.currentCursor;
-
-  PaintIn.renderObject(processingData.allObject);
-
-  // PaintIn.offButtonDraw(PaintIn.currentValueBrush, "brush");
-  // PaintIn.offButtonDraw(PaintIn.currentValueSpl, "spl");
-  // PaintIn.offButtonDraw(PaintIn.currentValueRect, "rect");
-  PaintIn.offButtonDraw(PaintIn.currentValueLine, "line");
-  // PaintIn.offButtonDraw(PaintIn.currentValueCircle, "circle");
-  // PaintIn.offButton(PaintIn.currentValueSelect, "select")
-  PaintIn.offButton(PaintIn.curValName, "valueName");
-  PaintIn.offButton(PaintIn.curValPressLoad, "pressLoad");
-  // PaintIn.offButton(PaintIn.curValAxialForce, "axialForce");
-  PaintIn.offButton(PaintIn.curValMoment, "moment");
-
-  PaintIn.onOffButton(PaintIn.curValPointLoad, "pointLoad");
-  if (PaintIn.curValPointLoad.value === "On") {
-    PaintIn.renderCommand("valueOn");
-    addForce();
-    valueMoment = undefined;
-    valueMoments = undefined;
-  } else {
-    valueLoad = undefined;
-    valueLoads = undefined;
-  }
-}
-
-function addValPressLoad() {
-  //change cursor
-  PaintIn.currentCursor =
-    "url(frontend/img/normal_press_cursor.svg) 0 0, default";
-  PaintIn.canvas.style.cursor = PaintIn.currentCursor;
-
-  PaintIn.renderObject(processingData.allObject);
-
-  // PaintIn.offButtonDraw(PaintIn.currentValueBrush, "brush");
-  // PaintIn.offButtonDraw(PaintIn.currentValueSpl, "spl");
-  // PaintIn.offButtonDraw(PaintIn.currentValueRect, "rect");
-  PaintIn.offButtonDraw(PaintIn.currentValueLine, "line");
-  // PaintIn.offButtonDraw(PaintIn.currentValueCircle, "circle");
-  // PaintIn.offButton(PaintIn.currentValueSelect, "select")
-  PaintIn.offButton(PaintIn.curValName, "valueName");
-  PaintIn.offButton(PaintIn.curValPointLoad, "pointLoad");
-  // PaintIn.offButton(PaintIn.curValAxialForce, "axialForce");
-  PaintIn.offButton(PaintIn.curValMoment, "moment");
-
-  PaintIn.onOffButton(PaintIn.curValPressLoad, "pressLoad");
-  if (PaintIn.curValPressLoad.value === "On") {
-    PaintIn.renderCommand("valueOn");
-    addForce();
-  } else {
-    valueLoad = undefined;
-    valueLoads = undefined;
-  }
-}
-
-function addValMoment() {
-  //change cursor
-  PaintIn.currentCursor = "url(frontend/img/moment_cursor.svg), default";
-  PaintIn.canvas.style.cursor = PaintIn.currentCursor;
-
-  PaintIn.renderObject(processingData.allObject);
-
-  // PaintIn.offButtonDraw(PaintIn.currentValueBrush, "brush");
-  // PaintIn.offButtonDraw(PaintIn.currentValueSpl, "spl");
-  // PaintIn.offButtonDraw(PaintIn.currentValueRect, "rect");
-  PaintIn.offButtonDraw(PaintIn.currentValueLine, "line");
-  // PaintIn.offButtonDraw(PaintIn.currentValueCircle, "circle");
-  // PaintIn.offButton(PaintIn.currentValueSelect, "select")
-  PaintIn.offButton(PaintIn.curValName, "valueName");
-  PaintIn.offButton(PaintIn.curValPointLoad, "pointLoad");
-  PaintIn.offButton(PaintIn.curValPressLoad, "pressLoad");
-  // PaintIn.offButton(PaintIn.curValAxialForce, "axialForce");
-
-  PaintIn.onOffButton(PaintIn.curValMoment, "moment");
-  if (PaintIn.curValMoment.value === "On") {
-    PaintIn.renderCommand("valueOn");
-    addForce();
-    valueLoad = undefined;
-    valueLoads = undefined;
-  } else {
-    valueMoment = undefined;
-    valueMoments = undefined;
-  }
-}
-
-var lineVertex1 = [];
-var segment_mesh = [];
-//ADD KEYDOWN EVENT FOR 'L' AND 'E'=======================================================================================================
-window.addEventListener("keydown", function (e) {
-  switch (e.keyCode) {
-
-    // USING BUTTON 'L'
-    case 76:
-      Draw.lineVertex = [];
-      Draw.segment = [];
-      Draw.point_x = [];
-      Draw.point_y = [];
-      DrawGL.canvas.addEventListener("pointermove", (event) => {
-        // canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
-        DrawGL.canvas.style.cursor = "crosshair";
-      });
-
-      DrawGL.canvas.addEventListener("mousedown", mouseDraw);
-      DrawGL.canvas.addEventListener("pointermove", drawCheckOldPoint);
-      DrawGL.canvas.removeEventListener("mousedown", showproperties);
-      DrawGL.canvas.removeEventListener("mousedown", mouse_down);
-      DrawGL.canvas.removeEventListener("mouseup", mouse_up);
-      DrawGL.canvas.removeEventListener("mouseout", mouse_out);
-      DrawGL.canvas.removeEventListener("mousemove", mouse_move);
-      DrawGL.canvas.removeEventListener("mousedown", selectLine);
-      // canvas.removeEventListener("mousemove", mouse_move_line);
-      DrawGL.canvas.removeEventListener('mousemove', hoverLine);
-      PaintIn.renderCommand("line");
-      break;
-
-    //USING BUTTON 'E'
-    case 69:
-      DrawGL.canvas.addEventListener("pointermove", (e) => {
-        DrawGL.canvas.style.cursor = "pointer";
-      });
-      DrawGL.canvas.removeEventListener("mousedown", mouseDraw);
-      DrawGL.canvas.addEventListener("pointermove", drawCheckOldPoint);
-
-      processingData.prototype.areaDetect(processingData.allLine);
-      DrawGL.canvas.addEventListener("mousedown", showproperties);
-
-      DrawGL.canvas.addEventListener("mousedown", mouse_down);
-      DrawGL.canvas.addEventListener("mouseup", mouse_up);
-      DrawGL.canvas.addEventListener("mouseout", mouse_out);
-      DrawGL.canvas.addEventListener("mousemove", mouse_move);
-      DrawGL.canvas.addEventListener("mousedown", selectLine);
-      DrawGL.canvas.addEventListener('mousemove', hoverLine);
-      DrawGL.canvas.addEventListener('mousedown', renderBDCondition);
-      PaintIn.renderCommand("drawmode");
-
-
-      // // Initial render of the point
-      // gl.clear(gl.COLOR_BUFFER_BIT);
-      // gl.drawArrays(gl.POINTS, 0, 1);
-
-      //RESET DATA
-      Draw.lineVertex = [];
-      Draw.point_x = [];
-      Draw.point_y = [];
-      Draw.pointGL = [];
-      DrawGL.scene = [];
-      Draw.scene_fill = [];
-      DrawGL.draw();
-      Draw.sceneOpen = [];
-      DrawGL.drawOpen();
-      var segments = [];
-      var segment = [];
-      var takePoints = [];
-      var lineVertex = [];
-      let nodes = [];
-
-      for (let point of processingData.allPoint) {
-        nodes.push(point.point);
-      }
-      for (let line of processingData.allLine) {
-        let index1 = nodes.findIndex(
-          (value) =>
-            JSON.stringify(value) === JSON.stringify(line.Point[0].point)
-        );
-        let index2 = nodes.findIndex(
-          (value) =>
-            JSON.stringify(value) === JSON.stringify(line.Point[1].point)
-        );
-        let segment = [index1, index2];
-        segments.push(segment);
-      }
-      for (let i = 0; i < processingData.allPoint.length; i++) {
-        takePoints.push(processingData.allPoint[i].point);
-      }
-
-      for (let i = 0; i < segments.length; i++) {
-        segment.push(segments[i]);
-      }
-      Draw.pointGL = takePoints;
-      takePoints = takePoints.flat();
-      segment = segment.flat();
-      lineVertex = takePoints;
-
-      // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
-      var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-        a_position: {
-          numComponents: 2,
-          data: lineVertex,
-        },
-        indices: segment,
-      });
-
-      var sphereBufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-        a_position: DrawGL.sphereVerts.position,
-        indices: DrawGL.sphereVerts.indices,
-      });
-
-      Draw.sceneOpen = [
-        { x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },
-      ];
-      DrawGL.drawOpen(sphereBufferInfo);
-
-      break;
-    case 70:
-      for (let z = 0; z < processingData.allArea.length; z++) {
-        switch (processingData.allArea[z].pointFlow.length) {
-          case 3:
-            lineVertex1 = [];
-            segment_mesh = [];
-            segment_mesh.push(0);
-            segment_mesh.push(1);
-            segment_mesh.push(2);
-            lineVertex1.push(processingData.allArea[z].pointFlow);
-            break;
-          case 4:
-            lineVertex1 = [];
-            segment_mesh = [];
-            segment_mesh.push(0);
-            segment_mesh.push(1);
-            segment_mesh.push(2);
-            segment_mesh.push(0);
-            segment_mesh.push(2);
-            segment_mesh.push(3);
-            lineVertex1.push(processingData.allArea[z].pointFlow);
-            break;
-          case 5:
-            lineVertex1 = [];
-            segment_mesh = [];
-            segment_mesh.push(0);
-            segment_mesh.push(1);
-            segment_mesh.push(2);
-            segment_mesh.push(0);
-            segment_mesh.push(2);
-            segment_mesh.push(3);
-            segment_mesh.push(0);
-            segment_mesh.push(3);
-            segment_mesh.push(4);
-            lineVertex1.push(processingData.allArea[z].pointFlow);
-            break;
-          case 6:
-            lineVertex1 = [];
-            segment_mesh = [];
-            segment_mesh.push(0);
-            segment_mesh.push(1);
-            segment_mesh.push(2);
-            segment_mesh.push(0);
-            segment_mesh.push(2);
-            segment_mesh.push(3);
-            segment_mesh.push(0);
-            segment_mesh.push(3);
-            segment_mesh.push(4);
-            segment_mesh.push(0);
-            segment_mesh.push(4);
-            segment_mesh.push(5);
-            lineVertex1.push(processingData.allArea[z].pointFlow);
-            break;
-          case 7:
-            lineVertex1 = [];
-            segment_mesh = [];
-            segment_mesh.push(0);
-            segment_mesh.push(1);
-            segment_mesh.push(2);
-            segment_mesh.push(0);
-            segment_mesh.push(2);
-            segment_mesh.push(3);
-            segment_mesh.push(0);
-            segment_mesh.push(3);
-            segment_mesh.push(4);
-            segment_mesh.push(0);
-            segment_mesh.push(4);
-            segment_mesh.push(5);
-            segment_mesh.push(0);
-            segment_mesh.push(5);
-            segment_mesh.push(6);
-            lineVertex1.push(processingData.allArea[z].pointFlow);
-            break;
-        }
-        lineVertex1 = lineVertex1.flat();
-        lineVertex1 = lineVertex1.flat();
-        var bufferInfo_mesh = twgl.createBufferInfoFromArrays(gl, {
-          a_position: {
-            numComponents: 2,
-            data: lineVertex1,
-          },
-          indices: segment_mesh,
-        });
-        Draw.scene_fill.push({
-          x: 0,
-          y: 0,
-          rotation: 0,
-          scale: 1,
-          color: [0.96, 0.75, 0.97, 1],
-          bufferInfo: bufferInfo_mesh,
-        });
-      }
-      DrawGL.drawFill();
-
-  }
-});
+const DrawGL = new solutionMode();

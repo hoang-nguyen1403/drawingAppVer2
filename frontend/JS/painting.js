@@ -1,12 +1,8 @@
-// var textCanvas = document.querySelector("#text");
-// var ctx = textCanvas.getContext("2d");
-
 class Paint {
   constructor() {
     // Call the ID from index.html element
-    this.canvas = document.querySelector("#text");
-    // this.canvas = document.getElementById("myCanvas");
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById("myCanvas");
+    // this.ctx = this.canvas.getContext("2d");
 
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height =
@@ -109,6 +105,60 @@ class Paint {
     this.lastMouseMove = [0, 0];
   }
 
+  // Press button change mode
+  // changeMode() {
+  //   if (this.curValDrawing.value === "Off") {
+  //     // mode drawing
+  //     // this.renderObject(processingData.allObject);
+  //     // this.curValDrawing.value = "On";
+  //     // document.getElementById("modeDrawing").classList.add("active");
+
+  //     // Mesh.curValFillColor.value = "Off";
+  //     // document.getElementById("fillColor").style.display = "none";
+
+  //     // this.mouseMoveStatus = true;
+  //     // this.pen = "select";
+  //     // this.curValSelect = "On";
+
+  //     // test
+
+  //   } else {
+  //     //mode soln
+  //     //this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
+  //     //this.canvas.style.cursor = this.currentCursor;
+
+  //     // this.ctx.fillStyle = "white";
+  //     // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+  //     // this.curValDrawing.value = "Off";
+  //     // document.getElementById("modeDrawing").classList.remove("active");
+
+  //     // Mesh.curValFillColor.value = "Off";
+  //     // document.getElementById("fillColor").classList.remove("active");
+
+  //     // this.mouseMoveStatus = false;
+  //     // this.pen = undefined;
+  //     // this.curValSelect = "Off";
+
+  //     // //display soln
+  //     // if (Mesh.inputData !== undefined) {
+  //     //   document.getElementById("command").style.display = "none";
+  //     //   Mesh.prototype.drawMesh();
+  //     // } else {
+  //     //   this.renderCommand("soln");
+  //     // }
+
+
+  //     this.view = new GLCanvas(this.canvas);
+  //     this.view.setup();
+
+  //     this.setup_control();
+
+  //     this.setup_solution_tabs();
+  //     this.setup_colorbar();
+
+  //   }
+  // }
   setup_control() {
     this.container.control_menu = $('<div style = \"margin-left: 0px; width: 70px; height: 30px; left: ' + (this.width - 100) + 'px; top: ' + (20 - this.height) + 'px; position: relative;\"></div>').appendTo(this.container.canvas_container);
     $('<div class="toggleButton" id="showMeshgroup' + this.name + '"><input id="showMesh' + this.name + '"type="checkbox" onchange="edit_meshoption()"><label>MESH</label></div>').appendTo(this.container.control_menu);
@@ -174,48 +224,78 @@ class Paint {
       this.drawGrid();
     }
     //---// clear saved data
-    Draw.lineVertex = [];
-    Draw.point_x = [];
-    Draw.point_y = [];
+    // Declare scene view and set up mouse position
+    Mesh.elements = [];
+    Mesh.edges = [];
+    Mesh.nodes = [];
+    DrawGL.nearPointGL_storage = [{ x: 0, y: 0 }, 0];
+    DrawGL3D.pointStorage = { x: 0, y: 0, z: 0 };
+    DrawGL.color = [1, 1, 1, 1];
+    DrawGL3D.ui = {
+      dragging: false,
+      mouse: {
+        lastX: -1,
+        lastY: -1,
+      },
+    };
 
-    Draw.takePoint = [];
-    Draw.segment = [];
+    DrawGL3D.mouse = {
+      prevMouseX: 0,
+      prevMouseY: 0
+    };
+    DrawGL3D.mouseX = -1;
+    DrawGL3D.mouseY = -1;
+    DrawGL3D.point_x = [];
+    DrawGL3D.point_y = [];
+    DrawGL3D.target = [0, 0, 0];
+    DrawGL3D.up = [0, 1, 0];
+    DrawGL3D.takeValueRange = [];
+    DrawGL3D.nodeCoord = [];
+    DrawGL3D.colorNode = [];
+    DrawGL3D.lineBase = [];
+    DrawGL3D.lineMeshExtrude = [];
+    DrawGL3D.takePoint = [];
+    DrawGL3D.takePoint_Extrude = [];
+    DrawGL3D.sceneFill = [];
+    DrawGL3D.sceneMesh = [];
+    DrawGL3D.valueFilter = [];
+    DrawGL3D.node = [];
+    DrawGL3D.u_id = [];
+    DrawGL.camera = {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      zoom: 1,
+    }
+    document.getElementById("fillColor").value = "Off";
+    DrawGL.nearPointGL = [];
+    DrawGL.lineVertex = [];
+    DrawGL.point_x = [];
+    DrawGL.point_y = [];
+    DrawGL.segment_mesh = [];
+    DrawGL.segment_fill = [];
+    DrawGL.segment = [];
+    DrawGL.takePoint = [];
+    DrawGL.fillcolor = [];
+    DrawGL.colorbar_size = [];
+    DrawGL.colorbar_indices = [];
+    DrawGL.pointcheck = [];
+    DrawGL.takevalueRange = [];
     DrawGL.scene = [];
-    DrawGL.sceneCheck = [];
-    DrawGL.storageSelectedLine = [];
-    DrawGL.selectedLine = [];
-    DrawGL.hoverLine = [];
-    DrawGL.sceneSelectedLine = [];
-
-    Draw.pointGLObj = [];
-
-    //Draw.newPointGL: là mảng để lưu trữ Object là điểm nhưng có thể bị trùng tọa độ điểm (nếu là hình khép kín)
-    Draw.newPointGL = [];
-
-    Draw.scenePoint = [];
-    Draw.arrMultiCurObj = [];
-    Draw.newLines = [];
-    Draw.newIntersPoints = [];
-    Draw.lineVertex = [];
-    Draw.segment_mesh = [];
-    Draw.point_x = [];
-    Draw.point_y = [];
-    Draw.segment = [];
-    Draw.sceneOpen = [];
-    Draw.scene_fill = [];
-    Draw.takePoint = [];
-    Draw.pointGL = [];
-    Draw.pointName = "";
-    Draw.listloadPoints = [];
-
-    Draw.lineSelect = [];
-    Draw.segmentSelect = [];
-    DrawGL.drawFill();
-    DrawGL.draw();
-    DrawGL.drawOpen();
-    DrawGL.drawLineSelected();
-    DrawGL.drawPoint()
-    DrawGL.gl.clear(DrawGL.gl.COLOR_BUFFER_BIT)
+    DrawGL.scene_fill = [];
+    DrawGL.scene_color = [];
+    DrawGL.scene_load = [];
+    DrawGL.colorvec4 = [];
+    DrawGL.ctx_gl.clearRect(0, 0, 65, 400);
+    DrawGL.drawMain();
+    DrawGL3D.drawMain();
+    DrawGL.gl_colorbar.clear(DrawGL.gl_colorbar.COLOR_BUFFER_BIT)
+    FEsoln = [];
+    document.getElementById("filter").innerHTML = ``;
+    document.getElementById("filter").style.display = "none";
+    document.getElementById("modeSolution_value").style.display = "none";
+    document.getElementById("modeSolution_value").value = "3D";
+    document.getElementById("property_solution").style.display = "none";
     processingData.allLine = [];
     processingData.allPoint = [];
     processingData.allArea = [];
@@ -233,7 +313,7 @@ class Paint {
     if (this.valueComment.value == []) {
       dataLogFile.push(this.valueComment.value);
     }
-    if (this.valueComment.value !== []) {
+    if (this.valueComment.value !== null) {
       dataLogFile[0] = this.valueComment.value;
     }
   }
@@ -275,65 +355,216 @@ class Paint {
 
   //set up event of Mouse
   listenEvent() {
-    this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
-    this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
-    this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
-    document.addEventListener("keydown", (event) => this.keyDown(event));
-    this.canvas.addEventListener("click", (event) => this.selectObj(event));
-
+    // this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
+    // this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
+    // this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
+    // document.addEventListener("keydown", (event) => this.keyDown(event));
+    // this.canvas.addEventListener("click", (event) => this.selectObj(event));
     // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
+      PaintIn.clearAll();
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
         if (inputData["jsmat"] !== undefined) {
+          document.getElementById("filter").style.display = "block";
+          document.getElementById("modeSolution_value").style.display = "block";
           Mesh.prototype.createDataMesh(inputData);
+          for (let i = 0; i < Mesh.nodes.length; i++) {
+            const id = i + 1;
+            DrawGL3D.u_id.push([((id >> 0) & 0xFF) / 0xFF,
+            ((id >> 8) & 0xFF) / 0xFF,
+            ((id >> 16) & 0xFF) / 0xFF,
+            ((id >> 24) & 0xFF) / 0xFF],)
+          }
+          for (let i = 0; i < Mesh.nodes.length; i++) {
+            DrawGL.takevalueRange.push(
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y], color: DrawGL3D.u_id[i] }
+            );
+            DrawGL3D.takeValueRange.push(
+              { coord: [Mesh.nodes[i].x, Mesh.nodes[i].y, 0], color: DrawGL3D.u_id[i] }
+            );
+          }
+          var count = 0;
+          for (let j = 0; j < DrawGL.takevalueRange.length; j++) {
+            for (let i = 0; i < FEsoln.length; i++) {
+              const value1 = FEsoln[i].name;
+              DrawGL.takevalueRange[j] = { ...DrawGL.takevalueRange[j], [value1]: FEsoln[i].data[j] };
+              DrawGL3D.takeValueRange[count] = { ...DrawGL3D.takeValueRange[count], [value1]: FEsoln[i].data[j] };
+            }
+            count += 1;
+          }
+          DrawGL3D.u_id = DrawGL3D.u_id.flat();
+          // Max element for Uint16array is 10921 elements;
+          var max_element = 10921;
+          var count_element = Mesh.elements.length / max_element;
+          if (count_element % 1 !== 0) {
+            count_element = Math.round(count_element) + 1;
+          }
+          for (let i = 0; i < count_element; i++) {
+            DrawGL.segment_mesh = [];
+            DrawGL.lineVertex = [];
+            DrawGL3D.lineBase = [];
+            DrawGL3D.lineMeshExtrude = [];
+            let count = 0;
+            let test = Mesh.elements.length - max_element * i;
+            let max = max_element * i;
+            for (let z = max; z < Mesh.elements.length; z++) {
+              DrawGL.lineVertex.push(Mesh.elements[z].pointFlow)
+            }
+            for (let j = 0; j <= test; j++) {
+              if (count == max_element + 1) break;
+              // put indices for lines
+              DrawGL.segment_mesh.push(6 * j);
+              DrawGL.segment_mesh.push(6 * j + 1);
+              DrawGL.segment_mesh.push(6 * j + 1);
+              DrawGL.segment_mesh.push(6 * j + 2);
+              DrawGL.segment_mesh.push(6 * j + 2);
+              DrawGL.segment_mesh.push(6 * j + 3);
+              DrawGL.segment_mesh.push(6 * j + 3);
+              DrawGL.segment_mesh.push(6 * j + 4);
+              DrawGL.segment_mesh.push(6 * j + 4);
+              DrawGL.segment_mesh.push(6 * j + 5);
+              DrawGL.segment_mesh.push(6 * j + 5);
+              DrawGL.segment_mesh.push(6 * j);
+              count = count + 1;
+            }
+            DrawGL.lineVertex = DrawGL.lineVertex.flat();
+            for (let k = 0; k < DrawGL.lineVertex.length; k++) {
+              DrawGL.pointcheck.push(DrawGL.lineVertex[k])
+            }
+            var color = [];
+
+            for (let l = 0; l < DrawGL.pointcheck.length; l++) {
+              DrawGL3D.lineBase.push(DrawGL.pointcheck[l][0]);
+              DrawGL3D.lineBase.push(DrawGL.pointcheck[l][1]);
+              DrawGL3D.lineBase.push(0);
+            }
+
+            DrawGL.lineVertex = DrawGL.lineVertex.flat();
+            var bufferInfo_mesh = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+              a_position: {
+                numComponents: 2,
+                data: DrawGL.lineVertex,
+              },
+              indices: DrawGL.segment_mesh,
+            });
+            var bufferInfo_mesh_base = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+              a_position: DrawGL3D.lineBase,
+              indices: DrawGL.segment_mesh,
+            });
+
+            DrawGL3D.sceneMesh.push(bufferInfo_mesh_base);
+            DrawGL.scene.push(
+              {
+                x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_mesh
+              },
+            )
+          }
+
+          var point_2D = []
+          var point_3D = []
+          for (let i = 0; i < DrawGL3D.takeValueRange.length; i++) {
+            point_3D.push(DrawGL3D.takeValueRange[i].coord)
+            point_2D.push(DrawGL.takevalueRange[i].coord)
+          }
+          point_3D = point_3D.flat();
+          point_2D = point_2D.flat();
+          var bufferNode = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+            a_position: point_3D,
+            a_color: DrawGL3D.u_id
+          })
+          var bufferNode2D = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+            a_position: {
+              numComponents: 2,
+              data: point_2D
+            },
+            a_color: DrawGL3D.u_id
+          })
+          DrawGL3D.node.push(bufferNode)
+          DrawGL.node.push(bufferNode2D)
+          for (let i = 0; i < DrawGL.point_x.length; i++) {
+            DrawGL.takePoint.push(DrawGL.point_x[i]);
+            DrawGL.takePoint.push(DrawGL.point_y[i]);
+          }
+
+          for (let i = 0; i < DrawGL.point_x.length; i++) {
+            DrawGL3D.nodeCoord.push(DrawGL.point_x[i]);
+            DrawGL3D.nodeCoord.push(DrawGL.point_y[i]);
+            DrawGL3D.nodeCoord.push(0);
+          }
+
+
+          for (let i = 0; i < DrawGL3D.point_x.length; i++) {
+            DrawGL3D.takePoint.push({ x: DrawGL3D.point_x[i], y: DrawGL3D.point_y[i], z: 0 });
+          }
+
+          DrawGL3D.colorNode = DrawGL3D.colorNode.flat();
+          var bufferInfo_fill = twgl.createBufferInfoFromArrays(DrawGL.gl, {
+            a_position: {
+              numComponents: 2,
+              data: DrawGL.takePoint,
+            },
+            color: DrawGL.colorvec4,
+          });
+
+          DrawGL3D.camera = {
+            rotation_X: 0, // degrees
+            rotation_Y: 0, // degrees
+            rotation_Z: 0, // degrees
+            Deep: 400000,
+            Zoom: 1,
+            translation_x: 0,
+            translation_y: 0,
+            translation_z: math.max(math.abs(DrawGL.pointcheck)),
+          }
+          // render();
+          var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL3D.gl, {
+            a_position: DrawGL3D.nodeCoord,
+            a_color: DrawGL3D.colorNode,
+          })
+          DrawGL3D.sceneFill.push(bufferInfo);
+          DrawGL3D.drawMain();
+          ChangeModeGL();
+          ChangeModeGL3D();
+          DrawGL.scene_fill.push({
+            x: 0, y: 0, rotation: 0, scale: 1, bufferInfo: bufferInfo_fill
+          })
+          DrawGL.drawMain();
         } else {
+          document.getElementById("filter").style.display = "none";
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
           for (let i = 0; i < processingData.allPoint.length; i++) {
-            Draw.takePoint.push(processingData.allPoint[i].point);
+            DrawGL.takePoint.push(processingData.allPoint[i].point);
           }
 
           for (let i = 0; i < processingData.allSeg.length; i++) {
-            Draw.segment.push(processingData.allSeg[i]);
+            DrawGL.segment.push(processingData.allSeg[i]);
           }
-          Draw.pointGL = Draw.takePoint;
-          Draw.takePoint = Draw.takePoint.flat();
-          Draw.segment = Draw.segment.flat();
-          Draw.lineVertex = Draw.takePoint;
 
-          for (let i = 0; i < Draw.lineVertex.length; i++) {
+          DrawGL.takePoint = DrawGL.takePoint.flat();
+          DrawGL.segment = DrawGL.segment.flat();
+          DrawGL.lineVertex = DrawGL.takePoint;
+
+          for (let i = 0; i < DrawGL.lineVertex.length; i++) {
             if (i % 2 == 0) {
-              Draw.point_x.push(Draw.lineVertex[i]);
+              DrawGL.point_x.push(DrawGL.lineVertex[i]);
             }
-            else Draw.point_y.push(Draw.lineVertex[i]);
+            else DrawGL.point_y.push(DrawGL.lineVertex[i]);
           }
 
           // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
-          var bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+          var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
             a_position: {
               numComponents: 2,
-              data: Draw.lineVertex,
+              data: DrawGL.lineVertex,
             },
-            indices: Draw.segment,
+            indices: DrawGL.segment,
           });
-
-
-          var sphereBufferInfo = twgl.createBufferInfoFromArrays(gl, {
-            a_position: sphereVerts.position,
-            indices: sphereVerts.indices,
-          });
-
-          // console.log(sphereVerts.indices)
-
-
-          Draw.sceneOpen = [{ x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },];
-          Draw.prototype.makeCameraMatrix();
-          Draw.prototype.updateViewProjection();
-          Draw.prototype.drawOpen(sphereBufferInfo);
-
+          DrawGL.scene_load = [{ x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },];
+          DrawGL.drawMain();
 
           //update screen
           PaintIn.renderObject(processingData.allObject);
@@ -377,7 +608,7 @@ class Paint {
       });
 
       promise.catch(function (err) {
-        // console.log("err", err);
+        console.log("err", err);
       });
     });
 
@@ -433,9 +664,6 @@ class Paint {
       this.arrRectY = [];
       this.arrMouseDownPosition = [];
       this.arrSPL = [];
-      // console.log(index);
-
-      // index = 0;
 
       //destroy box input
       if (this.curValName.value === "On") {
@@ -531,8 +759,8 @@ class Paint {
         //this.ctx.strokeStyle = "grey";
         this.drawGrid();
       } else if (dataLogFile.length > 1) {
-        // console.log("up");
-        // console.log(dataLogFileIndex);
+        console.log("up");
+        console.log(dataLogFileIndex);
         if (dataLogFileIndex === 0) {
           dataLogFileIndex += 1;
           this.valueComment.value = dataLogFile.at(dataLogFileIndex);
@@ -563,7 +791,7 @@ class Paint {
         //this.ctx.strokeStyle = "grey";
         this.drawGrid();
       } else if (dataLogFile.length > 1) {
-        // console.log("down");
+        console.log("down");
         if (dataLogFileIndex === 0) {
           this.valueComment.value = dataLogFile.at(dataLogFileIndex);
         } else if (dataLogFileIndex === dataLogFile.length - 1) {
@@ -602,7 +830,7 @@ class Paint {
       //    this.valueComment.value = "";
       //  }
       //
-
+      //      PaintIn.renderCommand("textCommands");
       deselectAll();
     }
     if (event.keyCode === 17) {
@@ -772,8 +1000,56 @@ class Paint {
       this.renderCommand("line");
     } else {
       this.renderObject(processingData.allObject);
+      processingData.prototype.areaDetect(processingData.allLine);
     }
   }
+
+  // chooseCircle() {
+  //     this.offButtonDraw(this.currentValueBrush, "brush");
+  //     this.offButtonDraw(this.currentValueSelect, "select");
+  //     this.offButtonDraw(this.currentValueSpl, "spl");
+  //     this.offButtonDraw(this.currentValueLine, "line");
+  //     this.offButtonDraw(this.currentValueRect, "rect");
+
+  //     this.offButton(this.curValNamePoint, "valueNamePoint");
+  //     this.offButton(this.curValNameLine, "valueNameLine");
+  //     this.offButton(this.curValNameArea, "valueNameArea");
+  //     this.offButton(this.curValPointLoad, "pointLoad");
+  //     this.offButton(this.curValPressLoad, "pressLoad");
+
+  //     this.onOffButtonDraw(this.currentValueCircle, "circle");
+  // }
+
+  // chooseRect() {
+  //     this.offButtonDraw(this.currentValueBrush, "brush");
+  //     this.offButtonDraw(this.currentValueSelect, "select");
+  //     this.offButtonDraw(this.currentValueSpl, "spl");
+  //     this.offButtonDraw(this.currentValueLine, "line");
+  //     this.offButtonDraw(this.currentValueCircle, "circle");
+
+  //     this.offButton(this.curValNamePoint, "valueNamePoint");
+  //     this.offButton(this.curValNameLine, "valueNameLine");
+  //     this.offButton(this.curValNameArea, "valueNameArea");
+  //     this.offButton(this.curValPointLoad, "pointLoad");
+  //     this.offButton(this.curValPressLoad, "pressLoad");
+
+  //     this.onOffButtonDraw(this.currentValueRect, "rect");
+  // }
+
+  // chooseSpl() {
+  //     this.offButtonDraw(this.currentValueBrush, "brush");
+  //     this.offButtonDraw(this.currentValueSelect, "select");
+  //     this.offButtonDraw(this.currentValueRect, "rect");
+  //     this.offButtonDraw(this.currentValueLine, "line");
+  //     this.offButtonDraw(this.currentValueCircle, "circle");
+
+  //     this.offButton(this.curValNamePoint, "valueNamePoint");
+  //     this.offButton(this.curValNameLine, "valueNameLine");
+  //     this.offButton(this.curValNameArea, "valueNameArea");
+  //     this.offButton(this.curValPointLoad, "pointLoad");
+  //     this.offButton(this.curValPressLoad, "pressLoad");
+  //     this.onOffButtonDraw(this.currentValueSpl, "spl");
+  // }
 
   concatArr(arr1, arr2) {
     return arr1.concat(arr2);
@@ -787,10 +1063,16 @@ class Paint {
 
     this.renderObject(processingData.allObject);
 
+    // if (this.currentValueSelect.value === "On") {
+    // this.offButtonDraw(this.currentValueBrush, "brush");
+    // this.offButtonDraw(this.currentValueSpl, "spl");
+    // this.offButtonDraw(this.currentValueRect, "rect");
     this.offButtonDraw(this.currentValueLine, "line");
+    // this.offButtonDraw(this.currentValueCircle, "circle");
     this.offButton(this.curValMoment, "moment");
     this.offButton(this.curValPointLoad, "pointLoad");
     this.offButton(this.curValPressLoad, "pressLoad");
+    // this.offButton(this.curValAxialForce, "axialForce");
     this.onOffButton(this.curValName, "valueName");
 
     if (this.curValName.value === "On") {
@@ -860,6 +1142,24 @@ class Paint {
       valueLoads = undefined;
     }
   }
+
+  // addValAxialForce() {
+  //     this.pen = undefined;
+  //     // this.offButtonDraw(this.currentValueBrush, "brush");
+  //     // this.offButtonDraw(this.currentValueSpl, "spl");
+  //     // this.offButtonDraw(this.currentValueRect, "rect");
+  //     this.offButtonDraw(this.currentValueLine, "line");
+  //     // this.offButtonDraw(this.currentValueCircle, "circle");
+  //     // this.offButton(this.currentValueSelect, "select")
+  //     this.offButton(this.curValName, "valueName");
+  //     this.offButton(this.curValPointLoad, "pointLoad");
+  //     this.offButton(this.curValMoment, "moment");
+  //     this.offButton(this.curValPressLoad, "pressLoad");
+
+  //     this.onOffButton(this.curValAxialForce, "axialForce");
+
+  //     this.renderObject(processingData.allObject);
+  // }
 
   addValMoment() {
     //change cursor
@@ -936,8 +1236,6 @@ class Paint {
             case "Point": {
               processingData.allPoint.forEach((obj) => {
                 if (obj.isInBox(topPoint, bottomPoint)) {
-
-                  //note
                   this.arrMultiCurObj.push(obj);
                 }
               });
@@ -990,7 +1288,6 @@ class Paint {
         }
         //set default obj type
         this.multiSelectType = this.multiSelectTypeDefault;
-        console.log(this.arrCurObj);
         // } else {
         //     //reset arrMultiCurObj
         //     this.arrMultiCurObj = [];
@@ -1161,10 +1458,7 @@ class Paint {
     this.isPainting = true;
     this.image = new Image();
     this.image.src = this.canvas.toDataURL("image/png ", 1.0);
-
-
     // var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-
     this.mouseDownPos = this.getMousePosition(event); //start
     this.arrMouseDownPosition.push(this.mouseDownPos);
     this.currentMouseDownPos = this.getMousePosition(event);
@@ -1185,7 +1479,34 @@ class Paint {
         this.mouseDownPos = nearPoint[0];
         this.arrLineX.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].x);
         this.arrLineY.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].y);
+        // this.arrLineColor.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0]);
+        // this.arrLineWidth.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0]);
+        // console.log('arrLine', this.arrLineX)
       }
+      // if (this.pen === 'circle') {
+      //     this.arrCircleX.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].x);
+      //     this.arrCircleY.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].y);
+      //     for (let i = 1; i < this.arr.length; i += 2) {
+      //         this.mouseDownPos = this.arr[i + 1];
+      //     }
+      //     // console.log('arrCircle', this.arrCircleX)
+      // };
+
+      // if (this.pen === 'rect') {
+      //     this.arrRectX.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].x);
+      //     this.arrRectY.push(getNearest(this.arrGrid, this.mouseDownPos)[0][0].y);
+      //     for (let i = 1; i < this.arr.length; i += 2) {
+      //         this.mouseDownPos = this.arr[i + 1];
+      //     }
+      //     this.arrRectColor = this.arrRect;
+      //     // console.log('arrRect', this.arrRectX)
+      // };
+
+      // if (this.pen === 'spl') {
+      //     this.arrSPLX.push(this.mouseDownPos.x);
+      //     this.arrSPLY.push(this.mouseDownPos.y);
+      //     this.drawSPLine();
+      // };
     } else {
       let arrPoints = [];
       processingData.allPoint.forEach((value) =>
@@ -1196,7 +1517,6 @@ class Paint {
         this.mouseDownPos,
         10
       );
-      // console.log(nearPoint);
       if (this.pen === "line") {
         if (nearPoint !== undefined) {
           this.mouseDownPos = nearPoint[0];
@@ -1207,6 +1527,29 @@ class Paint {
         this.arrLineWidth.push(this.lineWidth);
         // console.log('arrLine', this.arrLineX)
       }
+
+      // if (this.pen === 'circle') {
+      //     this.arrCircleX.push(this.mouseDownPos.x);
+      //     this.arrCircleY.push(this.mouseDownPos.y);
+      //     for (let i = 1; i < this.arrMouseDownPosition.length; i += 2) {
+      //         this.mouseDownPos = this.arrMouseDownPosition[i + 1];
+      //     }
+      //     // console.log('arrCircle', this.arrCircleX)
+
+      // };
+
+      // if (this.pen === 'rect') {
+      //     this.arrRectX.push(this.mouseDownPos.x);
+      //     this.arrRectY.push(this.mouseDownPos.y);
+      //     for (let i = 1; i < this.arrMouseDownPosition.length; i += 2) {
+      //         this.mouseDownPos = this.arrMouseDownPosition[i + 1];
+      //     }
+      // }
+
+      // if (this.pen === 'spl') {
+      //     this.arrSPLX.push(this.mouseDownPos.x);
+      //     this.arrSPLY.push(this.mouseDownPos.y);
+      // }
     }
 
     //get data (need optimize)
@@ -1238,6 +1581,46 @@ class Paint {
       this.arrRectY = [];
     }
     //----------------------------//
+    // if (this.pen === 'circle' || this.pen === 'rect'|| this.pen === 'spl') {
+    //     this.undo();
+    // }
+
+    // //END Linh config---------------------------------------------------
+    //---------------------------------------------------
+
+    // -----------------------------------------
+    //        //get data (need optimize)
+    //        // Line
+    //        if (this.arrLineX.length >= 2) {
+    //            processingData.prototype.inputRawData(this.pen, this.arrLineX, this.arrLineY);
+    //        };
+    //        // Rect
+    //        // console.log(this.arrRectX);
+    //        if (this.arrRectX.length % 2 === 0 && this.arrRectX.length !== 0) {
+    //            var lastTwoPointX = [this.arrRectX[this.arrRectX.length - 2],
+    //            this.arrRectX[this.arrRectX.length - 1]];
+    //            var lastTwoPointY = [this.arrRectY[this.arrRectY.length - 2],
+    //            this.arrRectY[this.arrRectY.length - 1]];
+    //            processingData.prototype.inputRawData(this.pen, lastTwoPointX, lastTwoPointY);
+    //        }
+    //----------------------------//
+
+    //find inters point => add to grid
+    // let lineList = [...processingData.allLine];
+    // for (let i = 0; i < lineList.length - 1; i++) {
+    //     var IntersPoint = processingData.prototype.intersectionCheck(lineList[i], lineList[lineList.length - 1]);
+    //     if (IntersPoint.Exist) {
+    //         // console.log("IntersPoint");
+    //         //create Point
+    //         let newPoint = new Point(IntersPoint.Coord);
+    //         //add
+    //         processingData.prototype.addObject(newPoint, processingData.allPoint);
+    //     }
+    // };
+    // if (this.isMovingObj && this.arrCurObj.length === 0) {
+    //   processingData.prototype.areaDetect(processingData.allLine);
+    //   PaintIn.renderObject(processingData.allObject);
+    // }
     processingData.prototype.updateStorage();
   }
 
@@ -1251,6 +1634,8 @@ class Paint {
     if (!this.mouseMoveStatus) {
       return;
     }
+    // this.image = new Image;
+    // this.image.src = this.canvas.toDataURL("frontend/image/bmp ", 1.0);
     let mouseMovePos = this.getMousePosition(event);
     this.currentMouseMovePos = this.getMousePosition(event);
     // let mouseMoveCoordination = this.changeOrigin(event);
@@ -1263,7 +1648,9 @@ class Paint {
       " ; " +
       this.currentMouseMovePos.y +
       "]";
-
+    // document.getElementById("display_coord").innerHTML =
+    //   "[" + mouseMoveCoordination.x + " ; " + mouseMoveCoordination.y + "]";
+    //
     if (
       this.currentValueGrid.value == "On" &&
       this.arrGrid.length != 0 &&
@@ -1291,6 +1678,25 @@ class Paint {
         this.currentMouseDownPos = mouseMovePos;
       }
     }
+    // } else if (this.currentValueGrid.value == "Off" && this.currentMouseDownPos != undefined && processingData.allPoint.length !== 0) {
+    //     let arrAllPoint = [];
+    //     processingData.allPoint.forEach((value) => arrAllPoint.push({ x: value.x, y: value.y }));
+
+    //     let nearPoint = getNearest(arrAllPoint, this.currentMouseDownPos, 10)
+    //     console.log(nearPoint)
+
+    // }
+
+    // not link position of start and end point
+    // if (this.isPainting) {
+    //   // brush
+    //   // if (this.pen === 'brush') {
+    //   //     this.drawBrush(
+    //   //         this.currentMouseDownPos,
+    //   //         this.currentMouseMovePos
+    //   //     );
+    //   // };
+    // }
 
     //line link start and end node
     if (this.pen === "line") {
@@ -1300,6 +1706,60 @@ class Paint {
       this.undo();
       this.drawLine(this.mouseDownPos, this.currentMouseDownPos);
     }
+
+    // if (this.pen === 'rect') {
+    //     if (!this.isCancled) {
+    //         return
+    //     };
+    //     this.undo();
+    //     this.drawRect
+    //         (
+    //             this.mouseDownPos,
+    //             this.currentMouseDownPos
+    //         );
+
+    // };
+    // if (this.pen === 'circle') {
+    //     if (!this.isCancled) {
+    //         return
+    //     };
+    //     this.undo();
+    //     this.drawCicle
+    //         (
+    //             this.mouseDownPos,
+    //             this.currentMouseDownPos
+    //         );
+    // };
+
+    // if (this.pen === 'spl') {
+    //     if (!this.isCancled) {
+    //         return
+    //     };
+    //     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
+    //     let arrXs = [...this.arrSPLX]
+    //     arrXs.push(this.currentMouseDownPos.x)
+    //     let arrYs = [...this.arrSPLY]
+    //     arrYs.push(this.currentMouseDownPos.y)
+    //     console.log("X", arrXs)
+    //     console.log("Y", arrYs)
+    //     this.drawSPLine(arrXs, arrYs);
+    // }
+
+    // if (this.pen === 'select') {
+    // //trace area
+    // //need optimize
+    // for (let area of processingData.allArea) {
+    //     if (area.areaTouch([this.currentMouseMovePos.x,this.currentMouseMovePos.y])) {
+    //         this.renderProperty("area",area);
+    //         this.fillArea(area,"#b6d8e7");
+    //         return;
+    //     } else {
+    //         this.fillArea(area);
+    //         this.renderProperty("off",area);
+    //     };
+    // };
+
+    // }
 
     // drag
     if (
@@ -1314,6 +1774,26 @@ class Paint {
       // processingData.prototype.areaDetect(processingData.allLine);
     }
 
+    // //change mouse (test)
+    // let lineButton = document.getElementById("line").value;
+    // let valueName = document.getElementById("valueName").value;
+    // let pointLoad = document.getElementById("pointLoad").value;
+    // let pressLoad = document.getElementById("pressLoad").value;
+    // let moment = document.getElementById("moment").value;
+
+    // if (lineButton === "On") {
+    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
+    // } else if (valueName === "On") {
+    //     this.canvas.style.cursor = "url(frontend/img/edit_text.png) 0 32, default";
+    // } else if (pointLoad === "On") {
+    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
+    // } else if (pressLoad === "On") {
+    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
+    // } else if (moment === "On") {
+    //     this.canvas.style.cursor = "url(frontend/img/pen_cursor.png) 0 32, default";
+    // } else {
+    //     this.canvas.style.cursor = "default";
+    // }
     //bounding box
     if (
       this.isPainting &&
@@ -1321,13 +1801,10 @@ class Paint {
       (this.pen === undefined || this.pen === "select") &&
       this.curValSelect === "On"
     ) {
-
       //draw bounding box
       this.undo();
       this.ctx.beginPath();
       this.ctx.fillStyle = "rgb(0 234 255 / 26%)";
-
-
       let topLeftPoint = [this.mouseDownPos.x, this.mouseDownPos.y];
       let bottomRigthPoint = [mouseMovePos.x, mouseMovePos.y];
       //save select box size
@@ -1420,7 +1897,7 @@ class Paint {
     });
 
     promise.catch(function (err) {
-      // console.log("err", err);
+      console.log("err", err);
       dataLogFile.push(JSON.stringify(err));
       PaintIn.renderCommand("textCommands");
     });
@@ -1455,10 +1932,12 @@ class Paint {
           receiveData = result.data["lhs"][0];
           if (receiveData !== undefined) {
             dataLogFile.push(JSON.stringify(receiveData));
+            visualizeData = new dataGL(receiveData);
+            visualizeData.proccesingData();
             PaintIn.renderCommand("textCommands");
           }
         } catch (err) {
-          // console.log(result);
+          console.log(result);
           dataLogFile.push(JSON.stringify(result.data));
           PaintIn.renderCommand("textCommands");
         }
@@ -1466,7 +1945,7 @@ class Paint {
 
       promise.catch(function (err) {
         document.getElementById("spinner").style.display = "none";
-        // console.log("err", err);
+        console.log("err", err);
         dataLogFile.push(JSON.stringify(err));
         PaintIn.renderCommand("textCommands");
       });
@@ -1506,7 +1985,7 @@ class Paint {
     });
 
     promise.catch(function (err) {
-      // console.log("err", err);
+      console.log("err", err);
       dataLogFile.push(JSON.stringify(err));
       PaintIn.renderCommand("textCommands");
     });
@@ -1514,17 +1993,12 @@ class Paint {
 
   renderCommand(mode) {
     switch (mode) {
-      case "drawmode":
-        document.getElementById("command").style.display = "flex";
-        document.getElementById("command").innerHTML = `
-                  <p> Press "L" to start drawing! </p>
-              </div>
-                  `;
-        break;
       case "line":
         document.getElementById("command").style.display = "flex";
         document.getElementById("command").innerHTML = `
-                  <p> Press "E" to exit draw! </p>
+                  <p> Press ESC to exit draw! <br>
+                      Press SPACE to break line! 
+                  </p>
               </div>
                   `;
         break;
@@ -1593,7 +2067,7 @@ class Paint {
     this.ctx.save();
     this.ctx.font = "13px Arial";
 
-    // ctx.textAlign = "center";
+    // this.ctx.textAlign = "center";
     try {
       //Line
       this.ctx.fillStyle = "red";
@@ -1806,27 +2280,27 @@ class Paint {
     }
   }
 
-  // drawRect(start, end, color = this.currentColor, width = this.currentWidth) {
-  //   if (start != undefined) {
-  //     this.ctx.strokeStyle = color;
-  //     this.ctx.lineWidth = width;
-  //     this.ctx.beginPath();
-  //     this.ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
-  //     this.ctx.stroke();
-  //     this.ctx.closePath();
-  //   }
-  // }
+  drawRect(start, end, color = this.currentColor, width = this.currentWidth) {
+    if (start != undefined) {
+      this.ctx.strokeStyle = color;
+      this.ctx.lineWidth = width;
+      this.ctx.beginPath();
+      this.ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
+      this.ctx.stroke();
+      this.ctx.closePath();
+    }
+  }
 
-  // drawCicle(start, end, width = this.currentWidth) {
-  //   if (start != undefined) {
-  //     this.ctx.strokeStyle = this.currentColor;
-  //     this.ctx.lineWidth = width;
-  //     this.ctx.beginPath();
-  //     let r = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
-  //     this.ctx.arc(start.x, start.y, r, 0, 2 * Math.PI);
-  //     this.ctx.stroke();
-  //   }
-  // }
+  drawCicle(start, end, width = this.currentWidth) {
+    if (start != undefined) {
+      this.ctx.strokeStyle = this.currentColor;
+      this.ctx.lineWidth = width;
+      this.ctx.beginPath();
+      let r = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
+      this.ctx.arc(start.x, start.y, r, 0, 2 * Math.PI);
+      this.ctx.stroke();
+    }
+  }
 
   gradient(a, b) {
     return (b.y - a.y) / (b.x - a.x);
@@ -1838,7 +2312,7 @@ class Paint {
     color = this.currentColor,
     width = this.currentWidth
   ) {
-    // console.log(arrXs, arrYs);
+    console.log(arrXs, arrYs);
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = width;
     let [arrX, arrY] = processingData.prototype.InterPolationFunction(
@@ -2104,7 +2578,7 @@ class Paint {
       this.ctx.moveTo(0, j);
       this.ctx.lineTo(this.canvas.width, j);
     }
-    this.ctx.strokeStyle = "blue";
+    this.ctx.strokeStyle = "grey";
     this.ctx.lineWidth = 0.2;
     this.ctx.stroke();
     this.ctx.closePath();
@@ -2125,198 +2599,198 @@ class Paint {
 
   //------------------//
   renderObject(arrObj) {
-    //clear screen before render
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    //
-    if (this.currentValueGrid.value === "On") {
-      //this.ctx.strokeStyle = "red";
-      this.drawGrid();
-    }
-    for (let i = arrObj.length - 1; i >= 0; i--) {
-      if (arrObj[i] instanceof Area) {
-        this.fillArea(arrObj[i]);
-        if (
-          arrObj[i].name !== undefined &&
-          arrObj[i].name !== "" &&
-          arrObj[i].name !== null
-        ) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
-      } else if (arrObj[i] instanceof Line) {
-        // this.drawLine(
-        //   arrObj[i].Point[0],
-        //   arrObj[i].Point[1],
-        //   arrObj[i].color,
-        //   arrObj[i].width
-        // );
-        if (
-          arrObj[i].name !== undefined &&
-          arrObj[i].name !== "" &&
-          arrObj[i].name !== null
-        ) {
-          drawText(arrObj[i], arrObj[i].name);
-        }
+    // //clear screen before render
+    // this.ctx.fillStyle = "white";
+    // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // //
+    // if (this.currentValueGrid.value === "On") {
+    //   //this.ctx.strokeStyle = "red";
+    //   this.drawGrid();
+    // }
+    // for (let i = arrObj.length - 1; i >= 0; i--) {
+    //   if (arrObj[i] instanceof Area) {
+    //     this.fillArea(arrObj[i]);
+    //     if (
+    //       arrObj[i].name !== undefined &&
+    //       arrObj[i].name !== "" &&
+    //       arrObj[i].name !== null
+    //     ) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
+    //   } else if (arrObj[i] instanceof Line) {
+    //     this.drawLine(
+    //       arrObj[i].Point[0],
+    //       arrObj[i].Point[1],
+    //       arrObj[i].color,
+    //       arrObj[i].width
+    //     );
+    //     if (
+    //       arrObj[i].name !== undefined &&
+    //       arrObj[i].name !== "" &&
+    //       arrObj[i].name !== null
+    //     ) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
 
-        if (arrObj[i].lineLoads !== null) {
-          for (let j = 0; j < arrObj[i].lineLoads.length; j++) {
-            //draw press
-            if (arrObj[i].lineLoads[j].type === "normal_pressure") {
-              this.drawPressure(
-                arrObj[i],
-                arrObj[i].lineLoads[j].parameters.node_0
-              );
-            }
-            //draw axial
-            if (arrObj[i].lineLoads[j].type === "axial_pressure") {
-              this.drawAxialPressure(
-                arrObj[i],
-                arrObj[i].lineLoads[j].parameters.value
-              );
-            }
-          }
-        }
-      } else if (arrObj[i] instanceof Point) {
-        // this.drawPoint(arrObj[i]);
-        if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
+    //     if (arrObj[i].lineLoads !== null) {
+    //       for (let j = 0; j < arrObj[i].lineLoads.length; j++) {
+    //         //draw press
+    //         if (arrObj[i].lineLoads[j].type === "normal_pressure") {
+    //           this.drawPressure(
+    //             arrObj[i],
+    //             arrObj[i].lineLoads[j].parameters.node_0
+    //           );
+    //         }
+    //         //draw axial
+    //         if (arrObj[i].lineLoads[j].type === "axial_pressure") {
+    //           this.drawAxialPressure(
+    //             arrObj[i],
+    //             arrObj[i].lineLoads[j].parameters.value
+    //           );
+    //         }
+    //       }
+    //     }
+    //   } else if (arrObj[i] instanceof Point) {
+    //     this.drawPoint(arrObj[i]);
+    //     if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
 
-        if (arrObj[i].pointLoads !== null) {
-          for (let j = 0; j < arrObj[i].pointLoads.length; j++) {
-            if (arrObj[i].pointLoads[j].type === "force") {
-              this.drawForceInPoint(
-                arrObj[i].pointLoads[j].parameters,
-                arrObj[i].x,
-                arrObj[i].y
-              );
-            }
-            if (arrObj[i].pointLoads[j].type === "moment") {
-              this.drawMoment(
-                arrObj[i].pointLoads[j].parameters,
-                arrObj[i].x,
-                arrObj[i].y
-              );
-            }
-          }
-        }
-      }
-    }
+    //     if (arrObj[i].pointLoads !== null) {
+    //       for (let j = 0; j < arrObj[i].pointLoads.length; j++) {
+    //         if (arrObj[i].pointLoads[j].type === "force") {
+    //           this.drawForceInPoint(
+    //             arrObj[i].pointLoads[j].parameters,
+    //             arrObj[i].x,
+    //             arrObj[i].y
+    //           );
+    //         }
+    //         if (arrObj[i].pointLoads[j].type === "moment") {
+    //           this.drawMoment(
+    //             arrObj[i].pointLoads[j].parameters,
+    //             arrObj[i].x,
+    //             arrObj[i].y
+    //           );
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
-    if (
-      this.curValName.value === "On" ||
-      this.curValPointLoad.value === "On" ||
-      this.curValMoment.value === "On" ||
-      this.curValPressLoad.value === "On"
-    ) {
-      this.renderCommand("valueOn");
-    } else {
-      this.renderCommand("Off");
-    }
+    // if (
+    //   this.curValName.value === "On" ||
+    //   this.curValPointLoad.value === "On" ||
+    //   this.curValMoment.value === "On" ||
+    //   this.curValPressLoad.value === "On"
+    // ) {
+    //   this.renderCommand("valueOn");
+    // } else {
+    //   this.renderCommand("Off");
+    // }
 
-    // render API and button
-    if (this.arrMultiCurObj[0] !== undefined) {
-      document.getElementById("BDCondition").style.display = "flex";
-      this.renderProperty("multi", this.arrMultiCurObj);
-      for (let i = 0; i < this.arrMultiCurObj.length; i++) {
-        let selectedObj;
-        selectedObj = this.arrMultiCurObj[i];
-        switch (selectedObj.className) {
-          case "Point":
-            this.drawPoint(selectedObj, "green");
-            document.getElementById("BDCondition").style.width = "200px";
-            //display 3 button
-            this.visibleButton("valueName");
-            this.visibleButton("pointLoad");
-            this.visibleButton("moment");
-            //hidden 1 button
-            this.hiddenButton("pressLoad");
-            break;
-          case "Line":
-            this.drawLine(
-              selectedObj.Point[0],
-              selectedObj.Point[1],
-              "#0000ff",
-              selectedObj.width
-            );
-            document.getElementById("BDCondition").style.width = "150px";
-            //display 2 button
-            this.visibleButton("valueName");
-            this.visibleButton("pressLoad");
-            //hidden 2 button
-            this.hiddenButton("pointLoad");
-            this.hiddenButton("moment");
-            break;
-          case "Area":
-            this.fillArea(selectedObj, "#b6d8e7");
-            document.getElementById("BDCondition").style.width = "70px";
-            //display 1 button
-            this.visibleButton("valueName");
-            //hidden 3 button
-            this.hiddenButton("pressLoad");
-            this.hiddenButton("pointLoad");
-            this.hiddenButton("moment");
-            break;
-        }
-      }
-    } else {
-      document.getElementById("BDCondition").style.display = "none";
-      this.renderProperty("off", this.arrMultiCurObj);
-    }
+    // // render API and button
+    // if (this.arrMultiCurObj[0] !== undefined) {
+    //   document.getElementById("BDCondition").style.display = "flex";
+    //   this.renderProperty("multi", this.arrMultiCurObj);
+    //   for (let i = 0; i < this.arrMultiCurObj.length; i++) {
+    //     let selectedObj;
+    //     selectedObj = this.arrMultiCurObj[i];
+    //     switch (selectedObj.className) {
+    //       case "Point":
+    //         this.drawPoint(selectedObj, "green");
+    //         document.getElementById("BDCondition").style.width = "200px";
+    //         //display 3 button
+    //         this.visibleButton("valueName");
+    //         this.visibleButton("pointLoad");
+    //         this.visibleButton("moment");
+    //         //hidden 1 button
+    //         this.hiddenButton("pressLoad");
+    //         break;
+    //       case "Line":
+    //         this.drawLine(
+    //           selectedObj.Point[0],
+    //           selectedObj.Point[1],
+    //           "#0000ff",
+    //           selectedObj.width
+    //         );
+    //         document.getElementById("BDCondition").style.width = "150px";
+    //         //display 2 button
+    //         this.visibleButton("valueName");
+    //         this.visibleButton("pressLoad");
+    //         //hidden 2 button
+    //         this.hiddenButton("pointLoad");
+    //         this.hiddenButton("moment");
+    //         break;
+    //       case "Area":
+    //         this.fillArea(selectedObj, "#b6d8e7");
+    //         document.getElementById("BDCondition").style.width = "70px";
+    //         //display 1 button
+    //         this.visibleButton("valueName");
+    //         //hidden 3 button
+    //         this.hiddenButton("pressLoad");
+    //         this.hiddenButton("pointLoad");
+    //         this.hiddenButton("moment");
+    //         break;
+    //     }
+    //   }
+    // } else {
+    //   document.getElementById("BDCondition").style.display = "none";
+    //   this.renderProperty("off", this.arrMultiCurObj);
+    // }
 
-    if (this.arrCurObj[0] !== undefined) {
-      let selectedObj;
-      selectedObj = this.arrCurObj[0];
-      switch (selectedObj.className) {
-        case "Point":
-          document.getElementById("BDCondition").style.display = "flex";
-          document.getElementById("BDCondition").style.width = "200px";
-          this.drawPoint(selectedObj, "green");
-          this.renderProperty("point", selectedObj);
-          //display 3 button
-          this.visibleButton("valueName");
-          this.visibleButton("pointLoad");
-          this.visibleButton("moment");
-          //hidden 1 button
-          this.hiddenButton("pressLoad");
-          break;
-        case "Line":
-          document.getElementById("BDCondition").style.width = "150px";
-          document.getElementById("BDCondition").style.display = "flex";
-          this.drawLine(
-            selectedObj.Point[0],
-            selectedObj.Point[1],
-            "#0000ff",
-            selectedObj.width
-          );
-          this.renderProperty("line", selectedObj);
-          //display 2 button
-          this.visibleButton("valueName");
-          this.visibleButton("pressLoad");
-          //hidden 2 button
-          this.hiddenButton("pointLoad");
-          this.hiddenButton("moment");
-          break;
-        case "Area":
-          document.getElementById("BDCondition").style.width = "70px";
-          document.getElementById("BDCondition").style.display = "flex";
-          this.fillArea(selectedObj, "#b6d8e7");
-          this.renderProperty("area", selectedObj);
-          //display 1 button
-          this.visibleButton("valueName");
-          //hidden 3 button
-          this.hiddenButton("pressLoad");
-          this.hiddenButton("pointLoad");
-          this.hiddenButton("moment");
-          break;
-      }
-    }
+    // if (this.arrCurObj[0] !== undefined) {
+    //   let selectedObj;
+    //   selectedObj = this.arrCurObj[0];
+    //   switch (selectedObj.className) {
+    //     case "Point":
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       document.getElementById("BDCondition").style.width = "200px";
+    //       this.drawPoint(selectedObj, "green");
+    //       this.renderProperty("point", selectedObj);
+    //       //display 3 button
+    //       this.visibleButton("valueName");
+    //       this.visibleButton("pointLoad");
+    //       this.visibleButton("moment");
+    //       //hidden 1 button
+    //       this.hiddenButton("pressLoad");
+    //       break;
+    //     case "Line":
+    //       document.getElementById("BDCondition").style.width = "150px";
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       this.drawLine(
+    //         selectedObj.Point[0],
+    //         selectedObj.Point[1],
+    //         "#0000ff",
+    //         selectedObj.width
+    //       );
+    //       this.renderProperty("line", selectedObj);
+    //       //display 2 button
+    //       this.visibleButton("valueName");
+    //       this.visibleButton("pressLoad");
+    //       //hidden 2 button
+    //       this.hiddenButton("pointLoad");
+    //       this.hiddenButton("moment");
+    //       break;
+    //     case "Area":
+    //       document.getElementById("BDCondition").style.width = "70px";
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       this.fillArea(selectedObj, "#b6d8e7");
+    //       this.renderProperty("area", selectedObj);
+    //       //display 1 button
+    //       this.visibleButton("valueName");
+    //       //hidden 3 button
+    //       this.hiddenButton("pressLoad");
+    //       this.hiddenButton("pointLoad");
+    //       this.hiddenButton("moment");
+    //       break;
+    //   }
+    // }
 
-    if (this.pen === "line") {
-      this.renderCommand("line");
-    } else {
-      this.renderCommand("Off");
-    }
+    // if (this.pen === "line") {
+    //   this.renderCommand("line");
+    // } else {
+    //   this.renderCommand("Off");
+    // }
   }
 
   renderProperty(mode, Obj) {
@@ -2615,9 +3089,13 @@ class Paint {
     ) {
       document.getElementsByClassName("boderProperties")[0].style.display =
         "block";
+      document.getElementsByClassName("property-icon")[0].style.transform = "rotate(-90deg)"
+      document.getElementsByClassName("property-icon")[0].title = "Close"
     } else {
       document.getElementsByClassName("boderProperties")[0].style.display =
         "none";
+      document.getElementsByClassName("property-icon")[0].style.transform = "rotate(90deg)"
+      document.getElementsByClassName("property-icon")[0].title = "Open"
     }
   }
 
@@ -2685,7 +3163,7 @@ class Paint {
         obj.point = newLocation;
         obj.x = newLocation[0];
         obj.y = newLocation[1];
-        // console.log(obj);
+        console.log(obj);
         processingData.allLine.forEach((line) => line.getLength());
         processingData.allArea.forEach((area) => {
           area.getPointFlow();

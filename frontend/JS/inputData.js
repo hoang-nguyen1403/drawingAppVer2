@@ -6,7 +6,7 @@ function deselectAll() {
   }
 function inputName(x, y, obj) {
   nameID = new CanvasInput({
-    canvas: document.getElementById("text"),
+    canvas: document.getElementById("myCanvas"),
     x: x,
     y: y,
     fontSize: 18,
@@ -40,7 +40,7 @@ var nameIDs;
 
 function inputNames(x, y) {
   nameIDs = new CanvasInput({
-    canvas: document.getElementById("text"),
+    canvas: document.getElementById("myCanvas"),
     x: x,
     y: y,
     fontSize: 18,
@@ -55,7 +55,7 @@ function inputNames(x, y) {
 
     onsubmit: function () {
       let newName = this.value();
-      for (let obj of DrawGL.storageSelectedLine) {
+      for (let obj of PaintIn.arrMultiCurObj) {
         obj.name = newName;
       }
       this.destroy();
@@ -70,7 +70,7 @@ function inputNames(x, y) {
 var valueLoad;
 function inputForce(x, y, obj, loadKey) {
   valueLoad = new CanvasInput({
-    canvas: document.getElementById("text"),
+    canvas: document.getElementById("myCanvas"),
     x: x,
     y: y,
     fontSize: 13,
@@ -156,7 +156,7 @@ function inputForce(x, y, obj, loadKey) {
 var valueLoads;
 function inputForces(x, y, loadKey) {
   valueLoads = new CanvasInput({
-    canvas: document.getElementById("text"),
+    canvas: document.getElementById("myCanvas"),
     x: x,
     y: y,
     fontSize: 13,
@@ -170,7 +170,7 @@ function inputForces(x, y, loadKey) {
     borderRadius: 3,
 
     onsubmit: function () {
-      for (let obj of DrawGL.storageSelectedLine) {
+      for (let obj of PaintIn.arrMultiCurObj) {
         if (loadKey === "force") {
           //first check
           if (obj.pointLoads === null) {
@@ -247,7 +247,7 @@ function inputForces(x, y, loadKey) {
 var valueMoment;
 function inputMoment(x, y, obj, loadKey) {
   valueMoment = new CanvasInput({
-    canvas: document.getElementById("text"),
+    canvas: document.getElementById("myCanvas"),
     x: x,
     y: y,
     fontSize: 13,
@@ -283,7 +283,7 @@ function inputMoment(x, y, obj, loadKey) {
 var valueMoments;
 function inputMoments(x, y, loadKey) {
   valueMoments = new CanvasInput({
-    canvas: document.getElementById("text"),
+    canvas: document.getElementById("myCanvas"),
     x: x,
     y: y,
     fontSize: 13,
@@ -297,7 +297,7 @@ function inputMoments(x, y, loadKey) {
     borderRadius: 3,
 
     onsubmit: function () {
-      for (let obj of DrawGL.storageSelectedLine) {
+      for (let obj of PaintIn.arrMultiCurObj) {
         if (loadKey === "moment") {
           //first check
           if (obj.pointLoads === null) {
@@ -321,7 +321,7 @@ function inputMoments(x, y, loadKey) {
 var lengthLine;
 function inputLenght(x, y) {
   lengthLine = new CanvasInput({
-    canvas: document.getElementById("text"),
+    canvas: document.getElementById("myCanvas"),
     x: x,
     y: y,
     fontSize: 18,
@@ -451,3 +451,72 @@ function inputComments() {
   PaintIn.renderObject(processingData.allObject);
 }
 
+// function inputComments() {
+//   if (PaintIn.valueComment.value.includes(",")) {
+//     let old_comma_index = 0;
+//     let inputValue = [];
+//     for (let i = 0; i < PaintIn.valueComment.value.length; i++) {
+//       if (PaintIn.valueComment.value[i] === ",") {
+//         inputValue.push(
+//           JSON.stringify(PaintIn.valueComment.value.slice(old_comma_index, i))
+//         );
+//         old_comma_index = i + 1;
+//       }
+//     }
+//     inputValue.push(
+//       JSON.stringify(
+//         PaintIn.valueComment.value.slice(
+//           old_comma_index,
+//           PaintIn.valueComment.value.length
+//         )
+//       )
+//     );
+//     console.log(inputValue);
+
+//     switch (inputValue[0]) {
+//       case "p":
+//         console.log("point");
+//         break;
+//       case "l":
+//         console.log("line");
+//         break;
+//       default:
+//         console.log(inputValue[0]);
+//     }
+//   }
+// }
+
+// function getPoint(start, cur, l) {
+//     let a = cur[0] - start[0];
+//     let b = cur[1] - start[1];
+//     let t = Math.sqrt(l * l / (a * a + b * b));
+//     return [start[0] + a * t, start[1] + b * t];
+// }
+
+// var areaName;
+// function inputAreaName(x, y, obj) {
+//   areaName = new CanvasInput({
+//     canvas: document.getElementById("myCanvas"),
+//     x: x,
+//     y: y,
+//     fontSize: 18,
+//     fontFamily: "Arial",
+//     fontColor: "#212121",
+//     fontWeight: "bold",
+//     width: 25,
+//     height: 25,
+//     padding: 0,
+//     borderColor: "#000",
+//     borderRadius: 3,
+
+//     onsubmit: function () {
+//       PaintIn.drawText(obj, this.value());
+//       obj.name = this.value();
+//       this.destroy();
+//       areaName = undefined;
+//       PaintIn.renderObject(processingData.allObject);
+//       PaintIn.isCancled = false;
+//     },
+//   });
+//   areaName.focus();
+// }

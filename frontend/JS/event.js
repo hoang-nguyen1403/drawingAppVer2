@@ -1,9 +1,8 @@
-
-function getClipSpaceMousePosition(e) {
+function getClipSpaceMousePosition(event) {
   // get canvas relative css position
   const rect = DrawGL.canvas.getBoundingClientRect();
-  const cssX = e.clientX - rect.left;
-  const cssY = e.clientY - rect.top;
+  const cssX = event.clientX - rect.left;
+  const cssY = event.clientY - rect.top;
 
   // get normalized 0 to 1 position across and down canvas
   const normalizedX = cssX / DrawGL.canvas.clientWidth;
@@ -12,31 +11,45 @@ function getClipSpaceMousePosition(e) {
   // convert to clip space
   const clipX = normalizedX * 2 - 1;
   const clipY = normalizedY * -2 + 1;
+
   return [clipX, clipY];
 }
+let oldPickNdx2D = -1;
+let oldPickColor2D;
+function takeIDPoint2DInvisible(event) {
+  const canvas = DrawGL.gl.canvas;
+  const rect = canvas.getBoundingClientRect();
+  const cssX = event.clientX - rect.left;
+  const cssY = event.clientY - rect.top;
 
-function moveCamera(e) {
+  const pixelX = cssX * canvas.width / canvas.clientWidth;
+  const pixelY = canvas.height - cssY * canvas.height / canvas.clientHeight - 1;
+  const data = new Uint8Array(4);
+  DrawGL.gl.readPixels(
+    pixelX,            // x
+    pixelY,            // y
+    1,                 // width
+    1,                 // height
+    DrawGL.gl.RGBA,           // format
+    DrawGL.gl.UNSIGNED_BYTE,  // type
+    data);             // typed array to hold result
+  const id = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+  return id
+}
+
+function moveCamera(event) {
   const pos = m3.transformPoint(
     DrawGL.startInvViewProjMat,
-    getClipSpaceMousePosition(e)
-  );
+    getClipSpaceMousePosition(event));
 
   DrawGL.camera.x = DrawGL.startCamera.x + DrawGL.startPos[0] - pos[0];
   DrawGL.camera.y = DrawGL.startCamera.y + DrawGL.startPos[1] - pos[1];
-  console.log(DrawGL.camera);
-  PaintIn.ctx.translate(DrawGL.camera.x,DrawGL.camera.y);
-  PaintIn.ctx.restore();
-  DrawGL.drawFill();
-  DrawGL.draw();
-  DrawGL.drawOpen();
-  DrawGL.drawLineSelected();
-  DrawGL.drawPoint()
+  DrawGL.drawMain();
 }
 
-function rotateCamera(e) {
-  const delta = (e.clientX - DrawGL.startMousePos[0]) / 100;
-
-  // compute a matrix to pivot around the camera space startPos
+function rotateCamera(event) {
+  const delta = (event.clientX - DrawGL.startMousePos[0]) / 100;
+  // compute a matrix to pivot around the camera space DrawGL.startPos
   let camMat = m3.identity();
   camMat = m3.translate(camMat, DrawGL.startPos[0], DrawGL.startPos[1]);
   camMat = m3.rotate(camMat, delta);
@@ -45,336 +58,255 @@ function rotateCamera(e) {
   // multply in the original camera matrix
   Object.assign(DrawGL.camera, DrawGL.startCamera);
   camMat = m3.multiply(camMat, DrawGL.makeCameraMatrix());
-
   // now we can set the rotation and get the needed
   // camera position from the matrix
   DrawGL.camera.rotation = DrawGL.startCamera.rotation + delta;
   DrawGL.camera.x = camMat[6];
   DrawGL.camera.y = camMat[7];
-  DrawGL.drawFill();
-  DrawGL.draw();
-  DrawGL.drawOpen();
-  DrawGL.drawLineSelected();
-  DrawGL.drawPoint()
+  DrawGL.drawMain();
 }
 
-function handleMouseMove(e) {
-  if (rotate) {
-    rotateCamera(e);
-    is_dragging = false;
+function handleMouseMove(event) {
+  if (DrawGL.rotate) {
+    rotateCamera(event);
   }
-  if (e.buttons == 4) {
-    moveCamera(e);
+  if (event.buttons == 4) {
+    moveCamera(event);
   }
 }
 
-function handleMouseUp(e) {
-  rotate = false;
-  DrawGL.drawFill();
-  DrawGL.draw();
-  DrawGL.drawOpen();
-  DrawGL.drawLineSelected();
-  DrawGL.drawPoint()
-  window.removeEventListener("mousemove", handleMouseMove);
-  window.removeEventListener("mouseup", handleMouseUp);
+function mousemove(event) {
+  DrawGL.drawMain();
 }
 
-function takePoints(e) {
-  e.preventDefault();
+DrawGL.canvas.addEventListener("mousemove", mousemove);
+
+function handleMouseUp() {
+  DrawGL.rotate = false;
+  DrawGL.drawMain();
+  DrawGL.canvas.removeEventListener('mousemove', handleMouseMove);
+  DrawGL.canvas.removeEventListener('mouseup', handleMouseUp);
+}
+
+DrawGL.canvas.addEventListener('mousedown', (event) => {
+  event.preventDefault();
+  DrawGL.canvas.addEventListener('mouseup', handleMouseUp);
+  DrawGL.canvas.addEventListener('mousemove', handleMouseMove);
+  if (event.buttons == 1) {
+    DrawGL.rotate = event.shiftKey;
+  }
   DrawGL.startInvViewProjMat = m3.inverse(DrawGL.viewProjectionMat);
   DrawGL.startCamera = Object.assign({}, DrawGL.camera);
-  DrawGL.startClipPos = getClipSpaceMousePosition(e);
-  DrawGL.startPos = m3.transformPoint(DrawGL.startInvViewProjMat, DrawGL.startClipPos);
-  DrawGL.startMousePos = [e.clientX, e.clientY];
-  return DrawGL.startPos;
-}
-function takePoints1(e) {
-  e.preventDefault();
-  DrawGL.startInvViewProjMat1 = m3.inverse(DrawGL.viewProjectionMat);
-  DrawGL.startCamera1 = Object.assign({}, DrawGL.camera);
-  DrawGL.startClipPos1 = getClipSpaceMousePosition(e);
-  DrawGL.startPos1 = m3.transformPoint(DrawGL.startInvViewProjMat1, DrawGL.startClipPos1);
-  DrawGL.startMousePos1 = [e.clientX, e.clientY];
-  return DrawGL.startPos1;
-}
-
-DrawGL.canvas.addEventListener("mousedown", (e) => {
-  takePoints(e);
-  window.addEventListener("mouseup", handleMouseUp);
-  window.addEventListener("mousemove", handleMouseMove);
-  if (e.buttons == 1) {
-
-    rotate = e.shiftKey;
-
-  }
-  // Draw.lineVertex.push(startPos);
-  // Draw.lineVertex = Draw.lineVertex.flat();
-  DrawGL.drawFill();
-  DrawGL.draw();
-  DrawGL.drawOpen();
-  DrawGL.drawLineSelected();
-  DrawGL.drawPoint()
+  DrawGL.startClipPos = getClipSpaceMousePosition(event);
+  DrawGL.startPos = m3.transformPoint(
+    DrawGL.startInvViewProjMat,
+    DrawGL.startClipPos
+  );
+  DrawGL.startMousePos = [event.clientX, event.clientY];
+  DrawGL.drawMain();
 });
 
-function mouseDraw(e) {
-  // Draw.pointGLObj = [];
-  if (e.buttons == 1) {
-    drawCheckOldPoint(e);
-    if (DrawGL.nearPointGL !== undefined) {
-      Draw.lineVertex.push([DrawGL.nearPointGL[0].x, DrawGL.nearPointGL[0].y]);
-      Draw.lineVertex = Draw.lineVertex.flat();
+function filter_change() {
+  let data = FEsoln.find(({ name }) => name == DrawGL.filter_value.value);
+  Mesh.prototype.fillElementsGL(data.data);
+  DrawGL.drawMain();
+  DrawGL3D.drawMain();
+}
 
-      for (let i = 0; i < DrawGL.startPos.length; i++) {
-        if (i % 2 == 0) {
-          Draw.point_x.push(DrawGL.nearPointGL[0].x);
-        } else if (i % 2 !== 0) {
-          Draw.point_y.push(DrawGL.nearPointGL[0].y);
-        }
-      }
-
-      for (let i = 0; i < DrawGL.startPos.length; i++) {
-        if (i % 2 == 0) {
-          Draw.pointGL.push([DrawGL.nearPointGL[0].x, DrawGL.nearPointGL[0].y]);
-        }
-      }
-
-    } else {
-      Draw.lineVertex.push(DrawGL.startPos);
-      Draw.lineVertex = Draw.lineVertex.flat();
-
-      for (let i = 0; i < DrawGL.startPos.length; i++) {
-        if (i % 2 == 0) {
-          Draw.point_x.push(Math.round(DrawGL.startPos[i], 8));
-        } else if (i % 2 !== 0) {
-          Draw.point_y.push(Math.round(DrawGL.startPos[i], 8));
-        }
-      }
-
-      for (let i = 0; i < DrawGL.startPos.length; i++) {
-        if (i % 2 == 0) {
-          Draw.pointGL.push([
-            Math.round(DrawGL.startPos[i], 8),
-            Math.round(DrawGL.startPos[i + 1], 8),
-          ]);
-        }
-      }
-    }
-
-    // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
-    var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-      a_position: {
-        numComponents: 2,
-        data: Draw.lineVertex,
-      },
-    });
-
-    var sphereBufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-      a_position: DrawGL.sphereVerts.position,
-      indices: DrawGL.sphereVerts.indices,
-    });
-
-    Draw.newPointGL = processingData.prototype.createPoint(
-      Draw.point_x,
-      Draw.point_y,
-      Draw.pointName,
-      Draw.listloadPoints
-    );
-    for (let point of Draw.newPointGL) {
-      processingData.prototype.addObject(point, Draw.pointGLObj);
-    }
-
-    DrawGL.scene.push({
-      x: 0,
-      y: 0,
-      rotation: 0,
-      scale: 1,
-      color: [0, 0, 0, 1],
-      bufferInfo,
-    });
-    DrawGL.makeCameraMatrix();
-    DrawGL.updateViewProjection();
-    DrawGL.drawFill();
-    DrawGL.draw();
-
-    // for (let i of Draw.newPointGL){
-    //   processingData.prototype.addObject(i, Draw.pointGLObject);
-    // }
-    // for (let i of Draw.newPointGL){
-    // processingData.prototype.addObject(Draw.newPointGL, Draw.pointGLObj);
-
-    if (Draw.point_x.length >= 2) {
-      processingData.prototype.inputRawData("line", Draw.point_x, Draw.point_y);
-    }
-
-    processingData.prototype.updateStorage();
+function mode_change() {
+  let value = document.getElementById("modeSolution_value").value;
+  switch (value) {
+    case "3D":
+      ChangeModeGL3D();
+      break;
+    case "2D":
+      ChangeModeGL();
   }
 }
 
-DrawGL.canvas.addEventListener("wheel", (e) => {
-  e.preventDefault();
-  const [clipX, clipY] = getClipSpaceMousePosition(e);
+function checkSolution(event) {
+  // event.preventDefault();
+  // DrawGL.startInvViewProjMat_check = m3.inverse(DrawGL.viewProjectionMat);
+  // DrawGL.startCamera_check = Object.assign({}, DrawGL.camera);
+  // DrawGL.startClipPos_check = getClipSpaceMousePosition(event);
+  // DrawGL.startPos_check = m3.transformPoint(
+  //   DrawGL.startInvViewProjMat_check,
+  //   DrawGL.startClipPos_check);
+  // var currentPointGL = {
+  //   x: DrawGL.startPos_check[0],
+  //   y: DrawGL.startPos_check[1],
+  // };
+  // let a = DrawGL.pointcheck;
+  // let arrPoints1 = [];
+  // for (let i = 0; i < a.length; i++) {
+  //   arrPoints1.push({ x: a[i][0], y: a[i][1] })
+  // }
+  // DrawGL.nearPointGL = processingData.prototype.getNearest(arrPoints1, currentPointGL, 10);
+  // if (DrawGL.nearPointGL !== undefined) {
+  //   DrawGL.drawMain();
+  //   DrawGL.drawCheckpoint({
+  //     x: DrawGL.nearPointGL[0].x,
+  //     y: DrawGL.nearPointGL[0].y,
+  //     color: [1, 0, 0, 1],
+  //     bufferInfo: DrawGL.sphereBufferInfo,
+  //   });
+  //   DrawGL.canvas.addEventListener('mousedown', showproperties);
+  // }
+  // else {
+  //   DrawGL.drawMain();
+  // }
+  if (DrawGL.nearPointGL[0] !== undefined) {
+    DrawGL.drawCheckpoint({
+      x: DrawGL.nearPointGL[0].coord[0],
+      y: DrawGL.nearPointGL[0].coord[1],
+      color: [1, 0, 0, 1],
+      bufferInfo: DrawGL.sphereBufferInfo,
+    });
+  }
+}
+
+function showproperties(event) {
+  if (event.buttons == 1 && !event.shiftKey) {
+    if (DrawGL.nearPointGL[0] !== undefined) {
+      let Detail = DrawGL.takevalueRange.find(({ coord }) => coord[0] == DrawGL.nearPointGL[0].coord[0] && coord[1] == DrawGL.nearPointGL[0].coord[1])
+      if (Detail !== undefined) {
+        DrawGL.color = [0, 0, 1, 1];
+        DrawGL.nearPointGL_storage = [{ x: DrawGL.nearPointGL[0].coord[0], y: DrawGL.nearPointGL[0].coord[1] }, 0];
+        DrawGL.drawCheckpoint({
+          x: DrawGL.nearPointGL_storage[0].x,
+          y: DrawGL.nearPointGL_storage[0].y,
+          color: DrawGL.color,
+          bufferInfo: DrawGL.sphereBufferInfo,
+        });
+        document.getElementById("property_solution").style.display = "inline-block"
+        document.getElementById("property_solution").innerHTML = `
+          <div class="property_solution_label">
+          <p style="display: flex; justify-content: center; align-items: center; width: 100%">DETAIL</p>
+          <div>
+            <button class="property_solution-icon" title = "Close" onclick="toggleProperty()" value="Off"></button>
+          </div>
+        </div>
+        <div class=boderProperties_solution>   
+            <div>
+              <p style="display: flex; justify-content: center; align-items: center">Coordinate</p>
+                <div>
+                  <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
+                    [${math.round(DrawGL.nearPointGL_storage[0].x, 2)}, ${math.round(DrawGL.nearPointGL_storage[0].y, 2)}]
+                  </div>
+                </div>
+            </div>
+          </div>
+          `;
+        for (let i = 0; i < FEsoln.length; i++) {
+          var a = FEsoln[i].name;
+          document.getElementsByClassName("boderProperties_solution")[0].innerHTML += `
+            <div>
+            <p style="display: flex; justify-content: center; align-items: center">${a}</p>
+            <div style="text-align: center; display: flex; justify-content: center; align-items: center">
+              ${math.round(Detail[a], 10)}
+            </div>
+        </div>
+            `
+        }
+      }
+    }
+    else {
+      document.getElementById("property_solution").style.display = "none";
+      DrawGL.nearPointGL_storage = [{ x: 100000000, y: 10000000000 }, 0];
+      DrawGL.color = [1, 1, 1, 1];
+    }
+  }
+}
+
+DrawGL.canvas.addEventListener('wheel', (event) => {
+  event.preventDefault();
+  const [clipX, clipY] = getClipSpaceMousePosition(event);
 
   // position before zooming
   const [preZoomX, preZoomY] = m3.transformPoint(
     m3.inverse(DrawGL.viewProjectionMat),
-    [clipX, clipY]
-  );
+    [clipX, clipY]);
 
   // multiply the wheel movement by the current zoom level
   // so we zoom less when zoomed in and more when zoomed out
-  const newZoom = DrawGL.camera.zoom * Math.pow(2, e.deltaY * -0.001);
-  DrawGL.camera.zoom = Math.max(0.02, Math.min(200, newZoom));
+  const newZoom = DrawGL.camera.zoom * Math.pow(2, event.deltaY * -0.001);
+  DrawGL.camera.zoom = Math.max(0.02, Math.min(10000, newZoom));
 
   DrawGL.updateViewProjection();
 
   // position after zooming
   const [postZoomX, postZoomY] = m3.transformPoint(
     m3.inverse(DrawGL.viewProjectionMat),
-    [clipX, clipY]
-  );
+    [clipX, clipY]);
 
   // camera needs to be moved the difference of before and after
   DrawGL.camera.x += preZoomX - postZoomX;
   DrawGL.camera.y += preZoomY - postZoomY;
-  DrawGL.drawFill();
-  DrawGL.draw(sphereBufferInfo);
-  DrawGL.drawOpen(sphereBufferInfo);
+
+  DrawGL.drawMain();
 });
 
-// Check position point for click or hover point
-function drawCheckOldPoint(event) {
-  takePoints1(event);
-  var currentPointGL = {
-    x: DrawGL.startPos1[0],
-    y: DrawGL.startPos1[1],
-  };
-  const a = Draw.pointGL;
-  let arrPoints1 = [];
-  for (let i = 0; i < a.length; i++) {
-    arrPoints1.push({ x: a[i][0], y: a[i][1] });
-  }
-  DrawGL.nearPointGL = processingData.prototype.getNearest(
-    arrPoints1,
-    currentPointGL,
-    10/ DrawGL.camera.zoom
-  );
-  if (DrawGL.nearPointGL !== undefined) {
-    DrawGL.drawFill();
-    DrawGL.draw();
-    DrawGL.drawOpen();
-    DrawGL.drawLineSelected();
-    DrawGL.drawCheckpoint({
-      x: DrawGL.nearPointGL[0].x,
-      y: DrawGL.nearPointGL[0].y,
-      rotation: 0,
-      scale: 8 / DrawGL.camera.zoom,
-      color: [1, 0, 0, 1],
-      bufferInfo: sphereBufferInfo,
-    });
-    // DrawGL.canvas.removeEventListener("mousemove", hoverLine);
+//Change cursor
+DrawGL.canvas.addEventListener('pointermove', (e) => {
+  DrawGL.canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
+})
+
+DrawGL.canvas.addEventListener("mousemove", function (event) {
+  event.preventDefault();
+  DrawGL.startInvViewProjMat_check = m3.inverse(DrawGL.viewProjectionMat);
+  DrawGL.startCamera_check = Object.assign({}, DrawGL.camera);
+  DrawGL.startClipPos_check = getClipSpaceMousePosition(event);
+  DrawGL.startPos_check = m3.transformPoint(
+    DrawGL.startInvViewProjMat_check,
+    DrawGL.startClipPos_check);
+  document.getElementById("display_coord").innerHTML =
+    "[" +
+    math.round(DrawGL.startPos_check[0]) +
+    " ; " +
+    math.round(DrawGL.startPos_check[1]) +
+    "]";
+
+});
+
+function toggleProperty() {
+  document.getElementsByClassName("property_solution_label")[0].style.display = "flex";
+  if (
+    document.getElementsByClassName("boderProperties_solution")[0].style.display ===
+    "none"
+  ) {
+    document.getElementsByClassName("boderProperties_solution")[0].style.display =
+      "block";
+    document.getElementsByClassName("property_solution-icon")[0].style.transform = "rotate(-90deg)"
+    document.getElementsByClassName("property_solution-icon")[0].title = "Close"
   } else {
-    DrawGL.drawFill();
-    DrawGL.draw();
-    DrawGL.drawOpen();
-    DrawGL.drawLineSelected();
-    // DrawGL.canvas.addEventListener("mousemove",hoverLine);
-  }
-  return DrawGL.nearPointGL;
-}
-
-// SHOW PROPERTY=====================================================================================
-function showproperties(e) {
-  if (e.buttons == 1) {
-    drawCheckOldPoint(e);
-    if (DrawGL.nearPointGL !== undefined) {
-      for (let i = 0; i < Draw.pointGL.length; i++) {
-        if (
-          DrawGL.nearPointGL[0].x == Draw.pointGL[i][0] &&
-          DrawGL.nearPointGL[0].y == Draw.pointGL[i][1]
-        ) {
-          document.getElementById("property").style.display = "inline-block";
-          document.getElementById("property").innerHTML = `
-          <div class="property_label">
-          <p style="display: flex; justify-content: center; align-items: center; width: 100%">PROPERTY</p>
-          <div>
-            <button class="property-icon" title = "Close" onclick="PaintIn.toggleProperty()" value="Off"></button>
-          </div>
-        </div>
-        <div class=boderProperties>
-            <div>
-              <p style="display: flex; justify-content: center; align-items: center">Object</p>
-              <div style="display: flex; justify-content: center; align-items: center">${processingData.allObject[0].className}</div>
-            </div>
-            <div>
-              <p style="display: flex; justify-content: center; align-items: center">Coordinate</p>
-                <div>
-                  <div style="text-align: center; width:100%; display: flex; justify-content: center; align-items: center">
-                    [${math.round(DrawGL.nearPointGL[0].x, 2)}, ${math.round(
-            DrawGL.nearPointGL[0].y,
-            2
-          )}]
-                  </div>
-                </div>
-            </div>
-          </div>
-          `;
-        }
-      }
-    }
+    document.getElementsByClassName("boderProperties_solution")[0].style.display =
+      "none";
+    document.getElementsByClassName("property_solution-icon")[0].style.transform = "rotate(90deg)"
+    document.getElementsByClassName("property_solution-icon")[0].title = "Open"
   }
 }
 
-// MOVE + SELECT POINT AND LINE ===============================================================================================================
-let offset_x;
-let offset_y;
-
-let get_offset = function () {
-  let canvas_offsets = DrawGL.canvas.getBoundingClientRect();
-  offset_x = canvas_offsets.left;
-  offset_y = canvas_offsets.top;
-}
-
-get_offset();
-window.onscroll = function () { get_offset(); }
-window.onresize = function () { get_offset(); }
-window.onresize = function () { get_offset(); }
-
-let point = [];
-let current_point_index = null;
-let is_dragging = false;
-let startX;
-let startY;
-let swap_point = [];
-
-
-let mouse_down = function (event) {
-  if (event.buttons === 1) {
-    event.preventDefault();
-    // console.log(event);
-
-    startX = Math.round(event.clientX - offset_x);
-    startY = Math.round(event.clientY - offset_y);
-
-    for (let i = 0; i < processingData.allPoint.length; i++) {
-      if (drawCheckOldPoint(event)) {
-        var check = drawCheckOldPoint(event);
-        if (processingData.allPoint[i].x == check[0].x && processingData.allPoint[i].y == check[0].y) {
-          current_point_index = i;
-          // console.log("yes")
-          // console.log(current_point_index);
-          is_dragging = true;
-          return;
-        } else {
-          // console.log("no")
-        }
-      }
-
-    }
-    // let selectedObj = processingData.allObject.find((obj) =>
-    //   obj.isIn([startX, startY])
-    // );
-    // console.log(selectedObj);
-  }
-}
-
-Draw.selectedLine = [];
+// function resetCameraView(){
+//   if (document.getElementById("modeSolution_value").value === "2D") {
+//     DrawGL.camera = {
+//       x: 0,
+//       y: 0,
+//       rotation: 0,
+//       zoom: 1,
+//     }
+//     DrawGL.drawMain();
+//   }
+//   else {
+//     DrawGL3D.camera = {
+//       rotation_X: 0, // degrees
+//       rotation_Y: 0, // degrees
+//       rotation_Z: 0, // degrees
+//       Deep: 400000,
+//       Zoom: 1,
+//       translation_x: 0,
+//       translation_y: 0,
+//       translation_z: math.max(math.abs(DrawGL.pointcheck)),
+//     }
+//     DrawGL3D.drawMain();
+//   }
+// }

@@ -26,7 +26,6 @@
 
 </head>
 
-
 <body>
 	<div id="header">
 		<h1><b style="font-family: Segoe Script;"></b></h1>
@@ -40,16 +39,16 @@
 				<input type="number" name="size" min="1" max="10" id="line_size" value="5">
 			</div>
 
-			<!-- <div>
-				<button id="grid" title="Grid" type="button"  onclick="PaintIn.buttonGrid()" -->
-					<!-- style="background-image: url(frontend/img/grid.png)" value="Off"></button> -->
+			<div>
+				<button id="grid" title="Grid" type="button" onclick="PaintIn.buttonGrid()"
+					style="background-image: url(frontend/img/grid.png)" value="Off"></button>
 				<!-- <input type="range" name="sizeGrid" min="10" max="100" id="sizeGrid" class="rangeSlider"> -->
-			<!-- </div> -->
+			</div>
 			<!-- <button id="brush" class="btn" type="button" onclick="PaintIn.chooseBrush()" value="Off"
 					style="background-image: url(frontend/img/brush.png)"></button> -->
 			<button id="line" title="Line" class="btn" type="button" onclick="PaintIn.chooseLine()" value="Off"
 				style="background-image: url(frontend/img/line.png)"></button>
-			<!-- <button id="circle" class="btn" type="button" onclick="PaintIn.chooseCircle()" value="Off"
+			<!-- <button	 id="circle" class="btn" type="button" onclick="PaintIn.chooseCircle()" value="Off"
 					style="background-image: url(frontend/img/circle.png)"></button>
 				<button id="rect" class="btn" type="button" onclick="PaintIn.chooseRect()" value="Off"
 					style="background-image: url(frontend/img/rectangle.png)"></button>
@@ -60,21 +59,25 @@
 		</div>
 
 		<div id="center_div">
-<!--			<div id="BDCondition">-->
-<!--				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"-->
-<!--					style="background-image: url(frontend/img/apply_name.svg)"></button>-->
-<!--				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"-->
-<!--					style="background-image: url(frontend/img/apply_force.svg)"></button>-->
-<!--				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"-->
-<!--					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>-->
-<!--				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"-->
-<!--					style="background-image: url(frontend/img/apply_moment.svg)"></button></button>-->
-<!--			</div>-->
+			<!--			<div id="BDCondition">-->
+			<!--				<button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"-->
+			<!--					style="background-image: url(frontend/img/apply_name.svg)"></button>-->
+			<!--				<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"-->
+			<!--					style="background-image: url(frontend/img/apply_force.svg)"></button>-->
+			<!--				<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"-->
+			<!--					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>-->
+			<!--				<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"-->
+			<!--					style="background-image: url(frontend/img/apply_moment.svg)"></button></button>-->
+			<!--			</div>-->
 
 			<div id="modeSoln">
 				<button id="fillColor" class="btn" type="button" onclick="Mesh.prototype.addValFillColor()"
 					value="Off"></button>
 			</div>
+			<!-- <div id="position">
+				<button id="setPosition" class="btn" type="button" onclick="resetCameraView()"
+					value="Off"></button>
+			</div> -->
 
 			<!-- <div id="constraint">
 				<button id="fixConstraint" class="btn" type="button" onclick="PaintIn.addValueName()" value="Off"></button>
@@ -87,38 +90,35 @@
 				<label id="openFile_label" title="Open">
 					<input type="file" name="openFile" id="openFile" style="display: none">
 				</label>
-				<button id="saveFile" title="Save" type="button" onclick="processingData.prototype.saveAsData()"></button>
+				<button id="saveFile" title="Save" type="button"
+					onclick="processingData.prototype.saveAsData()"></button>
 				<button id="Clear_all" title="Clear" type="button" onclick="PaintIn.clearAll()"></button>
 
 				<!-- request -->
-				<button id="meshing" title="Mesh" onclick="PaintIn.mps_PALc('phi',processingData.prototype.saveObj());"></button>
 				<!-- <button id="openFile_Solu" title="Solve" onclick="PaintIn.getAPI()"></button> -->
 				<label id="ChangeMode">
-					<button id="modeDrawing" title="Drawing mode" type="button"></button>
+					<button id="modeDrawing" title="Drawing mode" style="background-color: #57fa6d;"
+						type="button"></button>
 				</label>
 				<!-- GLMode -->
-				<label id="ChangeModeGL">
-					<button id="modeGL" title="GL mode" type="button"></button>
+				<label id="ChangeModeGL" style="display: none;">
+					<button id="modeGL" title="Solution mode" type="button"></button>
 				</label>
+				<button id="meshing" title="Solution mode" onclick="mode_change()"></button>
 				<label class="inputImage" title="Open image">
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
 						style="display: none">
 				</label>
-				<!-- <div> -->
-					<button id="grid" title="Grid" type="button"  onclick="PaintIn.buttonGrid()"
-						style="background-image: url(frontend/img/grid.png)" value="Off"></button>
-					<!-- <input type="range" name="sizeGrid" min="10" max="100" id="sizeGrid" class="rangeSlider"> -->
-				<!-- </div> -->
 
 				<div id="BDCondition">
-					</button><button id="valueName" class="btn" type="button" onclick="addValueName()" value="Off"
-				style="background-image: url(frontend/img/apply_name.svg)"></button>
-				<button id="pointLoad" class="btn" type="button" onclick="addValPointLoad()" value="Off"
-					style="background-image: url(frontend/img/apply_force.svg)"></button>
-				<button id="pressLoad" class="btn" type="button" onclick="addValPressLoad()" value="Off"
-					style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
-				<button id="moment" class="btn" type="button" onclick="addValMoment()" value="Off"
-					style="background-image: url(frontend/img/apply_moment.svg)"></button>
+					</button><button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()"
+						value="Off" style="background-image: url(frontend/img/apply_name.svg)"></button>
+					<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
+						style="background-image: url(frontend/img/apply_force.svg)"></button>
+					<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
+						style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
+					<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
+						style="background-image: url(frontend/img/apply_moment.svg)"></button>
 				</div>
 				<div class="request">
 					<label class="url">
@@ -136,29 +136,28 @@
 
 			</div>
 			<div id="wrap_canvas_div">
-				<canvas id="myCanvas">
-
-				</canvas>
-				
+				<canvas id="myCanvas"></canvas>
 			</div>
-
-				<!-- <canvas onload="drawGrid()" id="mycanvas" width="1200" height="600" style="background-color: #ffffff; border: 1px solid black;"></canvas> -->
-
-			<div id="WebGL_area" style="display: none;">
+			<div id="WebGL_area">
 				<div id="aks_visualizer">
-					<!-- <button class="toggleButton" id="showMeshtest" onchange="edit_meshoption()"></button>
-					<! <div style="margin-left: 0px; width: 70px;height: 30px;left: 0px; top: 0px;position: relative;">
-						<label for="">
-							<input id="showMeshtest" type="checkbox" onchange="edit_meshoption()">
-							Mesh
-						</label>						 -->
-					<!-- </div> -->
-						<!-- <canvas id = "canvas_test" width="1200" height="1000" style="background-color: #ffffff; border: 1px solid black;">
-						</canvas> -->
-						<canvas id = "my_canvasTest"></canvas>
-						<canvas id="text"></canvas>
-						
+					<canvas id="canvasGL"></canvas>
+					<canvas id="text_colorbar"></canvas>
+					<canvas id="canvas_colorbar"></canvas>
+					</form>
+					<form id="form">
+						<select name="modeSolution" id="modeSolution_value" onchange="mode_change()"
+							style="display: none;">
+							<option value="2D">2D</option>
+							<option value="3D">3D</option>
+						</select>
+						<select name="filter" id="filter" onchange="filter_change()" style="display: none;">
+						</select>
+					</form>
 				</div>
+
+			</div>
+			<div id="Mode3D">
+				<canvas id="mode"></canvas>
 			</div>
 			<div id="coord_div">
 				<div id="icon_coord">
@@ -169,8 +168,9 @@
 		</div>
 
 		<div id="tool_right">
-			<div id="property">
+			<div id="property_solution">
 			</div>
+			<div id="property"></div>
 			<div id="command"></div>
 		</div>
 
@@ -181,17 +181,18 @@
 				<textarea id="textBox" name="" rows="17" cols="32" style="padding: 2px;">
 				</textarea>
 				<div id="btn_tab_cmt">
-					<label id="uploadFile_label" title="Upload file" >Choose a file
+					<label id="uploadFile_label" title="Upload file">Choose a file
 						<input type="file" name="uploadFile" id="uploadFile" style="display: none">
 					</label>
 
-					<button id="cmtSaveText" title="Save into a .txt" type="button" class="btn" onclick="processingData.prototype.saveTextFile()" value="Off"
-					>Save text</button>
+					<button id="cmtSaveText" title="Save into a .txt" type="button" class="btn"
+						onclick="processingData.prototype.saveTextFile()" value="Off">Save text</button>
 
 				</div>
 				<div id="spinner"></div>
 				<div id="valueInputed">
-					<p style="background-color: #ffffff; height: 40%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
+					<p
+						style="background-color: #ffffff; height: 40%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
 					</p>
 				</div>
 
@@ -231,9 +232,14 @@
 	<script src="./frontend/libs/twgl.js"></script>
 	<script src="./frontend/libs/twgl-full.js"></script>
 	<script src="./js/webgl-utils-2021.js"></script>
-	<!-- <script src="frontend/libs/three.js"></script> -->
 	<script src="./frontend/JS/paintingWebGL.js"></script>
 	<script src="frontend/JS/event.js"></script>
+	<script src="./frontend/JS/Draw3D.js"></script>
+	<script src="./frontend/JS/uiUtils.js"></script>
+	<script src="./frontend/JS/event3D.js"></script>
+	<script src="./frontend/JS/processingData_GL.js"></script>
+	<script src="./frontend/JS/Drawing.js"></script>
+	<script src="./frontend/JS/eventDrawing.js"></script>
 </body>
 
 </html>

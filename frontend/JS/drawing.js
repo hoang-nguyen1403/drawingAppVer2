@@ -1,143 +1,255 @@
+// USING FOR DRAWING GEOMETRY IN WEBGL ===============================================================================================================
 class Drawing {
+	constructor() {
+		// Declare canvas and webgl
+		this.canvas = document.querySelector("#myCanvas");
+		this.gl = this.canvas.getContext("webgl");
+		this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
+		this.canvas.height =
+			document.getElementById("wrap_canvas_div").clientHeight;
+		// Load script Shader
+		this.vertex = this.loadVSFG('./frontend/shader/shader_black.vs');
+		this.fragment = this.loadVSFG('./frontend/shader/shader_black.fs');
 
-    // The general method for drawing a quad.
-    static drawQuad(canvas, gl, vertices, RGBA) {
-        var indices = [3,2,1,3,1,0];
+		// Compiles shaders and create program
+		this.programInfo = twgl.createProgramInfo(this.gl, [this.vertex, this.fragment]);
 
-        // Binds the vertex buffer, adds the data, and then unbinds the vertex buffer.
-        var vertexBuffer = gl.createBuffer();
-    	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    	gl.bindBuffer(gl.ARRAY_BUFFER, null);
+		// Declare the geometry sphere imformation from library twgl
+		this.sphereVerts = twgl.primitives.createSphereVertices(1, 24, 12);
+		// Create the buffer info from array for the sphere geometry
+		this.sphereBufferInfo = twgl.createBufferInfoFromArrays(this.gl, {
+			a_position: this.sphereVerts.position,
+			indices: this.sphereVerts.indices,
+		});
 
-        // Binds the index buffer, adds the data, and then unbinds the vertex buffer.
-        var indexBuffer = gl.createBuffer();
-    	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-    	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-
-        // Sets up the vertex code.
-        var vertexCode =
-    		'attribute vec3 coordinates;' +
-    		'void main(void){' +
-    			'gl_Position = vec4(coordinates,1.0);'+
-    		'}';
-
-        // Passes the vertex shader code to be compiled.
-        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    	gl.shaderSource(vertexShader, vertexCode);
-    	gl.compileShader(vertexShader);
-
-        // Sets up the fragment code.
-        var fragmentCode =
-            'void main(void){' +
-                'gl_FragColor = vec4(' +
-                RGBA[0].toString() + ',' +
-                RGBA[1].toString() + ',' +
-                RGBA[2].toString() + ',' +
-                RGBA[3].toString() +
-                ');' +
-            '}';
-
-        // Pases the fragment shader code to be compiled. Hense the open pipeline.
-        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragmentShader, fragmentCode);
-        gl.compileShader(fragmentShader);
-
-        // Sets up the shader program and links the vertex and fragment shader.
-        var shaderProgram = gl.createProgram();
-    	gl.attachShader(shaderProgram, vertexShader);
-    	gl.attachShader(shaderProgram, fragmentShader);
-    	gl.linkProgram(shaderProgram);
-    	gl.useProgram(shaderProgram);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-        var coord = gl.getAttribLocation(shaderProgram, "coordinates");
-    	gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0, 0);
-
-        gl.enableVertexAttribArray(coord);
-        // Sets up the viewport based on the canvas width and height.
-        gl.viewport(0,0, canvas.width, canvas.height);
-
-        // Once everything has been set up the elements can be drawn to the screen.
-        gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-    }
-
-    static drawLine(canvas, gl, vertices, RGBA) {
-
-    	// Initialize the buffer object.
-    	var vertexBuffer = gl.createBuffer();
-
-    	// Bind the buffer to the ARRAY_BUFFER.
-    	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-
-    	// Add vertex data to the ARRAY_BUFFER
-    	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
-    	// Unbind the ARRAY_BUFFER
-    	gl.bindBuffer(gl.ARRAY_BUFFER, null);
+		// Create default values for camera view
+		this.camera = {
+			x: 0,
+			y: 0,
+			rotation: 0,
+			zoom: 1,
+		};
 
 
-    	/*
-    	A Shader is a program that lives in the GPU.
-    	*/
+		// Declare scene view and set up mouse position
+		this.viewProjectionMat = new Float32Array([0.0013840830652043223, 0, 0, 0, -0.004566209856420755, 0, -1, 1, 1]);
+		this.viewProjectionMat_colorbar;
+		this.startInvViewProjMat;
+		this.startCamera;
+		this.startPos;
+		this.startClipPos;
+		this.startMousePos;
+		this.startInvViewProjMat_check;
+		this.startCamera_check;
+		this.startPos_check;
+		this.startClipPos_check;
+		this.startMousePos_check;
 
-    	/*
-    	Vertex Shader deals with transforming vertices from the affine space
-    	to the projective space (screen).
-    	*/
-    	var vertCode =
-                'attribute vec3 coordinates;' +
-                'void main(void) {' +
-                   ' gl_Position = vec4(coordinates, 1.0);' +
-                '}';
-    	var vertShader = gl.createShader(gl.VERTEX_SHADER);
-    	gl.shaderSource(vertShader, vertCode);
-    	gl.compileShader(vertShader);
+		//  Declare rotate
+		this.rotate;
 
-    	/*
-    	Fragment Shader deals with coloring the space between vertices starting
-    	with the edges.
-    	*/
+		// Bool for drawing or not drawing
+		this.isDrawing;
 
-        var fragCode =
-            'void main(void){' +
-                'gl_FragColor = vec4(' +
-                RGBA[0].toString() + ',' +
-                RGBA[1].toString() + ',' +
-                RGBA[2].toString() + ',' +
-                RGBA[3].toString() +
-                ');' +
-            '}';
+		// Bool for selecting or not selecting
+		this.isSelecting;
 
-    	var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    	gl.shaderSource(fragShader, fragCode);
-    	gl.compileShader(fragShader);
+		// Bool for dragging or not dragging
+		this.isDragging;
 
+		// Data storage
 
-    	/*
-    	Creates a GPU program to link vertexShader and fragmentShader.
-    	*/
-    	var shaderProgram = gl.createProgram();
-    	gl.attachShader(shaderProgram, vertShader);
-    	gl.attachShader(shaderProgram, fragShader);
-    	gl.linkProgram(shaderProgram);
-    	gl.useProgram(shaderProgram);
+		// Data storage mouse down position
+		this.mouseDownPos = []; //start
+		this.arrMouseDownPosition = [];
+		this.currentMouseDownPos = [];
 
-    	// Binds the vertex buffer to use the freed buffer.
-    	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+		// Data storage point coordinate
+		this.arrPoint = [];
 
-    	// Gets the attribute location (line in the program) in which the program holds.
-    	var coord = gl.getAttribLocation(shaderProgram, "coordinates");
-    	gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 0, 0);
+		// Data storage line coordinate x and y
+		this.arrLineX = [];
+		this.arrLineY = [];
+		this.arrLine = [];
 
-    	gl.enableVertexAttribArray(coord);
+		// Data storage area point coordinate
+		this.arrArea = [];
 
-    	// Projection Coordinates
-    	gl.viewport(0,0,canvas.width,canvas.height);
+		// Data storage - scene
+		this.scenePoint = [];
+		this.sceneLine = [];
+		this.sceneArea = [];
+		this.sceneSelectedPoint = [];
+		this.sceneSelectedLine = [];
+		this.sceneSelectedArea = [];
 
-    	gl.drawArrays(gl.LINES, 0, 2);
-    }
+		// Data storage - selected Point, Line and Area
+		this.storageSelectPoint = [];
+		this.storageSelectLine = [];
+		this.storageSelectArea = [];
+		this.selectPoint = [];
+		this.selectLine = [];
+		this.selectArea = [];
+
+		// Data storage - find point near mouse when moving
+		this.nearPointGL = [];
+
+		// Hover Point, Line and Area
+		this.hoverLine = [];
+		this.hoverPoint = [];
+		this.hoverArea = [];
+
+		// Color
+		this.colorDefault = [0, 0, 0, 1];
+		this.colorDefaultArea = [0.90, 0.95, 1.00, 1.0];
+		this.colorPickPoint = [1, 0, 0, 1];
+		this.colorPickLine = [0, 0, 1, 1];
+		this.colorPickArea = [0.71, 0.85, 0.91, 1.0];
+	}
+
+	// Load vertex and fragment shader
+	loadVSFG(path) {
+		var request = new XMLHttpRequest();
+		request.open('GET', path, false);
+		request.overrideMimeType('text\/plain; charset=x-user-defined');
+		request.send();
+		return ((request.status === 0) || (request.status === 200)) ? request.responseText : null;
+	}
+
+	// Create camera matrix
+	makeCameraMatrix() {
+		const zoomScale = 1 / this.camera.zoom;
+		let cameraMat = m3.identity();
+		cameraMat = m3.translate(cameraMat, this.camera.x, this.camera.y);
+		cameraMat = m3.rotate(cameraMat, this.camera.rotation);
+		cameraMat = m3.scale(cameraMat, zoomScale, zoomScale);
+		return cameraMat;
+	}
+
+	// Update camera matrix
+	updateViewProjection() {
+		// same as ortho(0, width, height, 0, -1, 1)
+		const projectionMat = m3.projection(this.gl.canvas.width, this.gl.canvas.height);
+		const cameraMat = this.makeCameraMatrix();
+		let viewMat = m3.inverse(cameraMat);
+		this.viewProjectionMat = m3.multiply(projectionMat, viewMat);
+	}
+	// Processing Data for Drawing
+	handleData() {
+		this.arrPoint = [];
+		this.arrLine = [];
+		// handle data for point
+		for (let i = 0; i < processingData.allPoint.length; i++) {
+			this.arrPoint.push(processingData.allPoint[i].x, processingData.allPoint[i].y);
+		}
+		// handle Data for Line
+		for (let i = 0; i < processingData.allLine.length; i++) {
+			this.arrLine.push(processingData.allLine[i].Point[0].x, processingData.allLine[i].Point[0].y, processingData.allLine[i].Point[1].x, processingData.allLine[i].Point[1].y);
+		}
+	}
+
+	handleArea() {
+		this.sceneArea = [];
+		for (let i = 0; i < processingData.allArea.length; i++) {
+			this.arrArea = [];
+			this.arrArea.push(processingData.allArea[i].pointFlow);
+			this.arrArea = this.arrArea.flat();
+			let triangles = earClipping(this.arrArea);
+			triangles = triangles.flat();
+			triangles = triangles.flat();
+			let bufferInfoArea = this.CreateBufferInfo(triangles, null);
+			this.sceneArea.push({ color: this.colorDefaultArea, bufferInfo: bufferInfoArea });
+		}
+	}
+
+	// Create buffer Info 
+	CreateBufferInfo(vertices, indices) {
+		if (indices == null) {
+			let bufferInfo = twgl.createBufferInfoFromArrays(this.gl, {
+				a_position: {
+					numComponents: 2,
+					data: vertices
+				},
+			})
+			return bufferInfo
+		} else {
+			let bufferInfo = twgl.createBufferInfoFromArrays(this.gl, {
+				a_position: {
+					numComponents: 2,
+					data: vertices
+				},
+				indices: indices
+			})
+			return bufferInfo
+		}
+	}
+
+	// Drawing Point in webGL
+	DrawPoint() {
+		for (let i = 0; i < DrawingGL.scenePoint.length; i++) {
+			const { color, bufferInfo } = DrawingGL.scenePoint[i];
+			twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
+			twgl.setUniforms(this.programInfo, {
+				u_matrix: this.viewProjectionMat,
+				u_color: color,
+			});
+			twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
+		}
+	}
+
+	// Drawing sphere check near Point
+	DrawSphere(thing) {
+		this.gl.useProgram(this.programInfo.program);
+		const { x, y } = thing;
+		twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.sphereBufferInfo);
+		let mat = m3.identity();
+		mat = m3.translate(mat, x, y);
+		mat = m3.rotate(mat, 0);
+		mat = m3.scale(mat, 5 / this.camera.zoom, 5 / this.camera.zoom);
+		this.gl.getParameter(this.gl.LINE_WIDTH);
+		this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
+		// calls gl.uniformXXX
+		twgl.setUniforms(this.programInfo, {
+			u_matrix: m3.multiply(this.viewProjectionMat, mat),
+			u_color: this.colorPickPoint,
+		});
+		// calls gl.drawArrays or gl.drawElements
+		twgl.drawBufferInfo(this.gl, this.sphereBufferInfo);
+	}
+
+	// Drawing Line in webGL
+	DrawLine() {
+		for (let i = 0; i < DrawingGL.sceneLine.length; i++) {
+			const { color, bufferInfo } = DrawingGL.sceneLine[i];
+			twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
+			twgl.setUniforms(this.programInfo, {
+				u_matrix: this.viewProjectionMat,
+				u_color: color,
+			});
+			twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
+		}
+	}
+
+	// Drawing Area in webGL
+	DrawArea() {
+		for (let i = 0; i < DrawingGL.sceneArea.length; i++) {
+			const { color, bufferInfo } = DrawingGL.sceneArea[i];
+			twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
+			twgl.setUniforms(this.programInfo, {
+				u_matrix: this.viewProjectionMat,
+				u_color: color,
+			});
+			twgl.drawBufferInfo(this.gl, bufferInfo);
+		}
+	}
+	DrawMain() {
+		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+		this.updateViewProjection();
+		this.gl.useProgram(this.programInfo.program);
+		this.DrawArea();
+		this.DrawPoint();
+		this.DrawLine();
+	}
 }
+const DrawingGL = new Drawing();
+

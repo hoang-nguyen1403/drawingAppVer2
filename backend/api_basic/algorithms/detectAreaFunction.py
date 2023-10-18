@@ -21,13 +21,26 @@ def detectArea(data):
             named_surface_names.append(name)
             named_surface_name_coords.append(old_surface_name_coords[idx])
     
-    # =============== SCALE AND ROUND NODE COORDINATES =========================
-    scale = 4
-    scale_node_coords = [[round(x*scale),round(y*scale)] for [x,y] in raw_node_coords]
+    # ============== TAKE MIN VALUE COORD =============================
+    min_x = 10000000;
+    min_y = 10000000;
+
+    for i in range(len(raw_node_coords)):
+        if raw_node_coords[i][0] <= min_x :
+            indice_x = raw_node_coords[i][0]
+            min_x = indice_x
+        if raw_node_coords[i][1] <= min_y :
+            indice_y = raw_node_coords[i][1]
+            min_y = indice_y
+
+    # =============== CHANGE, SCALE AND ROUND NODE COORDINATES =========================
+    scale = 16
+    scale_node_coords = [[round((x+abs(min_x)+5)* scale), round((y+abs(min_y)+5)* scale)] for [x, y] in raw_node_coords]
+
     kdtree = cKDTree(scale_node_coords)
 
     # =============== CREATE MATRIX =============================
-    matrix = np.zeros((6000, 6000), 'uint8')
+    matrix = np.zeros((26500, 26500), 'uint8')
 
     # =============== DRAW SEGMENTS ============================
     for segment in segments:
