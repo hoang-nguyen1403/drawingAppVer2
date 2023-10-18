@@ -1,5 +1,5 @@
 // Class Draw
-class Draw {
+class solutionMode {
   constructor() {
     // Declare the card canvasGl - main draw
     this.canvas = document.querySelector('#canvasGL');
@@ -70,7 +70,7 @@ class Draw {
 
     // Declare nearpointGL to interesction check point near mouse
     this.nearPointGL;
-    this.nearPointGL_storage;
+    this.nearPointGL_storage = [{ x: 0, y: 0 }, 0];
 
     // Declare array to storage the data for drawing
     this.lineVertex = [];
@@ -90,8 +90,6 @@ class Draw {
     this.scene_color = [];
     this.scene_load = [];
     this.colorvec4 = [];
-    this.color_black = [0, 0, 0, 1];
-    this.color_red = [1, 0, 0, 1];
     this.color = [1, 1, 1, 1];
 
     this.node = []
@@ -119,10 +117,10 @@ class Draw {
 
   // processing data matrix when zoom, move and rotate
   makeCameraMatrix() {
-    const zoomScale = 1 / DrawGL.camera.zoom;
+    const zoomScale = 1 / this.camera.zoom;
     let cameraMat = m3.identity();
-    cameraMat = m3.translate(cameraMat, DrawGL.camera.x, DrawGL.camera.y);
-    cameraMat = m3.rotate(cameraMat, DrawGL.camera.rotation);
+    cameraMat = m3.translate(cameraMat, this.camera.x, this.camera.y);
+    cameraMat = m3.rotate(cameraMat, this.camera.rotation);
     cameraMat = m3.scale(cameraMat, zoomScale, zoomScale);
     return cameraMat;
   }
@@ -133,7 +131,7 @@ class Draw {
     const projectionMat = m3.projection(this.gl.canvas.width, this.gl.canvas.height);
     const cameraMat = this.makeCameraMatrix();
     let viewMat = m3.inverse(cameraMat);
-    DrawGL.viewProjectionMat = m3.multiply(projectionMat, viewMat);
+    this.viewProjectionMat = m3.multiply(projectionMat, viewMat);
   }
 
   // Draw check point
@@ -144,12 +142,12 @@ class Draw {
     let mat = m3.identity();
     mat = m3.translate(mat, x, y);
     mat = m3.rotate(mat, 0);
-    mat = m3.scale(mat, 5 / DrawGL.camera.zoom, 5 / DrawGL.camera.zoom);
+    mat = m3.scale(mat, 5 / this.camera.zoom, 5 / this.camera.zoom);
     this.gl.getParameter(this.gl.LINE_WIDTH);
     this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
     // calls gl.uniformXXX
     twgl.setUniforms(this.programInfo_edges, {
-      u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
+      u_matrix: m3.multiply(this.viewProjectionMat, mat),
       u_color: color,
     });
     // calls gl.drawArrays or gl.drawElements
@@ -157,8 +155,8 @@ class Draw {
   }
   drawLoad() {
     this.gl.useProgram(this.programInfo_edges.program);
-    for (let i = 0; i < DrawGL.scene_load.length; i++) {
-      const { x, y, rotation, scale, bufferInfo } = DrawGL.scene_load[i];
+    for (let i = 0; i < this.scene_load.length; i++) {
+      const { x, y, rotation, scale, bufferInfo } = this.scene_load[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
       twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
       let mat = m3.identity();
@@ -169,8 +167,8 @@ class Draw {
       this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
       // calls gl.uniformXXX
       twgl.setUniforms(this.programInfo_edges, {
-        u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
-        u_color: DrawGL.color_black,
+        u_matrix: m3.multiply(this.viewProjectionMat, mat),
+        u_color: [0, 0, 0, 1],
       });
 
       // calls gl.drawArrays or gl.drawElements
@@ -180,8 +178,8 @@ class Draw {
   }
   colorBar() {
     this.gl_colorbar.useProgram(this.programInfo_colorbar.program);
-    for (let i = 0; i < DrawGL.scene_color.length; i++) {
-      const { x, y, rotation, scale, color, bufferInfo } = DrawGL.scene_color[i];
+    for (let i = 0; i < this.scene_color.length; i++) {
+      const { x, y, rotation, scale, color, bufferInfo } = this.scene_color[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
       twgl.setBuffersAndAttributes(this.gl_colorbar, this.programInfo_colorbar, bufferInfo);
       let mat = m3.identity();
@@ -201,8 +199,8 @@ class Draw {
   }
   fillColor() {
     this.gl.useProgram(this.programInfo.program);
-    for (let i = 0; i < DrawGL.scene_fill.length; i++) {
-      const { x, y, rotation, scale, bufferInfo } = DrawGL.scene_fill[i];
+    for (let i = 0; i < this.scene_fill.length; i++) {
+      const { x, y, rotation, scale, bufferInfo } = this.scene_fill[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
       twgl.setBuffersAndAttributes(this.gl, this.programInfo, bufferInfo);
       let mat = m3.identity();
@@ -213,7 +211,7 @@ class Draw {
       this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
       // calls gl.uniformXXX
       twgl.setUniforms(this.programInfo, {
-        u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
+        u_matrix: m3.multiply(this.viewProjectionMat, mat),
       });
 
       // calls gl.drawArrays or gl.drawElements
@@ -222,8 +220,8 @@ class Draw {
   }
   drawMesh() {
     this.gl.useProgram(this.programInfo_edges.program);
-    for (let i = 0; i < DrawGL.scene.length; i++) {
-      const { x, y, rotation, scale, bufferInfo } = DrawGL.scene[i];
+    for (let i = 0; i < this.scene.length; i++) {
+      const { x, y, rotation, scale, bufferInfo } = this.scene[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
       twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
       var color_default = [0, 0, 0, 1];
@@ -235,7 +233,7 @@ class Draw {
       this.gl.getParameter(this.gl.ALIASED_LINE_WIDTH_RANGE);
       // calls gl.uniformXXX
       twgl.setUniforms(this.programInfo_edges, {
-        u_matrix: m3.multiply(DrawGL.viewProjectionMat, mat),
+        u_matrix: m3.multiply(this.viewProjectionMat, mat),
         u_color: color_default,
       });
 
@@ -284,12 +282,12 @@ class Draw {
   }
   drawPointInvisible() {
     this.gl.useProgram(this.program_pick_node.program);
-    for (let i = 0; i < DrawGL.node.length; i++) {
-      const bufferInfo = DrawGL.node[i];
+    for (let i = 0; i < this.node.length; i++) {
+      const bufferInfo = this.node[i];
       // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
       twgl.setBuffersAndAttributes(this.gl, this.program_pick_node, bufferInfo);
       twgl.setUniforms(this.program_pick_node, {
-        u_matrix: DrawGL.viewProjectionMat,
+        u_matrix: this.viewProjectionMat,
       })
       twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
     }
@@ -303,7 +301,7 @@ class Draw {
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.enable(this.gl.DEPTH_TEST);
-    DrawGL.gl.depthFunc(DrawGL.gl.LEQUAL);
+    this.gl.depthFunc(this.gl.LEQUAL);
     this.updateViewProjection();
     // Invisible in canvas
     this.drawPointInvisible();
@@ -315,12 +313,12 @@ class Draw {
         oldPickNdx2D = -1;
       }
       if (id2D > 0) {
-        DrawGL.nearPointGL = [];
+        this.nearPointGL = [];
         const pickNdx = id2D - 1;
         oldPickNdx2D = pickNdx;
-        const object = DrawGL.takevalueRange[pickNdx]
-        DrawGL.nearPointGL.push(object)
-      } else DrawGL.nearPointGL = [];
+        const object = this.takevalueRange[pickNdx]
+        this.nearPointGL.push(object)
+      } else this.nearPointGL = [];
       this.canvas.addEventListener('pointermove', (e) => {
         // canvas.style.cursor = "url(frontend/img/select_cursor.svg) 0 0, default";
         this.canvas.style.cursor = "pointer";
@@ -341,13 +339,13 @@ class Draw {
       this.fillColor();
     }
     this.drawLoad();
-    DrawGL.drawCheckpoint({
-      x: DrawGL.nearPointGL_storage[0].x,
-      y: DrawGL.nearPointGL_storage[0].y,
-      color: DrawGL.color,
-      bufferInfo: DrawGL.sphereBufferInfo,
+    this.drawCheckpoint({
+      x: this.nearPointGL_storage[0].x,
+      y: this.nearPointGL_storage[0].y,
+      color: this.color,
+      bufferInfo: this.sphereBufferInfo,
     });
   }
 }
 
-const DrawGL = new Draw();
+const DrawGL = new solutionMode();

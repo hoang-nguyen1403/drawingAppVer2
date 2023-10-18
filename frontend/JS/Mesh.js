@@ -6,8 +6,8 @@ class Mesh {
   }
 
   addValFillColor() {
-    PaintIn.ctx.fillStyle = "white";
-    PaintIn.ctx.fillRect(0, 0, PaintIn.canvas.width, PaintIn.canvas.height);
+    // PaintIn.ctx.fillStyle = "white";
+    // PaintIn.ctx.fillRect(0, 0, PaintIn.canvas.width, PaintIn.canvas.height);
     if (Mesh.curValFillColor.value === "Off") {
       Mesh.curValFillColor.value === "On";
       document.getElementById("fillColor").classList.add("active");

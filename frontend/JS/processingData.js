@@ -377,6 +377,22 @@ class processingData {
     promise.then((result) => {
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
+      // DrawingGL.sceneArea = [];
+      // for (let i = 0; i < processingData.allArea.length; i++) {
+      //   DrawingGL.arrArea = [];
+      //   DrawingGL.arrArea.push(processingData.allArea[i].pointFlow);
+      //   DrawingGL.arrArea = DrawingGL.arrArea.flat();
+      //   var triangles = earClipping(DrawingGL.arrArea);
+      //   triangles = triangles.flat();
+      //   triangles = triangles.flat();
+      //   let bufferInfoArea = DrawingGL.CreateBufferInfo(triangles, null);
+      //   DrawingGL.sceneArea.push({ color: DrawingGL.colorDefaultArea, bufferInfo: bufferInfoArea });
+      // }
+      DrawingGL.arrMouseDownPosition = [];
+      DrawingGL.arrLineY = [];
+      DrawingGL.arrLineX = [];
+      DrawingGL.handleArea();
+      DrawingGL.DrawMain();
     });
 
     promise.catch(function (err) {

@@ -2,7 +2,7 @@ class Paint {
   constructor() {
     // Call the ID from index.html element
     this.canvas = document.getElementById("myCanvas");
-    this.ctx = this.canvas.getContext("2d");
+    // this.ctx = this.canvas.getContext("2d");
 
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height =
@@ -355,11 +355,11 @@ class Paint {
 
   //set up event of Mouse
   listenEvent() {
-    this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
-    this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
-    this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
-    document.addEventListener("keydown", (event) => this.keyDown(event));
-    this.canvas.addEventListener("click", (event) => this.selectObj(event));
+    // this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
+    // this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
+    // this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
+    // document.addEventListener("keydown", (event) => this.keyDown(event));
+    // this.canvas.addEventListener("click", (event) => this.selectObj(event));
     // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
@@ -1000,6 +1000,7 @@ class Paint {
       this.renderCommand("line");
     } else {
       this.renderObject(processingData.allObject);
+      processingData.prototype.areaDetect(processingData.allLine);
     }
   }
 
@@ -2598,198 +2599,198 @@ class Paint {
 
   //------------------//
   renderObject(arrObj) {
-    //clear screen before render
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    //
-    if (this.currentValueGrid.value === "On") {
-      //this.ctx.strokeStyle = "red";
-      this.drawGrid();
-    }
-    for (let i = arrObj.length - 1; i >= 0; i--) {
-      if (arrObj[i] instanceof Area) {
-        this.fillArea(arrObj[i]);
-        if (
-          arrObj[i].name !== undefined &&
-          arrObj[i].name !== "" &&
-          arrObj[i].name !== null
-        ) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
-      } else if (arrObj[i] instanceof Line) {
-        this.drawLine(
-          arrObj[i].Point[0],
-          arrObj[i].Point[1],
-          arrObj[i].color,
-          arrObj[i].width
-        );
-        if (
-          arrObj[i].name !== undefined &&
-          arrObj[i].name !== "" &&
-          arrObj[i].name !== null
-        ) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
+    // //clear screen before render
+    // this.ctx.fillStyle = "white";
+    // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // //
+    // if (this.currentValueGrid.value === "On") {
+    //   //this.ctx.strokeStyle = "red";
+    //   this.drawGrid();
+    // }
+    // for (let i = arrObj.length - 1; i >= 0; i--) {
+    //   if (arrObj[i] instanceof Area) {
+    //     this.fillArea(arrObj[i]);
+    //     if (
+    //       arrObj[i].name !== undefined &&
+    //       arrObj[i].name !== "" &&
+    //       arrObj[i].name !== null
+    //     ) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
+    //   } else if (arrObj[i] instanceof Line) {
+    //     this.drawLine(
+    //       arrObj[i].Point[0],
+    //       arrObj[i].Point[1],
+    //       arrObj[i].color,
+    //       arrObj[i].width
+    //     );
+    //     if (
+    //       arrObj[i].name !== undefined &&
+    //       arrObj[i].name !== "" &&
+    //       arrObj[i].name !== null
+    //     ) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
 
-        if (arrObj[i].lineLoads !== null) {
-          for (let j = 0; j < arrObj[i].lineLoads.length; j++) {
-            //draw press
-            if (arrObj[i].lineLoads[j].type === "normal_pressure") {
-              this.drawPressure(
-                arrObj[i],
-                arrObj[i].lineLoads[j].parameters.node_0
-              );
-            }
-            //draw axial
-            if (arrObj[i].lineLoads[j].type === "axial_pressure") {
-              this.drawAxialPressure(
-                arrObj[i],
-                arrObj[i].lineLoads[j].parameters.value
-              );
-            }
-          }
-        }
-      } else if (arrObj[i] instanceof Point) {
-        this.drawPoint(arrObj[i]);
-        if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
+    //     if (arrObj[i].lineLoads !== null) {
+    //       for (let j = 0; j < arrObj[i].lineLoads.length; j++) {
+    //         //draw press
+    //         if (arrObj[i].lineLoads[j].type === "normal_pressure") {
+    //           this.drawPressure(
+    //             arrObj[i],
+    //             arrObj[i].lineLoads[j].parameters.node_0
+    //           );
+    //         }
+    //         //draw axial
+    //         if (arrObj[i].lineLoads[j].type === "axial_pressure") {
+    //           this.drawAxialPressure(
+    //             arrObj[i],
+    //             arrObj[i].lineLoads[j].parameters.value
+    //           );
+    //         }
+    //       }
+    //     }
+    //   } else if (arrObj[i] instanceof Point) {
+    //     this.drawPoint(arrObj[i]);
+    //     if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
 
-        if (arrObj[i].pointLoads !== null) {
-          for (let j = 0; j < arrObj[i].pointLoads.length; j++) {
-            if (arrObj[i].pointLoads[j].type === "force") {
-              this.drawForceInPoint(
-                arrObj[i].pointLoads[j].parameters,
-                arrObj[i].x,
-                arrObj[i].y
-              );
-            }
-            if (arrObj[i].pointLoads[j].type === "moment") {
-              this.drawMoment(
-                arrObj[i].pointLoads[j].parameters,
-                arrObj[i].x,
-                arrObj[i].y
-              );
-            }
-          }
-        }
-      }
-    }
+    //     if (arrObj[i].pointLoads !== null) {
+    //       for (let j = 0; j < arrObj[i].pointLoads.length; j++) {
+    //         if (arrObj[i].pointLoads[j].type === "force") {
+    //           this.drawForceInPoint(
+    //             arrObj[i].pointLoads[j].parameters,
+    //             arrObj[i].x,
+    //             arrObj[i].y
+    //           );
+    //         }
+    //         if (arrObj[i].pointLoads[j].type === "moment") {
+    //           this.drawMoment(
+    //             arrObj[i].pointLoads[j].parameters,
+    //             arrObj[i].x,
+    //             arrObj[i].y
+    //           );
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
-    if (
-      this.curValName.value === "On" ||
-      this.curValPointLoad.value === "On" ||
-      this.curValMoment.value === "On" ||
-      this.curValPressLoad.value === "On"
-    ) {
-      this.renderCommand("valueOn");
-    } else {
-      this.renderCommand("Off");
-    }
+    // if (
+    //   this.curValName.value === "On" ||
+    //   this.curValPointLoad.value === "On" ||
+    //   this.curValMoment.value === "On" ||
+    //   this.curValPressLoad.value === "On"
+    // ) {
+    //   this.renderCommand("valueOn");
+    // } else {
+    //   this.renderCommand("Off");
+    // }
 
-    // render API and button
-    if (this.arrMultiCurObj[0] !== undefined) {
-      document.getElementById("BDCondition").style.display = "flex";
-      this.renderProperty("multi", this.arrMultiCurObj);
-      for (let i = 0; i < this.arrMultiCurObj.length; i++) {
-        let selectedObj;
-        selectedObj = this.arrMultiCurObj[i];
-        switch (selectedObj.className) {
-          case "Point":
-            this.drawPoint(selectedObj, "green");
-            document.getElementById("BDCondition").style.width = "200px";
-            //display 3 button
-            this.visibleButton("valueName");
-            this.visibleButton("pointLoad");
-            this.visibleButton("moment");
-            //hidden 1 button
-            this.hiddenButton("pressLoad");
-            break;
-          case "Line":
-            this.drawLine(
-              selectedObj.Point[0],
-              selectedObj.Point[1],
-              "#0000ff",
-              selectedObj.width
-            );
-            document.getElementById("BDCondition").style.width = "150px";
-            //display 2 button
-            this.visibleButton("valueName");
-            this.visibleButton("pressLoad");
-            //hidden 2 button
-            this.hiddenButton("pointLoad");
-            this.hiddenButton("moment");
-            break;
-          case "Area":
-            this.fillArea(selectedObj, "#b6d8e7");
-            document.getElementById("BDCondition").style.width = "70px";
-            //display 1 button
-            this.visibleButton("valueName");
-            //hidden 3 button
-            this.hiddenButton("pressLoad");
-            this.hiddenButton("pointLoad");
-            this.hiddenButton("moment");
-            break;
-        }
-      }
-    } else {
-      document.getElementById("BDCondition").style.display = "none";
-      this.renderProperty("off", this.arrMultiCurObj);
-    }
+    // // render API and button
+    // if (this.arrMultiCurObj[0] !== undefined) {
+    //   document.getElementById("BDCondition").style.display = "flex";
+    //   this.renderProperty("multi", this.arrMultiCurObj);
+    //   for (let i = 0; i < this.arrMultiCurObj.length; i++) {
+    //     let selectedObj;
+    //     selectedObj = this.arrMultiCurObj[i];
+    //     switch (selectedObj.className) {
+    //       case "Point":
+    //         this.drawPoint(selectedObj, "green");
+    //         document.getElementById("BDCondition").style.width = "200px";
+    //         //display 3 button
+    //         this.visibleButton("valueName");
+    //         this.visibleButton("pointLoad");
+    //         this.visibleButton("moment");
+    //         //hidden 1 button
+    //         this.hiddenButton("pressLoad");
+    //         break;
+    //       case "Line":
+    //         this.drawLine(
+    //           selectedObj.Point[0],
+    //           selectedObj.Point[1],
+    //           "#0000ff",
+    //           selectedObj.width
+    //         );
+    //         document.getElementById("BDCondition").style.width = "150px";
+    //         //display 2 button
+    //         this.visibleButton("valueName");
+    //         this.visibleButton("pressLoad");
+    //         //hidden 2 button
+    //         this.hiddenButton("pointLoad");
+    //         this.hiddenButton("moment");
+    //         break;
+    //       case "Area":
+    //         this.fillArea(selectedObj, "#b6d8e7");
+    //         document.getElementById("BDCondition").style.width = "70px";
+    //         //display 1 button
+    //         this.visibleButton("valueName");
+    //         //hidden 3 button
+    //         this.hiddenButton("pressLoad");
+    //         this.hiddenButton("pointLoad");
+    //         this.hiddenButton("moment");
+    //         break;
+    //     }
+    //   }
+    // } else {
+    //   document.getElementById("BDCondition").style.display = "none";
+    //   this.renderProperty("off", this.arrMultiCurObj);
+    // }
 
-    if (this.arrCurObj[0] !== undefined) {
-      let selectedObj;
-      selectedObj = this.arrCurObj[0];
-      switch (selectedObj.className) {
-        case "Point":
-          document.getElementById("BDCondition").style.display = "flex";
-          document.getElementById("BDCondition").style.width = "200px";
-          this.drawPoint(selectedObj, "green");
-          this.renderProperty("point", selectedObj);
-          //display 3 button
-          this.visibleButton("valueName");
-          this.visibleButton("pointLoad");
-          this.visibleButton("moment");
-          //hidden 1 button
-          this.hiddenButton("pressLoad");
-          break;
-        case "Line":
-          document.getElementById("BDCondition").style.width = "150px";
-          document.getElementById("BDCondition").style.display = "flex";
-          this.drawLine(
-            selectedObj.Point[0],
-            selectedObj.Point[1],
-            "#0000ff",
-            selectedObj.width
-          );
-          this.renderProperty("line", selectedObj);
-          //display 2 button
-          this.visibleButton("valueName");
-          this.visibleButton("pressLoad");
-          //hidden 2 button
-          this.hiddenButton("pointLoad");
-          this.hiddenButton("moment");
-          break;
-        case "Area":
-          document.getElementById("BDCondition").style.width = "70px";
-          document.getElementById("BDCondition").style.display = "flex";
-          this.fillArea(selectedObj, "#b6d8e7");
-          this.renderProperty("area", selectedObj);
-          //display 1 button
-          this.visibleButton("valueName");
-          //hidden 3 button
-          this.hiddenButton("pressLoad");
-          this.hiddenButton("pointLoad");
-          this.hiddenButton("moment");
-          break;
-      }
-    }
+    // if (this.arrCurObj[0] !== undefined) {
+    //   let selectedObj;
+    //   selectedObj = this.arrCurObj[0];
+    //   switch (selectedObj.className) {
+    //     case "Point":
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       document.getElementById("BDCondition").style.width = "200px";
+    //       this.drawPoint(selectedObj, "green");
+    //       this.renderProperty("point", selectedObj);
+    //       //display 3 button
+    //       this.visibleButton("valueName");
+    //       this.visibleButton("pointLoad");
+    //       this.visibleButton("moment");
+    //       //hidden 1 button
+    //       this.hiddenButton("pressLoad");
+    //       break;
+    //     case "Line":
+    //       document.getElementById("BDCondition").style.width = "150px";
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       this.drawLine(
+    //         selectedObj.Point[0],
+    //         selectedObj.Point[1],
+    //         "#0000ff",
+    //         selectedObj.width
+    //       );
+    //       this.renderProperty("line", selectedObj);
+    //       //display 2 button
+    //       this.visibleButton("valueName");
+    //       this.visibleButton("pressLoad");
+    //       //hidden 2 button
+    //       this.hiddenButton("pointLoad");
+    //       this.hiddenButton("moment");
+    //       break;
+    //     case "Area":
+    //       document.getElementById("BDCondition").style.width = "70px";
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       this.fillArea(selectedObj, "#b6d8e7");
+    //       this.renderProperty("area", selectedObj);
+    //       //display 1 button
+    //       this.visibleButton("valueName");
+    //       //hidden 3 button
+    //       this.hiddenButton("pressLoad");
+    //       this.hiddenButton("pointLoad");
+    //       this.hiddenButton("moment");
+    //       break;
+    //   }
+    // }
 
-    if (this.pen === "line") {
-      this.renderCommand("line");
-    } else {
-      this.renderCommand("Off");
-    }
+    // if (this.pen === "line") {
+    //   this.renderCommand("line");
+    // } else {
+    //   this.renderCommand("Off");
+    // }
   }
 
   renderProperty(mode, Obj) {
