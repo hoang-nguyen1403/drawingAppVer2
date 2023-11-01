@@ -1,4 +1,4 @@
-class Draw3D {
+class solutionMode3D {
     constructor() {
         this.canvas = document.querySelector("#mode");
         this.gl = this.canvas.getContext("webgl");
@@ -98,22 +98,22 @@ class Draw3D {
         return deg * Math.PI / 180;
     }
     updateViewProjection() {
-        const zoomScale = 1 / DrawGL3D.camera.Zoom;
-        let projection = m4_fix.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, DrawGL3D.camera.Deep);
-        projection = m4_fix.translate(projection, DrawGL3D.camera.translation_x, DrawGL3D.camera.translation_y, DrawGL3D.camera.translation_z);
-        projection = m4_fix.xRotate(projection, this.degToRad(DrawGL3D.camera.rotation_X));
-        projection = m4_fix.yRotate(projection, this.degToRad(DrawGL3D.camera.rotation_Y));
-        projection = m4_fix.zRotate(projection, this.degToRad(DrawGL3D.camera.rotation_Z));
+        const zoomScale = 1 / this.camera.Zoom;
+        let projection = m4_fix.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, this.camera.Deep);
+        projection = m4_fix.translate(projection, this.camera.translation_x, this.camera.translation_y, this.camera.translation_z);
+        projection = m4_fix.xRotate(projection, this.degToRad(this.camera.rotation_X));
+        projection = m4_fix.yRotate(projection, this.degToRad(this.camera.rotation_Y));
+        projection = m4_fix.zRotate(projection, this.degToRad(this.camera.rotation_Z));
         projection = m4_fix.scale(projection, zoomScale, zoomScale, zoomScale);
-        DrawGL3D.viewProjectionMat = projection;
+        this.viewProjectionMat = projection;
     }
     drawMesh() {
         this.gl.useProgram(this.programInfo_edges.program);
-        for (let i = 0; i < DrawGL3D.sceneMesh.length; i++) {
-            const bufferInfo = DrawGL3D.sceneMesh[i];
+        for (let i = 0; i < this.sceneMesh.length; i++) {
+            const bufferInfo = this.sceneMesh[i];
             twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
             twgl.setUniforms(this.programInfo_edges, {
-                u_matrix: DrawGL3D.viewProjectionMat,
+                u_matrix: this.viewProjectionMat,
                 u_color: [0, 0, 0, 1],
             })
             twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.LINES);
@@ -121,11 +121,11 @@ class Draw3D {
     }
     drawFill() {
         this.gl.useProgram(this.program.program);
-        for (let i = 0; i < DrawGL3D.sceneFill.length; i++) {
-            const bufferInfo = DrawGL3D.sceneFill[i];
+        for (let i = 0; i < this.sceneFill.length; i++) {
+            const bufferInfo = this.sceneFill[i];
             twgl.setBuffersAndAttributes(this.gl, this.program, bufferInfo);
             twgl.setUniforms(this.program, {
-                u_matrix: DrawGL3D.viewProjectionMat,
+                u_matrix: this.viewProjectionMat,
             })
             twgl.drawBufferInfo(this.gl, bufferInfo);
         }
@@ -136,9 +136,9 @@ class Draw3D {
         twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
         let mat = m4.identity();
         mat = m4_fix.translate(mat, x, y, z);
-        mat = m4_fix.scale(mat, 5 * DrawGL3D.camera.Zoom, 5 * DrawGL3D.camera.Zoom, 5 * DrawGL3D.camera.Zoom);
+        mat = m4_fix.scale(mat, 5 * this.camera.Zoom, 5 * this.camera.Zoom, 5 * this.camera.Zoom);
         twgl.setUniforms(this.programInfo_edges, {
-            u_matrix: m4_fix.multiply(DrawGL3D.viewProjectionMat, mat),
+            u_matrix: m4_fix.multiply(this.viewProjectionMat, mat),
             u_color: [1, 0, 0, 1],
         })
         twgl.drawBufferInfo(this.gl, bufferInfo);
@@ -149,9 +149,9 @@ class Draw3D {
         twgl.setBuffersAndAttributes(this.gl, this.programInfo_edges, bufferInfo);
         let mat = m4.identity();
         mat = m4_fix.translate(mat, x, y, z);
-        mat = m4_fix.scale(mat, 5 * DrawGL3D.camera.Zoom, 5 * DrawGL3D.camera.Zoom, 5 * DrawGL3D.camera.Zoom);
+        mat = m4_fix.scale(mat, 5 * this.camera.Zoom, 5 * this.camera.Zoom, 5 * this.camera.Zoom);
         twgl.setUniforms(this.programInfo_edges, {
-            u_matrix: m4_fix.multiply(DrawGL3D.viewProjectionMat, mat),
+            u_matrix: m4_fix.multiply(this.viewProjectionMat, mat),
             u_color: color,
         })
         twgl.drawBufferInfo(this.gl, bufferInfo);
@@ -197,17 +197,17 @@ class Draw3D {
     }
     drawPointInvisible() {
         this.gl.useProgram(this.program_pick_node.program);
-        for (let i = 0; i < DrawGL3D.node.length; i++) {
-            const bufferInfo = DrawGL3D.node[i];
+        for (let i = 0; i < this.node.length; i++) {
+            const bufferInfo = this.node[i];
             twgl.setBuffersAndAttributes(this.gl, this.program_pick_node, bufferInfo);
             twgl.setUniforms(this.program_pick_node, {
-                u_matrix: DrawGL3D.viewProjectionMat,
+                u_matrix: this.viewProjectionMat,
             })
             twgl.drawBufferInfo(this.gl, bufferInfo, this.gl.POINTS);
         }
     }
     drawMain() {
-
+        // twgl.resizeCanvasToDisplaySize(this.gl.canvas)
         // set up screen draw
         this.drawFrameBuffer();
         this.setFramebufferAttachmentSizes(this.gl.canvas.width, this.gl.canvas.height);
@@ -215,7 +215,7 @@ class Draw3D {
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
         this.gl.enable(this.gl.CULL_FACE);
         this.gl.enable(this.gl.DEPTH_TEST);
-        DrawGL3D.gl.depthFunc(DrawGL3D.gl.LEQUAL);
+        this.gl.depthFunc(this.gl.LEQUAL);
         this.updateViewProjection();
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
@@ -230,18 +230,18 @@ class Draw3D {
                 oldPickNdx3D = -1;
             }
             if (id > 0) {
-                DrawGL3D.nearestPointGL3D = [];
+                this.nearestPointGL3D = [];
                 const pickNdx = id - 1;
                 oldPickNdx3D = pickNdx;
-                const object = DrawGL3D.takeValueRange[pickNdx]
+                const object = this.takeValueRange[pickNdx]
                 this.drawCheckPoint({
                     x: object.coord[0],
                     y: object.coord[1],
                     z: object.coord[2],
                     bufferInfo: this.sphereBufferInfo
                 });
-                DrawGL3D.nearestPointGL3D.push(object)
-            } else DrawGL3D.nearestPointGL3D = [];
+                this.nearestPointGL3D.push(object)
+            } else this.nearestPointGL3D = [];
             this.canvas.addEventListener('pointermove', (e) => {
                 this.canvas.style.cursor = "pointer";
             })
@@ -257,14 +257,14 @@ class Draw3D {
             this.canvas.removeEventListener("mousedown", showproperties3D);
             this.drawFill();
         }
-        DrawGL3D.drawPointProperty({
-            x: DrawGL3D.pointStorage.x,
-            y: DrawGL3D.pointStorage.y,
-            z: DrawGL3D.pointStorage.z,
+        this.drawPointProperty({
+            x: this.pointStorage.x,
+            y: this.pointStorage.y,
+            z: this.pointStorage.z,
             color: DrawGL.color,
-            bufferInfo: DrawGL3D.sphereBufferInfo,
+            bufferInfo: this.sphereBufferInfo,
         });
     }
 }
 
-const DrawGL3D = new Draw3D();
+const DrawGL3D = new solutionMode3D();

@@ -7,7 +7,6 @@ class Paint {
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height =
       document.getElementById("wrap_canvas_div").clientHeight;
-
     // Call the ID in the tool left position
     this.toolbar = document.getElementById("tool_left");
     this.currentValueGrid = document.getElementById("grid");
@@ -352,7 +351,6 @@ class Paint {
       }
     });
   }
-
   //set up event of Mouse
   listenEvent() {
     this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
@@ -367,6 +365,8 @@ class Paint {
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
+        test = inputData;
+        console.log(inputData);
         if (inputData["jsmat"] !== undefined) {
           document.getElementById("filter").style.display = "block";
           document.getElementById("modeSolution_value").style.display = "block";
@@ -614,11 +614,23 @@ class Paint {
 
     //make canvas responsive
     onresize = (event) => {
-      PaintIn.canvas.width =
-        document.getElementById("wrap_canvas_div").clientWidth;
-      PaintIn.canvas.height =
-        document.getElementById("wrap_canvas_div").clientHeight;
+      PaintIn.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
+      PaintIn.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
       PaintIn.renderObject(processingData.allObject);
+      // DrawGL.gl.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
+      // DrawGL.gl.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
+      // DrawGL3D.gl.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
+      // DrawGL3D.gl.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
+      // DrawGL.drawMain();
+      // DrawGL3D.drawMain();
+      // if (DrawGL.scene_fill[0] != null) {
+      //   twgl.resizeCanvasToDisplaySize(DrawGL.gl.canvas);
+      //   DrawGL.drawMain();
+      // }
+      // if (DrawGL3D.sceneFill[0] != null) {
+      //   twgl.resizeCanvasToDisplaySize(DrawGL3D.gl.canvas);
+      //   DrawGL3D.drawMain();
+      // }
     };
   }
 
@@ -1905,10 +1917,40 @@ class Paint {
   testAPI() {
     // show spinner
     if (PaintIn.APIurl.value !== "") {
-      document.getElementById("spinner").style.display = "flex";
+      document.getElementById("spinner").style.display = "block";
+      domID("clearcommands").style.display = "none";
+      domID("valueInputed").style.display = "none";
+      domID("textBox").style.maxHeight = "90%"
       urlSendRequest = PaintIn.APIurl.value;
       let pname = PaintIn.urlFunc.value;
-      let params = processingData.prototype.saveObj();
+      let parameter = domID("parameterSelected").value.toString();
+      let type1 = checkExist("=", parameter);
+      let type2 = checkExist(",", parameter);
+      let type3 = checkExist(":", parameter);
+      let value = parameter[type1];
+      if (type1 != -1) {
+        value = parameter[type1];
+      } else if (type2 != -1) {
+        value = parameter[type2];
+      } else {
+        value = parameter[type3];
+      }
+      const temp = parameter.split(value);
+      let obj = {};
+      let i = 0;
+      while (i < temp.length) {
+        obj[temp[i]] = temp[i + 1];
+        i += 2;
+      }
+      let param = JSON.parse(processingData.prototype.saveObj());
+      for (let val in obj) {
+        if (typeof (obj[val]) === "string") {
+          let str = obj[val];
+          obj[val] = Number(str);
+        }
+      }
+      let params = JSON.stringify({ ...param, ...obj });
+
       let bodyData = {
         rhs: [pname, params], //rhs: reading - used when send data
         nargout: 1,
@@ -1926,26 +1968,36 @@ class Paint {
 
       promise.then((result) => {
         document.getElementById("spinner").style.display = "none";
+        domID("clearcommands").style.display = "block";
+        domID("valueInputed").style.display = "flex";
+        domID("textBox").style.maxHeight = "30%"
         let receiveData;
         try {
           receiveData = result.data["lhs"][0];
           if (receiveData !== undefined) {
-            dataLogFile.push(JSON.stringify(receiveData));
+            dataRequest = [];
+            dataLogFile.push(receiveData);
+            // let blob = new Blob([(receiveData)], { type: "text/plain;charset=utf-8" });
+            // saveAs(blob, "data.json");
+            dataRequest.push(receiveData);
             visualizeData = new dataGL(receiveData);
             visualizeData.proccesingData();
             PaintIn.renderCommand("textCommands");
           }
         } catch (err) {
-          console.log(result);
-          dataLogFile.push(JSON.stringify(result.data));
+          dataRequest = [];
+          dataRequest.push(JSON.stringify(result.data));
           PaintIn.renderCommand("textCommands");
         }
       });
 
       promise.catch(function (err) {
+        dataRequest = [];
         document.getElementById("spinner").style.display = "none";
-        console.log("err", err);
-        dataLogFile.push(JSON.stringify(err));
+        domID("clearcommands").style.display = "block";
+        domID("valueInputed").style.display = "flex";
+        domID("textBox").style.maxHeight = "30%"
+        dataRequest.push(JSON.stringify(err));
         PaintIn.renderCommand("textCommands");
       });
       //      spinner.style.display = "none";
@@ -2022,21 +2074,13 @@ class Paint {
         break;
       case "textCommands":
         //render Text commands
-        dataLogFileIndex = dataLogFile.length - 1;
+        dataLogFileIndex = dataRequest.length - 1;
         let strings = "";
-        let reverseData = [...dataLogFile].reverse();
+        let reverseData = [...dataRequest].reverse();
         for (let i in reverseData) {
           strings += reverseData[i] + "<br>";
         }
-        // console.log(strings)
-        document.getElementById("valueInputed").innerHTML = `
-      
-      <p style="background-color: #ffffff; 
-      height: 100%;
-      overflow: scroll;
-      border: 1px solid #0784d1;
-      user-select: text;"> ${strings}</p>
-      `;
+        document.getElementsByClassName("logFile")[0].innerHTML = `${strings}`;
     }
   }
 
@@ -3486,12 +3530,16 @@ class Paint {
   //--------------------------------------------------------------------//
   //tab-comments
   toggleTab() {
-    if (this.tabStatus.value === "On") {
-      this.tabStatus.value = "Off";
-      this.hiddenButton("tab-comments");
-    } else {
+    if (this.tabStatus.value === "Off") {
       this.tabStatus.value = "On";
-      this.visibleButton("tab-comments");
+      document.getElementsByClassName("tab")[0].style.display = "flex";
+      domID("tab-icon").style.transform = "rotate(0deg)";
+      domID("tab-icon").title = "Close";
+    } else {
+      this.tabStatus.value = "Off";
+      document.getElementsByClassName("tab")[0].style.display = "none";
+      domID("tab-icon").style.transform = "rotate(180deg)";
+      domID("tab-icon").title = "Open";
     }
   }
 
@@ -3499,6 +3547,8 @@ class Paint {
   clearCommands() {
     dataLogFile = [];
     dataLogFileIndex = 0;
+    domID("valueInputed").style.display = "none";
+    domID("textBox").style.maxHeight = "100%"
     PaintIn.renderCommand("textCommands");
   }
 

@@ -34,14 +34,16 @@ def detectArea(data):
             min_y = indice_y
 
     # =============== CHANGE, SCALE AND ROUND NODE COORDINATES =========================
-    scale = 16
-    scale_node_coords = [[round((x+abs(min_x)+5)* scale), round((y+abs(min_y)+5)* scale)] for [x, y] in raw_node_coords]
-
+    # for drawing WebGL
+    # scale = 16
+    # scale_node_coords = [[round((x+abs(min_x)+5)* scale), round((y+abs(min_y)+5)* scale)] for [x, y] in raw_node_coords]
+    scale = 4
+    scale_node_coords = [[round(x*scale),round(y*scale)] for [x,y] in raw_node_coords]
     kdtree = cKDTree(scale_node_coords)
 
     # =============== CREATE MATRIX =============================
-    matrix = np.zeros((26500, 26500), 'uint8')
-
+    # matrix = np.zeros((26500, 26500), 'uint8')
+    matrix = np.zeros((6000, 6000), 'uint8')
     # =============== DRAW SEGMENTS ============================
     for segment in segments:
         start_node = scale_node_coords[segment[0]]

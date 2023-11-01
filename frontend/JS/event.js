@@ -310,3 +310,10 @@ function toggleProperty() {
 //     DrawGL3D.drawMain();
 //   }
 // }
+
+// function resize_2D() {
+//   twgl.resizeCanvasToDisplaySize(DrawGL.gl.canvas);
+//   DrawGL.drawMain();
+// }
+// resize_2D()
+// DrawGL.canvas.addEventListener("resize",resize_2D());

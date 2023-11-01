@@ -32,11 +32,14 @@ body {
 }
 
 #tool_top {
+    z-index: 10;
     height: 50px;
     background-color: #e6f5ff;
     border: 1px solid #0784d1;
     width: 100%;
     display: flex;
+    margin: auto;
+    align-items: center;
 }
 
 /* #inOutData {
@@ -69,6 +72,7 @@ body {
     display: flex;
     background-color: #e6f5ff;
     justify-content: space-between;
+    z-index: 2;
 }
 
 #tool_right {
@@ -76,12 +80,24 @@ body {
     align-content: center;
     background-color: #e6f5ff;
     height: 0%;
+    z-index: 2;
 }
 
 #wrap_canvas_div {
     flex: 1;
     border: 1px solid #0784d1;
     width: 100%;
+    z-index: 1;
+    max-height: 100%;
+}
+
+#PopUp {
+    position: absolute;
+    display: flex;
+    width: 99%;
+    height: 97%;
+    justify-content: center;
+    align-items: center;
 }
 
 #myCanvas {
@@ -212,7 +228,8 @@ button {
     height: 15px;
     background-image: url(img/arrow.png);
     background-size: 10px 10px;
-    background-color: rgb(230, 245, 255);;
+    background-color: rgb(230, 245, 255);
+    ;
     border: 1px;
     position: absolute;
     right: -3%;
@@ -274,7 +291,8 @@ button {
     height: 15px;
     background-image: url(img/arrow.png);
     background-size: 10px 10px;
-    background-color: rgb(162 202 212 / 98%);;
+    background-color: rgb(162 202 212 / 98%);
+    ;
     border: 1px;
     position: absolute;
     right: -3%;
@@ -362,6 +380,7 @@ button {
 }
 
 #coord_div {
+    z-index: 2;
     position: absolute;
     top: 90%;
     left: 25px;
@@ -413,10 +432,9 @@ button {
     color: rgb(3, 93, 209);
     border-radius: 5px;
     cursor: pointer;
-    margin-right: 60px;
-    margin-bottom: 10px;
     font-size: 14px;
 }
+
 #cmtSaveText {
     padding: 5px;
     width: 70px;
@@ -467,9 +485,13 @@ button {
 }
 
 #clearcommands {
-    margin: 10;
+    margin: 10px;
     width: 35px;
     height: 35px;
+    min-width: 35px;
+    max-width: 35px;
+    min-height: 35px;
+    max-height: 35px;
     background: url(img/clear.png);
     background-size: 25px 25px;
     background-repeat: no-repeat;
@@ -516,6 +538,7 @@ button {
     background-color: rgb(230, 245, 255);
     border: 0px;
     transform: rotate(-90deg);
+    transition: 300ms ease all;
     position: absolute;
     right: 6px;
 }
@@ -548,15 +571,15 @@ button {
     height: 19px;
 }
 
-.coordinate input{
+.coordinate input {
     position: absolute;
     top: 0px;
     left: 0px;
-    width: 75px; 
+    width: 75px;
     padding: 1px;
     font-size: 12px;
     border: none;
-} 
+}
 
 .select-editable select {
     position: absolute;
@@ -596,6 +619,7 @@ button {
 } */
 
 #fillColor {
+    z-index: 3;
     background: url(img/mesh.png);
     width: 40px;
     height: 40px;
@@ -668,8 +692,13 @@ button {
 }
 
 /* ----------Tab comment */
+.tab {
+    z-index: 2;
+}
 
 #tab-icon {
+    transform: rotate(0deg);
+    transition: 300ms ease all;
     width: 35px;
     height: 35px;
     border-radius: 0;
@@ -677,7 +706,7 @@ button {
     border: none;
     background: url(img/arrow.png);
     position: absolute;
-    right:0%;
+    right: 0%;
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;
@@ -686,21 +715,30 @@ button {
 
 #tab-comments {
     position: absolute;
-    display: block;
+    display: flex;
     align-items: center;
     text-align: center;
-    justify-content: center;
     right: 9px;
     top: 125px;
     width: 250px;
-    height: 100%;
+    height: 82.3%;
     background-color: #e6f5ff;
-    border-left: 1px solid #0784d1
+    /* border-left: 1px solid #0784d1; */
+    /* border-left: 1px solid #0784d1;
+    border-bottom: 1px solid #0784d1; */
+    flex-direction: column;
 }
 
 #lableTab {
     font-weight: bold;
     font-size: 20px;
+}
+
+#textBox {
+    height: 100%;
+    max-width: 80%;
+    min-width: 80%;
+    max-height: 100%;
 }
 
 #tab-comments>input {
@@ -719,18 +757,35 @@ button {
     justify-content: center;
 }
 
-#valueInputed {
-    margin: 10px 10px 10px 25px;
+#btn_tab_cmt{
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     width: 80%;
-    height: 80%;
 }
 
-#valueInputed>div {
-    /* vertical-align: top; */
-    display: block;
-    align-items: center;
+#valueInputed {
+    width: 100%;
+    height: 50%;
+    max-height: 50%;
+    display: none;
     text-align: justify;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+}
+
+p.logFile {
+    width: 80%;
+    height: 70%;
+    max-width: 80%;
+    max-height: 70%;
+    background-color: #ffffff;
+    overflow: scroll;
+    border: 1px solid #0784d1;
+    user-select: text
 }
 
 .inputImage {
@@ -769,23 +824,46 @@ button {
 
 /* requestAPI */
 .request {
-    right: 10%;
+    top: 125px;
+    right: 8px;
     position: fixed;
+    background-color: #e6f5ff;
+    border: 1px solid #0784d1;
+    justify-content: space-evenly;
+    flex-direction: column;
+    border-radius: 0 0 0 10px;
+    display: none;
+    z-index: 10;
 }
 
-.request .url p{
-    display: inline-grid;
-    width: 10px;
+.request .url {
+    width: 400px;
+    margin: 17px;
+    display: flex;
+    justify-content: space-between;
 }
 
-.request .functionName p{
-    display: inline-grid;
-    width: 60px;
+.request .functionName {
+    margin: 17px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.request .Parameter {
+    margin: 17px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.request .addRequest {
+    /* width: 180px; */
+    margin: 17px;
+    display: flex;
+    justify-content: center;
 }
 
 #urlInputted {
     width: 300px;
-    margin: 17px;
     background-color: #ffffff;
     background-position: center;
     background-size: 300px;
@@ -793,11 +871,77 @@ button {
 }
 
 #functionNameInputted {
-    width: 150px;
+    width: 300px;
     background-color: #ffffff;
     background-position: center;
     background-size: 300px;
     background-repeat: no-repeat;
+}
+
+#parameterSelected {
+    width: 300px;
+    background-color: #ffffff;
+    background-position: center;
+    background-size: 300px;
+    background-repeat: no-repeat;
+}
+
+#addAttribute {
+    width: 70px;
+    height: 30px;
+    background-color: lightblue;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px;
+}
+
+#addAttribute:hover {
+    font-size: 15px;
+}
+
+#editAttribute {
+    width: 70px;
+    height: 30px;
+    background-color: lightblue;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px;
+}
+
+#editAttribute:hover {
+    font-size: 15px;
+}
+
+#deleteAttribute {
+    width: 70px;
+    height: 30px;
+    background-color: lightblue;
+    color: black;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px;
+}
+
+#deleteAttribute:hover {
+    font-size: 15px;
+}
+
+
+.Request-button {
+    width: 100px;
+    display: inline-flex;
+    justify-content: space-around;
+    margin-left: 10px;
+    position: fixed;
+    right: 5%;
 }
 
 #sendRequest {
@@ -806,38 +950,44 @@ button {
     background-position: center;
     background-size: 30px;
     background-repeat: no-repeat;
-    position: fixed;
-    margin: 5px;
-    right: 5%;
 }
 
 #sendRequest:hover {
     background-size: 35px 35px;
 }
 
+#settingRequest {
+    background: url(img/setting.png);
+    background-color: #ffffff;
+    background-position: center;
+    background-size: 30px;
+    background-repeat: no-repeat;
+}
+
+#settingRequest:hover {
+    background-size: 35px 35px;
+}
+
 #spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #000;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s ease-in-out infinite;
-  margin: auto;
-  display: none;/* initially hidden */
+    display: none;
+    margin: 0 0 10px 0;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }
+
 #WebGL_area {
     display: none;
     border: 1px solid #0784d1;
     width: 100%;
     height: 100%;
+    z-index: 2;
 }
-#text_colorbar{
+
+#text_colorbar {
     background-color: #fff;
     width: 65px;
     height: 400px;
@@ -845,16 +995,19 @@ button {
     top: 156px;
     position: absolute;
 }
-#canvasGL{
+
+#canvasGL {
     background-color: #fff;
     width: 100%;
     height: 100%;
 }
-#canvas_colorbar{
+
+#canvas_colorbar {
     right: 74px;
     top: 156px;
     position: absolute;
 }
+
 #form {
     position: absolute;
     top: 126px;
@@ -867,13 +1020,15 @@ button {
 }
 
 
-#Mode3D{
+#Mode3D {
+    z-index: 1;
     display: none;
     border: 1px solid #0784d1;
     width: 100%;
     height: 100%;
 }
-#mode{
+
+#mode {
     background-color: #fff;
     width: 100%;
     height: 100%;
@@ -881,3 +1036,169 @@ button {
 
 
 
+/* {box-sizing: border-box;} */
+
+/* The popup form - hidden by default */
+.form-popup {
+    position: absolute;
+    z-index: 11;
+    width: 53vh;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    display: none;
+}
+
+/* Add styles to the form container */
+.form-container {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: #e6f5ff;
+    border: 1px solid #0784D1;
+    border-radius: 20px;
+}
+
+/* Full-width input fields */
+.form-container input[type=text],
+.form-container input[type=url] {
+    width: 86%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    border: none;
+    background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus,
+.form-container input[type=url]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+.button-choose-attribute {
+    display: flex;
+    justify-content: center;
+}
+
+.buttonMethod {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    top: 120px;
+}
+
+.methodAttribute {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin: 20px;
+}
+
+#typeAttribute {
+    margin: 10px;
+}
+
+.methodAttribute .typeAttribute-select,
+.typeAttribute-text {
+    width: 80%;
+    margin: 10px;
+    display: none;
+}
+#typeChange{
+    margin: 10px;
+}
+
+/* Set a style for the submit/login button */
+.button-choose-attribute .URL {
+    background: url(img/link.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+}
+
+/* Add a red background color to the cancel button */
+.button-choose-attribute .function {
+    background: url(img/function.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.button-choose-attribute .parameter {
+    background: url(img/Parameter.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+}
+
+/* Add some hover effects to buttons */
+.button-choose-attribute .URL:hover,
+.function:hover,
+.parameter:hover {
+    background-size: 35px 35px;
+}
+
+/* .buttonMethod {
+    margin-top: 25%;
+} */
+
+.buttonMethod .confirm {
+    display: none;
+    background: url(img/confirm.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+}
+
+/* Add a red background color to the cancel button */
+.buttonMethod .close {
+    background: url(img/cancel.png);
+    width: 40px;
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 50%;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.buttonMethod .confirm:hover,
+.close:hover {
+    background-size: 35px 35px;
+}

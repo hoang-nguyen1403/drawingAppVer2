@@ -97,7 +97,8 @@
 				<!-- request -->
 				<!-- <button id="openFile_Solu" title="Solve" onclick="PaintIn.getAPI()"></button> -->
 				<label id="ChangeMode">
-					<button id="modeDrawing" title="Drawing mode" style="background-color: #57fa6d;" type="button"></button>
+					<button id="modeDrawing" title="Drawing mode" style="background-color: #57fa6d;"
+						type="button"></button>
 				</label>
 				<!-- GLMode -->
 				<label id="ChangeModeGL" style="display: none;">
@@ -119,40 +120,96 @@
 					<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
 						style="background-image: url(frontend/img/apply_moment.svg)"></button>
 				</div>
-				<div class="request">
+
+
+				<!-- <div class="form-popup-url-func" id="myFormFUNC">
+					<form class="form-container-url-func">
+						<h1 style="text-align: center;">Add new Function</h1>
+
+						<input id="newfunc" type="text" placeholder="Enter Function" name="Function" required>
+
+						<div class="button_func">
+							<button type="button" onclick="addNewFUNC()" title="Add" class="btn"></button>
+							<button type="button" title="Close" class="btn_cancel" onclick="closePopUpFUNC()"></button>
+						</div>
+					</form>
+				</div> -->
+
+				<div class="request" id="request">
 					<label class="url">
 						<p>url</p>
-						<input type="text" id="urlInputted" value="">
+						<select id="urlInputted" value="">
+						</select>
 					</label>
 					<label class="functionName">
 						<p>Function</p>
-						<input type="text" id="functionNameInputted" value="">
+						<select id="functionNameInputted" value="">
+						</select>
 					</label>
-
+					<label class="Parameter">
+						<p>Parameter</p>
+						<select id="parameterSelected" value="">
+						</select>
+					</label>
+					<div class="addRequest">
+						<button id="addAttribute" onclick="addAttribute()" title="Add Attribute"
+							value="Off">Add</button>
+						<button id="editAttribute" onclick="editAttribute()" title="Edit Attribute"
+							value="Off">Edit</button>
+						<button id="deleteAttribute" onclick="deleteAttribute()" title="Delete Attribute"
+							value="Off">Delete</button>
+					</div>
 				</div>
-				<button id="tab-icon" onclick="PaintIn.toggleTab()" value="Off"></button>
-				<button id="sendRequest" title="Request" type="button" onclick="PaintIn.testAPI()"></button>
 
+				<button id="tab-icon" title="Close" onclick="PaintIn.toggleTab()" value="On"></button>
+				<div class="Request-button">
+					<button id="settingRequest" title="Setting Request" type="button" onclick="settingRequest()"
+						value="Off"></button>
+					<button id="sendRequest" title="Request" type="button" onclick="PaintIn.testAPI()"></button>
+				</div>
+
+			</div>
+
+			<div id="PopUp">
+				<div class="form-popup" id="myForm">
+					<form class="form-container">
+						<h1 style="text-align: center;margin: 10px;" id="Title"></h1>
+						<div class="button-choose-attribute">
+							<button type="button" onclick="methodURL()" title="url" class="URL" value="Off"></button>
+							<button type="button" onclick="methodFunc()" title="Function" class="function"
+								value="Off"></button>
+							<button type="button" onclick="methodParam()" title="Parameter" class="parameter"
+								value="Off"></button>
+						</div>
+						<div class="methodAttribute">
+							<p id="typeAttribute"></p>
+							<select class="typeAttribute-select" onchange="updateSelect()"></select>
+							<p id="typeChange"></p>
+							<input class="typeAttribute-text">
+						</div>
+						<div class="buttonMethod">
+							<button type="button" title="Confirm" class="confirm" onclick="confirm()"></button>
+							<button type="button" title="Close" class="close" onclick="closePopUp()"></button>
+						</div>
+					</form>
+				</div>
 			</div>
 			<div id="wrap_canvas_div">
 				<canvas id="myCanvas"></canvas>
 			</div>
 			<div id="WebGL_area">
-				<div id="aks_visualizer">
-					<canvas id="canvasGL"></canvas>
-					<canvas id="text_colorbar"></canvas>
-					<canvas id="canvas_colorbar"></canvas>
-					</form>
-					<form id="form">
-						<select name="modeSolution" id="modeSolution_value" onchange="mode_change()" style="display: none;">
-							<option value="2D">2D</option>
-							<option value="3D">3D</option>
-						</select>
-						<select name="filter" id="filter" onchange="filter_change()" style="display: none;">
-						</select>
-					</form>
-				</div>
-
+				<canvas id="canvasGL"></canvas>
+				<canvas id="text_colorbar"></canvas>
+				<canvas id="canvas_colorbar"></canvas>
+				</form>
+				<form id="form">
+					<select name="modeSolution" id="modeSolution_value" onchange="mode_change()" style="display: none;">
+						<option value="2D">2D</option>
+						<option value="3D">3D</option>
+					</select>
+					<select name="filter" id="filter" onchange="filter_change()" style="display: none;">
+					</select>
+				</form>
 			</div>
 			<div id="Mode3D">
 				<canvas id="mode"></canvas>
@@ -173,11 +230,11 @@
 		</div>
 
 		<div class="tab">
-
+			<div style="position:absolute;top: 125px;right: 9px; width: 250px;height: 100% ;background-color:#e6f5ff ; border-left: 1px solid #0784d1;">
+			</div>
 			<div id="tab-comments">
-				<p id="lableTab">Text comments</p>
-				<textarea id="textBox" name="" rows="17" cols="32" style="padding: 2px;">
-				</textarea>
+				<p id="lableTab" style="margin: 10px;">Text comments</p>
+				<textarea id="textBox" name="" rows="17" cols="32" style="padding: 2px;"></textarea>
 				<div id="btn_tab_cmt">
 					<label id="uploadFile_label" title="Upload file">Choose a file
 						<input type="file" name="uploadFile" id="uploadFile" style="display: none">
@@ -187,14 +244,16 @@
 						onclick="processingData.prototype.saveTextFile()" value="Off">Save text</button>
 
 				</div>
-				<div id="spinner"></div>
-				<div id="valueInputed">
-					<p
-						style="background-color: #ffffff; height: 40%; overflow: scroll; border: 1px solid #0784d1; user-select: text">
-					</p>
+				<div id="spinner">
+					<img id="loading" src="frontend/img/loading.gif" style="width: 20px;
+					height: 20px;
+					max-width: 20px;
+					max-height: 20px;">
 				</div>
-
-				<div id="clearButton">
+				<div id="valueInputed">
+					<p id="lableTab" style="margin: 0 0 10px 0;">Output</p>
+					<p class="logFile">
+					</p>
 					<button id="clearcommands" type="button" class="option-btn btn-off btn"
 						onclick="PaintIn.clearCommands()" value="Off"></button>
 				</div>
@@ -236,6 +295,7 @@
 	<script src="./frontend/JS/uiUtils.js"></script>
 	<script src="./frontend/JS/event3D.js"></script>
 	<script src="./frontend/JS/processingData_GL.js"></script>
+	<script src="./frontend/JS/Request.js"></script>
 </body>
 
 </html>

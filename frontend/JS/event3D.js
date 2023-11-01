@@ -168,3 +168,10 @@ function showproperties3D(event) {
     }
   }
 }
+
+// function resize_3D() {
+//   twgl.resizeCanvasToDisplaySize(DrawGL3D.gl.canvas);
+//   DrawGL3D.drawMain();
+// }
+// resize_3D();
+// DrawGL3D.canvas.addEventListener("resize",resize_3D());

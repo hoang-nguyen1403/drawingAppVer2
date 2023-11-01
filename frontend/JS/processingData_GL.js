@@ -706,10 +706,6 @@ class dataGL {
     }
     DrawGL.colorBar();
   }
-  createID() {
-
-  }
 }
-// var test
 
-var visualizeData
+var visualizeData;
