@@ -370,7 +370,8 @@ class processingData {
       // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
       // url: "http://127.0.0.1:8000/v1/detectArea/",
 
-      url: "http://13.212.51.164:8000/v1/detectArea/",
+      // url: "http://13.212.51.164:8000/v1/detectArea/",
+      url: "http://4.194.96.65:8000/v1/detectArea/",
       data: dataRequest,
     }); 
 
