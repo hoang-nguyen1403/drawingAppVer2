@@ -1059,8 +1059,8 @@ p.logFile {
 .form-popup {
     position: absolute;
     z-index: 11;
-    width: 28%;
-    height: 50%;
+    width: 60vh;
+    height: 50vh;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
