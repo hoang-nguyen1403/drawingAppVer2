@@ -184,18 +184,19 @@ function checkExist(value, type) {
 }
 
 function settingRequest() {
-    if (document.getElementById("settingRequest").value === "On") {
-        document.getElementById("request").style.display = "none";
-        document.getElementById("settingRequest").value = "Off";
-        document.getElementById("settingRequest").style.backgroundColor = "#ffff";
+    if (domID("settingRequest").value === "On") {
+        domID("request").style.display = "none";
+        domID("settingRequest").value = "Off";
+        domID("settingRequest").style.backgroundColor = "#ffff";
+        closePopUp();
     } else {
-        document.getElementById("settingRequest").value = "On";
-        document.getElementById("request").style.display = "flex";
+        domID("settingRequest").value = "On";
+        domID("request").style.display = "flex";
         domID("tab-icon").value = "Off";
         domClass("tab")[0].style.display = "none";
         domID("tab-icon").style.transform = "rotate(180deg)";
         domID("tab-icon").title = "Open";
-        document.getElementById("settingRequest").style.backgroundColor = "#57fa6d";
+        domID("settingRequest").style.backgroundColor = "#57fa6d";
     }
 }
 
@@ -399,8 +400,10 @@ function confirm() {
                         arr_url[index] = typeAttributeText.value;
                     }
                 } else {
-                    alert("url '" + arr_url[index] + "' has been changed");
-                    arr_url[index] = typeAttributeText.value;
+                    if (arr_url[index] !== undefined) {
+                        alert("url '" + arr_url[index] + "' has been changed");
+                        arr_url[index] = typeAttributeText.value;
+                    } else alert("No thing to change");
                 }
             } else {
                 alert("Just input URL, please input URL");
@@ -416,8 +419,10 @@ function confirm() {
                     if (find) {
                         alert("This Function existed")
                     } else {
-                        alert("Function '" + arr_Function[index] + "' has been changed");
-                        arr_Function[index] = typeAttributeText.value;
+                        if (arr_Function[index] !== undefined) {
+                            alert("Function '" + arr_Function[index] + "' has been changed");
+                            arr_Function[index] = typeAttributeText.value;
+                        } else alert("No thing to change");
                     }
                 } else {
                     alert("Function '" + arr_Function[index] + "' has been changed");
@@ -434,8 +439,10 @@ function confirm() {
                     if (find) {
                         alert("This Parameter existed")
                     } else {
-                        alert("Parameter '" + arr_Parameter[index] + "' has been changed");
-                        arr_Parameter[index] = typeAttributeText.value;
+                        if (arr_Parameter[index] !== undefined) {
+                            alert("Parameter '" + arr_Parameter[index] + "' has been changed");
+                            arr_Parameter[index] = typeAttributeText.value;
+                        } else alert("No thing to change");
                     }
                 } else {
                     alert("Parameter '" + arr_Parameter[index] + "' has been changed");
@@ -448,16 +455,22 @@ function confirm() {
     } else if (deleteAttr.value === "On") {
         if (url.value === "On") {
             let index = arr_url.findIndex((Element) => Element === typeAttributeSelect.value);
-            alert("url '" + arr_url[index] + "' has been deleted");
-            arr_url.splice(index, 1);
+            if (arr_url[index] !== undefined) {
+                alert("url '" + arr_url[index] + "' has been deleted");
+                arr_url.splice(index, 1);
+            } else alert("No thing to delete");
         } else if (func.value === "On") {
             let index = arr_Function.findIndex((Element) => Element === typeAttributeSelect.value);
-            alert("Function '" + arr_Function[index] + "' has been deleted");
-            arr_Function.splice(index, 1);
+            if (arr_Function[index] !== undefined) {
+                alert("Function '" + arr_Function[index] + "' has been deleted");
+                arr_Function.splice(index, 1);
+            } else alert("No thing to delete");
         } else if (param.value === "On") {
             let index = arr_Parameter.findIndex((Element) => Element === typeAttributeSelect.value);
-            alert("Parameter '" + arr_Parameter[index] + "' has been deleted");
-            arr_Parameter.splice(index, 1);
+            if (arr_Parameter[index] !== undefined) {
+                alert("Parameter '" + arr_Parameter[index] + "' has been deleted");
+                arr_Parameter.splice(index, 1);
+            } else alert("No thing to delete");
         }
         updateLocalStorage();
         loadAttribute();
@@ -523,4 +536,4 @@ function clearCommands() {
 }
 
 
-var dataRequest =[];
+var dataRequest = [];

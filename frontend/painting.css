@@ -878,8 +878,25 @@ p.logFile {
     background-repeat: no-repeat;
 }
 
-#parameterSelected {
+#attributeParam {
     width: 300px;
+    background-position: center;
+    background-size: 300px;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: space-between;
+}
+
+#parameterSelected {
+    width: 130px;
+    background-color: #ffffff;
+    background-position: center;
+    background-size: 300px;
+    background-repeat: no-repeat;
+}
+
+#ValueParameter {
+    width: 130px;
     background-color: #ffffff;
     background-position: center;
     background-size: 300px;
@@ -1042,8 +1059,8 @@ p.logFile {
 .form-popup {
     position: absolute;
     z-index: 11;
-    width: 53vh;
-    height: 50vh;
+    width: 28%;
+    height: 50%;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;

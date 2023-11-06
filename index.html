@@ -136,21 +136,24 @@
 				</div> -->
 
 				<div class="request" id="request">
-					<label class="url">
+					<div class="url">
 						<p>url</p>
 						<select id="urlInputted" value="">
 						</select>
-					</label>
-					<label class="functionName">
+					</div>
+					<div class="functionName">
 						<p>Function</p>
 						<select id="functionNameInputted" value="">
 						</select>
-					</label>
-					<label class="Parameter">
+					</div>
+					<div class="Parameter">
 						<p>Parameter</p>
-						<select id="parameterSelected" value="">
+						<div id="attributeParam">
+							<select id="parameterSelected" value="">
+							<input id="ValueParameter" type="text">
+						</div>
 						</select>
-					</label>
+					</div>
 					<div class="addRequest">
 						<button id="addAttribute" onclick="addAttribute()" title="Add Attribute"
 							value="Off">Add</button>
@@ -230,7 +233,8 @@
 		</div>
 
 		<div class="tab">
-			<div style="position:absolute;top: 125px;right: 9px; width: 250px;height: 100% ;background-color:#e6f5ff ; border-left: 1px solid #0784d1;">
+			<div
+				style="position:absolute;top: 125px;right: 9px; width: 250px;height: 100% ;background-color:#e6f5ff ; border-left: 1px solid #0784d1;">
 			</div>
 			<div id="tab-comments">
 				<p id="lableTab" style="margin: 10px;">Text comments</p>

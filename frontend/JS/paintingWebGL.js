@@ -350,5 +350,3 @@ class solutionMode {
 }
 
 const DrawGL = new solutionMode();
-
-var test;

@@ -1,6 +1,6 @@
 //----------RECORD data------------//point
 class processingData {
-  constructor() {}
+  constructor() { }
   //Add
   addObject(newObject, saveArr) {
     //except point
@@ -42,10 +42,10 @@ class processingData {
     return AllPointObj;
   }
   //
-  createSegment(segment_1,segment_2){
-    let AllSeg=[];
-    for (let i = 0; i< segment_1.length; i++){
-      let segment =[segment_1[i],segment_2[i]];
+  createSegment(segment_1, segment_2) {
+    let AllSeg = [];
+    for (let i = 0; i < segment_1.length; i++) {
+      let segment = [segment_1[i], segment_2[i]];
       AllSeg.push(segment);
     }
     return AllSeg;
@@ -373,7 +373,7 @@ class processingData {
       // url: "http://13.212.51.164:8000/v1/detectArea/",
       url: "http://4.194.96.65:8000/v1/detectArea/",
       data: dataRequest,
-    }); 
+    });
 
     promise.then((result) => {
       processingData.prototype.createData(result.data);
@@ -420,8 +420,8 @@ class processingData {
       B.subset(
         math.index(row, 0),
         3 *
-          ((arrY[row + 1] - arrY[row]) / h[row] -
-            (arrY[row] - arrY[row - 1]) / h[row - 1])
+        ((arrY[row + 1] - arrY[row]) / h[row] -
+          (arrY[row] - arrY[row - 1]) / h[row - 1])
       );
     }
     //solve C
@@ -433,7 +433,7 @@ class processingData {
         (arrY[i + 1] - arrY[i]) / h[i] -
         (h[i] *
           (c.subset(math.index(i + 1, 0)) + 2 * c.subset(math.index(i, 0)))) /
-          3;
+        3;
       let d =
         (c.subset(math.index(i + 1, 0)) - c.subset(math.index(i, 0))) /
         (3 * h[i]);
@@ -464,7 +464,7 @@ class processingData {
     //
     return [arrXOutPut, arrYOutPut];
   }
-  saveObj(dataSaved) {
+  saveObj() {
     let data = JSON.stringify(processingData.allObject);
     let num_nodes;
     let num_segments;
@@ -515,24 +515,24 @@ class processingData {
     // }
     for (let point of processingData.allPoint) {
       nodes.push(point.point);
-//      node_names.push(point.name);
+      //      node_names.push(point.name);
       if (point.name != null) {
         node_names.push(point.name);
       } else {
         node_names.push("");
       }
-//      if(point.pointLoads != null) {
-//        nodal_loads.push(point.pointLoads);
-//      } else {
-//        nodal_loads.push([{
-//          type: "force",
-//          parameters: { force_x: 0, force_y: 0 },
-//        }]);
-//      }
-    if(point.pointLoads != null) {
-      nodal_loads.push(point.pointLoads);
-    } else {
-      nodal_loads.push([]);
+      //      if(point.pointLoads != null) {
+      //        nodal_loads.push(point.pointLoads);
+      //      } else {
+      //        nodal_loads.push([{
+      //          type: "force",
+      //          parameters: { force_x: 0, force_y: 0 },
+      //        }]);
+      //      }
+      if (point.pointLoads != null) {
+        nodal_loads.push(point.pointLoads);
+      } else {
+        nodal_loads.push([]);
       }
 
     }
@@ -545,14 +545,14 @@ class processingData {
       );
       let segment = [index1, index2];
       segments.push(segment);
-//      segment_names.push(line.name);
-      if(line.name != null) {
+      //      segment_names.push(line.name);
+      if (line.name != null) {
         segment_names.push(line.name);
       } else {
         segment_names.push("");
       }
-//      segment_loads.push(line.lineLoads);
-      if(line.lineLoads != null) {
+      //      segment_loads.push(line.lineLoads);
+      if (line.lineLoads != null) {
         segment_loads.push(line.lineLoads);
       } else {
         segment_loads.push([]);
@@ -570,44 +570,59 @@ class processingData {
         surface.push(index);
       }
       surfaces.push(surface);
-//      surface_names.push(area.name);
-//      surface_coords.push(area.coordNaming);
-      if(area.name != null) {
+      //      surface_names.push(area.name);
+      //      surface_coords.push(area.coordNaming);
+      if (area.name != null) {
         surface_names.push(area.name);
       } else {
-        surface_names.push("");}
-      if(area.coordNaming != null) {
+        surface_names.push("");
+      }
+      if (area.coordNaming != null) {
         surface_coords.push(area.coordNaming);
       } else {
-      surface_coords.push([]);
+        surface_coords.push([]);
       }
     }
-
+    let jsonObject
     PaintIn.saveCommentText()
+    if (!visualizeData) {
+      jsonObject = {
+        num_nodes: num_nodes,
+        num_segments: num_segments,
+        node_coords: nodes,
+        node_names: node_names,
+        segments: segments,
+        segment_names: segment_names,
+        surfaces: surfaces,
+        surface_names: surface_names,
+        surface_coords: surface_coords,
+        nodal_loads: nodal_loads,
+        segment_loads: segment_loads,
+        text_data: dataLogFile,
+      };
+    } else {
+      jsonObject = {
+          num_nodes: num_nodes,
+          num_segments: num_segments,
+          node_coords: nodes,
+          node_names: node_names,
+          segments: segments,
+          segment_names: segment_names,
+          surfaces: surfaces,
+          surface_names: surface_names,
+          surface_coords: surface_coords,
+          nodal_loads: nodal_loads,
+          segment_loads: segment_loads,
+      }
+      jsonObject = {...jsonObject,...visualizeData.data};
+    }
 
-    let jsonObject = {
-      num_nodes: num_nodes,
-      num_segments: num_segments,
-      node_coords: nodes,
-      node_names: node_names,
-      segments: segments,
-      segment_names: segment_names,
-      surfaces: surfaces,
-      surface_names: surface_names,
-      surface_coords: surface_coords,
-      nodal_loads: nodal_loads,
-      segment_loads: segment_loads,
-      text_data: dataLogFile,
-    };
-    
-
-    dataSaved = JSON.stringify(jsonObject);
-    return dataSaved;
+    return JSON.stringify(jsonObject);
   }
 
   saveAsData() {
-    let dataSaved;
-    let jsonData = processingData.prototype.saveObj(dataSaved);
+    // let dataSaved;
+    let jsonData = processingData.prototype.saveObj();
     let blob = new Blob([jsonData], { type: "text/plain;charset=utf-8" });
     saveAs(blob, "data.json");
   }
@@ -615,10 +630,10 @@ class processingData {
   // save comment text into .txt
   saveTextFile() {
     let textToSave = document.getElementById("textBox").value;
-    let textToSaveAsBlob = new Blob([textToSave], {type:"text/plain"});
-    saveAs(textToSaveAsBlob,"myFile.txt");
+    let textToSaveAsBlob = new Blob([textToSave], { type: "text/plain" });
+    saveAs(textToSaveAsBlob, "myFile.txt");
   }
-   
+
 
   //point - line -area
   // updateStorage() {
@@ -755,7 +770,7 @@ class processingData {
           break;
       }
       switch (b.className) {
-        case "Point": 
+        case "Point":
           b_ = 3;
           break;
         case "Line":
@@ -825,7 +840,7 @@ class processingData {
 
     //create line
     let allLine = [];
-    let AllSeg=[];
+    let AllSeg = [];
     // console.log("input data->>>>>>>>>>>>");
     // console.log(inputData["segments"]);
     for (let i = 0; i <= inputData["segments"].length - 1; i++) {
@@ -873,8 +888,8 @@ class processingData {
       let rawArea = inputData["surfaces"][i];
       let coordName = inputData["surface_coords"][i]
       let sur_name = inputData["surface_names"][i]
-//      let coordName = inputData["surface_coords"][i] != null ? inputData["surface_coords"][i] : [];
-//      let sur_name = inputData["surface_names"][i] != null ? inputData["surface_names"][i] : "";
+      //      let coordName = inputData["surface_coords"][i] != null ? inputData["surface_coords"][i] : [];
+      //      let sur_name = inputData["surface_names"][i] != null ? inputData["surface_names"][i] : "";
       for (let ii = 0; ii < rawArea.length; ii++) {
         pointInArea.push(allPoint[rawArea[ii]].point);
       }
@@ -914,7 +929,7 @@ class processingData {
       let edge = [point1, point2];
       edges.push(edge);
     }
-    
+
     //dx, dy (pixel)
     let dx = 0.3;
     let dy = 0.3;

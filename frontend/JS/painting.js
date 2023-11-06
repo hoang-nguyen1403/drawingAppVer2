@@ -365,8 +365,6 @@ class Paint {
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
-        test = inputData;
-        console.log(inputData);
         if (inputData["jsmat"] !== undefined) {
           document.getElementById("filter").style.display = "block";
           document.getElementById("modeSolution_value").style.display = "block";
@@ -1923,19 +1921,14 @@ class Paint {
       domID("textBox").style.maxHeight = "90%"
       urlSendRequest = PaintIn.APIurl.value;
       let pname = PaintIn.urlFunc.value;
-      let parameter = domID("parameterSelected").value.toString();
-      let type1 = checkExist("=", parameter);
-      let type2 = checkExist(",", parameter);
-      let type3 = checkExist(":", parameter);
-      let value = parameter[type1];
-      if (type1 != -1) {
-        value = parameter[type1];
-      } else if (type2 != -1) {
-        value = parameter[type2];
+      let parameter;
+      if (domID("ValueParameter").value === "") {
+        // alert("The value of the parameter '"+ domID("parameterSelected").value.toString() + "' is null. Please input the value" );
+        parameter = domID("parameterSelected").value.toString() + "= 0";
       } else {
-        value = parameter[type3];
+        parameter = domID("parameterSelected").value.toString() + "=" + domID("ValueParameter").value.toString();
       }
-      const temp = parameter.split(value);
+      const temp = parameter.split("=");
       let obj = {};
       let i = 0;
       while (i < temp.length) {
@@ -1950,7 +1943,6 @@ class Paint {
         }
       }
       let params = JSON.stringify({ ...param, ...obj });
-
       let bodyData = {
         rhs: [pname, params], //rhs: reading - used when send data
         nargout: 1,
@@ -1985,6 +1977,14 @@ class Paint {
             PaintIn.renderCommand("textCommands");
           }
         } catch (err) {
+          this.tabStatus.value = "On";
+          document.getElementsByClassName("tab")[0].style.display = "flex";
+          domID("tab-icon").style.transform = "rotate(0deg)";
+          domID("tab-icon").title = "Close";
+          document.getElementById("request").style.display = "none";
+          document.getElementById("settingRequest").value = "Off";
+          document.getElementById("settingRequest").style.backgroundColor = "#ffff";
+          closePopUp();
           dataRequest = [];
           dataRequest.push(JSON.stringify(result.data));
           PaintIn.renderCommand("textCommands");
@@ -1992,6 +1992,14 @@ class Paint {
       });
 
       promise.catch(function (err) {
+        this.tabStatus.value = "On";
+        document.getElementsByClassName("tab")[0].style.display = "flex";
+        domID("tab-icon").style.transform = "rotate(0deg)";
+        domID("tab-icon").title = "Close";
+        document.getElementById("request").style.display = "none";
+        document.getElementById("settingRequest").value = "Off";
+        document.getElementById("settingRequest").style.backgroundColor = "#ffff";
+        closePopUp();
         dataRequest = [];
         document.getElementById("spinner").style.display = "none";
         domID("clearcommands").style.display = "block";
@@ -3535,6 +3543,9 @@ class Paint {
       document.getElementsByClassName("tab")[0].style.display = "flex";
       domID("tab-icon").style.transform = "rotate(0deg)";
       domID("tab-icon").title = "Close";
+      domID("request").style.display = "none";
+      domID("settingRequest").value = "Off";
+      domID("settingRequest").style.backgroundColor = "#ffff";
     } else {
       this.tabStatus.value = "Off";
       document.getElementsByClassName("tab")[0].style.display = "none";
