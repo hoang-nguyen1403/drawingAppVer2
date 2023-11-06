@@ -3546,6 +3546,7 @@ class Paint {
       domID("request").style.display = "none";
       domID("settingRequest").value = "Off";
       domID("settingRequest").style.backgroundColor = "#ffff";
+      closePopUp();
     } else {
       this.tabStatus.value = "Off";
       document.getElementsByClassName("tab")[0].style.display = "none";

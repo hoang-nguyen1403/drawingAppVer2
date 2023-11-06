@@ -551,6 +551,7 @@ button {
     background-color: rgb(162 202 212 / 97%);
     border: 0px;
     transform: rotate(-90deg);
+    transition: 300ms ease all;
     position: absolute;
     right: 6px;
 }
