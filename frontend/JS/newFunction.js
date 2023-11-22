@@ -13,14 +13,6 @@ function ChangeModeDrawing() {
 	myCanVas.style.display = "block";
 	mode3D.style.display = "none";
 	Gl.style.display = "none";
-	// this.document.getElementById("modeGL").value = "Off"
-	document.getElementById("colorpicker_label").style.display = "block";
-	document.getElementById("line_size").style.display = "block";
-	document.getElementById("coord_div").style.display = "block";
-	document.getElementById("grid").style.display = "block";
-	document.getElementById("line").style.display = "block";
-	document.getElementById("fillColor").style.display = "none";
-	// document.getElementById("setPosition").style.display = "none";
 	document.getElementById("property_solution").style.display = "none";
 	document.getElementById("property").style.display = "block";
 	document.getElementById("meshing").style.backgroundColor = "white";
@@ -28,6 +20,7 @@ function ChangeModeDrawing() {
 	PaintIn.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
 	PaintIn.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
 	PaintIn.renderObject(processingData.allObject);
+	// resize.drawAfterResize();
 }
 
 function ChangeModeGL() {
@@ -39,20 +32,16 @@ function ChangeModeGL() {
 	Gl.style.border = "1px solid #0784d1";
 	Gl.style.width = "100%";
 	Gl.style.height = "100%";
-	document.getElementById("fillColor").style.display = "block";
 	// document.getElementById("setPosition").style.display = "block";
 	document.getElementById("canvasGL").style.display = "block";
-	// document.getElementById("mode").style.display = "none";
-	document.getElementById("colorpicker_label").style.display = "none";
-	document.getElementById("line_size").style.display = "none";
-	document.getElementById("coord_div").style.display = "block";
-	document.getElementById("grid").style.display = "none";
-	document.getElementById("line").style.display = "none";
-	document.getElementById("command").style.display = "none";
-	domID("tab-icon").value = "Off";
-	domClass("tab")[0].style.display = "none";
-	domID("tab-icon").style.transform = "rotate(180deg)";
-	domID("tab-icon").title = "Open";
+	// document.getElementsByClassName("tab")[0].style.width = "3%";
+	// domID("tab-comments").style.display = "none";
+	// domID("tab-icon").style.width = "100%";
+	// domID("Show").style.width = "97%";
+	// domID("tab-icon").value = "Off";
+	// // domClass("tab")[0].style.display = "none";
+	// domID("tab-icon").style.transform = "rotate(180deg)";
+	// domID("tab-icon").title = "Open";
 	document.getElementById("property").style.display = "none";
 	document.getElementById("property_solution").style.display = "block";
 	document.getElementById("meshing").style.backgroundColor = "#57fa6d";
@@ -60,6 +49,7 @@ function ChangeModeGL() {
 	document.getElementById("request").style.display = "none";
 	document.getElementById("settingRequest").value = "Off";
 	document.getElementById("settingRequest").style.backgroundColor = "#ffff";
+	// resize.drawAfterResize();
 };
 
 function ChangeModeGL3D() {
@@ -78,19 +68,38 @@ function ChangeModeGL3D() {
 	document.getElementById("mode").style.display = "block";
 	document.getElementById("text_colorbar").style.display = "block";
 	document.getElementById("canvas_colorbar").style.display = "block";
-	document.getElementById("colorpicker_label").style.display = "none";
-	document.getElementById("line_size").style.display = "none";
 	document.getElementById("coord_div").style.display = "none";
-	document.getElementById("grid").style.display = "none";
-	document.getElementById("line").style.display = "none";
 	document.getElementById("command").style.display = "none";
-	domID("tab-icon").value = "Off";
-	domClass("tab")[0].style.display = "none";
-	domID("tab-icon").style.transform = "rotate(180deg)";
-	domID("tab-icon").title = "Open";
+	// domID("tab-icon").value = "Off";
+	// // domClass("tab")[0].style.display = "none";
+	// document.getElementsByClassName("tab")[0].style.width = "3%";
+	// domID("tab-comments").style.display = "none";
+	// domID("tab-icon").style.width = "100%";
+	// domID("Show").style.width = "97%";
+	// domID("tab-icon").style.transform = "rotate(180deg)";
+	// domID("tab-icon").title = "Open";
 	document.getElementById("meshing").style.backgroundColor = "#57fa6d";
 	document.getElementById("modeDrawing").style.backgroundColor = "white";
 	document.getElementById("request").style.display = "none";
 	document.getElementById("settingRequest").value = "Off";
 	document.getElementById("settingRequest").style.backgroundColor = "#ffff";
+	// resize.drawAfterResize();
 };
+
+
+function Tool() {
+    if (domID("roof").value == "Off") {
+        domID("roof").value = "On";
+		domID("tool_left").style.backgroundColor = "#e6f5ff"
+		domID("tool_left").style.border = "1px solid #0784d1"
+        domID("tool").style.display = "flex";
+        domID("roof").style.transform = "rotate(-90deg)";
+		
+    } else{
+		domID("tool_left").style.backgroundColor = "transparent"
+		domID("tool_left").style.border = "none"
+		domID("roof").value = "Off";
+        domID("tool").style.display = "none";
+        domID("roof").style.transform = "rotate(90deg)";
+    }
+}

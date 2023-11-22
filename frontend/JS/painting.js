@@ -612,23 +612,10 @@ class Paint {
 
     //make canvas responsive
     onresize = (event) => {
-      PaintIn.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
-      PaintIn.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
-      PaintIn.renderObject(processingData.allObject);
-      // DrawGL.gl.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
-      // DrawGL.gl.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
-      // DrawGL3D.gl.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
-      // DrawGL3D.gl.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
-      // DrawGL.drawMain();
-      // DrawGL3D.drawMain();
-      // if (DrawGL.scene_fill[0] != null) {
-      //   twgl.resizeCanvasToDisplaySize(DrawGL.gl.canvas);
-      //   DrawGL.drawMain();
-      // }
-      // if (DrawGL3D.sceneFill[0] != null) {
-      //   twgl.resizeCanvasToDisplaySize(DrawGL3D.gl.canvas);
-      //   DrawGL3D.drawMain();
-      // }
+      // PaintIn.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
+      // PaintIn.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
+      // PaintIn.renderObject(processingData.allObject);
+      resize.drawAfterResize();
     };
   }
 
@@ -1968,17 +1955,25 @@ class Paint {
           receiveData = result.data["lhs"][0];
           if (receiveData !== undefined) {
             dataRequest = [];
-            dataLogFile.push(receiveData);
+            dataLogFile.push(receiveData)
             // let blob = new Blob([(receiveData)], { type: "text/plain;charset=utf-8" });
             // saveAs(blob, "data.json");
             dataRequest.push(receiveData);
             visualizeData = new dataGL(receiveData);
-            visualizeData.proccesingData();
+            if (visualizeData.data.phi) {
+              visualizeData.proccesingData();
+            } else {
+              drawChart = new processingDataChart(receiveData);
+              drawChart.processingData();
+            }
             PaintIn.renderCommand("textCommands");
           }
         } catch (err) {
           this.tabStatus.value = "On";
-          document.getElementsByClassName("tab")[0].style.display = "flex";
+          document.getElementsByClassName("tab")[0].style.width = "25%";
+          domID("tab-icon").style.width = "10%";
+          domID("Show").style.width = "75%";
+          domID("tab-comments").style.display = "flex";
           domID("tab-icon").style.transform = "rotate(0deg)";
           domID("tab-icon").title = "Close";
           document.getElementById("request").style.display = "none";
@@ -1993,7 +1988,10 @@ class Paint {
 
       promise.catch(function (err) {
         this.tabStatus.value = "On";
-        document.getElementsByClassName("tab")[0].style.display = "flex";
+        document.getElementsByClassName("tab")[0].style.width = "25%";
+        domID("tab-icon").style.width = "10%";
+        domID("Show").style.width = "75%";
+        domID("tab-comments").style.display = "flex";
         domID("tab-icon").style.transform = "rotate(0deg)";
         domID("tab-icon").title = "Close";
         document.getElementById("request").style.display = "none";
@@ -3540,18 +3538,26 @@ class Paint {
   toggleTab() {
     if (this.tabStatus.value === "Off") {
       this.tabStatus.value = "On";
-      document.getElementsByClassName("tab")[0].style.display = "flex";
+      document.getElementsByClassName("tab")[0].style.width = "25%";
+      domID("tab-icon").style.width = "10%";
+      domID("Show").style.width = "75%";
+      domID("tab-comments").style.display = "flex";
       domID("tab-icon").style.transform = "rotate(0deg)";
       domID("tab-icon").title = "Close";
       domID("request").style.display = "none";
       domID("settingRequest").value = "Off";
       domID("settingRequest").style.backgroundColor = "#ffff";
+      resize.drawAfterResize();
       closePopUp();
     } else {
       this.tabStatus.value = "Off";
-      document.getElementsByClassName("tab")[0].style.display = "none";
+      document.getElementsByClassName("tab")[0].style.width = "3%";
+      domID("tab-comments").style.display = "none";
+      domID("tab-icon").style.width = "100%";
+      domID("Show").style.width = "97%";
       domID("tab-icon").style.transform = "rotate(180deg)";
       domID("tab-icon").title = "Open";
+      resize.drawAfterResize();
     }
   }
 

@@ -207,7 +207,7 @@ class solutionMode3D {
         }
     }
     drawMain() {
-        // twgl.resizeCanvasToDisplaySize(this.gl.canvas)
+        twgl.resizeCanvasToDisplaySize(this.gl.canvas)
         // set up screen draw
         this.drawFrameBuffer();
         this.setFramebufferAttachmentSizes(this.gl.canvas.width, this.gl.canvas.height);

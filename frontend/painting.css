@@ -8,6 +8,10 @@
 html {
     height: 100%;
     width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 50%;
+    min-height: 50%;
 }
 
 body {
@@ -36,7 +40,7 @@ body {
     height: 50px;
     background-color: #e6f5ff;
     border: 1px solid #0784d1;
-    width: 100%;
+    width: 99.899%;
     display: flex;
     margin: auto;
     align-items: center;
@@ -68,19 +72,61 @@ body {
     flex-direction: column;
 }
 
-#tool_left {
+#center {
+    width: 100%;
+    height: 100%;
     display: flex;
-    background-color: #e6f5ff;
+    flex-direction: row;
     justify-content: space-between;
-    z-index: 2;
+}
+
+#Show {
+    display: flex;
+    width: 75%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 30%;
+    max-width: 97%;
+}
+
+#Drawing {
+    display: flex;
+    width: 100%;
+    height: 50%;
+    min-height: 30%;
+    max-height: 70%;
+}
+
+#Draw {
+    width: 90%;
+    height: 100%;
+    position: relative;
+}
+
+
+#tool_left {
+    background-color: transparent;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    z-index: 5;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    border-radius: 10px;
+    margin-left: 10px;
 }
 
 #tool_right {
     display: flex;
     align-content: center;
-    background-color: #e6f5ff;
-    height: 0%;
+    /* background-color: #e6f5ff; */
+    /* height: 0%; */
     z-index: 2;
+    position: absolute;
+    bottom: 0px;
+    right: 2px;
 }
 
 #wrap_canvas_div {
@@ -88,7 +134,9 @@ body {
     border: 1px solid #0784d1;
     width: 100%;
     z-index: 1;
-    max-height: 100%;
+    height: 100%;
+    position: relative;
+    /* max-height: 100%; */
 }
 
 #PopUp {
@@ -137,6 +185,7 @@ body {
 }
 
 #command {
+    z-index: 2;
     position: absolute;
     left: 25%;
     top: 22%;
@@ -203,9 +252,9 @@ button {
 }
 
 #property_solution {
-    position: absolute;
+    /* position: absolute;
     right: 10px;
-    top: 558px;
+    top: 558px; */
     width: 200px;
     display: none;
     flex-direction: column;
@@ -266,9 +315,9 @@ button {
 }
 
 #property {
-    position: absolute;
+    /* position: absolute;
     right: 17.631%;
-    bottom: 1.1%;
+    bottom: 1.1%; */
     width: 150px;
     display: none;
     flex-direction: column;
@@ -328,16 +377,25 @@ button {
     justify-content: left;
 }
 
+#tool {
+    display: flex;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
 #grid {
-    position: absolute;
+    margin: 10px;
+    /* position: absolute;
     top: 350px;
-    left: 25px;
+    left: 25px; */
 }
 
 #line {
-    position: absolute;
+    margin: 10px;
+    /* position: absolute;
     top: 400px;
-    left: 25px;
+    left: 25px; */
 }
 
 #clear_undo {
@@ -347,9 +405,10 @@ button {
 }
 
 #colorpicker_label {
-    position: absolute;
+    margin: 10px;
+    /* position: absolute;
     top: 150px;
-    left: 25px;
+    left: 25px; */
     width: 35px;
     height: 35px;
     background: url(img/paint.png);
@@ -367,9 +426,10 @@ button {
 }
 
 #line_size {
-    position: absolute;
+    /* position: absolute;
     top: 200px;
-    left: 25px;
+    left: 25px; */
+    margin: 10px;
     width: 35px;
     height: 35px;
     background-repeat: no-repeat;
@@ -382,8 +442,9 @@ button {
 #coord_div {
     z-index: 2;
     position: absolute;
-    top: 90%;
-    left: 25px;
+    /* top: 90%; */
+    bottom: 10px;
+    left: 10px;
     height: 50px;
     width: 150px;
     display: flex;
@@ -556,6 +617,19 @@ button {
     right: 6px;
 }
 
+.property_chart_label .property_chart-icon {
+    height: 26px;
+    width: 26px;
+    background-image: url(img/arrow.png);
+    background-size: 20px 20px;
+    background-color: rgb(162 202 212 / 97%);
+    border: 0px;
+    transform: rotate(-90deg);
+    transition: 300ms ease all;
+    position: absolute;
+    right: 6px;
+}
+
 .select-editable {
     position: relative;
     background-color: white;
@@ -607,40 +681,37 @@ button {
     outline: none;
 }
 
-/* #modeSoln {
-    position: absolute;
-    top: 20%;
-    left: 45%;
-    justify-content: space-around;
-    border: 2px solid black;
-    border-radius: 20px;
-    padding: 5px;
-    display: none;
-    background-color: #e6f5ff;
-} */
-
 #fillColor {
-    z-index: 3;
+    /* z-index: 3; */
     background: url(img/mesh.png);
-    width: 40px;
+    /* width: 40px;
     height: 40px;
-    position: absolute;
+    top: 0px;
+    left: 0px;
+    /* position: absolute;
     top: 55%;
-    left: 25px;
-    display: none;
+    left: 25px; */
+    display: block;
     border: 2px solid black;
     border-radius: 50%;
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;
     background-color: white;
-    margin: 5px;
+    margin: 10px;
 }
 
 #fillColor:hover {
     background-size: 35px 35px;
 }
 
+#roof {
+    background-image: url(img/arrow.png);
+    transform: rotate(90deg);
+    transition: 300ms ease all;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
 /* #setPosition {
     background: url(img/targeting.png);
@@ -695,23 +766,43 @@ button {
 /* ----------Tab comment */
 .tab {
     z-index: 2;
+    width: 25%;
+    position: relative;
+    display: flex;
+    border: solid 1px #0784d1;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 3%;
+    max-width: 70%;
 }
 
 #tab-icon {
     transform: rotate(0deg);
     transition: 300ms ease all;
-    width: 35px;
-    height: 35px;
+    width: 10%;
+    height: 10%;
     border-radius: 0;
     background-size: 20px 20px;
     border: none;
     background: url(img/arrow.png);
     position: absolute;
-    right: 0%;
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;
     margin: 5px;
+}
+
+#ghostpane {
+    /* position: absolute; */
+    /* top: 125px;
+    right: 8px; */
+    /* right: 9px; */
+    /* left: 200px; */
+    width: 100%;
+    height: 100%;
+    background-color: #e6f5ff;
+    /* border-left: 1px solid #0784d1;
+    border-right: 1px solid #0784d1; */
 }
 
 #tab-comments {
@@ -719,15 +810,33 @@ button {
     display: flex;
     align-items: center;
     text-align: center;
-    right: 9px;
-    top: 125px;
-    width: 250px;
-    height: 82.3%;
+    top: 0px;
+    right: 0px;
+    width: 90%;
+    height: 100%;
+    /* max-width: 250px; */
+    /* max-height: 82.3%; */
     background-color: #e6f5ff;
     /* border-left: 1px solid #0784d1; */
     /* border-left: 1px solid #0784d1;
     border-bottom: 1px solid #0784d1; */
     flex-direction: column;
+
+}
+
+#choosen {
+    width: 80%;
+    /* display: flex;
+    justify-content: space-between;
+    align-items: center; */
+}
+
+#switch {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    /* margin: 10px; */
+    width: 100%;
+    height: 50%;
 }
 
 #lableTab {
@@ -758,7 +867,7 @@ button {
     justify-content: center;
 }
 
-#btn_tab_cmt{
+#btn_tab_cmt {
     margin: 10px;
     display: flex;
     flex-direction: row;
@@ -826,7 +935,7 @@ p.logFile {
 /* requestAPI */
 .request {
     top: 125px;
-    right: 8px;
+    right: 10px;
     position: fixed;
     background-color: #e6f5ff;
     border: 1px solid #0784d1;
@@ -838,7 +947,7 @@ p.logFile {
 }
 
 .request .url {
-    width: 400px;
+    width: 430px;
     margin: 17px;
     display: flex;
     justify-content: space-between;
@@ -864,7 +973,7 @@ p.logFile {
 }
 
 #urlInputted {
-    width: 300px;
+    width: 310px;
     background-color: #ffffff;
     background-position: center;
     background-size: 300px;
@@ -872,7 +981,7 @@ p.logFile {
 }
 
 #functionNameInputted {
-    width: 300px;
+    width: 310px;
     background-color: #ffffff;
     background-position: center;
     background-size: 300px;
@@ -880,7 +989,7 @@ p.logFile {
 }
 
 #attributeParam {
-    width: 300px;
+    width: 310px;
     background-position: center;
     background-size: 300px;
     background-repeat: no-repeat;
@@ -998,6 +1107,7 @@ p.logFile {
 }
 
 #WebGL_area {
+    position: relative;
     display: none;
     border: 1px solid #0784d1;
     width: 100%;
@@ -1005,13 +1115,51 @@ p.logFile {
     z-index: 2;
 }
 
+#value {
+    position: relative;
+    display: flex;
+    background-color: #fff;
+    border-bottom: 1px solid #0784d1;
+    border-top: 1px solid #0784d1;
+    /* border-right: 1px solid #0784d1; */
+    width: 10%;
+    min-width: 10%;
+    max-width: 10%;
+    height: 100%;
+    z-index: 2;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#Colorbar {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
 #text_colorbar {
     background-color: #fff;
-    width: 65px;
-    height: 400px;
-    right: 9px;
-    top: 156px;
-    position: absolute;
+    min-width: 50%;
+    width: 50%;
+    max-width: 50%;
+    height: 100%;
+    right: 0px;
+    bottom: 0px;
+    /* position: absolute; */
+}
+
+#canvas_colorbar {
+    height: 100%;
+    right: 74px;
+    bottom: 0px;
+    min-width: 50%;
+    width: 50%;
+    max-width: 50%;
+    /* position: absolute; */
 }
 
 #canvasGL {
@@ -1020,25 +1168,18 @@ p.logFile {
     height: 100%;
 }
 
-#canvas_colorbar {
-    right: 74px;
-    top: 156px;
-    position: absolute;
-}
+
 
 #form {
-    position: absolute;
-    top: 126px;
-    right: 10px;
+    width: 100%;
     display: flex;
-    height: 30px;
+    height: 10%;
     justify-content: space-between;
     align-items: center;
-    width: 114px;
 }
 
-
 #Mode3D {
+    position: relative;
     z-index: 1;
     display: none;
     border: 1px solid #0784d1;
@@ -1052,6 +1193,142 @@ p.logFile {
     height: 100%;
 }
 
+#Chart {
+    z-index: 1;
+    display: block;
+    border: 1px solid #0784d1;
+    width: 100%;
+    height: 50%;
+    position: relative;
+    min-height: 30%;
+    max-height: 70%;
+}
+
+#ChartGL {
+    background-color: transparent;
+    position: absolute;
+    left: 9%;
+    top: 10%;
+    border: solid 1px black;
+    /* width: 100%;
+    height: 100%; */
+    z-index: 1;
+}
+
+#Title_chart {
+    position: absolute;
+    z-index: 2;
+    top: 5px;
+    display: inline;
+}
+
+#filter_chart {
+    z-index: 2;
+    position: absolute;
+    top: 5px;
+    right: 10%;
+    display: flex;
+    height: 20px;
+}
+
+#axes {
+    background-color: #fff;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+#Legend {
+    display: none;
+    background-color: #fff;
+    position: absolute;
+    right: 6%;
+    top: 10%;
+    width: 30vh;
+    height: 20vh;
+    border-left: solid 1px black;
+    border-top: solid 1px black;
+    border-bottom: solid 1px black;
+    z-index: 1;
+}
+
+#property_chart {
+    z-index: 5;
+    position: absolute;
+    left: 30%;
+    top: 10%;
+    width: 200px;
+    display: none;
+    flex-direction: column;
+    font-size: 13px;
+    background-color: #ffffff;
+}
+
+.property_chart_label {
+    display: flex;
+    width: 100%;
+    /* height: 30px; */
+    padding: 0%;
+    font-size: 22px;
+    border: 1px solid black;
+    background-color: rgb(230, 245, 255);
+    font-family: UVF Bariol Regular;
+}
+
+.property_chart_label>div {
+    height: 15px;
+    background-image: url(img/arrow.png);
+    background-size: 10px 10px;
+    background-color: rgb(230, 245, 255);
+    ;
+    border: 1px;
+    position: absolute;
+    right: -3%;
+    border-radius: 8px;
+
+}
+
+.boderProperties_chart>div {
+    width: 100%;
+    height: 35px;
+    display: flex;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    /* background-color: #ffffff; */
+}
+
+.boderProperties_chart>div>p {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    align-items: right;
+    text-align: left;
+    justify-content: left;
+}
+
+.boderProperties_chart>div>div {
+    height: 100%;
+    flex: 1;
+    border-left: 1px solid black;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+}
+
+
+/*
+#axes_y{
+    background-color: black;
+    width: 60px;
+    height: 100%;
+    left: 10px;
+    top: 125px;
+    position: absolute;
+} */
 
 
 /* {box-sizing: border-box;} */
@@ -1127,7 +1404,8 @@ p.logFile {
     margin: 10px;
     display: none;
 }
-#typeChange{
+
+#typeChange {
     margin: 10px;
 }
 

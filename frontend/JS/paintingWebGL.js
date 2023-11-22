@@ -10,12 +10,12 @@ class solutionMode {
     // Declare the card canvas2D - text value of color bar
     this.canvas_text = document.querySelector('#text_colorbar');
     this.canvas_text.width = 65;
-    this.canvas_text.height = 400;
+    // this.canvas_text.height = 400;
     this.ctx_gl = this.canvas_text.getContext('2d');
 
     // Declare the card canavasGL - color bar
     this.canvas_colorbar = document.querySelector('#canvas_colorbar');
-    this.canvas_colorbar.width = 50;
+    this.canvas_colorbar.width = 65;
     this.canvas_colorbar.height = 400;
     this.gl_colorbar = this.canvas_colorbar.getContext('webgl2');
 
@@ -293,7 +293,7 @@ class solutionMode {
     }
   }
   drawMain() {    
-    // twgl.resizeCanvasToDisplaySize(this.gl.canvas)
+    twgl.resizeCanvasToDisplaySize(this.gl.canvas)
     // set up screen draw
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     this.drawFrameBuffer();

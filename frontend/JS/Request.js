@@ -193,10 +193,14 @@ function settingRequest() {
         domID("settingRequest").value = "On";
         domID("request").style.display = "flex";
         domID("tab-icon").value = "Off";
-        domClass("tab")[0].style.display = "none";
+        domClass("tab")[0].style.width = "3%";
+        domID("tab-comments").style.display = "none";
+        domID("tab-icon").style.width = "100%";
+        domID("Show").style.width = "97%";
         domID("tab-icon").style.transform = "rotate(180deg)";
         domID("tab-icon").title = "Open";
         domID("settingRequest").style.backgroundColor = "#57fa6d";
+        resize.drawAfterResize();
     }
 }
 

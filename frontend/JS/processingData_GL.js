@@ -6,22 +6,6 @@ class dataGL {
     this.u = []
     this.node = []
     this.element = []
-
-    this.red_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.RED_BITS);
-    this.green_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.GREEN_BITS);
-    this.blue_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.BLUE_BITS);
-    this.alpha_bits = DrawGL3D.gl.getParameter(DrawGL3D.gl.ALPHA_BITS);
-    this.total_bits = this.alpha_bits + this.blue_bits + this.green_bits + this.alpha_bits;
-
-    this.red_scale = Math.pow(2, this.red_bits);
-    this.green_scale = Math.pow(2, this.green_bits);
-    this.blue_scale = Math.pow(2, this.blue_bits);
-    this.total_scale = Math.pow(2, this.total_bits);
-
-    this.red_shift = Math.pow(2, this.green_bits + this.blue_bits + this.alpha_bits);
-    this.green_shift = Math.pow(2, this.blue_bits + this.alpha_bits);
-    this.blue_bits = Math.pow(2, this.alpha_bits);
-
     FEsoln = []
   }
   clearData() {
@@ -637,7 +621,7 @@ class dataGL {
   }
   colorBar(data) {
     DrawGL.gl_colorbar.clear(DrawGL.gl_colorbar.COLOR_BUFFER_BIT)
-    DrawGL.ctx_gl.clearRect(0, 0, 65, 400);
+    DrawGL.ctx_gl.clearRect(0, 0, 65, domID("text_colorbar").height);
     let maxValue = math.max(data);
     let minValue = math.min(data);
     let delta = math.abs(minValue);
@@ -645,7 +629,7 @@ class dataGL {
 
     let xMax = 500;
     let yMin = 0;
-    let yMax = 400;
+    let yMax = domID("text_colorbar").height;
     let xCBSpace = 0;
 
     let n = 20;

@@ -107,10 +107,107 @@ DrawGL.canvas.addEventListener('mousedown', (event) => {
 });
 
 function filter_change() {
-  let data = FEsoln.find(({ name }) => name == DrawGL.filter_value.value);
-  Mesh.prototype.fillElementsGL(data.data);
-  DrawGL.drawMain();
-  DrawGL3D.drawMain();
+  if (drawChart.type === "Chart") {
+    Chart.scene = [];
+    Chart.node = [];
+    Chart.nearPointGL_storage = [{ x: 10000000, y: 10000000 }, 0];
+    switch (domID("filter_chart").value) {
+      case "tavg":
+        Chart.legend.style.display = "none";
+        var buffer = twgl.createBufferInfoFromArrays(Chart.gl, {
+          a_position: {
+            numComponents: 2,
+            data: Chart.arrLine[0]
+          }
+        });
+        Chart.scene.push({ color: [1, 0, 0, 1], bufferInfo: buffer });
+        var bufferInfo = twgl.createBufferInfoFromArrays(Chart.gl, {
+          a_position: {
+            numComponents: 2,
+            data: drawChart.line_tavg_coord
+          },
+          a_color: Chart.id_1
+        })
+        Chart.node.push(bufferInfo);
+        Chart.drawMain();
+        break;
+      case "tsurf":
+        Chart.legend.style.display = "none";
+        var buffer = twgl.createBufferInfoFromArrays(Chart.gl, {
+          a_position: {
+            numComponents: 2,
+            data: Chart.arrLine[1]
+          }
+        });
+        Chart.scene.push({ color: [0, 1, 0, 1], bufferInfo: buffer });
+        var bufferInfo = twgl.createBufferInfoFromArrays(Chart.gl, {
+          a_position: {
+            numComponents: 2,
+            data: drawChart.line_tsurf_coord
+          },
+          a_color: Chart.id_2
+        })
+        Chart.node.push(bufferInfo);
+        Chart.drawMain();
+        break;
+      case "tcent":
+        Chart.legend.style.display = "none";
+        var buffer = twgl.createBufferInfoFromArrays(Chart.gl, {
+          a_position: {
+            numComponents: 2,
+            data: Chart.arrLine[2]
+          }
+        });
+        Chart.scene.push({ color: [0, 0, 1, 1], bufferInfo: buffer });
+        var bufferInfo = twgl.createBufferInfoFromArrays(Chart.gl, {
+          a_position: {
+            numComponents: 2,
+            data: drawChart.line_tcent_coord
+          },
+          a_color: Chart.id_3
+        })
+        Chart.node.push(bufferInfo);
+        Chart.drawMain();
+        break;
+      case "All":
+        Chart.legend.style.display = "block";
+        for (let i = 0; i < Chart.arrLine.length; i++) {
+          var buffer = twgl.createBufferInfoFromArrays(Chart.gl, {
+            a_position: {
+              numComponents: 2,
+              data: Chart.arrLine[i]
+            }
+          });
+          switch (i) {
+            case 0:
+              Chart.scene.push({ color: [1, 0, 0, 1], bufferInfo: buffer });
+              break;
+            case 1:
+              Chart.scene.push({ color: [0, 1, 0, 1], bufferInfo: buffer });
+              break;
+            case 2:
+              Chart.scene.push({ color: [0, 0, 1, 1], bufferInfo: buffer });
+              break;
+          }
+        }
+        var bufferInfo = twgl.createBufferInfoFromArrays(Chart.gl, {
+          a_position: {
+            numComponents: 2,
+            data: drawChart.all_line
+          },
+          a_color: Chart.id
+        })
+        Chart.node.push(bufferInfo);
+        Chart.drawMain();
+        Chart.drawLegend();
+        break;
+    }
+  } else {
+    let data = FEsoln.find(({ name }) => name == DrawGL.filter_value.value);
+    Mesh.prototype.fillElementsGL(data.data);
+    DrawGL.drawMain();
+    DrawGL3D.drawMain();
+  }
 }
 
 function mode_change() {
