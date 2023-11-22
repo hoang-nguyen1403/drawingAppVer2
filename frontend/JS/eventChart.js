@@ -278,9 +278,6 @@ function toggleChart(){
     domID("Drawing").style.height = "50%";
     domID("chart-icon").style.transform = "rotate(90deg)";
     domID("chart-icon").title = "Close";
-    domID("request").style.display = "none";
-    domID("settingRequest").value = "Off";
-    domID("settingRequest").style.backgroundColor = "#ffff";
     resize.drawAfterResize();
   } else {
     domID("chart-icon").value = "Off";

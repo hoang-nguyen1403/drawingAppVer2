@@ -934,9 +934,10 @@ p.logFile {
 
 /* requestAPI */
 .request {
-    top: 125px;
+    /* top: 61px;
+    right: 10px; */
+    position: absolute;
     right: 10px;
-    position: fixed;
     background-color: #e6f5ff;
     border: 1px solid #0784d1;
     justify-content: space-evenly;
