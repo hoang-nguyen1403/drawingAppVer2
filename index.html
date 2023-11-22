@@ -249,20 +249,25 @@
 
 					</div>
 					<div id="Chart">
-						<b id="Title_chart"></b>
-						<select name="filter" id="filter_chart" onchange="filter_change()" style="display: none;">
-						</select>
-						<canvas id="ChartGL"></canvas>
-						<canvas id="Legend"></canvas>
-						<canvas id="axes"></canvas>
-						<div id="property_chart"></div>
+						<div id="Close-Open">
+							<button id="chart-icon" title="Close" onclick="toggleChart()" value="On"></button>
+						</div>
+						<div id="ChartPlot">
+							<b id="Title_chart"></b>
+							<select name="filter" id="filter_chart" onchange="filter_change()" style="display: none;">
+							</select>
+							<canvas id="ChartGL"></canvas>
+							<canvas id="Legend"></canvas>
+							<canvas id="axes"></canvas>
+							<div id="property_chart"></div>
+						</div>
 						<!-- <canvas id="axes_y"></canvas> -->
 					</div>
 				</div>
 
 				<div class="tab">
 					<button id="tab-icon" title="Close" onclick="PaintIn.toggleTab()" value="On"></button>
-					<div id="ghostpane" style="">
+					<div id="ghostpane">
 
 					</div>
 					<div id="tab-comments">

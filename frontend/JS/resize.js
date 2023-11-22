@@ -24,10 +24,10 @@ class Resize {
 
     drawAfterResize() {
         // Resize Chart
-        Chart.canvas.width = domID("Chart").clientWidth - domID("Chart").clientWidth * 0.15;
-        Chart.canvas.height = domID("Chart").clientHeight - domID("Chart").clientHeight * 0.2;
-        Chart.textCanvas.width = domID("Chart").clientWidth;
-        Chart.textCanvas.height = domID("Chart").clientHeight;
+        Chart.canvas.width = domID("ChartPlot").clientWidth - domID("ChartPlot").clientWidth * 0.15;
+        Chart.canvas.height = domID("ChartPlot").clientHeight - domID("ChartPlot").clientHeight * 0.2;
+        Chart.textCanvas.width = domID("ChartPlot").clientWidth;
+        Chart.textCanvas.height = domID("ChartPlot").clientHeight;
         Chart.drawAxes();
         //draw Canvas 2D;
         PaintIn.canvas.width = domID("wrap_canvas_div").clientWidth;
@@ -53,8 +53,8 @@ class Resize {
                 // draw Chart
 
                 domID("Title_chart").style.left = (domID("axes").clientWidth / 2 - domID("Title_chart").clientWidth / 2).toString() + 'px';
-                domID("Legend").style.left = (domID("Chart").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("Legend").clientWidth).toString() + "px";
-                domID("property_chart").style.left = (domID("Chart").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("property_chart").clientWidth - domID("Legend").clientWidth).toString() + "px";
+                domID("Legend").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("Legend").clientWidth).toString() + "px";
+                domID("property_chart").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("property_chart").clientWidth - domID("Legend").clientWidth).toString() + "px";
                 drawChart.handleData();
                 drawChart.loadDataAfterHandle();
                 twgl.resizeCanvasToDisplaySize(Chart.gl.canvas);
@@ -253,7 +253,7 @@ const resize = new Resize("Drawing");
 
 // function switchMode() {
 //     switch (document.getElementById("switch").value) {
-//         case "Chart":
+//         case "ChartPlot":
 //             ChartOn();
 //             drawChart.handleData();
 //             drawChart.createFilter();

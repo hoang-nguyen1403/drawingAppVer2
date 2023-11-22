@@ -268,3 +268,28 @@ function togglePropertyChart() {
 // Chart.canvas.addEventListener("mousemove",mouseChart);
 
 var type;
+
+function toggleChart(){
+  if (domID("chart-icon").value === "Off") {
+    domID("chart-icon").value = "On";
+    domID("Close-Open").style.height = "10%";
+    domID("ChartPlot").style.display = "block";
+    domID("Chart").style.height = "50%";
+    domID("Drawing").style.height = "50%";
+    domID("chart-icon").style.transform = "rotate(90deg)";
+    domID("chart-icon").title = "Close";
+    domID("request").style.display = "none";
+    domID("settingRequest").value = "Off";
+    domID("settingRequest").style.backgroundColor = "#ffff";
+    resize.drawAfterResize();
+  } else {
+    domID("chart-icon").value = "Off";
+    domID("Close-Open").style.height = "100%";
+    domID("ChartPlot").style.display = "none";
+    domID("Chart").style.height = "10%";
+    domID("Drawing").style.height = "90%";
+    domID("chart-icon").style.transform = "rotate(-90deg)";
+    domID("chart-icon").title = "Open";
+    resize.drawAfterResize();
+  }
+}

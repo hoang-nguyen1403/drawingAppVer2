@@ -1,13 +1,13 @@
 class PlotChart {
     constructor() {
         this.canvas = document.querySelector('#ChartGL');
-        this.canvas.width = document.getElementById("Chart").clientWidth - document.getElementById("Chart").clientWidth * 0.15;
-        this.canvas.height = document.getElementById("Chart").clientHeight - document.getElementById("Chart").clientHeight * 0.2;
+        this.canvas.width = document.getElementById("ChartPlot").clientWidth - document.getElementById("ChartPlot").clientWidth * 0.15;
+        this.canvas.height = document.getElementById("ChartPlot").clientHeight - document.getElementById("ChartPlot").clientHeight * 0.2;
         this.gl = this.canvas.getContext('webgl');
 
         this.textCanvas = document.getElementById("axes");
-        this.textCanvas.width = document.getElementById("Chart").clientWidth;
-        this.textCanvas.height = document.getElementById("Chart").clientHeight;
+        this.textCanvas.width = document.getElementById("ChartPlot").clientWidth;
+        this.textCanvas.height = document.getElementById("ChartPlot").clientHeight;
         this.ctx = this.textCanvas.getContext("2d");
 
         this.legend = document.getElementById("Legend");
@@ -303,28 +303,28 @@ class PlotChart {
         for (let i = 1; i <= xDivisions; i++) {
             const x = i * xInterval * scaleX;
             this.ctx.font = "13px Arial"
-            this.ctx.fillText(vertices[count_x], x + domID("Chart").clientWidth * 0.09, this.textCanvas.height - 5);
+            this.ctx.fillText(vertices[count_x], x + domID("ChartPlot").clientWidth * 0.09, this.textCanvas.height - 5);
             this.ctx.beginPath();
-            this.ctx.moveTo(x + domID("Chart").clientWidth * 0.09, 30 + this.gl.canvas.height);
-            this.ctx.lineTo(x + domID("Chart").clientWidth * 0.09, 35 + this.gl.canvas.height);
+            this.ctx.moveTo(x + domID("ChartPlot").clientWidth * 0.09, 30 + this.gl.canvas.height);
+            this.ctx.lineTo(x + domID("ChartPlot").clientWidth * 0.09, 35 + this.gl.canvas.height);
             this.ctx.stroke();
             count_x += 2;
         }
         for (let i = 1; i <= yDivisions; i++) {
             const y = this.textCanvas.height - i * yInterval * scaleY;
             this.ctx.font = "13px Arial"
-            this.ctx.fillText(vertices[count_y], 0, y - domID("Chart").clientHeight * 0.1);
+            this.ctx.fillText(vertices[count_y], 0, y - domID("ChartPlot").clientHeight * 0.1);
             this.ctx.beginPath();
-            this.ctx.moveTo(domID("Chart").clientWidth * 0.09, y - domID("Chart").clientHeight * 0.1);
-            this.ctx.lineTo(domID("Chart").clientWidth * 0.11, y - domID("Chart").clientHeight * 0.1);
+            this.ctx.moveTo(domID("ChartPlot").clientWidth * 0.09, y - domID("ChartPlot").clientHeight * 0.1);
+            this.ctx.lineTo(domID("ChartPlot").clientWidth * 0.11, y - domID("ChartPlot").clientHeight * 0.1);
             this.ctx.stroke();
             count_y += 2;
         }
         this.ctx.restore();
     }
     drawLegend() {
-        domID("Legend").style.left = (domID("Chart").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("Legend").clientWidth).toString() + "px";
-        domID("property_chart").style.left = (domID("Chart").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("property_chart").clientWidth - domID("Legend").clientWidth).toString() + "px";
+        domID("Legend").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("Legend").clientWidth).toString() + "px";
+        domID("property_chart").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("property_chart").clientWidth - domID("Legend").clientWidth).toString() + "px";
         // this.ctx_legend.save();
         this.ctx_legend.lineWidth = 2;
         this.ctx_legend.beginPath();
