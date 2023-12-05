@@ -1,17 +1,17 @@
 class PlotChart {
     constructor() {
-        this.canvas = document.querySelector('#ChartGL');
-        this.canvas.width = document.getElementById("ChartPlot").clientWidth - document.getElementById("ChartPlot").clientWidth * 0.15;
-        this.canvas.height = document.getElementById("ChartPlot").clientHeight - document.getElementById("ChartPlot").clientHeight * 0.2;
-        this.gl = this.canvas.getContext('webgl');
+        // this.canvas = document.querySelector('#ChartGL');
+        // this.canvas.width = document.getElementById("ChartPlot").clientWidth - document.getElementById("ChartPlot").clientWidth * 0.15;
+        // this.canvas.height = document.getElementById("ChartPlot").clientHeight - document.getElementById("ChartPlot").clientHeight * 0.2;
+        // this.gl = this.canvas.getContext('webgl');
 
-        this.textCanvas = document.getElementById("axes");
-        this.textCanvas.width = document.getElementById("ChartPlot").clientWidth;
-        this.textCanvas.height = document.getElementById("ChartPlot").clientHeight;
-        this.ctx = this.textCanvas.getContext("2d");
+        // this.textCanvas = document.getElementById("axes");
+        // this.textCanvas.width = document.getElementById("ChartPlot").clientWidth;
+        // this.textCanvas.height = document.getElementById("ChartPlot").clientHeight;
+        // this.ctx = this.textCanvas.getContext("2d");
 
-        this.legend = document.getElementById("Legend");
-        this.ctx_legend = this.legend.getContext("2d");
+        // this.legend = document.getElementById("Legend");
+        // this.ctx_legend = this.legend.getContext("2d");
 
         // Declare the card canvas2D - text value of color bar
         this.canvas_text = document.querySelector('#text_colorbar');
@@ -21,87 +21,87 @@ class PlotChart {
 
         // Declare the card canavasGL - color bar
         this.canvas_colorbar = document.querySelector('#canvas_colorbar');
-        this.canvas_colorbar.width = 50;
+        this.canvas_colorbar.width = 65;
         this.canvas_colorbar.height = 400;
         this.gl_colorbar = this.canvas_colorbar.getContext('webgl2');
 
-        // Declare the vertex and fragment shader
-        this.vertex_fill = this.loadVSFG('./frontend/shader/shader_fill.vs');
-        this.fragment_fill = this.loadVSFG('./frontend/shader/shader_fill.fs');
-        this.vertex_black = this.loadVSFG('./frontend/shader/shader_black.vs');
-        this.fragment_black = this.loadVSFG('./frontend/shader/shader_black.fs');
-        this.vertex_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.vs');
-        this.fragment_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.fs');
-        // Compiles shaders, links program
-        this.programInfo = twgl.createProgramInfo(this.gl, [this.vertex_fill, this.fragment_fill]);
-        this.programInfo_colorbar = twgl.createProgramInfo(this.gl_colorbar, [this.vertex_black, this.fragment_black]);
-        this.programInfo_edges = twgl.createProgramInfo(this.gl, [this.vertex_black, this.fragment_black]);
-        this.program_pick_node = twgl.createProgramInfo(this.gl, [this.vertex_pick_node, this.fragment_pick_node]);
-        // Declare the geometry sphere imformation from library twgl
-        this.sphereVerts = twgl.primitives.createSphereVertices(1, 24, 12);
+        // // Declare the vertex and fragment shader
+        // this.vertex_fill = this.loadVSFG('./frontend/shader/shader_fill.vs');
+        // this.fragment_fill = this.loadVSFG('./frontend/shader/shader_fill.fs');
+        // this.vertex_black = this.loadVSFG('./frontend/shader/shader_black.vs');
+        // this.fragment_black = this.loadVSFG('./frontend/shader/shader_black.fs');
+        // this.vertex_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.vs');
+        // this.fragment_pick_node = this.loadVSFG('../frontend/shader/shader_pick_node2D.fs');
+        // // Compiles shaders, links program
+        // this.programInfo = twgl.createProgramInfo(this.gl, [this.vertex_fill, this.fragment_fill]);
+        // this.programInfo_colorbar = twgl.createProgramInfo(this.gl_colorbar, [this.vertex_black, this.fragment_black]);
+        // this.programInfo_edges = twgl.createProgramInfo(this.gl, [this.vertex_black, this.fragment_black]);
+        // this.program_pick_node = twgl.createProgramInfo(this.gl, [this.vertex_pick_node, this.fragment_pick_node]);
+        // // Declare the geometry sphere imformation from library twgl
+        // this.sphereVerts = twgl.primitives.createSphereVertices(1, 24, 12);
 
-        // Create the buffer info from array for the sphere geometry
-        this.sphereBufferInfo = twgl.createBufferInfoFromArrays(this.gl, {
-            a_position: this.sphereVerts.position,
-            indices: this.sphereVerts.indices,
-        });
+        // // Create the buffer info from array for the sphere geometry
+        // this.sphereBufferInfo = twgl.createBufferInfoFromArrays(this.gl, {
+        //     a_position: this.sphereVerts.position,
+        //     indices: this.sphereVerts.indices,
+        // });
 
-        // Declare card filler to take the value to load the fillter model
-        this.filter_value = document.getElementById("filter");
+        // // Declare card filler to take the value to load the fillter model
+        // this.filter_value = document.getElementById("filter");
 
-        // Create camera
-        this.camera = {
-            x: 0,
-            y: 0,
-            rotation: 0,
-            zoom: 1,
-        };
+        // // Create camera
+        // this.camera = {
+        //     x: 0,
+        //     y: 0,
+        //     rotation: 0,
+        //     zoom: 1,
+        // };
 
-        // Declare scene view and set up mouse position
-        this.viewProjectionMat = new Float32Array([0.0013840830652043223, 0, 0, 0, -0.05066209856420755, 0, -1, 1, 1]);
-        this.viewProjectionMat_colorbar;
-        this.startInvViewProjMat;
-        this.startCamera;
-        this.startPos = [0, 0];
-        this.startClipPos;
-        this.startMousePos;
-        this.startInvViewProjMat_check;
-        this.startCamera_check;
-        this.startPos_check;
-        this.startClipPos_check;
-        this.startMousePos_check;
+        // // Declare scene view and set up mouse position
+        // this.viewProjectionMat = new Float32Array([0.0013840830652043223, 0, 0, 0, -0.05066209856420755, 0, -1, 1, 1]);
+        // this.viewProjectionMat_colorbar;
+        // this.startInvViewProjMat;
+        // this.startCamera;
+        // this.startPos = [0, 0];
+        // this.startClipPos;
+        // this.startMousePos;
+        // this.startInvViewProjMat_check;
+        // this.startCamera_check;
+        // this.startPos_check;
+        // this.startClipPos_check;
+        // this.startMousePos_check;
 
-        // Declare nearpointGL to interesction check point near mouse
-        this.nearPointGL;
-        this.nearPointGL_storage = [{ x: 10000000, y: 10000000 }, 0];
-        this.color = [1, 1, 1, 1];
+        // // Declare nearpointGL to interesction check point near mouse
+        // this.nearPointGL;
+        // this.nearPointGL_storage = [{ x: 10000000, y: 10000000 }, 0];
+        // this.color = [1, 1, 1, 1];
 
-        // Declare array to storage the data for drawing
-        this.scene = [];
-        this.arrLine = [];
-        this.arrPoint = [];
-        this.arrLineAll = [];
-        this.node = []
-        this.id;
-        this.targetTexture;
-        this.depthBuffer;
-        this.fb;
-        this.attachmentPoint;
-        this.level;
-        this.internalFormat;
-        this.border;
-        this.format;
-        this.type;
-        this.data;
-        this.scene_axis;
-        this.axis_data_max;
-        this.axis_data_min;
-        this.max_x = 0;
-        this.max_y = 0;
-        this.id = [];
-        this.id_1 = [];
-        this.id_2 = [];
-        this.id_3 = [];
+        // // Declare array to storage the data for drawing
+        // this.scene = [];
+        // this.arrLine = [];
+        // this.arrPoint = [];
+        // this.arrLineAll = [];
+        // this.node = []
+        // this.id;
+        // this.targetTexture;
+        // this.depthBuffer;
+        // this.fb;
+        // this.attachmentPoint;
+        // this.level;
+        // this.internalFormat;
+        // this.border;
+        // this.format;
+        // this.type;
+        // this.data;
+        // this.scene_axis;
+        // this.axis_data_max;
+        // this.axis_data_min;
+        // this.max_x = 0;
+        // this.max_y = 0;
+        // this.id = [];
+        // this.id_1 = [];
+        // this.id_2 = [];
+        // this.id_3 = [];
     }
     // Load vertex and fragment shader
     loadVSFG(path) {
@@ -306,7 +306,7 @@ class PlotChart {
             this.ctx.fillText(vertices[count_x], x + domID("ChartPlot").clientWidth * 0.09, this.textCanvas.height - 5);
             this.ctx.beginPath();
             this.ctx.moveTo(x + domID("ChartPlot").clientWidth * 0.09, 30 + this.gl.canvas.height);
-            this.ctx.lineTo(x + domID("ChartPlot").clientWidth * 0.09, 35 + this.gl.canvas.height);
+            this.ctx.lineTo(x + domID("ChartPlot").clientWidth * 0.09, 15 + this.gl.canvas.height);
             this.ctx.stroke();
             count_x += 2;
         }

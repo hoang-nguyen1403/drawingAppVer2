@@ -237,7 +237,7 @@
 									<option value="2D">2D</option>
 									<option value="3D">3D</option>
 								</select>
-								<select name="filter" id="filter" onchange="filter_change()" style="display: none;">
+								<select name="fil	ter" id="filter" onchange="filter_change()" style="display: none;">
 								</select>
 							</form>
 							<div id="Colorbar">
@@ -252,53 +252,52 @@
 							<button id="chart-icon" title="Close" onclick="toggleChart()" value="On"></button>
 						</div>
 						<div id="ChartPlot">
-							<b id="Title_chart"></b>
+							<!-- <b id="Title_chart"></b>
 							<select name="filter" id="filter_chart" onchange="filter_change()" style="display: none;">
 							</select>
 							<canvas id="ChartGL"></canvas>
 							<canvas id="Legend"></canvas>
 							<canvas id="axes"></canvas>
-							<div id="property_chart"></div>
+							<div id="property_chart"></div> -->
 						</div>
 						<!-- <canvas id="axes_y"></canvas> -->
 					</div>
 				</div>
 
 				<div class="tab">
-					<button id="tab-icon" title="Close" onclick="PaintIn.toggleTab()" value="On"></button>
 					<div id="ghostpane">
-
-					</div>
-					<div id="tab-comments">
-						<div id="choosen">
-							<select id="switch" onchange="">
-								<option value="Tab-comments">Tab-comment</option>
-								<option value="Chart">Chart</option>
-							</select>
-						</div>
-						<p id="lableTab" style="margin: 10px;">Text comments</p>
-						<textarea id="textBox" name="" rows="17" cols="32" style="padding: 2px;"></textarea>
-						<div id="btn_tab_cmt">
-							<label id="uploadFile_label" title="Upload file">Choose a file
-								<input type="file" name="uploadFile" id="uploadFile" style="display: none">
-							</label>
-
-							<button id="cmtSaveText" title="Save into a .txt" type="button" class="btn"
-								onclick="processingData.prototype.saveTextFile()" value="Off">Save text</button>
-
-						</div>
-						<div id="spinner">
-							<img id="loading" src="frontend/img/loading.gif" style="width: 20px;
-					height: 20px;
-					max-width: 20px;
-					max-height: 20px;">
-						</div>
-						<div id="valueInputed">
-							<p id="lableTab" style="margin: 0 0 10px 0;">Output</p>
-							<p class="logFile">
-							</p>
-							<button id="clearcommands" type="button" class="option-btn btn-off btn"
-								onclick="PaintIn.clearCommands()" value="Off"></button>
+						<button id="tab-icon" title="Close" onclick="PaintIn.toggleTab()" value="On"></button>
+						<div id="tab-comments">
+							<div id="choosen">
+								<select id="switch" onchange="">
+									<option value="Tab-comments">Tab-comment</option>
+									<option value="Chart">Chart</option>
+								</select>
+							</div>
+							<p id="lableTab" style="margin: 10px;">Text comments</p>
+							<textarea id="textBox" name="" rows="17" cols="32" style="padding: 2px;"></textarea>
+							<div id="btn_tab_cmt">
+								<label id="uploadFile_label" title="Upload file">Choose a file
+									<input type="file" name="uploadFile" id="uploadFile" style="display: none">
+								</label>
+	
+								<button id="cmtSaveText" title="Save into a .txt" type="button" class="btn"
+									onclick="processingData.prototype.saveTextFile()" value="Off">Save text</button>
+	
+							</div>
+							<div id="spinner">
+								<img id="loading" src="frontend/img/loading.gif" style="width: 20px;
+						height: 20px;
+						max-width: 20px;
+						max-height: 20px;">
+							</div>
+							<div id="valueInputed">
+								<p id="lableTab" style="margin: 0 0 10px 0;">Output</p>
+								<p class="logFile">
+								</p>
+								<button id="clearcommands" type="button" class="option-btn btn-off btn"
+									onclick="PaintIn.clearCommands()" value="Off"></button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -319,6 +318,7 @@
 		<script src="frontend/libs/math.js"></script>
 		<script src="js/webgl-utils-2021.js"></script>
 		<script src="js/ui.js"></script>
+		<script src="./frontend/JS/Chart.js"></script>
 
 
 
@@ -346,9 +346,9 @@
 		<script src="./frontend/JS/processingData_GL.js"></script>
 		<script src="./frontend/JS/Request.js"></script>
 		<script src="./frontend/JS/PlotChart.js"></script>
-		<script src="./frontend/JS/eventChart.js"></script>
+		<!-- <script src="./frontend/JS/eventChart.js"></script> -->
 		<script src="./frontend/JS/processingChart.js"></script>
-		<script src="./frontend/JS/resi	ze.js"></script>
+		<script src="./frontend/JS/resize.js"></script>
 </body>
 
 </html>

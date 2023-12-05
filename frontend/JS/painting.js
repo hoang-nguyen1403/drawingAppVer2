@@ -1962,9 +1962,119 @@ class Paint {
             visualizeData = new dataGL(receiveData);
             if (visualizeData.data.phi) {
               visualizeData.proccesingData();
+              domID("ChartPlot").style.backgroundColor = "#ffff";
+              domID("ChartPlot").innerHTML = `
+                <h1>&#160&#160Summary</h1><br>
+                <p>&#160&#160&#160&#160<b>phi</b> : ${visualizeData.data.phi}</p>
+                <p>&#160&#160&#160&#160<b>area</b> : ${visualizeData.data.area}</p>
+                <p>&#160&#160&#160&#160<b>err</b> : ${visualizeData.data.err}</p>
+                <p>&#160&#160&#160&#160<b>p</b> : ${visualizeData.data.p}</p> 
+                <p>&#160&#160&#160&#160<b>perimeter</b> : ${visualizeData.data.perimeter}</p>
+              `
             } else {
               drawChart = new processingDataChart(receiveData);
-              drawChart.processingData();
+              var trace1 = {
+                x: drawChart.t,
+                y: drawChart.tavg,
+                mode: 'lines+markers',
+                name: 'Domain Average',
+                marker: {
+                  color: 'rgb(219, 64, 82)',
+                  size: 3
+                },
+                line: {
+                  color: 'rgb(219, 64, 82)',
+                  size: 1
+                },
+                visible: true
+              };
+
+              var trace2 = {
+                x: drawChart.t,
+                y: drawChart.tsurf,
+                mode: 'lines+markers',
+                name: 'Surface Avarage',
+                marker: {
+                  color: 'rgb(55, 128, 191)',
+                  size: 3
+                },
+                line: {
+                  color: 'rgb(55, 128, 191)',
+                  width: 1
+                },
+                visible: false
+              };
+
+              var trace3 = {
+                x: drawChart.t,
+                y: drawChart.tcent,
+                mode: 'lines+markers',
+                name: 'Maximum',
+                marker: {
+                  color: 'rgb(128, 0, 128)',
+                  size: 3
+                },
+                line: {
+                  color: 'rgb(128, 0, 128)',
+                  width: 1
+                },
+                visible: false
+              };
+
+              var data = [trace1, trace2, trace3];
+              drawChart.dataChart = [trace1, trace2, trace3];
+
+              var layout = {
+                title: 'Line and Scatter Styling',
+                xaxis: {
+                  title: 't'
+                },
+                yaxis: {
+                  title: 'u'
+                }
+              };
+              drawChart.layout = {
+                title: 'Temperature of polygon domain (Bi = ' + domID("ValueParameter").value.toString() + ')',
+                xaxis: {
+                  title: 't'
+                },
+                yaxis: {
+                  title: 'u'
+                },
+                updatemenus: [{
+                  x: 1,
+                  xanchor:"left",
+                  y: 1,
+                  yanchor:"bottom",
+                  buttons: [{
+                    method: 'restyle',
+                    args: ['visible', [true, false, false]],
+                    label: 'Domain Average'
+                  }, {
+                    method: 'restyle',
+                    args: ['visible', [false, true, false]],
+                    label: 'Surface Avarage'
+                  }, {
+                    method: 'restyle',
+                    args: ['visible', [false, false, true]],
+                    label: 'Maximum'
+                  }, {
+                    method: 'restyle',
+                    args: ['visible', [true, true, true]],
+                    label: 'All'
+                  }]
+                }],
+                legend: {
+                  x:1,
+                  xanchor:"left",
+                  y: 1
+                }
+              };
+
+              Plotly.newPlot("ChartPlot", drawChart.dataChart, drawChart.layout, { scrollZoom: true });
+              resize.height = domClass("tab")[0].clientHeight;
+              domID("Show").style.height = (resize.height + 2).toString() + 'px';
+              // drawChart.processingData();
             }
             PaintIn.renderCommand("textCommands");
           }
@@ -3539,9 +3649,9 @@ class Paint {
     if (this.tabStatus.value === "Off") {
       this.tabStatus.value = "On";
       document.getElementsByClassName("tab")[0].style.width = "25%";
-      domID("tab-icon").style.width = "10%";
       domID("Show").style.width = "75%";
       domID("tab-comments").style.display = "flex";
+      domID("tab-icon").style.width = "10%";
       domID("tab-icon").style.transform = "rotate(0deg)";
       domID("tab-icon").title = "Close";
       domID("request").style.display = "none";
@@ -3549,15 +3659,17 @@ class Paint {
       domID("settingRequest").style.backgroundColor = "#ffff";
       resize.drawAfterResize();
       closePopUp();
+      // Plotly.newPlot('ChartPlot', data, layout);
     } else {
       this.tabStatus.value = "Off";
-      document.getElementsByClassName("tab")[0].style.width = "3%";
+      document.getElementsByClassName("tab")[0].style.width = "1%";
       domID("tab-comments").style.display = "none";
       domID("tab-icon").style.width = "100%";
-      domID("Show").style.width = "97%";
+      domID("Show").style.width = "99%";
       domID("tab-icon").style.transform = "rotate(180deg)";
       domID("tab-icon").title = "Open";
       resize.drawAfterResize();
+      // Plotly.newPlot('ChartPlot', data, layout);
     }
   }
 

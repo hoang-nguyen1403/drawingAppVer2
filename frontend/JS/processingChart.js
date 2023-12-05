@@ -18,6 +18,8 @@ class processingDataChart {
         this.all_line = [];
         this.all_line_find = [];
         this.type = "Chart";
+        this.layout;
+        this.dataChart;
     }
     clearData() {
         Chart.scene = [];

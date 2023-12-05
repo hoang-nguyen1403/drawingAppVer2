@@ -6,6 +6,7 @@ class dataGL {
     this.u = []
     this.node = []
     this.element = []
+    this.data_change;
     FEsoln = []
   }
   clearData() {
@@ -622,22 +623,22 @@ class dataGL {
   colorBar(data) {
     DrawGL.gl_colorbar.clear(DrawGL.gl_colorbar.COLOR_BUFFER_BIT)
     DrawGL.ctx_gl.clearRect(0, 0, 65, domID("text_colorbar").height);
-    let maxValue = math.max(data);
-    let minValue = math.min(data);
-    let delta = math.abs(minValue);
+    var maxValue = math.max(data);
+    var minValue = math.min(data);
+    var delta = math.abs(minValue);
     delta = math.ceil(delta, 1);
 
-    let xMax = 500;
-    let yMin = 0;
-    let yMax = domID("text_colorbar").height;
-    let xCBSpace = 0;
+    var xMax = 500;
+    var yMin = 0;
+    var yMax = domID("text_colorbar").height;
+    var xCBSpace = 0;
 
-    let n = 20;
-    let base = [xMax + xCBSpace, yMin];
-    let width = 50;
-    let height = yMax - base[1];
-    let dy = height / n;
-    let rangeY = math.range(base[1], yMax, dy);
+    var n = 20;
+    var base = [xMax + xCBSpace, yMin];
+    var width = 50;
+    var height = yMax - base[1];
+    var dy = height / n;
+    var rangeY = math.range(base[1], yMax, dy);
     let barcolors_vec4 = colormap({
       colormap: "jet",
       nshades: n,

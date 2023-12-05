@@ -5,34 +5,206 @@ class Resize {
         this.name3 = domID(name3);
 
         this.clicked = null;
-        this.onRightEdge;
-        this.onBottomEdge;
-        this.onLeftEdge;
-        this.onTopEdge;
+        this.onRightEdgeDraw;
+        this.onBottomEdgeDraw;
+        this.onLeftEdgeDraw;
+        this.onTopEdgeDraw;
+        this.onRightEdgeTab;
+        this.onBottomEdgeTab;
+        this.onLeftEdgeTab;
+        this.onTopEdgeTab;
+        this.height = domID("center").clientHeight;
+
+        this.MARGINS = 10;
+        this.e;
+        this.b1;
+        this.b3;
+        this.x1;
+        this.x3;
+        this.y1;
+        this.y3;
+        this.redraw = false;
+        this.isResizing;
+        this.local;
+        this.Draw;
+        this.Chart;
+        this.Tab;
+        this.move;
     }
-    resizeDrawing() {
+    calc(event) {
+        this.b1 = this.name1.getBoundingClientRect();
+        this.x1 = event.clientX - this.b1.left;
+        this.y1 = event.clientY - this.b1.top;
+
+        this.b3 = this.name3.getBoundingClientRect();
+        this.x3 = event.clientX - this.b3.left;
+        this.y3 = event.clientY - this.b3.top;
+
+
+        this.onTopEdgeDraw = this.y1 < this.MARGINS;
+        this.onLeftEdgeDraw = this.x1 < this.MARGINS;
+        this.onRightEdgeDraw = this.x1 >= this.b1.width - 10;
+        this.onBottomEdgeDraw = this.y1 >= this.b1.height - 10;
+
+        this.onTopEdgeTab = this.y3 < this.MARGINS;
+        this.onLeftEdgeTab = this.x3 < this.MARGINS;
+        this.onRightEdgeTab = this.x3 >= this.b3.width - this.MARGINS;
+        this.onBottomEdgeTab = this.y3 >= this.b3.height - this.MARGINS;
+    }
+    onDown(event, name) {
+        this.calc(event, name)
+        this.isResizing = this.onRightEdgeDraw || this.onBottomEdgeDraw || this.onTopEdgeDraw || this.onLeftEdgeDraw || this.onRightEdgeTab || this.onBottomEdgeTab || this.onTopEdgeTab || this.onLeftEdgeTab;
+        if (name === this.name1) {
+            this.clicked = {
+                x: this.x1,
+                y: this.y1,
+                cx: event.clientX,
+                cy: event.clientY,
+                w: this.b1.width,
+                h: this.b1.height,
+                isResizing: this.isResizing,
+                isMoving: !this.isResizing,
+                onTopEdge: this.onTopEdgeDraw,
+                onLeftEdge: this.onLeftEdgeDraw,
+                onRightEdge: this.onRightEdgeDraw,
+                onBottomEdge: this.onBottomEdgeDraw,
+                name: name
+            };
+        } else {
+            this.clicked = {
+                x: this.x3,
+                y: this.y3,
+                cx: event.clientX,
+                cy: event.clientY,
+                w: this.b3.width,
+                h: this.b3.height,
+                isResizing: this.isResizing,
+                isMoving: !this.isResizing,
+                onTopEdge: this.onTopEdgeTab,
+                onLeftEdge: this.onLeftEdgeTab,
+                onRightEdge: this.onRightEdgeTab,
+                onBottomEdge: this.onBottomEdgeTab,
+                name: name
+            };
+        }
+    }
+    onMouseDown(event, name) {
+        if (event.buttons === 1 && !event.shiftKey)
+            this.onDown(event, name);
+    }
+    onMove(event) {
+        this.calc(event);
+        this.e = event;
+        this.redraw = true;
+    }
+    onUp(event) {
+        this.calc(event);
+        this.clicked = null;
 
     }
+    resizeAll() {
+        requestAnimationFrame(() => this.resizeAll());
 
-    resizeChart() {
+        if (!this.redraw) return;
+
+        this.redraw = false;
+
+        if (this.clicked && this.clicked.isResizing) {
+            if (this.clicked.onBottomEdge === true && this.clicked.name === this.name1) {
+                this.name1.style.height = this.y1 + 'px';
+                this.name2.style.height = this.height - this.y1 + 'px';
+                if (this.name2.clientHeight / this.height < 0.15) {
+                    domID("chart-icon").value = "Off";
+                    domID("Close-Open").style.height = "100%";
+                    domID("ChartPlot").style.display = "none";
+                    domID("Chart").style.height = "2%";
+                    domID("Drawing").style.height = "98%";
+                    domID("chart-icon").style.transform = "rotate(-90deg)";
+                    domID("chart-icon").title = "Open";
+                    this.local = null
+                }
+                if (domID("ChartPlot").style.display === "none" && this.local !== null) {
+                    domID("chart-icon").value = "On";
+                    domID("Close-Open").style.height = "10%";
+                    domID("ChartPlot").style.display = "block";
+                    domID("Chart").style.height = "50%";
+                    domID("Drawing").style.height = "50%";
+                    domID("chart-icon").style.transform = "rotate(90deg)";
+                    domID("chart-icon").title = "Close";
+                }
+                this.local = 1;
+                this.drawAfterResize();
+            } else if ((this.clicked.onLeftEdge && this.clicked.name === this.name3)) {
+                domID("center_div").style.width = window.innerWidth - 10 + 'px';
+                domID("tool_top").style.width = window.innerWidth - 20 + 'px';
+                domID("center").style.width = window.innerWidth - 20 + 'px';
+                domID("Show").style.width = this.x1 + 'px';
+                domClass("tab")[0].style.width = domID("center").clientWidth - this.x1 + 'px';
+                if (domID("ghostpane").clientWidth / domID("center").clientWidth < 0.07) {
+                    PaintIn.tabStatus.value = "Off";
+                    domClass("tab")[0].style.width = "1%";
+                    domID("tab-comments").style.display = "none";
+                    domID("tab-icon").style.width = "100%";
+                    domID("Show").style.width = "99%";
+                    domID("tab-icon").style.transform = "rotate(180deg)";
+                    domID("tab-icon").title = "Open";
+                    this.local = null
+                }
+                if (domID("tab-comments").style.display === "none" && this.local !== null) {
+                    PaintIn.tabStatus.value = "On";
+                    domID("tab-comments").style.display = "flex";
+                    domID("tab-icon").style.width = "10%";
+                    domID("tab-icon").style.transform = "rotate(0deg)";
+                    domID("tab-icon").title = "Close";
+                }
+                this.local = 1;
+                this.drawAfterResize();
+            } else {
+
+            }
+            return;
+        }
+        if (this.onBottomEdgeDraw) {
+            domID("Close-Open").style.cursor = 'ns-resize';
+        } else if (this.onLeftEdgeTab) {
+            this.name3.style.cursor = 'ew-resize';
+        } else {
+            this.name1.style.cursor = 'default';
+            this.name3.style.cursor = 'default';
+            domID("Close-Open").style.cursor = 'default';
+        }
 
     }
-
-    resizeTab() {
-
+    moveDraw() {
+        this.move = 1;
     }
-
+    moveChart() {
+        this.move = 2;
+    }
+    moveTab() {
+        this.move = 3;
+    }
     drawAfterResize() {
         // Resize Chart
-        Chart.canvas.width = domID("ChartPlot").clientWidth - domID("ChartPlot").clientWidth * 0.15;
-        Chart.canvas.height = domID("ChartPlot").clientHeight - domID("ChartPlot").clientHeight * 0.2;
-        Chart.textCanvas.width = domID("ChartPlot").clientWidth;
-        Chart.textCanvas.height = domID("ChartPlot").clientHeight;
-        Chart.drawAxes();
+        // Chart.canvas.width = domID("ChartPlot").clientWidth - domID("ChartPlot").clientWidth * 0.15;
+        // Chart.canvas.height = domID("ChartPlot").clientHeight - domID("ChartPlot").clientHeight * 0.2;
+        // Chart.textCanvas.width = domID("ChartPlot").clientWidth;
+        // Chart.textCanvas.height = domID("ChartPlot").clientHeight;
+        // Chart.drawAxes();
         //draw Canvas 2D;
+        domID("center_div").style.width = window.innerWidth - 10 + 'px';
+        domID("tool_top").style.width = window.innerWidth - 21 + 'px';
+        domID("center").style.width = window.innerWidth - 19 + 'px';
+        domID("center").style.height = window.innerHeight - 70 + "px";
+        this.height = domID("center").clientHeight;
+        if (!this.clicked){
+            this.name2.style.height = this.height - this.name1.clientHeight + 'px';
+            this.name1.style.height = this.height - this.name2.clientHeight + 'px';
+        }
         PaintIn.canvas.width = domID("wrap_canvas_div").clientWidth;
         PaintIn.canvas.height = domID("wrap_canvas_div").clientHeight;
         PaintIn.renderObject(processingData.allObject);
+        domID("Show").style.height = (this.height).toString() + 'px';
         if (visualizeData !== undefined) {
             if (visualizeData.data.phi) {
 
@@ -51,218 +223,28 @@ class Resize {
                 // visualizeData.colorBar(visualizeData.data)
             } else {
                 // draw Chart
-
-                domID("Title_chart").style.left = (domID("axes").clientWidth / 2 - domID("Title_chart").clientWidth / 2).toString() + 'px';
-                domID("Legend").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("Legend").clientWidth).toString() + "px";
-                domID("property_chart").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("property_chart").clientWidth - domID("Legend").clientWidth).toString() + "px";
-                drawChart.handleData();
-                drawChart.loadDataAfterHandle();
-                twgl.resizeCanvasToDisplaySize(Chart.gl.canvas);
-                Chart.drawMain();
+                Plotly.newPlot("ChartPlot", drawChart.dataChart, drawChart.layout, { scrollZoom: true });
+                // domID("Title_chart").style.left = (domID("axes").clientWidth / 2 - domID("Title_chart").clientWidth / 2).toString() + 'px';
+                // domID("Legend").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("Legend").clientWidth).toString() + "px";
+                // domID("property_chart").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("property_chart").clientWidth - domID("Legend").clientWidth).toString() + "px";
+                // drawChart.handleData();
+                // drawChart.loadDataAfterHandle();
+                // twgl.resizeCanvasToDisplaySize(Chart.gl.canvas);
+                // Chart.drawMain();
             }
         }
     }
 
 }
-const resize = new Resize("Drawing");
-
-// // Minimum resizable area
-// var minWidth = 250;
-// var minHeight = 82.3;
-
-// // Thresholds
-// var FULLSCREEN_MARGINS = -10;
-// var MARGINS = 0;
-
-// // End of what's configurable.
-// var clicked = null;
-// var onRightEdge, onBottomEdge, onLeftEdge, onTopEdge;
-
-// var rightScreenEdge, bottomScreenEdge;
-
-// var preSnapped;
-
-// var b, x, y;
-
-// var redraw = false;
-
-// var pane = document.getElementById('tab-comments');
-// pane.style.left = document.getElementById("wrap_canvas_div").clientWidth + 9 - pane.clientWidth + 'px';
-// var width = document.getElementById("wrap_canvas_div").clientWidth + 9 - pane.clientWidth;
-// const width1 = document.getElementById("wrap_canvas_div").clientWidth + 9 - pane.clientWidth;
-// var ghostpane = document.getElementById('tab-comments');
-// // ghostpane.style.left = document.getElementById("wrap_canvas_div").clientWidth + 12 - pane.clientWidth + 'px'
-// // pane.style.maxWidth = document.getElementById("wrap_canvas_div").clientWidth + 'px';
-
-// // Mouse events
-// pane.addEventListener('mousedown', onMouseDown);
-// document.addEventListener('mousemove', onMove);
-// document.addEventListener('mouseup', onUp);
+const resize = new Resize("Drawing", "Chart", "ghostpane");
 
 
-// function onTouchDown(e) {
-//     onDown(e.touches[0]);
-//     e.preventDefault();
-// }
 
-// function onTouchMove(e) {
-//     onMove(e.touches[0]);
-// }
+resize.name1.addEventListener("mousedown", event => { resize.onMouseDown(event, resize.name1) });
+resize.name3.addEventListener("mousedown", event => { resize.onMouseDown(event, resize.name3) });
+document.addEventListener("mousemove", event => { resize.onMove(event) });
+document.addEventListener("mouseup", event => { resize.onUp(event) });
 
-// function onTouchEnd(e) {
-//     if (e.touches.length == 0) onUp(e.changedTouches[0]);
-// }
+resize.resizeAll();
 
-// function onMouseDown(e) {
-//     onDown(e);
-//     e.preventDefault();
-// }
-
-// function onDown(e) {
-//     calc(e);
-
-//     var isResizing = onRightEdge || onBottomEdge || onTopEdge || onLeftEdge;
-
-//     clicked = {
-//         x: x,
-//         y: y,
-//         cx: e.clientX,
-//         cy: e.clientY,
-//         w: b.width,
-//         h: b.height,
-//         isResizing: isResizing,
-//         isMoving: !isResizing,
-//         onTopEdge: onTopEdge,
-//         onLeftEdge: onLeftEdge,
-//         onRightEdge: onRightEdge,
-//         onBottomEdge: onBottomEdge
-//     };
-// }
-
-// function canMove() {
-//     return x > 0 && x < b.width && y > 0 && y < b.height
-//         && y < 30;
-// }
-
-// function calc(e) {
-//     b = pane.getBoundingClientRect();
-//     x = e.clientX - b.left;
-//     y = e.clientY - b.top;
-
-//     onTopEdge = y < MARGINS;
-//     onLeftEdge = x < MARGINS;
-//     onRightEdge = x >= b.width - MARGINS;
-//     onBottomEdge = y >= b.height - MARGINS;
-
-//     rightScreenEdge = window.innerWidth - MARGINS;
-//     bottomScreenEdge = window.innerHeight - MARGINS;
-// }
-
-// var e;
-
-// pane.addEventListener("resize", function (e) {
-//     Chart.textCanvas.width = document.getElementById("ghostpane").clientWidth;
-//     Chart.textCanvas.height = document.getElementById("wrap_canvas_div").clientHeight;
-//     Chart.canvas.width = document.getElementById("ghostpane").clientWidth - 70;
-//     Chart.canvas.height = document.getElementById("wrap_canvas_div").clientHeight - 75;
-//     Chart.drawMain();
-//     console.log(1);
-// })
-
-// function onMove(ee) {
-//     calc(ee);
-//     e = ee;
-
-//     redraw = true;
-
-// }
-
-// function animate() {
-
-//     requestAnimationFrame(animate);
-
-//     if (!redraw) return;
-
-//     redraw = false;
-
-//     if (clicked && clicked.isResizing) {
-
-//         if (clicked.onRightEdge) pane.style.width = Math.max(x, minWidth) + 'px';
-//         if (clicked.onBottomEdge) pane.style.height = Math.max(y, minHeight) + '%';
-
-//         if (clicked.onLeftEdge) {
-//             var currentWidth = Math.max(clicked.cx - e.clientX + clicked.w, minWidth);
-//             if (currentWidth > minWidth) {
-//                 if (currentWidth > document.getElementById("wrap_canvas_div").clientWidth) {
-//                     pane.style.width = document.getElementById("wrap_canvas_div").clientWidth + 'px';
-//                 } else if (currentWidth < 251) {
-//                     pane.style.width = 250 + 'px';
-//                 } else {
-//                     pane.style.width = currentWidth + 'px';
-//                 }
-//                 if (e.clientX < 10) {
-//                     pane.style.left = 10 + 'px';
-//                 } else if (e.clientX > width) {
-//                     pane.style.left = width1 + 'px';
-//                 } else {
-//                     pane.style.left = e.clientX + 'px';
-//                 }
-//             }
-//             Chart.textCanvas.width = document.getElementById("ghostpane").clientWidth;
-//             Chart.textCanvas.height = document.getElementById("wrap_canvas_div").clientHeight;
-//             Chart.canvas.width = document.getElementById("ghostpane").clientWidth - 70;
-//             Chart.canvas.height = document.getElementById("wrap_canvas_div").clientHeight - 75;
-//             drawChart.handleData();
-//             drawChart.loadDefaultChart();
-//             Chart.drawMain();
-//         }
-
-//         if (clicked.onTopEdge) {
-//             var currentHeight = Math.max(clicked.cy - e.clientY + clicked.h, minHeight);
-//             if (currentHeight > minHeight) {
-//                 pane.style.height = currentHeight + 'px';
-//                 pane.style.top = e.clientY + 'px';
-//             }
-//         }
-
-//         return;
-//     }
-
-//     // style cursor
-//     if (onRightEdge && onBottomEdge || onLeftEdge && onTopEdge) {
-//         pane.style.cursor = 'nwse-resize';
-//     } else if (onRightEdge && onTopEdge || onBottomEdge && onLeftEdge) {
-//         pane.style.cursor = 'nesw-resize';
-//     } else if (onRightEdge || onLeftEdge) {
-//         pane.style.cursor = 'ew-resize';
-//     } else if (onBottomEdge || onTopEdge) {
-//         pane.style.cursor = 'ns-resize';
-//     } else {
-//         pane.style.cursor = 'default';
-//     }
-// }
-
-// animate();
-
-// function onUp(e) {
-//     calc(e);
-
-//     clicked = null;
-
-// }
-
-// function switchMode() {
-//     switch (document.getElementById("switch").value) {
-//         case "ChartPlot":
-//             ChartOn();
-//             drawChart.handleData();
-//             drawChart.createFilter();
-//             drawChart.loadDefaultChart();
-//             Chart.drawMain();
-//             break;
-//         case "Tab-comments":
-//             ChangeModeDrawing();
-//             break;
-//     }
-// }
-
+const width = domID("center_div").clientWidth;

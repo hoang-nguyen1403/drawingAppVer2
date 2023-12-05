@@ -8,10 +8,6 @@
 html {
     height: 100%;
     width: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    min-width: 50%;
-    min-height: 50%;
 }
 
 body {
@@ -36,10 +32,12 @@ body {
 }
 
 #tool_top {
-    z-index: 10;
+    z-index: 1;
     height: 50px;
     background-color: #e6f5ff;
-    border: 1px solid #0784d1;
+    border-top: 1px solid #0784d1;
+    border-right: 1px solid #0784d1;
+    border-left: 1px solid #0784d1;
     width: 99.899%;
     display: flex;
     margin: auto;
@@ -60,6 +58,8 @@ body {
     background-color: #e6f5ff;
     display: flex;
     width: 100%;
+    height: 100%;
+    max-height: 100%;
     flex: 1;
     /* background-color: #e6f5ff; */
 }
@@ -87,7 +87,8 @@ body {
     flex-direction: column;
     justify-content: space-between;
     min-width: 30%;
-    max-width: 97%;
+    max-height: 100vh;
+    max-width: 99%;
 }
 
 #Drawing {
@@ -95,11 +96,14 @@ body {
     width: 100%;
     height: 50%;
     min-height: 30%;
-    max-height: 90%;
+    max-height: 98%;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #fff;
 }
 
 #Draw {
-    width: 90%;
+    width: 100%;
     height: 100%;
     position: relative;
 }
@@ -110,7 +114,7 @@ body {
     position: absolute;
     display: flex;
     justify-content: space-between;
-    z-index: 5;
+    z-index: 1;
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
@@ -121,19 +125,18 @@ body {
 #tool_right {
     display: flex;
     align-content: center;
-    /* background-color: #e6f5ff; */
-    /* height: 0%; */
-    z-index: 2;
     position: absolute;
     bottom: 0px;
-    right: 2px;
+    right: 0px;
 }
 
 #wrap_canvas_div {
     flex: 1;
-    border: 1px solid #0784d1;
+    border-left: 1px solid #0784d1;
+    border-top: 1px solid #0784d1;
+    border-bottom: 1px solid #0784d1;
     width: 100%;
-    z-index: 1;
+    /* z-index: 1; */
     height: 100%;
     position: relative;
     /* max-height: 100%; */
@@ -188,7 +191,7 @@ body {
     z-index: 2;
     position: absolute;
     left: 25%;
-    top: 22%;
+    top: 15%;
     width: 150px;
     height: 35px;
     display: none;
@@ -440,7 +443,7 @@ button {
 }
 
 #coord_div {
-    z-index: 2;
+    /* z-index: 2; */
     position: absolute;
     /* top: 90%; */
     bottom: 10px;
@@ -617,19 +620,6 @@ button {
     right: 6px;
 }
 
-.property_chart_label .property_chart-icon {
-    height: 26px;
-    width: 26px;
-    background-image: url(img/arrow.png);
-    background-size: 20px 20px;
-    background-color: rgb(162 202 212 / 97%);
-    border: 0px;
-    transform: rotate(-90deg);
-    transition: 300ms ease all;
-    position: absolute;
-    right: 6px;
-}
-
 .select-editable {
     position: relative;
     background-color: white;
@@ -765,14 +755,13 @@ button {
 
 /* ----------Tab comment */
 .tab {
-    z-index: 2;
     width: 25%;
     position: relative;
     display: flex;
     border: solid 1px #0784d1;
     align-items: center;
     justify-content: space-between;
-    min-width: 3%;
+    min-width: 1%;
     max-width: 70%;
 }
 
@@ -789,7 +778,6 @@ button {
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center;
-    margin: 5px;
 }
 
 #ghostpane {
@@ -801,6 +789,9 @@ button {
     width: 100%;
     height: 100%;
     background-color: #e6f5ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     /* border-left: 1px solid #0784d1;
     border-right: 1px solid #0784d1; */
 }
@@ -834,9 +825,9 @@ button {
 #switch {
     margin-top: 10px;
     margin-bottom: 10px;
-    /* margin: 10px; */
     width: 100%;
     height: 50%;
+    z-index: 20;
 }
 
 #lableTab {
@@ -944,7 +935,7 @@ p.logFile {
     flex-direction: column;
     border-radius: 0 0 0 10px;
     display: none;
-    z-index: 10;
+    z-index: 2;
 }
 
 .request .url {
@@ -1110,24 +1101,25 @@ p.logFile {
 #WebGL_area {
     position: relative;
     display: none;
-    border: 1px solid #0784d1;
+    border-left: 1px solid #0784d1;
+    border-top: 1px solid #0784d1;
+    border-bottom: 1px solid #0784d1;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    /* z-index: 2; */
 }
 
 #value {
     position: relative;
     display: flex;
     background-color: #fff;
-    border-bottom: 1px solid #0784d1;
+    /* border-bottom: 1px solid #0784d1; */
     border-top: 1px solid #0784d1;
+    /* border-left: 1px solid #0784D1; */
     /* border-right: 1px solid #0784d1; */
-    width: 10%;
-    min-width: 10%;
-    max-width: 10%;
-    height: 100%;
-    z-index: 2;
+    width: 140px;
+    height: 99.6%;
+    z-index: 1;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
@@ -1144,12 +1136,12 @@ p.logFile {
 
 #text_colorbar {
     background-color: #fff;
-    min-width: 50%;
-    width: 50%;
-    max-width: 50%;
+    width: 65px;
     height: 100%;
+    max-height: 300px;
     right: 0px;
     bottom: 0px;
+    /* z-index: 10; */
     /* position: absolute; */
 }
 
@@ -1157,9 +1149,9 @@ p.logFile {
     height: 100%;
     right: 74px;
     bottom: 0px;
-    min-width: 50%;
-    width: 50%;
-    max-width: 50%;
+    width: 65px;
+    height: 100%;
+    max-height: 300px;
     /* position: absolute; */
 }
 
@@ -1172,6 +1164,7 @@ p.logFile {
 
 
 #form {
+    /* z-index: 5; */
     width: 100%;
     display: flex;
     height: 10%;
@@ -1181,9 +1174,11 @@ p.logFile {
 
 #Mode3D {
     position: relative;
-    z-index: 1;
+    /* z-index: 1; */
     display: none;
-    border: 1px solid #0784d1;
+    border-left: 1px solid #0784d1;
+    border-top: 1px solid #0784d1;
+    border-bottom: 1px solid #0784d1;
     width: 100%;
     height: 100%;
 }
@@ -1195,19 +1190,17 @@ p.logFile {
 }
 
 #Chart {
-    z-index: 1;
     border: 1px solid #0784d1;
     width: 100%;
     height: 50%;
     position: relative;
-    min-height: 10%;
+    min-height: 2%;
     max-height: 70%;
     display: flex;
     flex-direction: column;
 }
 
 #Close-Open{
-    z-index: 2;
     width: 100%;
     height: 10%;
     background-color: #e6f5ff;
@@ -1220,6 +1213,8 @@ p.logFile {
     transform: rotate(90deg);
     transition: 300ms ease all;
     height: 100%;
+    min-height: 100%;
+    /* width: 10%; */
     border-radius: 0;
     background-size: 20px 20px;
     border: none;
@@ -1232,128 +1227,24 @@ p.logFile {
 }
 
 #ChartPlot{
-    z-index: 1;
+    /* z-index: 1; */
     display: block;
-    border: 1px solid #0784d1;
+    border-top: 1px solid #0784d1;
     width: 100%;
     height: 90%;
     position: relative;
 }
 
-#ChartGL {
-    background-color: transparent;
-    position: absolute;
-    left: 9%;
-    top: 10%;
-    border: solid 1px black;
-    /* width: 100%;
-    height: 100%; */
-    z-index: 1;
-}
 
-#Title_chart {
+
+/* #Title_chart {
     position: absolute;
-    z-index: 2;
+    /* z-index: 2;
     top: 5px;
     display: inline;
-}
+} */
 
-#filter_chart {
-    z-index: 2;
-    position: absolute;
-    top: 5px;
-    right: 10%;
-    display: flex;
-    height: 20px;
-}
 
-#axes {
-    background-color: #fff;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
-
-#Legend {
-    display: none;
-    background-color: #fff;
-    position: absolute;
-    right: 6%;
-    top: 10%;
-    width: 30vh;
-    height: 20vh;
-    border-left: solid 1px black;
-    border-top: solid 1px black;
-    border-bottom: solid 1px black;
-    z-index: 1;
-}
-
-#property_chart {
-    z-index: 5;
-    position: absolute;
-    left: 30%;
-    top: 10%;
-    width: 200px;
-    display: none;
-    flex-direction: column;
-    font-size: 13px;
-    background-color: #ffffff;
-}
-
-.property_chart_label {
-    display: flex;
-    width: 100%;
-    /* height: 30px; */
-    padding: 0%;
-    font-size: 22px;
-    border: 1px solid black;
-    background-color: rgb(230, 245, 255);
-    font-family: UVF Bariol Regular;
-}
-
-.property_chart_label>div {
-    height: 15px;
-    background-image: url(img/arrow.png);
-    background-size: 10px 10px;
-    background-color: rgb(230, 245, 255);
-    ;
-    border: 1px;
-    position: absolute;
-    right: -3%;
-    border-radius: 8px;
-
-}
-
-.boderProperties_chart>div {
-    width: 100%;
-    height: 35px;
-    display: flex;
-    border-bottom: 1px solid black;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    /* background-color: #ffffff; */
-}
-
-.boderProperties_chart>div>p {
-    width: 40%;
-    height: 100%;
-    display: flex;
-    align-items: right;
-    text-align: left;
-    justify-content: left;
-}
-
-.boderProperties_chart>div>div {
-    height: 100%;
-    flex: 1;
-    border-left: 1px solid black;
-    display: flex;
-    align-items: left;
-    justify-content: left;
-}
 
 
 /*
@@ -1372,7 +1263,7 @@ p.logFile {
 /* The popup form - hidden by default */
 .form-popup {
     position: absolute;
-    z-index: 11;
+    z-index: 3;
     width: 60vh;
     height: 50vh;
     display: flex;
@@ -1534,3 +1425,17 @@ p.logFile {
 .close:hover {
     background-size: 35px 35px;
 }
+
+svg {
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+  
+  text {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+  
+  polygon {
+    fill: #666;
+  }

@@ -222,7 +222,10 @@ class solutionMode3D {
         // Invisible in canvas
         this.drawPointInvisible();
         // Pick node invisible in canvas
-        let id = takeIDPoint3DInvisible(event);
+        let id2D
+        if (resize.clicked === null) {
+            id2D = takeIDPoint2DInvisible(event);
+        }
         // Visible in canvas
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
         if (document.getElementById("fillColor").value === "On") {
