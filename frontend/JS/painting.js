@@ -293,7 +293,7 @@ class Paint {
     document.getElementById("filter").innerHTML = ``;
     document.getElementById("filter").style.display = "none";
     document.getElementById("modeSolution_value").style.display = "none";
-    document.getElementById("modeSolution_value").value = "3D";
+    document.getElementById("modeSolution_value").value = "2D";
     document.getElementById("property_solution").style.display = "none";
     processingData.allLine = [];
     processingData.allPoint = [];
@@ -305,6 +305,11 @@ class Paint {
     this.renderProperty("off", "");
     this.renderObject(processingData.allObject);
     PaintIn.clearCommands("textCommands");
+    if (drawChart !== undefined) {
+      drawChart.clearData();
+      Plotly.purge("ChartPlot");
+      drawChart = undefined
+    }
   }
 
   // save comment text
@@ -365,6 +370,9 @@ class Paint {
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
+        for (let i =0;i<inputData.node_coords.length;i++){
+          inputData.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-inputData.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
+        }
         if (inputData["jsmat"] !== undefined) {
           document.getElementById("filter").style.display = "block";
           document.getElementById("modeSolution_value").style.display = "block";
@@ -534,36 +542,6 @@ class Paint {
           document.getElementById("filter").style.display = "none";
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
-          for (let i = 0; i < processingData.allPoint.length; i++) {
-            DrawGL.takePoint.push(processingData.allPoint[i].point);
-          }
-
-          for (let i = 0; i < processingData.allSeg.length; i++) {
-            DrawGL.segment.push(processingData.allSeg[i]);
-          }
-
-          DrawGL.takePoint = DrawGL.takePoint.flat();
-          DrawGL.segment = DrawGL.segment.flat();
-          DrawGL.lineVertex = DrawGL.takePoint;
-
-          for (let i = 0; i < DrawGL.lineVertex.length; i++) {
-            if (i % 2 == 0) {
-              DrawGL.point_x.push(DrawGL.lineVertex[i]);
-            }
-            else DrawGL.point_y.push(DrawGL.lineVertex[i]);
-          }
-
-          // calls gl.createBuffer, gl.bindBuffer, gl.bufferData
-          var bufferInfo = twgl.createBufferInfoFromArrays(DrawGL.gl, {
-            a_position: {
-              numComponents: 2,
-              data: DrawGL.lineVertex,
-            },
-            indices: DrawGL.segment,
-          });
-          DrawGL.scene_load = [{ x: 0, y: 0, rotation: 0, scale: 1, color: [0, 0, 0, 1], bufferInfo },];
-          DrawGL.drawMain();
-
           //update screen
           PaintIn.renderObject(processingData.allObject);
         }
@@ -1439,6 +1417,27 @@ class Paint {
       };
     }
   }
+  getMousePositionChange(event) {
+    let rect = this.canvas.getBoundingClientRect();
+    if (
+      this.pen === "brush" ||
+      this.pen === "line" ||
+      this.pen === "circle" ||
+      this.pen === "rect" ||
+      this.pen === "spl" ||
+      this.curValSelect === "On" ||
+      this.curValName.value === "On" ||
+      this.curValPointLoad.value === "On" ||
+      this.curValPressLoad.value === "On" ||
+      this.curValMoment.value === "On" ||
+      this.curValDrawing.value === "On"
+    ) {
+      return {
+        x: Math.round(event.clientX - rect.left),
+        y: Math.round(-(event.clientY - rect.bottom + 3)),
+      };
+    }
+  }
 
   changeOrigin(event) {
     let offSetX = 0;
@@ -1636,13 +1635,13 @@ class Paint {
     this.currentMouseMovePos = this.getMousePosition(event);
     // let mouseMoveCoordination = this.changeOrigin(event);
     // this.renderObject(processingData.allObject);
-
+    var mouseMove = this.getMousePositionChange(event);
     //
     document.getElementById("display_coord").innerHTML =
       "[" +
-      this.currentMouseMovePos.x +
+      mouseMove.x +
       " ; " +
-      this.currentMouseMovePos.y +
+      mouseMove.y +
       "]";
     // document.getElementById("display_coord").innerHTML =
     //   "[" + mouseMoveCoordination.x + " ; " + mouseMoveCoordination.y + "]";
@@ -1923,6 +1922,9 @@ class Paint {
         i += 2;
       }
       let param = JSON.parse(processingData.prototype.saveObj());
+      for (let i =0;i<param.node_coords.length;i++){
+        param.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-param.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
+      }
       for (let val in obj) {
         if (typeof (obj[val]) === "string") {
           let str = obj[val];
@@ -2043,9 +2045,9 @@ class Paint {
                 },
                 updatemenus: [{
                   x: 1,
-                  xanchor:"left",
+                  xanchor: "left",
                   y: 1,
-                  yanchor:"bottom",
+                  yanchor: "bottom",
                   buttons: [{
                     method: 'restyle',
                     args: ['visible', [true, false, false]],
@@ -2065,8 +2067,8 @@ class Paint {
                   }]
                 }],
                 legend: {
-                  x:1,
-                  xanchor:"left",
+                  x: 1,
+                  xanchor: "left",
                   y: 1
                 }
               };
@@ -3010,7 +3012,7 @@ class Paint {
                   <input type="text" name="format" value="[${math.round(
           Obj.x,
           2
-        )}, ${math.round(Obj.y, 2)}]"
+        )}, ${math.round(PaintIn.canvas.getBoundingClientRect().bottom-Obj.y-PaintIn.canvas.getBoundingClientRect().top, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                 </div>
               </div>
@@ -3076,8 +3078,8 @@ class Paint {
             <div>
               <div class="coordinate">
                 <input type="text" name="format"
-                  value="[${math.round(Obj.Point[0].x, 2)},${math.round(
-          Obj.Point[0].y,
+                  value="[${math.round(Obj.Point[0].x, 2)},${math.round(PaintIn.canvas.getBoundingClientRect().bottom-
+          Obj.Point[0].y-PaintIn.canvas.getBoundingClientRect().top,
           2
         )}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
@@ -3090,8 +3092,8 @@ class Paint {
             <div>
               <div class="coordinate">
                 <input type="text" name="format"
-                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(
-          Obj.Point[1].y,
+                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(PaintIn.canvas.getBoundingClientRect().bottom-
+          Obj.Point[1].y-PaintIn.canvas.getBoundingClientRect().top,
           2
         )}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />

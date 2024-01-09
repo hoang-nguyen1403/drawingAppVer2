@@ -197,7 +197,7 @@ class Resize {
         domID("center").style.width = window.innerWidth - 19 + 'px';
         domID("center").style.height = window.innerHeight - 70 + "px";
         this.height = domID("center").clientHeight;
-        if (!this.clicked){
+        if (!this.clicked) {
             this.name2.style.height = this.height - this.name1.clientHeight + 'px';
             this.name1.style.height = this.height - this.name2.clientHeight + 'px';
         }
@@ -207,7 +207,7 @@ class Resize {
         domID("Show").style.height = (this.height).toString() + 'px';
         if (visualizeData !== undefined) {
             if (visualizeData.data.phi) {
-
+                // visualizeData.proccesingData();
                 //draw Solution 2D
                 DrawGL.drawMain();
 
@@ -223,7 +223,9 @@ class Resize {
                 // visualizeData.colorBar(visualizeData.data)
             } else {
                 // draw Chart
-                Plotly.newPlot("ChartPlot", drawChart.dataChart, drawChart.layout, { scrollZoom: true });
+                if (drawChart !== undefined) {
+                    Plotly.newPlot("ChartPlot", drawChart.dataChart, drawChart.layout, { scrollZoom: true });
+                }
                 // domID("Title_chart").style.left = (domID("axes").clientWidth / 2 - domID("Title_chart").clientWidth / 2).toString() + 'px';
                 // domID("Legend").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("Legend").clientWidth).toString() + "px";
                 // domID("property_chart").style.left = (domID("ChartPlot").clientWidth * 0.09 + domID("ChartGL").clientWidth - domID("property_chart").clientWidth - domID("Legend").clientWidth).toString() + "px";
@@ -248,3 +250,5 @@ document.addEventListener("mouseup", event => { resize.onUp(event) });
 resize.resizeAll();
 
 const width = domID("center_div").clientWidth;
+
+var test_1 = [];

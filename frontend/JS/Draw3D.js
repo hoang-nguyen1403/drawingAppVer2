@@ -209,6 +209,7 @@ class solutionMode3D {
     drawMain() {
         twgl.resizeCanvasToDisplaySize(this.gl.canvas)
         // set up screen draw
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         this.drawFrameBuffer();
         this.setFramebufferAttachmentSizes(this.gl.canvas.width, this.gl.canvas.height);
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.fb);
@@ -217,14 +218,13 @@ class solutionMode3D {
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.depthFunc(this.gl.LEQUAL);
         this.updateViewProjection();
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
         // Invisible in canvas
         this.drawPointInvisible();
         // Pick node invisible in canvas
-        let id2D
+        let id
         if (resize.clicked === null) {
-            id2D = takeIDPoint2DInvisible(event);
+            id= takeIDPoint3DInvisible(event);
         }
         // Visible in canvas
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
@@ -248,9 +248,9 @@ class solutionMode3D {
             this.canvas.addEventListener('pointermove', (e) => {
                 this.canvas.style.cursor = "pointer";
             })
-            this.canvas.addEventListener("mousedown", showproperties3D);
             this.drawFill();
             this.drawMesh();
+            this.canvas.addEventListener("mousedown", showproperties3D);
             // this.drawPoint();
         } else if (document.getElementById("fillColor").value === "Off") {
             this.canvas.addEventListener('pointermove', (e) => {

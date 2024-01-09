@@ -37,6 +37,8 @@ class processingDataChart {
         this.line_tcent_find = [];
         this.all_line = [];
         this.all_line_find = [];
+        this.layout=[];
+        this.dataChart=[];
         // Chart.drawMain();
     }
     handleData() {

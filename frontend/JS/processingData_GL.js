@@ -333,6 +333,7 @@ class dataGL {
       a_color: DrawGL3D.colorNode,
     })
     DrawGL3D.sceneFill.push(bufferInfo);
+    
     DrawGL3D.drawMain();
     ChangeModeGL3D();
     ChangeModeGL();

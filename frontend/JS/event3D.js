@@ -58,7 +58,7 @@ function handleMouseMove3D(event) {
     const deltaX = event.clientX - DrawGL3D.mouse.prevMouseX;
     const deltaY = event.clientY - DrawGL3D.mouse.prevMouseY;
     DrawGL3D.camera.translation_x += deltaX * 1;
-    DrawGL3D.camera.translation_y += deltaY * 1;
+    DrawGL3D.camera.translation_y -= deltaY * 1;
     DrawGL3D.mouse.prevMouseX = event.clientX;
     DrawGL3D.mouse.prevMouseY = event.clientY;
     DrawGL3D.drawMain();
@@ -175,3 +175,5 @@ function showproperties3D(event) {
 // }
 // resize_3D();
 // DrawGL3D.canvas.addEventListener("resize",resize_3D());
+
+

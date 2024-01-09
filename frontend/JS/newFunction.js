@@ -9,6 +9,7 @@ var changeModee = document.getElementById("modeDrawing");
 changeModee.addEventListener("click", ChangeModeDrawing);
 var mode3D = document.getElementById("Mode3D");
 function ChangeModeDrawing() {
+	domID("modeDrawing").value = "On";
 	canVas.style.display = "block";
 	myCanVas.style.display = "block";
 	mode3D.style.display = "none";

@@ -360,6 +360,10 @@ class processingData {
     }
 
     let jsonData = JSON.parse(listData);
+    for (let i =0;i<jsonData.node_coords.length;i++){
+      jsonData.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-jsonData.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
+    }
+    console.log(jsonData);
     jsonData.surfaces = surfaces;
     jsonData.surface_coords = surface_coords;
     jsonData.surface_names = surface_names;
@@ -376,6 +380,10 @@ class processingData {
     });
 
     promise.then((result) => {
+      console.log(result.data);
+      for (let i =0;i<result.data.node_coords.length;i++){
+        result.data.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-result.data.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
+      }
       processingData.prototype.createData(result.data);
       PaintIn.renderObject(processingData.allObject);
     });
@@ -602,19 +610,19 @@ class processingData {
       };
     } else {
       jsonObject = {
-          num_nodes: num_nodes,
-          num_segments: num_segments,
-          node_coords: nodes,
-          node_names: node_names,
-          segments: segments,
-          segment_names: segment_names,
-          surfaces: surfaces,
-          surface_names: surface_names,
-          surface_coords: surface_coords,
-          nodal_loads: nodal_loads,
-          segment_loads: segment_loads,
+        num_nodes: num_nodes,
+        num_segments: num_segments,
+        node_coords: nodes,
+        node_names: node_names,
+        segments: segments,
+        segment_names: segment_names,
+        surfaces: surfaces,
+        surface_names: surface_names,
+        surface_coords: surface_coords,
+        nodal_loads: nodal_loads,
+        segment_loads: segment_loads,
       }
-      jsonObject = {...jsonObject,...visualizeData.data};
+      jsonObject = { ...jsonObject, ...visualizeData.data };
     }
 
     return JSON.stringify(jsonObject);
@@ -622,7 +630,11 @@ class processingData {
 
   saveAsData() {
     // let dataSaved;
-    let jsonData = processingData.prototype.saveObj();
+    let jsonData = JSON.parse(processingData.prototype.saveObj());
+    for (let i =0;i<jsonData.node_coords.length;i++){
+      jsonData.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-jsonData.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
+    }
+    jsonData = JSON.stringify(jsonData)
     let blob = new Blob([jsonData], { type: "text/plain;charset=utf-8" });
     saveAs(blob, "data.json");
   }
@@ -720,6 +732,7 @@ class processingData {
         }
       }
     }
+    console.log(processingData.allArea);
     //
     for (let area of processingData.allArea) {
       processingData.allObject.push(area);
@@ -731,6 +744,7 @@ class processingData {
         }
       }
     }
+    console.log(processingData.allLine);
     for (let line of processingData.allLine) {
       processingData.allObject.push(line);
       // console.log('line1',line)

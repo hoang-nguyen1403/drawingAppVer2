@@ -212,6 +212,8 @@ function filter_change() {
 
 function mode_change() {
   let value = document.getElementById("modeSolution_value").value;
+  domID("modeDrawing").value = "Off";
+  domID("meshing").value = "On";
   switch (value) {
     case "3D":
       ChangeModeGL3D();

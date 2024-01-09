@@ -128,7 +128,7 @@ class solutionMode {
   // update view scene when zoom, move and rotate
   updateViewProjection() {
     // same as ortho(0, width, height, 0, -1, 1)
-    const projectionMat = m3.projection(this.gl.canvas.width, this.gl.canvas.height);
+    const projectionMat = m3_fix.projection(this.gl.canvas.width, this.gl.canvas.height);
     const cameraMat = this.makeCameraMatrix();
     let viewMat = m3.inverse(cameraMat);
     this.viewProjectionMat = m3.multiply(projectionMat, viewMat);

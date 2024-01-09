@@ -74,7 +74,7 @@
 				<label id="ChangeModeGL" style="display: none;">
 					<button id="modeGL" title="Solution mode" type="button"></button>
 				</label>
-				<button id="meshing" title="Solution mode" onclick="mode_change()"></button>
+				<button id="meshing" title="Solution mode" onclick="mode_change()" value="Off"></button>
 				<label class="inputImage" title="Open image">
 					<input type="file" id="inputImg" name="inputImg" accept="image/png, image/jpg" ref="file"
 						style="display: none">
@@ -209,7 +209,11 @@
 
 							</div>
 							<div id="wrap_canvas_div">
-								<canvas id="myCanvas"></canvas>
+								<canvas id="myCanvas">
+									<canvas.LayoutTransform>
+										<ScaleTransform ScaleX="1" ScaleY="-1" CenterX=".5" CenterY=".5" />
+									</canvas.LayoutTransform>
+								</canvas>
 								<div id="coord_div">
 									<div id="icon_coord">
 									</div>
@@ -268,12 +272,12 @@
 					<div id="ghostpane">
 						<button id="tab-icon" title="Close" onclick="PaintIn.toggleTab()" value="On"></button>
 						<div id="tab-comments">
-							<div id="choosen">
+							<!-- <div id="choosen">
 								<select id="switch" onchange="">
 									<option value="Tab-comments">Tab-comment</option>
 									<option value="Chart">Chart</option>
 								</select>
-							</div>
+							</div> -->
 							<p id="lableTab" style="margin: 10px;">Text comments</p>
 							<textarea id="textBox" name="" rows="17" cols="32" style="padding: 2px;"></textarea>
 							<div id="btn_tab_cmt">
