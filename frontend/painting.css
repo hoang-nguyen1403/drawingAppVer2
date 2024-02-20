@@ -99,7 +99,7 @@ body {
     max-height: 98%;
     flex-direction: row;
     justify-content: space-between;
-    background-color: #fff;
+    background-color: transparent;
 }
 
 #Draw {
@@ -114,12 +114,32 @@ body {
     position: absolute;
     display: flex;
     justify-content: space-between;
-    z-index: 1;
+    z-index: 3;
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
     border-radius: 10px;
     margin-left: 10px;
+}
+
+#inputAdd {
+    z-index: 3;
+    position: relative;
+    display: none;
+    width: 50px;
+}
+
+#ZoneName {
+    z-index: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    bottom: 100%;
+}
+
+#AddZone {
+    height: 100%;
+    width: 100%;
 }
 
 #tool_right {
@@ -153,8 +173,18 @@ body {
 
 #myCanvas {
     background-color: white;
+    position: absolute;
     height: 100%;
     width: 100%;
+    z-index: 0;
+}
+
+#CanvasInput {
+    background-color: transparent;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
 }
 
 #style {
@@ -325,6 +355,7 @@ button {
     display: none;
     flex-direction: column;
     font-size: 13px;
+    z-index: 2;
     /* background-color: #ffffff; */
 }
 
@@ -443,7 +474,7 @@ button {
 }
 
 #coord_div {
-    /* z-index: 2; */
+    z-index: 2;
     position: absolute;
     /* top: 90%; */
     bottom: 10px;
@@ -1200,7 +1231,7 @@ p.logFile {
     flex-direction: column;
 }
 
-#Close-Open{
+#Close-Open {
     width: 100%;
     height: 10%;
     background-color: #e6f5ff;
@@ -1226,7 +1257,7 @@ p.logFile {
     margin: 5px;
 }
 
-#ChartPlot{
+#ChartPlot {
     /* z-index: 1; */
     display: block;
     border-top: 1px solid #0784d1;
@@ -1429,13 +1460,13 @@ p.logFile {
 svg {
     border: 1px solid #ccc;
     cursor: pointer;
-  }
-  
-  text {
+}
+
+text {
     font-family: Arial, sans-serif;
     font-size: 14px;
-  }
-  
-  polygon {
+}
+
+polygon {
     fill: #666;
-  }
+}

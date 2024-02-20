@@ -201,9 +201,35 @@ class Resize {
             this.name2.style.height = this.height - this.name1.clientHeight + 'px';
             this.name1.style.height = this.height - this.name2.clientHeight + 'px';
         }
-        PaintIn.canvas.width = domID("wrap_canvas_div").clientWidth;
-        PaintIn.canvas.height = domID("wrap_canvas_div").clientHeight;
-        PaintIn.renderObject(processingData.allObject);
+        DrawingGL.canvas.width = domID("wrap_canvas_div").clientWidth;
+        DrawingGL.canvas.height = domID("wrap_canvas_div").clientHeight;
+        // PaintIn.renderObject(processingData.allObject);
+        twgl.resizeCanvasToDisplaySize(DrawingGL.gl.canvas)
+        DrawingGL.DrawMain();
+        renderName();
+        if (domID("valueName").value == "On" || domID("pointLoad").value == "On" || domID("moment").value == "On" || domID("pressLoad").value == "On") {
+            if (select !== null) {
+                var heightwidth = convertPositionGLtoHeightWeight(select);
+                var input = domID("inputAdd")
+                input.style.display = "block";
+                domID("styleInput").style.display = "none";
+                if (heightwidth.height <= DrawingGL.gl.canvas.clientHeight && heightwidth.width <= DrawingGL.gl.canvas.clientWidth) {
+                    if (domID("styleInput").style.display === "none") {
+                        input.style.left = heightwidth.width.toString() + "px";
+                        input.style.bottom = heightwidth.height.toString() + "px";
+                    } else {
+                        input.style.left = heightwidth.width.toString() + "px";
+                        input.style.bottom = (heightwidth.height + domID("styleInput").clientHeight).toString() + "px";
+                    }
+                } else {
+                    input.style.left = (DrawingGL.gl.canvas.clientWidth / 2).toString() + "px";
+                    input.style.bottom = (DrawingGL.gl.canvas.clientHeight).toString() + "px";
+                }
+            } else if (selected.length !== 0 || PaintIn.arrMultiCurObj.length !== 0) {
+                domID("inputAdd").style.left = (DrawingGL.gl.canvas.clientWidth / 2).toString() + "px";
+                domID("inputAdd").style.bottom = (DrawingGL.gl.canvas.clientHeight).toString() + "px";
+            }
+        }
         domID("Show").style.height = (this.height).toString() + 'px';
         if (visualizeData !== undefined) {
             if (visualizeData.data.phi) {

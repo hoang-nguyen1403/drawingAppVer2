@@ -6,7 +6,7 @@ function deselectAll() {
   }
 function inputName(x, y, obj) {
   nameID = new CanvasInput({
-    canvas: document.getElementById("myCanvas"),
+    canvas: document.getElementById("CanvasInput"),
     x: x,
     y: y,
     fontSize: 18,
@@ -40,7 +40,7 @@ var nameIDs;
 
 function inputNames(x, y) {
   nameIDs = new CanvasInput({
-    canvas: document.getElementById("myCanvas"),
+    canvas: document.getElementById("CanvasInput"),
     x: x,
     y: y,
     fontSize: 18,
@@ -70,7 +70,7 @@ function inputNames(x, y) {
 var valueLoad;
 function inputForce(x, y, obj, loadKey) {
   valueLoad = new CanvasInput({
-    canvas: document.getElementById("myCanvas"),
+    canvas: document.getElementById("CanvasInput"),
     x: x,
     y: y,
     fontSize: 13,
@@ -156,7 +156,7 @@ function inputForce(x, y, obj, loadKey) {
 var valueLoads;
 function inputForces(x, y, loadKey) {
   valueLoads = new CanvasInput({
-    canvas: document.getElementById("myCanvas"),
+    canvas: document.getElementById("CanvasInput"),
     x: x,
     y: y,
     fontSize: 13,
@@ -247,7 +247,7 @@ function inputForces(x, y, loadKey) {
 var valueMoment;
 function inputMoment(x, y, obj, loadKey) {
   valueMoment = new CanvasInput({
-    canvas: document.getElementById("myCanvas"),
+    canvas: document.getElementById("CanvasInput"),
     x: x,
     y: y,
     fontSize: 13,
@@ -283,7 +283,7 @@ function inputMoment(x, y, obj, loadKey) {
 var valueMoments;
 function inputMoments(x, y, loadKey) {
   valueMoments = new CanvasInput({
-    canvas: document.getElementById("myCanvas"),
+    canvas: document.getElementById("CanvasInput"),
     x: x,
     y: y,
     fontSize: 13,
@@ -321,7 +321,7 @@ function inputMoments(x, y, loadKey) {
 var lengthLine;
 function inputLenght(x, y) {
   lengthLine = new CanvasInput({
-    canvas: document.getElementById("myCanvas"),
+    canvas: document.getElementById("CanvasInput"),
     x: x,
     y: y,
     fontSize: 18,
@@ -496,7 +496,7 @@ function inputComments() {
 // var areaName;
 // function inputAreaName(x, y, obj) {
 //   areaName = new CanvasInput({
-//     canvas: document.getElementById("myCanvas"),
+//     canvas: document.getElementById("CanvasInput"),
 //     x: x,
 //     y: y,
 //     fontSize: 18,

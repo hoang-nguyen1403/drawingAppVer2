@@ -151,10 +151,10 @@
     dst[1] = 0;
     dst[2] = 0;
     dst[3] = 0;
-    dst[4] = -2 / height;
+    dst[4] = 2 / height;
     dst[5] = 0;
     dst[6] = -1;
-    dst[7] = 1;
+    dst[7] = -1;
     dst[8] = 1;
 
     return dst;

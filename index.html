@@ -81,13 +81,13 @@
 				</label>
 
 				<div id="BDCondition">
-					</button><button id="valueName" class="btn" type="button" onclick="PaintIn.addValueName()"
-						value="Off" style="background-image: url(frontend/img/apply_name.svg)"></button>
-					<button id="pointLoad" class="btn" type="button" onclick="PaintIn.addValPointLoad()" value="Off"
+					</button><button id="valueName" class="btn" type="button" onclick="addValueName()" value="Off"
+						style="background-image: url(frontend/img/apply_name.svg)"></button>
+					<button id="pointLoad" class="btn" type="button" onclick="addValForce()" value="Off"
 						style="background-image: url(frontend/img/apply_force.svg)"></button>
-					<button id="pressLoad" class="btn" type="button" onclick="PaintIn.addValPressLoad()" value="Off"
+					<button id="pressLoad" class="btn" type="button" onclick="addValPressure()" value="Off"
 						style="background-image: url(frontend/img/apply_normal_press.svg)"></button>
-					<button id="moment" class="btn" type="button" onclick="PaintIn.addValMoment()" value="Off"
+					<button id="moment" class="btn" type="button" onclick="addValMoment()" value="Off"
 						style="background-image: url(frontend/img/apply_moment.svg)"></button>
 				</div>
 
@@ -210,10 +210,8 @@
 							</div>
 							<div id="wrap_canvas_div">
 								<canvas id="myCanvas">
-									<canvas.LayoutTransform>
-										<ScaleTransform ScaleX="1" ScaleY="-1" CenterX=".5" CenterY=".5" />
-									</canvas.LayoutTransform>
 								</canvas>
+								<div id="CanvasInput"></div>
 								<div id="coord_div">
 									<div id="icon_coord">
 									</div>
@@ -231,6 +229,14 @@
 								<div id="property_solution"></div>
 								<div id="property"></div>
 							</div>
+							<div id="inputAdd">
+								<p id="styleInput"
+									style="color: red;display: none;display: flex;justify-content: center;"></p>
+								<input id="AddZone" type="text">
+							</div>
+							<!-- <div id="ZoneName">
+
+							</div> -->
 						</div>
 
 						<div id="value">
@@ -284,10 +290,10 @@
 								<label id="uploadFile_label" title="Upload file">Choose a file
 									<input type="file" name="uploadFile" id="uploadFile" style="display: none">
 								</label>
-	
+
 								<button id="cmtSaveText" title="Save into a .txt" type="button" class="btn"
 									onclick="processingData.prototype.saveTextFile()" value="Off">Save text</button>
-	
+
 							</div>
 							<div id="spinner">
 								<img id="loading" src="frontend/img/loading.gif" style="width: 20px;
@@ -353,6 +359,9 @@
 		<!-- <script src="./frontend/JS/eventChart.js"></script> -->
 		<script src="./frontend/JS/processingChart.js"></script>
 		<script src="./frontend/JS/resize.js"></script>
+		<script src="frontend/JS/Drawing.js"></script>
+		<script src="frontend/JS/eventDrawing.js"></script>
+		<script src="frontend/JS/detectArea.js"></script>
 </body>
 
 </html>

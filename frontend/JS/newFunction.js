@@ -14,10 +14,12 @@ function ChangeModeDrawing() {
 	myCanVas.style.display = "block";
 	mode3D.style.display = "none";
 	Gl.style.display = "none";
+	domID("CanvasInput").style.display = "block";
 	document.getElementById("property_solution").style.display = "none";
 	document.getElementById("property").style.display = "block";
 	document.getElementById("meshing").style.backgroundColor = "white";
 	document.getElementById("modeDrawing").style.backgroundColor = "#57fa6d";
+	document.getElementById("coord_div").style.display = "flex";
 	PaintIn.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
 	PaintIn.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
 	PaintIn.renderObject(processingData.allObject);
@@ -35,6 +37,7 @@ function ChangeModeGL() {
 	Gl.style.height = "100%";
 	// document.getElementById("setPosition").style.display = "block";
 	document.getElementById("canvasGL").style.display = "block";
+	domID("CanvasInput").style.display = "none";
 	// document.getElementsByClassName("tab")[0].style.width = "3%";
 	// domID("tab-comments").style.display = "none";
 	// domID("tab-icon").style.width = "100%";
@@ -42,7 +45,7 @@ function ChangeModeGL() {
 	// domID("tab-icon").value = "Off";
 	// // domClass("tab")[0].style.display = "none";
 	// domID("tab-icon").style.transform = "rotate(180deg)";
-	// domID("tab-icon").title = "Open";
+	// domID("tab-icon").title = "Open"; 
 	document.getElementById("property").style.display = "none";
 	document.getElementById("property_solution").style.display = "block";
 	document.getElementById("meshing").style.backgroundColor = "#57fa6d";
@@ -71,6 +74,7 @@ function ChangeModeGL3D() {
 	document.getElementById("canvas_colorbar").style.display = "block";
 	document.getElementById("coord_div").style.display = "none";
 	document.getElementById("command").style.display = "none";
+	domID("CanvasInput").style.display = "none";
 	// domID("tab-icon").value = "Off";
 	// // domClass("tab")[0].style.display = "none";
 	// document.getElementsByClassName("tab")[0].style.width = "3%";

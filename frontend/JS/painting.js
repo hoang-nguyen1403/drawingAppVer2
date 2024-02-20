@@ -1,12 +1,13 @@
 class Paint {
   constructor() {
     // Call the ID from index.html element
-    this.canvas = document.getElementById("myCanvas");
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById("CanvasInput");
+    // this.ctx = this.canvas.getContext("2d");
 
     this.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
     this.canvas.height =
       document.getElementById("wrap_canvas_div").clientHeight;
+
     // Call the ID in the tool left position
     this.toolbar = document.getElementById("tool_left");
     this.currentValueGrid = document.getElementById("grid");
@@ -200,8 +201,8 @@ class Paint {
   clearAll() {
     this.isCancled = false;
     this.offButtonDraw(this.currentValueLine, "line");
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // this.ctx.fillStyle = "white";
+    // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // vo hieu hoa this.undo()
     this.pen = "select";
     this.currentCursor = "url(frontend/img/select_cursor.svg) 0 0,  default";
@@ -305,6 +306,12 @@ class Paint {
     this.renderProperty("off", "");
     this.renderObject(processingData.allObject);
     PaintIn.clearCommands("textCommands");
+    DrawingGL.clearData();
+    storage = [];
+    storage_point = [];
+    storage_line = [];
+    storage_area = [];
+    DrawingGL.DrawMain();
     if (drawChart !== undefined) {
       drawChart.clearData();
       Plotly.purge("ChartPlot");
@@ -356,13 +363,14 @@ class Paint {
       }
     });
   }
+
   //set up event of Mouse
   listenEvent() {
-    this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
-    this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
-    this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
-    document.addEventListener("keydown", (event) => this.keyDown(event));
-    this.canvas.addEventListener("click", (event) => this.selectObj(event));
+    // this.canvas.addEventListener("mousedown", (event) => this.mouseDown(event));
+    // this.canvas.addEventListener("mouseup", (event) => this.mouseUp(event));
+    // this.canvas.addEventListener("mousemove", (event) => this.mouseMove(event));
+    // document.addEventListener("keydown", (event) => this.keyDown(event));
+    // this.canvas.addEventListener("click", (event) => this.selectObj(event));
     // this.canvas.addEventListener('click', (event) => this.deleteForce(event));
     //up file event
     document.getElementById("openFile").addEventListener("change", function () {
@@ -370,9 +378,6 @@ class Paint {
       var fr = new FileReader();
       fr.onload = function () {
         let inputData = JSON.parse(fr.result);
-        for (let i =0;i<inputData.node_coords.length;i++){
-          inputData.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-inputData.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
-        }
         if (inputData["jsmat"] !== undefined) {
           document.getElementById("filter").style.display = "block";
           document.getElementById("modeSolution_value").style.display = "block";
@@ -542,6 +547,16 @@ class Paint {
           document.getElementById("filter").style.display = "none";
           PaintIn.clearAll();
           processingData.prototype.createData(inputData);
+          DrawingGL.handleDataStorage();
+          DrawingGL.handleArea();
+          DrawingGL.scenePoint = [];
+          DrawingGL.sceneLine = [];
+          let bufferInfoPoint = DrawingGL.CreateBufferInfo(DrawingGL.arrPointStorage, null);
+          let bufferInfoLine = DrawingGL.CreateBufferInfo(DrawingGL.arrLineStorage, null);
+          DrawingGL.scenePoint.push({ color: [1, 0, 0, 1], bufferInfo: bufferInfoPoint });
+          DrawingGL.sceneLine.push({ color: DrawingGL.colorDefault, bufferInfo: bufferInfoLine });
+          DrawingGL.DrawMain();
+          renderName();
           //update screen
           PaintIn.renderObject(processingData.allObject);
         }
@@ -590,8 +605,10 @@ class Paint {
 
     //make canvas responsive
     onresize = (event) => {
-      // PaintIn.canvas.width = document.getElementById("wrap_canvas_div").clientWidth;
-      // PaintIn.canvas.height = document.getElementById("wrap_canvas_div").clientHeight;
+      // PaintIn.canvas.width =
+      //   document.getElementById("wrap_canvas_div").clientWidth;
+      // PaintIn.canvas.height =
+      //   document.getElementById("wrap_canvas_div").clientHeight;
       // PaintIn.renderObject(processingData.allObject);
       resize.drawAfterResize();
     };
@@ -600,21 +617,21 @@ class Paint {
   //set up keyDown
   keyDown(event) {
     //SPACE
-    if (event.keyCode === 32) {
-      //reset data
-      this.arrLineX = [];
-      this.arrLineY = [];
-      this.arrCurObj = [];
-      this.arrMultiCurObj = [];
-      //
-      this.isCancled = false;
-      // processingData.prototype.separateData();
-      if (this.pen === "line") {
-        this.undo();
-        processingData.prototype.areaDetect(processingData.allLine);
-        this.addNode();
-      }
-    }
+    // if (event.keyCode === 32) {
+    //   // //reset data
+    //   // this.arrLineX = [];
+    //   // this.arrLineY = [];
+    //   // this.arrCurObj = [];
+    //   // this.arrMultiCurObj = [];
+    //   // //
+    //   // this.isCancled = false;
+    //   // // processingData.prototype.separateData();
+    //   // if (this.pen === "line") {
+    //   //   this.undo();
+    //   //   processingData.prototype.areaDetect(processingData.allLine);
+    //   //   this.addNode();
+    //   // }
+    // }
     //ESC
     if (event.keyCode === 27) {
       // processingData.prototype.separateData();
@@ -809,17 +826,17 @@ class Paint {
       deselectAll();
     }
     if (event.keyCode === 17) {
-      if (this.valueComment.value === "l" && this.pen === "select") {
-        //shortcut for draw line
-        // press l
-        //change cursor
-        this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
-        this.canvas.style.cursor = this.currentCursor;
-        let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
-        this.keyDown(spaceKey);
-        this.onButtonDraw(this.currentValueLine, "line");
-        this.renderObject(processingData.allObject);
-      }
+      // if (this.valueComment.value === "l" && this.pen === "select") {
+      //   //shortcut for draw line
+      //   // press l
+      //   //change cursor
+      //   this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
+      //   this.canvas.style.cursor = this.currentCursor;
+      //   let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
+      //   this.keyDown(spaceKey);
+      //   this.onButtonDraw(this.currentValueLine, "line");
+      //   this.renderObject(processingData.allObject);
+      // }
       // if (this.valueComment.value !== "") {
       //   dataLogFile.push(this.valueComment.value);
       //   // this.valueComment.value = "";
@@ -905,6 +922,8 @@ class Paint {
       this.curValSelect = "Off";
       this.mouseMoveStatus = true;
       document.getElementById(nameID).classList.add("active");
+      isAdd = true
+      document.addEventListener("keydown", addValue);
     } else {
       currentActive.value = "Off";
       document.getElementById(nameID).classList.remove("active");
@@ -913,6 +932,9 @@ class Paint {
       this.canvas.style.cursor = this.currentCursor;
       this.curValSelect = "On";
       this.pen = "select";
+      isAdd = false
+      domID("inputAdd").style.display = "none";
+      document.removeEventListener("keydown", addValue)
     }
     // this.renderObject(processingData.allObject);
   }
@@ -956,8 +978,8 @@ class Paint {
     this.currentCursor = "url(frontend/img/pen_cursor.svg) 0 32, default";
     this.canvas.style.cursor = this.currentCursor;
 
-    let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
-    this.keyDown(spaceKey);
+    // let spaceKey = new KeyboardEvent("keydown", { keyCode: 32 });
+    // this.keyDown(spaceKey);
     this.renderObject(processingData.allObject);
 
     // this.offButtonDraw(this.currentValueBrush, "brush");
@@ -973,8 +995,83 @@ class Paint {
     this.onOffButtonDraw(this.currentValueLine, "line");
     if (this.currentValueLine.value === "On") {
       this.renderCommand("line");
+      domID("CanvasInput").addEventListener("mousemove", lineDraw);
     } else {
-      this.renderObject(processingData.allObject);
+      if (DrawingGL.arrLineX.length >= 2) {
+        lastDraw = [];
+        lastDraw = storageData(DrawingGL.arrLineX, DrawingGL.arrLineY);
+        // console.log(DrawingGL.arrLineX, DrawingGL.arrLineY);
+        // console.log(processingData.allObject);
+        if (lastDraw.length !== 0) {
+          storage.push(storageData(
+            DrawingGL.arrLineX,
+            DrawingGL.arrLineY
+          ))
+        }
+
+        var all_line = checkBox(storage, lastDraw);
+        var unique = [all_line[0]];
+        for (let line of all_line) {
+          var count = 0;
+          for (let lineCheck of unique) {
+            if (JSON.stringify(lineCheck) === JSON.stringify(line)) {
+              count += 1;
+            }
+          }
+          if (count < 1) {
+            unique.push(line)
+          }
+        }
+        all_line = unique
+        if (all_line.length > 2) {
+          detect = true;
+          DrawingGL.sceneLineMove = [];
+          DrawingGL.DrawMain();
+          detectArea(all_line);
+        }
+        else {
+          detect = false
+          storage_line.push(all_line)
+          storage_point.push([all_line[0].Point[0], all_line[0].Point[1]]);
+          processingData.allArea = storage_area.flat();
+          processingData.allLine = storage_line.flat();
+          processingData.allPoint = storage_point.flat();
+          domID("CanvasInput").removeEventListener("mousemove", lineDraw);
+          DrawingGL.sceneLineMove = [];
+          DrawingGL.arrPoint = [];
+          DrawingGL.arrLine = [];
+          DrawingGL.arrLineX = [];
+          DrawingGL.arrLineY = [];
+          DrawingGL.arrPointStorage.splice(DrawingGL.arrPointStorage.length - 2, 1);
+          DrawingGL.arrPointStorage.splice(DrawingGL.arrPointStorage.length - 1, 1);
+          DrawingGL.scenePoint = [];
+          DrawingGL.sceneLine = [];
+          DrawingGL.handleDataStorage();
+          bufferInfoPoint = DrawingGL.CreateBufferInfo(DrawingGL.arrPointStorage, null);
+          bufferInfoLine = DrawingGL.CreateBufferInfo(DrawingGL.arrLineStorage, null);
+          DrawingGL.scenePoint.push({ color: [1, 0, 0, 1], bufferInfo: bufferInfoPoint });
+          DrawingGL.sceneLine.push({ color: DrawingGL.colorDefault, bufferInfo: bufferInfoLine });
+          DrawingGL.DrawMain();
+        }
+      } else {
+        domID("CanvasInput").removeEventListener("mousemove", lineDraw);
+        DrawingGL.sceneLineMove = [];
+        DrawingGL.arrPoint = [];
+        DrawingGL.arrLineX = [];
+        DrawingGL.arrLineY = [];
+        DrawingGL.arrPointStorage.splice(DrawingGL.arrPointStorage.length - 2, 1);
+        DrawingGL.arrPointStorage.splice(DrawingGL.arrPointStorage.length - 1, 1);
+        DrawingGL.scenePoint = [];
+        DrawingGL.sceneLine = [];
+        DrawingGL.handleDataStorage();
+        bufferInfoPoint = DrawingGL.CreateBufferInfo(DrawingGL.arrPointStorage, null);
+        bufferInfoLine = DrawingGL.CreateBufferInfo(DrawingGL.arrLineStorage, null);
+        DrawingGL.scenePoint.push({ color: [1, 0, 0, 1], bufferInfo: bufferInfoPoint });
+        DrawingGL.sceneLine.push({ color: DrawingGL.colorDefault, bufferInfo: bufferInfoLine });
+        DrawingGL.DrawMain();
+      }
+      domID("CanvasInput").removeEventListener("mousemove", lineDraw);
+      this.renderCommand("Off")
     }
   }
 
@@ -1035,7 +1132,7 @@ class Paint {
     this.currentCursor = "url(frontend/img/text_cursor.svg), default";
     this.canvas.style.cursor = this.currentCursor;
 
-    this.renderObject(processingData.allObject);
+    // this.renderObject(processingData.allObject);
 
     // if (this.currentValueSelect.value === "On") {
     // this.offButtonDraw(this.currentValueBrush, "brush");
@@ -1417,27 +1514,6 @@ class Paint {
       };
     }
   }
-  getMousePositionChange(event) {
-    let rect = this.canvas.getBoundingClientRect();
-    if (
-      this.pen === "brush" ||
-      this.pen === "line" ||
-      this.pen === "circle" ||
-      this.pen === "rect" ||
-      this.pen === "spl" ||
-      this.curValSelect === "On" ||
-      this.curValName.value === "On" ||
-      this.curValPointLoad.value === "On" ||
-      this.curValPressLoad.value === "On" ||
-      this.curValMoment.value === "On" ||
-      this.curValDrawing.value === "On"
-    ) {
-      return {
-        x: Math.round(event.clientX - rect.left),
-        y: Math.round(-(event.clientY - rect.bottom + 3)),
-      };
-    }
-  }
 
   changeOrigin(event) {
     let offSetX = 0;
@@ -1454,9 +1530,9 @@ class Paint {
     this.image = new Image();
     this.image.src = this.canvas.toDataURL("image/png ", 1.0);
     // var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-    this.mouseDownPos = this.getMousePosition(event); //start
+    this.mouseDownPos = DrawingGL.mouseDownPos; //start
     this.arrMouseDownPosition.push(this.mouseDownPos);
-    this.currentMouseDownPos = this.getMousePosition(event);
+    this.currentMouseDownPos = DrawingGL.mouseDownPos;
 
     if (
       this.currentValueGrid.value == "On" &&
@@ -1635,13 +1711,13 @@ class Paint {
     this.currentMouseMovePos = this.getMousePosition(event);
     // let mouseMoveCoordination = this.changeOrigin(event);
     // this.renderObject(processingData.allObject);
-    var mouseMove = this.getMousePositionChange(event);
+
     //
     document.getElementById("display_coord").innerHTML =
       "[" +
-      mouseMove.x +
+      this.currentMouseMovePos.x +
       " ; " +
-      mouseMove.y +
+      this.currentMouseMovePos.y +
       "]";
     // document.getElementById("display_coord").innerHTML =
     //   "[" + mouseMoveCoordination.x + " ; " + mouseMoveCoordination.y + "]";
@@ -1922,9 +1998,6 @@ class Paint {
         i += 2;
       }
       let param = JSON.parse(processingData.prototype.saveObj());
-      for (let i =0;i<param.node_coords.length;i++){
-        param.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-param.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
-      }
       for (let val in obj) {
         if (typeof (obj[val]) === "string") {
           let str = obj[val];
@@ -2166,7 +2239,7 @@ class Paint {
         document.getElementById("command").style.display = "flex";
         document.getElementById("command").innerHTML = `
                   <p> Press ESC to exit draw! <br>
-                      Press SPACE to break line! 
+                      Press L to break line! 
                   </p>
               </div>
                   `;
@@ -2199,6 +2272,15 @@ class Paint {
           strings += reverseData[i] + "<br>";
         }
         document.getElementsByClassName("logFile")[0].innerHTML = `${strings}`;
+        break;
+      case "updateArea":
+        document.getElementById("command").style.display = "flex";
+        document.getElementById("command").innerHTML = `
+                  <p> Press ESC to update area
+                  </p>
+              </div>
+                  `;
+        break;
     }
   }
 
@@ -2760,204 +2842,204 @@ class Paint {
 
   //------------------//
   renderObject(arrObj) {
-    //clear screen before render
-    this.ctx.fillStyle = "white";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    //
-    if (this.currentValueGrid.value === "On") {
-      //this.ctx.strokeStyle = "red";
-      this.drawGrid();
-    }
-    for (let i = arrObj.length - 1; i >= 0; i--) {
-      if (arrObj[i] instanceof Area) {
-        this.fillArea(arrObj[i]);
-        if (
-          arrObj[i].name !== undefined &&
-          arrObj[i].name !== "" &&
-          arrObj[i].name !== null
-        ) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
-      } else if (arrObj[i] instanceof Line) {
-        this.drawLine(
-          arrObj[i].Point[0],
-          arrObj[i].Point[1],
-          arrObj[i].color,
-          arrObj[i].width
-        );
-        if (
-          arrObj[i].name !== undefined &&
-          arrObj[i].name !== "" &&
-          arrObj[i].name !== null
-        ) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
+    // //clear screen before render
+    // this.ctx.fillStyle = "white";
+    // this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    // //
+    // if (this.currentValueGrid.value === "On") {
+    //   //this.ctx.strokeStyle = "red";
+    //   this.drawGrid();
+    // }
+    // for (let i = arrObj.length - 1; i >= 0; i--) {
+    //   if (arrObj[i] instanceof Area) {
+    //     this.fillArea(arrObj[i]);
+    //     if (
+    //       arrObj[i].name !== undefined &&
+    //       arrObj[i].name !== "" &&
+    //       arrObj[i].name !== null
+    //     ) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
+    //   } else if (arrObj[i] instanceof Line) {
+    //     this.drawLine(
+    //       arrObj[i].Point[0],
+    //       arrObj[i].Point[1],
+    //       arrObj[i].color,
+    //       arrObj[i].width
+    //     );
+    //     if (
+    //       arrObj[i].name !== undefined &&
+    //       arrObj[i].name !== "" &&
+    //       arrObj[i].name !== null
+    //     ) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
 
-        if (arrObj[i].lineLoads !== null) {
-          for (let j = 0; j < arrObj[i].lineLoads.length; j++) {
-            //draw press
-            if (arrObj[i].lineLoads[j].type === "normal_pressure") {
-              this.drawPressure(
-                arrObj[i],
-                arrObj[i].lineLoads[j].parameters.node_0
-              );
-            }
-            //draw axial
-            if (arrObj[i].lineLoads[j].type === "axial_pressure") {
-              this.drawAxialPressure(
-                arrObj[i],
-                arrObj[i].lineLoads[j].parameters.value
-              );
-            }
-          }
-        }
-      } else if (arrObj[i] instanceof Point) {
-        this.drawPoint(arrObj[i]);
-        if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
-          this.drawText(arrObj[i], arrObj[i].name);
-        }
+    //     if (arrObj[i].lineLoads !== null) {
+    //       for (let j = 0; j < arrObj[i].lineLoads.length; j++) {
+    //         //draw press
+    //         if (arrObj[i].lineLoads[j].type === "normal_pressure") {
+    //           this.drawPressure(
+    //             arrObj[i],
+    //             arrObj[i].lineLoads[j].parameters.node_0
+    //           );
+    //         }
+    //         //draw axial
+    //         if (arrObj[i].lineLoads[j].type === "axial_pressure") {
+    //           this.drawAxialPressure(
+    //             arrObj[i],
+    //             arrObj[i].lineLoads[j].parameters.value
+    //           );
+    //         }
+    //       }
+    //     }
+    //   } else if (arrObj[i] instanceof Point) {
+    //     this.drawPoint(arrObj[i]);
+    //     if (arrObj[i].name !== undefined && arrObj[i].name !== null) {
+    //       this.drawText(arrObj[i], arrObj[i].name);
+    //     }
 
-        if (arrObj[i].pointLoads !== null) {
-          for (let j = 0; j < arrObj[i].pointLoads.length; j++) {
-            if (arrObj[i].pointLoads[j].type === "force") {
-              this.drawForceInPoint(
-                arrObj[i].pointLoads[j].parameters,
-                arrObj[i].x,
-                arrObj[i].y
-              );
-            }
-            if (arrObj[i].pointLoads[j].type === "moment") {
-              this.drawMoment(
-                arrObj[i].pointLoads[j].parameters,
-                arrObj[i].x,
-                arrObj[i].y
-              );
-            }
-          }
-        }
-      }
-    }
+    //     if (arrObj[i].pointLoads !== null) {
+    //       for (let j = 0; j < arrObj[i].pointLoads.length; j++) {
+    //         if (arrObj[i].pointLoads[j].type === "force") {
+    //           this.drawForceInPoint(
+    //             arrObj[i].pointLoads[j].parameters,
+    //             arrObj[i].x,
+    //             arrObj[i].y
+    //           );
+    //         }
+    //         if (arrObj[i].pointLoads[j].type === "moment") {
+    //           this.drawMoment(
+    //             arrObj[i].pointLoads[j].parameters,
+    //             arrObj[i].x,
+    //             arrObj[i].y
+    //           );
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
-    if (
-      this.curValName.value === "On" ||
-      this.curValPointLoad.value === "On" ||
-      this.curValMoment.value === "On" ||
-      this.curValPressLoad.value === "On"
-    ) {
-      this.renderCommand("valueOn");
-    } else {
-      this.renderCommand("Off");
-    }
+    // if (
+    //   this.curValName.value === "On" ||
+    //   this.curValPointLoad.value === "On" ||
+    //   this.curValMoment.value === "On" ||
+    //   this.curValPressLoad.value === "On"
+    // ) {
+    //   this.renderCommand("valueOn");
+    // } else {
+    //   this.renderCommand("Off");
+    // }
 
-    // render API and button
-    if (this.arrMultiCurObj[0] !== undefined) {
-      document.getElementById("BDCondition").style.display = "flex";
-      this.renderProperty("multi", this.arrMultiCurObj);
-      for (let i = 0; i < this.arrMultiCurObj.length; i++) {
-        let selectedObj;
-        selectedObj = this.arrMultiCurObj[i];
-        switch (selectedObj.className) {
-          case "Point":
-            this.drawPoint(selectedObj, "green");
-            document.getElementById("BDCondition").style.width = "200px";
-            //display 3 button
-            this.visibleButton("valueName");
-            this.visibleButton("pointLoad");
-            this.visibleButton("moment");
-            //hidden 1 button
-            this.hiddenButton("pressLoad");
-            break;
-          case "Line":
-            this.drawLine(
-              selectedObj.Point[0],
-              selectedObj.Point[1],
-              "#0000ff",
-              selectedObj.width
-            );
-            document.getElementById("BDCondition").style.width = "150px";
-            //display 2 button
-            this.visibleButton("valueName");
-            this.visibleButton("pressLoad");
-            //hidden 2 button
-            this.hiddenButton("pointLoad");
-            this.hiddenButton("moment");
-            break;
-          case "Area":
-            this.fillArea(selectedObj, "#b6d8e7");
-            document.getElementById("BDCondition").style.width = "70px";
-            //display 1 button
-            this.visibleButton("valueName");
-            //hidden 3 button
-            this.hiddenButton("pressLoad");
-            this.hiddenButton("pointLoad");
-            this.hiddenButton("moment");
-            break;
-        }
-      }
-    } else {
-      document.getElementById("BDCondition").style.display = "none";
-      this.renderProperty("off", this.arrMultiCurObj);
-    }
+    // // render API and button
+    // if (this.arrMultiCurObj[0] !== undefined) {
+    //   document.getElementById("BDCondition").style.display = "flex";
+    //   this.renderProperty("multi", this.arrMultiCurObj);
+    //   for (let i = 0; i < this.arrMultiCurObj.length; i++) {
+    //     let selectedObj;
+    //     selectedObj = this.arrMultiCurObj[i];
+    //     switch (selectedObj.className) {
+    //       case "Point":
+    //         this.drawPoint(selectedObj, "green");
+    //         document.getElementById("BDCondition").style.width = "200px";
+    //         //display 3 button
+    //         this.visibleButton("valueName");
+    //         this.visibleButton("pointLoad");
+    //         this.visibleButton("moment");
+    //         //hidden 1 button
+    //         this.hiddenButton("pressLoad");
+    //         break;
+    //       case "Line":
+    //         this.drawLine(
+    //           selectedObj.Point[0],
+    //           selectedObj.Point[1],
+    //           "#0000ff",
+    //           selectedObj.width
+    //         );
+    //         document.getElementById("BDCondition").style.width = "150px";
+    //         //display 2 button
+    //         this.visibleButton("valueName");
+    //         this.visibleButton("pressLoad");
+    //         //hidden 2 button
+    //         this.hiddenButton("pointLoad");
+    //         this.hiddenButton("moment");
+    //         break;
+    //       case "Area":
+    //         this.fillArea(selectedObj, "#b6d8e7");
+    //         document.getElementById("BDCondition").style.width = "70px";
+    //         //display 1 button
+    //         this.visibleButton("valueName");
+    //         //hidden 3 button
+    //         this.hiddenButton("pressLoad");
+    //         this.hiddenButton("pointLoad");
+    //         this.hiddenButton("moment");
+    //         break;
+    //     }
+    //   }
+    // } else {
+    //   document.getElementById("BDCondition").style.display = "none";
+    //   this.renderProperty("off", this.arrMultiCurObj);
+    // }
 
-    if (this.arrCurObj[0] !== undefined) {
-      let selectedObj;
-      selectedObj = this.arrCurObj[0];
-      switch (selectedObj.className) {
-        case "Point":
-          document.getElementById("BDCondition").style.display = "flex";
-          document.getElementById("BDCondition").style.width = "200px";
-          this.drawPoint(selectedObj, "green");
-          this.renderProperty("point", selectedObj);
-          //display 3 button
-          this.visibleButton("valueName");
-          this.visibleButton("pointLoad");
-          this.visibleButton("moment");
-          //hidden 1 button
-          this.hiddenButton("pressLoad");
-          break;
-        case "Line":
-          document.getElementById("BDCondition").style.width = "150px";
-          document.getElementById("BDCondition").style.display = "flex";
-          this.drawLine(
-            selectedObj.Point[0],
-            selectedObj.Point[1],
-            "#0000ff",
-            selectedObj.width
-          );
-          this.renderProperty("line", selectedObj);
-          //display 2 button
-          this.visibleButton("valueName");
-          this.visibleButton("pressLoad");
-          //hidden 2 button
-          this.hiddenButton("pointLoad");
-          this.hiddenButton("moment");
-          break;
-        case "Area":
-          document.getElementById("BDCondition").style.width = "70px";
-          document.getElementById("BDCondition").style.display = "flex";
-          this.fillArea(selectedObj, "#b6d8e7");
-          this.renderProperty("area", selectedObj);
-          //display 1 button
-          this.visibleButton("valueName");
-          //hidden 3 button
-          this.hiddenButton("pressLoad");
-          this.hiddenButton("pointLoad");
-          this.hiddenButton("moment");
-          break;
-      }
-    }
+    // if (this.arrCurObj[0] !== undefined) {
+    //   let selectedObj;
+    //   selectedObj = this.arrCurObj[0];
+    //   switch (selectedObj.className) {
+    //     case "Point":
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       document.getElementById("BDCondition").style.width = "200px";
+    //       this.drawPoint(selectedObj, "green");
+    //       this.renderProperty("point", selectedObj);
+    //       //display 3 button
+    //       this.visibleButton("valueName");
+    //       this.visibleButton("pointLoad");
+    //       this.visibleButton("moment");
+    //       //hidden 1 button
+    //       this.hiddenButton("pressLoad");
+    //       break;
+    //     case "Line":
+    //       document.getElementById("BDCondition").style.width = "150px";
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       this.drawLine(
+    //         selectedObj.Point[0],
+    //         selectedObj.Point[1],
+    //         "#0000ff",
+    //         selectedObj.width
+    //       );
+    //       this.renderProperty("line", selectedObj);
+    //       //display 2 button
+    //       this.visibleButton("valueName");
+    //       this.visibleButton("pressLoad");
+    //       //hidden 2 button
+    //       this.hiddenButton("pointLoad");
+    //       this.hiddenButton("moment");
+    //       break;
+    //     case "Area":
+    //       document.getElementById("BDCondition").style.width = "70px";
+    //       document.getElementById("BDCondition").style.display = "flex";
+    //       this.fillArea(selectedObj, "#b6d8e7");
+    //       this.renderProperty("area", selectedObj);
+    //       //display 1 button
+    //       this.visibleButton("valueName");
+    //       //hidden 3 button
+    //       this.hiddenButton("pressLoad");
+    //       this.hiddenButton("pointLoad");
+    //       this.hiddenButton("moment");
+    //       break;
+    //   }
+    // }
 
-    if (this.pen === "line") {
-      this.renderCommand("line");
-    } else {
-      this.renderCommand("Off");
-    }
+    // if (this.pen === "line") {
+    //   this.renderCommand("line");
+    // } else {
+    //   this.renderCommand("Off");
+    // }
   }
 
   renderProperty(mode, Obj) {
     document.getElementById("property").style.display = "flex";
     switch (mode) {
-      case "point": {
+      case "Point": {
         //classify load
         let forces = [];
         let moments = [];
@@ -3012,7 +3094,7 @@ class Paint {
                   <input type="text" name="format" value="[${math.round(
           Obj.x,
           2
-        )}, ${math.round(PaintIn.canvas.getBoundingClientRect().bottom-Obj.y-PaintIn.canvas.getBoundingClientRect().top, 2)}]"
+        )}, ${math.round(Obj.y, 2)}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
                 </div>
               </div>
@@ -3047,7 +3129,7 @@ class Paint {
         `;
         break;
       }
-      case "line": {
+      case "Line": {
         //create list force
         let selectNormalPress = "";
         let firstValue = null;
@@ -3078,8 +3160,8 @@ class Paint {
             <div>
               <div class="coordinate">
                 <input type="text" name="format"
-                  value="[${math.round(Obj.Point[0].x, 2)},${math.round(PaintIn.canvas.getBoundingClientRect().bottom-
-          Obj.Point[0].y-PaintIn.canvas.getBoundingClientRect().top,
+                  value="[${math.round(Obj.Point[0].x, 2)},${math.round(
+          Obj.Point[0].y,
           2
         )}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
@@ -3092,8 +3174,8 @@ class Paint {
             <div>
               <div class="coordinate">
                 <input type="text" name="format"
-                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(PaintIn.canvas.getBoundingClientRect().bottom-
-          Obj.Point[1].y-PaintIn.canvas.getBoundingClientRect().top,
+                  value="[${math.round(Obj.Point[1].x, 2)},${math.round(
+          Obj.Point[1].y,
           2
         )}]"
                   onchange="PaintIn.changeCoordinate(PaintIn.arrCurObj[0], this.value)" />
@@ -3196,7 +3278,7 @@ class Paint {
         );
         break;
       }
-      case "area": {
+      case "Area": {
         document.getElementById("property").innerHTML = `
         <div class="property_label">
           <p>Properties</p>
@@ -3261,7 +3343,7 @@ class Paint {
   }
 
   delLoad(tagId) {
-    let obj = this.arrCurObj[0];
+    let obj = select;
     let selectTag = document.getElementById(tagId);
     let selectedLoad = selectTag[selectTag.selectedIndex];
     if (selectedLoad !== undefined) {
@@ -3271,7 +3353,7 @@ class Paint {
         obj.lineLoads.splice(selectedLoad.value, 1);
       }
     }
-    this.renderObject(processingData.allObject);
+    this.renderProperty(obj.className, obj);
   }
 
   changeLoad(loadIndex, newValue, type) {

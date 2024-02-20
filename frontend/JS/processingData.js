@@ -202,6 +202,7 @@ class processingData {
       var Point1x = x1 + (x2 - x1) * T[0][0];
       var Point1y = y1 + (y2 - y1) * T[0][0];
       return {
+        Lines: [Line1, Line2],
         Coord: [math.round(Point1x, 8), math.round(Point1y, 8)],
         Exist: true,
       };
@@ -214,183 +215,207 @@ class processingData {
   }
 
   areaDetect(Line_List) {
-    this.isCancled = false;
-    let Line_List_copy = [...Line_List];
-    processingData.allLine = [];
-    let oldArea = [...processingData.allArea];
-    processingData.allArea = [];
+    // this.isCancled = false;
+    // let Line_List_copy = [...Line_List];
+    // processingData.allLine = [];
+    // let oldArea = [...processingData.allArea];
+    // processingData.allArea = [];
 
-    let arrEndLineX = [];
-    let arrEndLineY = [];
-    let arrEndLineName = [];
-    let arrEndLinePointName = [];
-    let arrEndLineColor = [];
-    let arrEndLineWidth = [];
-    let arrEndLinePointForce = [];
-    let arrEndLineForce = [];
-    for (let i = 0; i <= Line_List_copy.length - 1; i++) {
-      let arrIntersPoint = [];
-      let arrSubLineX = [];
-      let arrSubLineY = [];
-      let EndLine1X = [];
-      let EndLine1Y = [];
-      let EndLine2X = [];
-      let EndLine2Y = [];
-      for (let ii = 0; ii <= Line_List_copy.length - 1; ii++) {
-        if (ii === i) {
-          continue;
-        } else {
-          var IntersPoint = this.intersectionCheck(
-            Line_List_copy[i],
-            Line_List_copy[ii]
-          );
-          if (
-            IntersPoint.Exist &&
-            JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1
-          ) {
-            arrIntersPoint.push(IntersPoint.Coord);
-          }
-        }
-      }
+    // let arrEndLineX = [];
+    // let arrEndLineY = [];
+    // let arrEndLineName = [];
+    // let arrEndLinePointName = [];
+    // let arrEndLineColor = [];
+    // let arrEndLineWidth = [];
+    // let arrEndLinePointForce = [];
+    // let arrEndLineForce = [];
+    // for (let i = 0; i <= Line_List_copy.length - 1; i++) {
+    //   let arrIntersPoint = [];
+    //   let arrSubLineX = [];
+    //   let arrSubLineY = [];
+    //   let EndLine1X = [];
+    //   let EndLine1Y = [];
+    //   let EndLine2X = [];
+    //   let EndLine2Y = [];
+    //   for (let ii = 0; ii <= Line_List_copy.length - 1; ii++) {
+    //     if (ii === i) {
+    //       continue;
+    //     } else {
+    //       var IntersPoint = this.intersectionCheck(
+    //         Line_List_copy[i],
+    //         Line_List_copy[ii]
+    //       );
+    //       if (
+    //         IntersPoint.Exist &&
+    //         JSON.stringify(arrIntersPoint).indexOf(IntersPoint.Coord) === -1
+    //       ) {
+    //         arrIntersPoint.push(IntersPoint.Coord);
+    //       }
+    //     }
+    //   }
 
-      //when dont have IntersPoint
-      if (arrIntersPoint.length === 0) {
-        processingData.allLine.push(Line_List_copy[i]);
-        continue;
-      }
-      //sort by distance from endpoint
-      let endPoint1 = Line_List_copy[i].Point[0].point;
-      let endPoint2 = Line_List_copy[i].Point[1].point;
-      arrIntersPoint.sort(function (value1, value2) {
-        var distance1 = math.norm(math.subtract(value1, endPoint1));
-        var distance2 = math.norm(math.subtract(value2, endPoint1));
-        return distance1 - distance2;
-      });
-      //keep end line
-      if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
-        EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
-        EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
-        arrEndLineX.push(EndLine1X);
-        arrEndLineY.push(EndLine1Y);
-        arrEndLineName.push([Line_List_copy[i].name]);
-        arrEndLinePointName.push([Line_List_copy[i].Point[0].name, undefined]);
-        arrEndLineColor.push([Line_List_copy[i].color]);
-        arrEndLineWidth.push([Line_List_copy[i].width]);
-        arrEndLinePointForce.push([
-          Line_List_copy[i].Point[0].pointLoads,
-          undefined,
-        ]);
-        arrEndLineForce.push([Line_List_copy[i].lineLoads]);
-      }
-      if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(-1))) {
-        EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
-        EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
-        arrEndLineX.push(EndLine2X);
-        arrEndLineY.push(EndLine2Y);
-        arrEndLineName.push([Line_List_copy[i].name]);
-        arrEndLinePointName.push([undefined, Line_List_copy[i].Point[1].name]);
-        arrEndLineColor.push([Line_List_copy[i].color]);
-        arrEndLineWidth.push([Line_List_copy[i].width]);
-        arrEndLinePointForce.push([
-          undefined,
-          Line_List_copy[i].Point[0].pointLoads,
-        ]);
-        arrEndLineForce.push([Line_List_copy[i].lineLoads]);
-      }
-      //
-      if (arrIntersPoint.length >= 2) {
-        //create line bw inters point
-        for (let index = 0; index <= arrIntersPoint.length - 1; index++) {
-          //
-          arrSubLineX.push(arrIntersPoint[index][0]);
-          arrSubLineY.push(arrIntersPoint[index][1]);
-          //
-        }
-        processingData.prototype.inputRawData(
-          "line",
-          arrSubLineX,
-          arrSubLineY,
-          undefined,
-          Array(arrSubLineX.length).fill(Line_List_copy[i].name),
-          Array(arrSubLineX.length).fill(Line_List_copy[i].color),
-          Array(arrSubLineX.length).fill(Line_List_copy[i].width),
-          undefined,
-          Array(arrSubLineX.length).fill(Line_List_copy[i].lineLoads)
-        );
-      }
-    }
-    //-----------------//
-    // save end line
-    for (let i = 0; i <= arrEndLineX.length - 1; i++) {
-      processingData.prototype.inputRawData(
-        "line",
-        arrEndLineX[i],
-        arrEndLineY[i],
-        arrEndLinePointName[i],
-        arrEndLineName[i],
-        arrEndLineColor[i],
-        arrEndLineWidth[i],
-        arrEndLinePointForce[i],
-        arrEndLineForce[i]
-      );
-    }
+    //   //when dont have IntersPoint
+    //   if (arrIntersPoint.length === 0) {
+    //     processingData.allLine.push(Line_List_copy[i]);
+    //     continue;
+    //   }
+    //   //sort by distance from endpoint
+    //   let endPoint1 = Line_List_copy[i].Point[0].point;
+    //   let endPoint2 = Line_List_copy[i].Point[1].point;
+    //   arrIntersPoint.sort(function (value1, value2) {
+    //     var distance1 = math.norm(math.subtract(value1, endPoint1));
+    //     var distance2 = math.norm(math.subtract(value2, endPoint1));
+    //     return distance1 - distance2;
+    //   });
+    //   //keep end line
+    //   if (JSON.stringify(endPoint1) !== JSON.stringify(arrIntersPoint[0])) {
+    //     EndLine1X.push(endPoint1[0], arrIntersPoint[0][0]);
+    //     EndLine1Y.push(endPoint1[1], arrIntersPoint[0][1]);
+    //     arrEndLineX.push(EndLine1X);
+    //     arrEndLineY.push(EndLine1Y);
+    //     arrEndLineName.push([Line_List_copy[i].name]);
+    //     arrEndLinePointName.push([Line_List_copy[i].Point[0].name, undefined]);
+    //     arrEndLineColor.push([Line_List_copy[i].color]);
+    //     arrEndLineWidth.push([Line_List_copy[i].width]);
+    //     arrEndLinePointForce.push([
+    //       Line_List_copy[i].Point[0].pointLoads,
+    //       undefined,
+    //     ]);
+    //     arrEndLineForce.push([Line_List_copy[i].lineLoads]);
+    //   }
+    //   if (JSON.stringify(endPoint2) !== JSON.stringify(arrIntersPoint.at(-1))) {
+    //     EndLine2X.push(arrIntersPoint.at(-1)[0], endPoint2[0]);
+    //     EndLine2Y.push(arrIntersPoint.at(-1)[1], endPoint2[1]);
+    //     arrEndLineX.push(EndLine2X);
+    //     arrEndLineY.push(EndLine2Y);
+    //     arrEndLineName.push([Line_List_copy[i].name]);
+    //     arrEndLinePointName.push([undefined, Line_List_copy[i].Point[1].name]);
+    //     arrEndLineColor.push([Line_List_copy[i].color]);
+    //     arrEndLineWidth.push([Line_List_copy[i].width]);
+    //     arrEndLinePointForce.push([
+    //       undefined,
+    //       Line_List_copy[i].Point[0].pointLoads,
+    //     ]);
+    //     arrEndLineForce.push([Line_List_copy[i].lineLoads]);
+    //   }
+    //   //
+    //   if (arrIntersPoint.length >= 2) {
+    //     //create line bw inters point
+    //     for (let index = 0; index <= arrIntersPoint.length - 1; index++) {
+    //       //
+    //       arrSubLineX.push(arrIntersPoint[index][0]);
+    //       arrSubLineY.push(arrIntersPoint[index][1]);
+    //       //
+    //     }
+    //     processingData.prototype.inputRawData(
+    //       "line",
+    //       arrSubLineX,
+    //       arrSubLineY,
+    //       undefined,
+    //       Array(arrSubLineX.length).fill(Line_List_copy[i].name),
+    //       Array(arrSubLineX.length).fill(Line_List_copy[i].color),
+    //       Array(arrSubLineX.length).fill(Line_List_copy[i].width),
+    //       undefined,
+    //       Array(arrSubLineX.length).fill(Line_List_copy[i].lineLoads)
+    //     );
+    //   }
+    // }
+    // //-----------------//
+    // // save end line
+    // for (let i = 0; i <= arrEndLineX.length - 1; i++) {
+    //   processingData.prototype.inputRawData(
+    //     "line",
+    //     arrEndLineX[i],
+    //     arrEndLineY[i],
+    //     arrEndLinePointName[i],
+    //     arrEndLineName[i],
+    //     arrEndLineColor[i],
+    //     arrEndLineWidth[i],
+    //     arrEndLinePointForce[i],
+    //     arrEndLineForce[i]
+    //   );
+    // }
 
-    //
-    // receive data
-    let listData = processingData.prototype.saveObj();
-    let nodes = [];
-    let surfaces = [];
-    let surface_names = [];
-    let surface_coords = [];
-    for (let point of processingData.allPoint) {
-      nodes.push(point.point);
-    }
-    for (let area of oldArea) {
-      let surface = [];
-      for (let i = 0; i <= area.pointFlow.length - 1; i++) {
-        let point = area.pointFlow[i];
-        let index = nodes.findIndex(
-          (value) => JSON.stringify(value) === JSON.stringify(point)
-        );
-        surface.push(index);
-      }
-      surfaces.push(surface);
-      surface_names.push(area.name);
-      surface_coords.push(area.coordNaming);
-    }
+    // //
+    // // receive data
+    // let listData = processingData.prototype.saveObj();
+    // let nodes = [];
+    // let surfaces = [];
+    // let surface_names = [];
+    // let surface_coords = [];
+    // for (let point of processingData.allPoint) {
+    //   nodes.push(point.point);
+    // }
+    // for (let area of oldArea) {
+    //   let surface = [];
+    //   for (let i = 0; i <= area.pointFlow.length - 1; i++) {
+    //     let point = area.pointFlow[i];
+    //     let index = nodes.findIndex(
+    //       (value) => JSON.stringify(value) === JSON.stringify(point)
+    //     );
+    //     surface.push(index);
+    //   }
+    //   surfaces.push(surface);
+    //   surface_names.push(area.name);
+    //   surface_coords.push(area.coordNaming);
+    // }
 
-    let jsonData = JSON.parse(listData);
-    for (let i =0;i<jsonData.node_coords.length;i++){
-      jsonData.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-jsonData.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
-    }
-    console.log(jsonData);
-    jsonData.surfaces = surfaces;
-    jsonData.surface_coords = surface_coords;
-    jsonData.surface_names = surface_names;
 
-    let dataRequest = JSON.stringify(jsonData);
-    let promise = axios({
-      method: "POST",
-      // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
-      // url: "http://127.0.0.1:8000/v1/detectArea/",
+    // let jsonData = JSON.parse(listData);
+    // jsonData.surfaces = surfaces;
+    // jsonData.surface_coords = surface_coords;
+    // jsonData.surface_names = surface_names;
+    // let dataRequest
+    // dataRequest = JSON.stringify(jsonData);
+    // // if (storage.length == 0){
+    // // } else {
 
-      // url: "http://13.212.51.164:8000/v1/detectArea/",
-      url: "http://4.194.96.65:8000/v1/detectArea/",
-      data: dataRequest,
-    });
+    // // }
+    // // tt = jsonData;
+    // // var new1  = JSON.parse(dataRequest);
+    // // var points = new1.node_coords;
+    // // var lines = [];
+    // // for (let i =0;i<new1.segments.length;i++){
+    // //   lines.push([points[new1.segments[i][0]],points[new1.segments[i][1]]])
+    // // }
+    // // var closedContours = detectClosedContours(lines)
+    // // console.log(new1);
+    // // console.log(closedContours);
+    // let promise = axios({
+    //   method: "POST",
+    //   // url: "https://vysecondapp.herokuapp.com/v1/detectArea/",
+    //   url: "http://127.0.0.1:8000/v1/detectArea/",
 
-    promise.then((result) => {
-      console.log(result.data);
-      for (let i =0;i<result.data.node_coords.length;i++){
-        result.data.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-result.data.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
-      }
-      processingData.prototype.createData(result.data);
-      PaintIn.renderObject(processingData.allObject);
-    });
+    //   // url: "http://13.212.51.164:8000/v1/detectArea/",
+    //   // url: "http://4.194.96.65:8000/v1/detectArea/",
+    //   data: dataRequest,
+    // });
 
-    promise.catch(function (err) {
-      console.log("err", err);
-    });
+    // promise.then((result) => {
+    //   // console.log(result.data);
+    //   processingData.prototype.createData(result.data);
+    //   PaintIn.renderObject(processingData.allObject);
+    //   DrawingGL.sceneArea = [];
+    //   // for (let i = 0; i < processingData.allArea.length; i++) {
+    //   //   DrawingGL.arrArea = [];
+    //   //   DrawingGL.arrArea.push(processingData.allArea[i].pointFlow);
+    //   //   DrawingGL.arrArea = DrawingGL.arrArea.flat();
+    //   //   var triangles = earClipping(DrawingGL.arrArea);
+    //   //   triangles = triangles.flat();
+    //   //   triangles = triangles.flat();
+    //   //   let bufferInfoArea = DrawingGL.CreateBufferInfo(triangles, null);
+    //   //   DrawingGL.sceneArea.push({ color: DrawingGL.colorDefaultArea, bufferInfo: bufferInfoArea });
+    //   // }
+    //   DrawingGL.arrMouseDownPosition = [];
+    //   DrawingGL.arrLineY = [];
+    //   DrawingGL.arrLineX = [];
+    //   DrawingGL.handleArea();
+    //   DrawingGL.DrawMain();
+    // });
+
+    // promise.catch(function (err) {
+    //   console.log("err", err);
+    // });
   }
 
   matrix(m, n) {
@@ -472,7 +497,7 @@ class processingData {
     //
     return [arrXOutPut, arrYOutPut];
   }
-  saveObj() {
+  saveObj(dataSaved) {
     let data = JSON.stringify(processingData.allObject);
     let num_nodes;
     let num_segments;
@@ -591,50 +616,32 @@ class processingData {
         surface_coords.push([]);
       }
     }
-    let jsonObject
-    PaintIn.saveCommentText()
-    if (!visualizeData) {
-      jsonObject = {
-        num_nodes: num_nodes,
-        num_segments: num_segments,
-        node_coords: nodes,
-        node_names: node_names,
-        segments: segments,
-        segment_names: segment_names,
-        surfaces: surfaces,
-        surface_names: surface_names,
-        surface_coords: surface_coords,
-        nodal_loads: nodal_loads,
-        segment_loads: segment_loads,
-        text_data: dataLogFile,
-      };
-    } else {
-      jsonObject = {
-        num_nodes: num_nodes,
-        num_segments: num_segments,
-        node_coords: nodes,
-        node_names: node_names,
-        segments: segments,
-        segment_names: segment_names,
-        surfaces: surfaces,
-        surface_names: surface_names,
-        surface_coords: surface_coords,
-        nodal_loads: nodal_loads,
-        segment_loads: segment_loads,
-      }
-      jsonObject = { ...jsonObject, ...visualizeData.data };
-    }
 
-    return JSON.stringify(jsonObject);
+    PaintIn.saveCommentText()
+
+    let jsonObject = {
+      num_nodes: num_nodes,
+      num_segments: num_segments,
+      node_coords: nodes,
+      node_names: node_names,
+      segments: segments,
+      segment_names: segment_names,
+      surfaces: surfaces,
+      surface_names: surface_names,
+      surface_coords: surface_coords,
+      nodal_loads: nodal_loads,
+      segment_loads: segment_loads,
+      text_data: dataLogFile,
+    };
+
+
+    dataSaved = JSON.stringify(jsonObject);
+    return dataSaved;
   }
 
   saveAsData() {
-    // let dataSaved;
-    let jsonData = JSON.parse(processingData.prototype.saveObj());
-    for (let i =0;i<jsonData.node_coords.length;i++){
-      jsonData.node_coords[i][1]=math.round(PaintIn.canvas.getBoundingClientRect().bottom-jsonData.node_coords[i][1]-PaintIn.canvas.getBoundingClientRect().top)
-    }
-    jsonData = JSON.stringify(jsonData)
+    let dataSaved;
+    let jsonData = processingData.prototype.saveObj(dataSaved);
     let blob = new Blob([jsonData], { type: "text/plain;charset=utf-8" });
     saveAs(blob, "data.json");
   }
@@ -732,7 +739,6 @@ class processingData {
         }
       }
     }
-    console.log(processingData.allArea);
     //
     for (let area of processingData.allArea) {
       processingData.allObject.push(area);
@@ -744,7 +750,6 @@ class processingData {
         }
       }
     }
-    console.log(processingData.allLine);
     for (let line of processingData.allLine) {
       processingData.allObject.push(line);
       // console.log('line1',line)
@@ -1016,13 +1021,32 @@ class processingData {
       case "Point":
         {
           let newLocation = [
-            PaintIn.currentMouseDownPos.x,
-            PaintIn.currentMouseDownPos.y,
+            math.round(startPos[0], 8),
+            math.round(startPos[1], 8),
           ];
+          for (let lines of storage) {
+            for (let line of lines) {
+              if (
+                JSON.stringify(line.Point[0].point) === JSON.stringify(obj.point)
+              ) {
+                line.Point[0].point = newLocation
+                line.Point[0].x = newLocation[0]
+                line.Point[0].y = newLocation[1]
+                line.getLength(), line.getBisectingPoint();
+              } else if (
+                JSON.stringify(line.Point[1].point) === JSON.stringify(obj.point)
+              ) {
+                line.Point[1].point = newLocation
+                line.Point[1].x = newLocation[0]
+                line.Point[1].y = newLocation[1]
+                line.getLength(), line.getBisectingPoint();
+              }
+            }
+          }
           obj.point = newLocation;
           obj.x = newLocation[0];
           obj.y = newLocation[1];
-          processingData.allLine.forEach((line) => line.getLength());
+          processingData.allLine.forEach((line) => { line.getLength(), line.getBisectingPoint() });
           processingData.allArea.forEach((area) => {
             for (let line of area.Line) {
               if (
@@ -1033,11 +1057,62 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = "";
+                // area.name = "";
                 area.coordNaming = [];
               }
             }
           });
+
+          // for (let Points of storage_point) {
+          //   for (let Point of Points) {
+          //     if (JSON.stringify(Point.point) === JSON.stringify(obj.point)) {
+          //       Point.point = newLocation;
+          //       Point.x = newLocation[0];
+          //       Point.y = newLocation[1];
+          //       Point.name = obj.name;
+          //     }
+          //   }
+          // }
+          // for (let lines of storage_line) {
+          //   for (let line of lines) {
+          //     line.getLength();
+          //     line.getBisectingPoint();
+          //     for (let line2 of processingData.allLine) {
+          //       if (line2.name !== '') {
+          //         if (
+          //           JSON.stringify(line2.Point[0].point) === JSON.stringify(line.Point[0].point) &&
+          //           JSON.stringify(line2.Point[1].point) === JSON.stringify(line.Point[1].point)
+          //         ) {
+          //           line.name == line2.name
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
+          // for (let areas of storage_area) {
+          //   for (let area of areas) {
+          //     for (let line of area.Line) {
+          //       if (
+          //         JSON.stringify(line.Point[0]) === JSON.stringify(obj) ||
+          //         JSON.stringify(line.Point[1]) === JSON.stringify(obj)
+          //       ) {
+          //         area.getPointFlow();
+          //         area.getArea();
+          //         area.getCenter();
+          //         area.getPerimeter();
+          //         // area.name = "";
+          //         area.coordNaming = [];
+          //       }
+          //     }
+          //   }
+          // }
+          // for (let lines of storage) {
+          //   for (let line of lines) {
+          //     for (let line2 of processingData.allLine) {
+
+          //     }
+          //   }
+          // }
         }
         break;
       case "Line": {
@@ -1046,13 +1121,13 @@ class processingData {
         let point2 = obj.Point[1].point;
 
         let newLocation = [
-          PaintIn.currentMouseDownPos.x,
-          PaintIn.currentMouseDownPos.y,
+          math.round(startPos[0], 8),
+          math.round(startPos[1], 8),
         ];
         let centerPoint = math.divide(math.add(point1, point2), 2);
         let translateVect = math.subtract(newLocation, centerPoint);
-        let newPoint1 = math.add(point1, translateVect);
-        let newPoint2 = math.add(point2, translateVect);
+        let newPoint1 = math.round(math.add(point1, translateVect), 8);
+        let newPoint2 = math.round(math.add(point2, translateVect), 8);
 
         //create new point obj
         let newPointObj1 = new Point(newPoint1, obj.Point[0].name);
@@ -1079,6 +1154,9 @@ class processingData {
             line.Point[1] = obj.Point[1];
             pointLinks2.push(line.Point[1]);
           }
+          line.getLength();
+          line.getBisectingPoint();
+          // line.bisectingPoint = [(line.Point[0].x + line.Point[1].x) / 2, (line.Point[0].y + line.Point[1].y) / 2]
         });
 
         let areaChanges = [];
@@ -1098,8 +1176,8 @@ class processingData {
         });
 
         processingData.allLine.forEach((line) => {
-          console.log(pointLinks1);
-          console.log(pointLinks2);
+          // console.log(pointLinks1);
+          // console.log(pointLinks2);
           if (pointLinks1.length > 0) {
             for (let point of pointLinks1) {
               if (JSON.stringify(line.Point[0]) === JSON.stringify(point)) {
@@ -1127,7 +1205,41 @@ class processingData {
           }
 
           line.getLength();
+          line.getBisectingPoint();
         });
+
+        for (let lines of storage) {
+          for (let line of lines) {
+            if (pointLinks1.length > 0) {
+              for (let point of pointLinks1) {
+                if (JSON.stringify(line.Point[0].point) === JSON.stringify(point.point)) {
+                  line.Point[0] = newPointObj1;
+                }
+                if (JSON.stringify(line.Point[1].point) === JSON.stringify(point.point)) {
+                  line.Point[1] = newPointObj1;
+                }
+              }
+            } else {
+              obj.Point[0] = newPointObj1;
+            }
+
+            if (pointLinks2.length > 0) {
+              for (let point of pointLinks2) {
+                if (JSON.stringify(line.Point[0].point) === JSON.stringify(point.point)) {
+                  line.Point[0] = newPointObj2;
+                }
+                if (JSON.stringify(line.Point[1].point) === JSON.stringify(point.point)) {
+                  line.Point[1] = newPointObj2;
+                }
+              }
+            } else {
+              obj.Point[1] = newPointObj2;
+            }
+
+            line.getLength();
+            line.getBisectingPoint();
+          }
+        }
 
         if (areaChanges.length > 0) {
           processingData.allArea.forEach((area) => {
@@ -1137,7 +1249,7 @@ class processingData {
                 area.getArea();
                 area.getCenter();
                 area.getPerimeter();
-                area.name = "";
+                // area.name = "";
                 area.coordNaming = [];
               }
             }
@@ -1180,7 +1292,7 @@ class processingData {
     }
     this.updateStorage();
     //refresh screen
-    PaintIn.renderObject(processingData.allObject);
+    // PaintIn.renderObject(processingData.allObject);
   }
 }
 // Point class
@@ -1206,10 +1318,22 @@ class Point {
   isInBox(topLeftPoint, bottomRigthPoint) {
     let point = this.point;
     if (
-      topLeftPoint[0] < point[0] &&
-      topLeftPoint[1] < point[1] &&
-      point[0] < bottomRigthPoint[0] &&
-      point[1] < bottomRigthPoint[1]
+      (topLeftPoint[0] < point[0] &&
+        topLeftPoint[1] > point[1] &&
+        point[0] < bottomRigthPoint[0] &&
+        point[1] > bottomRigthPoint[1]) ||
+      (topLeftPoint[0] > point[0] &&
+        topLeftPoint[1] > point[1] &&
+        point[0] > bottomRigthPoint[0] &&
+        point[1] > bottomRigthPoint[1]) ||
+      (topLeftPoint[0] < point[0] &&
+        topLeftPoint[1] < point[1] &&
+        point[0] < bottomRigthPoint[0] &&
+        point[1] < bottomRigthPoint[1]) ||
+      (topLeftPoint[0] > point[0] &&
+        topLeftPoint[1] < point[1] &&
+        point[0] > bottomRigthPoint[0] &&
+        point[1] < bottomRigthPoint[1])
     ) {
       return true;
     } else return false;
@@ -1288,10 +1412,22 @@ class Line {
     for (let pointObj of this.Point) {
       let point = pointObj.point;
       if (
-        topLeftPoint[0] < point[0] &&
-        topLeftPoint[1] < point[1] &&
-        point[0] < bottomRigthPoint[0] &&
-        point[1] < bottomRigthPoint[1]
+        (topLeftPoint[0] < point[0] &&
+          topLeftPoint[1] > point[1] &&
+          point[0] < bottomRigthPoint[0] &&
+          point[1] > bottomRigthPoint[1]) ||
+        (topLeftPoint[0] > point[0] &&
+          topLeftPoint[1] > point[1] &&
+          point[0] > bottomRigthPoint[0] &&
+          point[1] > bottomRigthPoint[1]) ||
+        (topLeftPoint[0] < point[0] &&
+          topLeftPoint[1] < point[1] &&
+          point[0] < bottomRigthPoint[0] &&
+          point[1] < bottomRigthPoint[1]) ||
+        (topLeftPoint[0] > point[0] &&
+          topLeftPoint[1] < point[1] &&
+          point[0] > bottomRigthPoint[0] &&
+          point[1] < bottomRigthPoint[1])
       ) {
       } else {
         return false;
@@ -1439,10 +1575,22 @@ class Area {
   isInBox(topLeftPoint, bottomRigthPoint) {
     for (let point of this.pointFlow) {
       if (
-        topLeftPoint[0] < point[0] &&
-        topLeftPoint[1] < point[1] &&
-        point[0] < bottomRigthPoint[0] &&
-        point[1] < bottomRigthPoint[1]
+        (topLeftPoint[0] < point[0] &&
+          topLeftPoint[1] > point[1] &&
+          point[0] < bottomRigthPoint[0] &&
+          point[1] > bottomRigthPoint[1]) ||
+        (topLeftPoint[0] > point[0] &&
+          topLeftPoint[1] > point[1] &&
+          point[0] > bottomRigthPoint[0] &&
+          point[1] > bottomRigthPoint[1]) ||
+        (topLeftPoint[0] < point[0] &&
+          topLeftPoint[1] < point[1] &&
+          point[0] < bottomRigthPoint[0] &&
+          point[1] < bottomRigthPoint[1]) ||
+        (topLeftPoint[0] > point[0] &&
+          topLeftPoint[1] < point[1] &&
+          point[0] > bottomRigthPoint[0] &&
+          point[1] < bottomRigthPoint[1])
       ) {
       } else {
         return false;
